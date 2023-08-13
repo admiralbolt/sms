@@ -27,21 +27,17 @@ class Command(BaseCommand):
     venues = Venue.objects.all()
     artists = [fake.name() for _ in range(300)]
 
+    today = datetime.date.today()
     # We'll go 30 days in both directions, just cause.
-    today = datetime.datetime.today()
-    date_list = []
     for x in range(60):
-      base_date = today + datetime.timedelta(days=30) - datetime.timedelta(days=x)
-      final_date = base_date.replace(hour=random.randint(19, 21), minute=random.choice([0, 15, 30, 45]), second=0, microsecond=0)
-      date_list.append(final_date)
-
-    for date in date_list:
+      show_date = today + datetime.timedelta(days=30) - datetime.timedelta(days=x)
       for venue in venues:
+        start_time = datetime.time(hour=random.randint(19, 21), minute=random.choice([0, 15, 30, 45]))
         # 2 or 3 artists per show.
         show_title = ", ".join([random.choice(artists) for _ in range(random.randint(2, 3))])
         # Sometimes add doors!
         if random.randint(0, 100) < 40:
-          Show.objects.create(venue=venue, title=show_title, show_start=date, ticket_price=random.randint(8, 15))
+          Show.objects.create(venue=venue, title=show_title, show_day=show_date, start_time=start_time, ticket_price=random.randint(8, 15))
         else:
-          doors_date = date - datetime.timedelta(minutes=random.choice([30, 60]))
-          Show.objects.create(venue=venue, title=show_title, show_start=date, doors_open=doors_date, ticket_price=random.randint(8, 15))
+          doors_open = (datetime.datetime.combine(show_date, start_time) - datetime.timedelta(minutes=random.choice([30, 60]))).time()
+          Show.objects.create(venue=venue, title=show_title, show_day=show_date, start_time=start_time, doors_open=doors_open, ticket_price=random.randint(8, 15))

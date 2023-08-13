@@ -25,9 +25,9 @@ class Show(models.Model):
   # I think eventually this could get replaced by linking to artists
   # participating in the show, but for a rough draft this is good enough.
   title = models.CharField(max_length=256)
-  show_start = models.DateTimeField()
-  # Optionally include a doors open time.
-  doors_open = models.DateTimeField(default=None, blank=True, null=True)
+  show_day = models.DateField()
+  start_time = models.TimeField()
+  doors_open = models.TimeField(default=None, blank=True, null=True)
   ticket_price = models.DecimalField(max_digits=5, decimal_places=2)
 
   def __str__(self):

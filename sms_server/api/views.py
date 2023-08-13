@@ -10,7 +10,7 @@ class ShowViewSet(viewsets.ModelViewSet):
   serializer_class = serializers.ShowSerializer
 
   def get_queryset(self):
-    return models.Show.objects.order_by("show_start")
+    return models.Show.objects.order_by("show_day")
   
 class VenueViewSet(viewsets.ModelViewSet):
   resource_name = "venues"

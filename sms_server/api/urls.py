@@ -10,5 +10,5 @@ router.register(r"shows", views.ShowViewSet)
 router.register(r"venues", views.VenueViewSet)
 
 urlpatterns = [
-  path("", include(router.urls)),
+  path("api/", include(router.urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
