@@ -1,3 +1,33 @@
 .leaflet-container {
   height: 100vh;
 }
+
+.leaflet-tooltip {
+  width: 300px;
+  text-wrap: wrap;
+}
+
+.venue-name {
+  font-size: 18px;
+  margin: auto;
+  text-align: center;
+  padding: -1px;
+}
+
+.venue-address {
+  text-align: left;
+  font-size: 12px;
+}
+
+.venue-description {
+  text-align: left;
+  font-size: 10px;
+}
+
+.show-info {
+  padding-left: 10px;
+}
+
+.show-info p {
+  margin: 0;
+}
