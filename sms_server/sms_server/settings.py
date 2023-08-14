@@ -12,6 +12,12 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
+# SOME API KEY THINGS THAT NEED TO BE SET.
+# Put these in a file called `local_settings.py` so they can be loaded.
+# The values to include are:
+#  * TICKET_MASTER_API_KEY
+from .local_settings import *
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -74,6 +80,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sms_server.wsgi.application'
 
+CELERY_TIMEZONE = "America/Los_Angeles"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

@@ -17,6 +17,9 @@ class Venue(models.Model):
 
   def __str__(self):
     return self.name
+  
+  class Meta:
+    unique_together = [["latitude", "longitude"]]
 
 
 class Show(models.Model):
@@ -32,6 +35,9 @@ class Show(models.Model):
 
   def __str__(self):
     return self.title
+  
+  class Meta:
+    unique_together = [["venue", "show_day"]]
 
 
 class OpenMic(models.Model):
