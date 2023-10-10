@@ -4,13 +4,13 @@ from rest_framework import viewsets
 from api import models
 from api import serializers
 
-class ShowViewSet(viewsets.ModelViewSet):
-  resource_name = "shows"
-  queryset = models.Show.objects.all()
-  serializer_class = serializers.ShowSerializer
+class EventViewSet(viewsets.ModelViewSet):
+  resource_name = "events"
+  queryset = models.Event.objects.all()
+  serializer_class = serializers.EventSerializer
 
   def get_queryset(self):
-    return models.Show.objects.order_by("show_day")
+    return models.Event.objects.order_by("event_day")
   
 class VenueViewSet(viewsets.ModelViewSet):
   resource_name = "venues"

@@ -16,6 +16,8 @@ from pathlib import Path
 # Put these in a file called `local_settings.py` so they can be loaded.
 # The values to include are:
 #  * TICKET_MASTER_API_KEY
+#  * TIXR_CLIENT_KEY
+#  * EVENTBRITE_TOKEN
 from .local_settings import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

@@ -22,22 +22,25 @@ class Venue(models.Model):
     unique_together = [["latitude", "longitude"]]
 
 
-class Show(models.Model):
+class Event(models.Model):
   """Shows to be had!"""
+  EVENT_TYPES = [
+    ("Open Mic", "Open Mic"),
+    ("Show", "Show")
+  ]
+
   venue = models.ForeignKey(Venue, on_delete=models.DO_NOTHING)
+  event_type = models.CharField(max_length=16, choices=EVENT_TYPES, default="Show")
   # I think eventually this could get replaced by linking to artists
   # participating in the show, but for a rough draft this is good enough.
   title = models.CharField(max_length=256)
-  show_day = models.DateField()
+  event_day = models.DateField()
   start_time = models.TimeField()
   doors_open = models.TimeField(default=None, blank=True, null=True)
   ticket_price = models.DecimalField(max_digits=5, decimal_places=2)
 
   def __str__(self):
     return self.title
-  
-  class Meta:
-    unique_together = [["venue", "show_day"]]
 
 
 class OpenMic(models.Model):
@@ -56,6 +59,6 @@ class OpenMic(models.Model):
 
 ADMIN_MODELS = [
   OpenMic,
-  Show,
+  Event,
   Venue
 ]

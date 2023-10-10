@@ -8,10 +8,10 @@ class VenueSerializer(serializers.ModelSerializer):
     model = models.Venue
     fields = "__all__"
 
-class ShowSerializer(serializers.ModelSerializer):
+class EventSerializer(serializers.ModelSerializer):
 
   class Meta:
-    model = models.Show
+    model = models.Event
     fields = "__all__"
 
 class OpenMicSerializer(serializers.ModelSerializer):
