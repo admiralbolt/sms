@@ -14,8 +14,8 @@ class EventSerializer(serializers.ModelSerializer):
     model = models.Event
     fields = "__all__"
 
-class OpenMicSerializer(serializers.ModelSerializer):
+class OpenMicGeneratorSerializer(serializers.ModelSerializer):
 
   class Meta:
-    model = models.OpenMic
+    model = models.OpenMicGenerator
     fields = "__all__"

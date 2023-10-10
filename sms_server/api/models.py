@@ -43,7 +43,7 @@ class Event(models.Model):
     return self.title
 
 
-class OpenMic(models.Model):
+class OpenMicGenerator(models.Model):
   """Showcase yourself!"""
   venue = models.ForeignKey(Venue, on_delete=models.DO_NOTHING)
   # A lot of open mic nights are just venue name + open mic i.e.
@@ -52,13 +52,12 @@ class OpenMic(models.Model):
   title = models.CharField(max_length=256, default="", blank=True, null=True)
   description = models.TextField()
   crontab_string = models.CharField(max_length=64)
-  schedule = CrontabSchedule()
 
   def __str__(self):
     return self.title
 
 ADMIN_MODELS = [
-  OpenMic,
   Event,
+  OpenMicGenerator,
   Venue
 ]
