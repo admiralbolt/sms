@@ -1,22 +1,13 @@
 import requests
 
-from api.models import Show, Venue
+from api.models import Venue
 from bs4 import BeautifulSoup
 from celery import shared_task
 from pprint import pprint
 from sms_server import settings
 
-SUNSET_TAVERN_TICKETMASTER_ID = "KovZpap2ne"
-SUNSET_TAVERN_INTERNAL_ID = 3
+from api.ingestion import ticketmaster
 
-TRACTOR_TAVERN_TICKETMASTER_ID = "KovZpZAdnvnA"
-TRACTOR_TAVERN_INTERNAL_ID = 2
-
-NECTAR_INTERNAL_ID = 5
-NECTAR_TICKETMASTER_ID = "KovZpapCme"
-
-HIGH_DIVE_INTERNAL_ID = 4
-HIGH_DIVE_TICKETMASTER_ID = "KovZpZAaIElA"
 
 def crawl_ticketweb(venue_id, ticketweb_id):
   venue = Venue.objects.get(id=venue_id)
@@ -66,4 +57,12 @@ def crawl_nectar():
 @shared_task
 def crawl_highdive():
   crawl_ticketweb(HIGH_DIVE_INTERNAL_ID, HIGH_DIVE_TICKETMASTER_ID)
+
+
+@shared_task
+def import_venues():
+  ticketmaster.import_venues()
   
+@shared_task
+def import_data():
+  ticketmaster.import_data()

@@ -31,7 +31,7 @@ class Map extends React.Component {
   loadShows() {
     // Shows should be indexed by venue. We do a two layer mapping of
     // venu -> date -> show object.
-    axios.get("/api/shows").then((res) => {
+    axios.get("/api/events").then((res) => {
       const shows = {};
       res.data.forEach(show => {
         shows[show.venue] = shows[show.venue] || {};
