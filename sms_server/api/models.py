@@ -36,6 +36,27 @@ class Venue(models.Model):
     unique_together = [["latitude", "longitude"]]
 
 
+class VenueAlias(models.Model):
+  """Multiple names for the same venue.
+
+  This happens when the data source is not the cleaniest. We get duplicate 
+  venues with very similar names e.g. "Tractor" vs. "Tractor Tavern". We want
+  to dedupe these to a single source of truth.
+
+  Ideally the aliases would map directly to a venue id, but we run into a
+  chicken and egg problem here. We want to create aliases to properly map venue
+  names BEFORE we ingest venue data. The primary alias mapping will be for the
+  string name only, and the actual link to the correct venue will be done as
+  a post-processing step.
+  """
+  alias = models.CharField(max_length=128, unique=True)
+  proper_name = models.CharField(max_length=128)
+  venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, blank=True, null=True)
+
+  def __str__(self):
+    return f"{self.alias} -> {self.proper_name}"
+
+
 class Event(models.Model):
   """Shows to be had!"""
   EVENT_TYPES = [
@@ -43,7 +64,7 @@ class Event(models.Model):
     ("Show", "Show")
   ]
 
-  venue = models.ForeignKey(Venue, on_delete=models.DO_NOTHING)
+  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
   event_type = models.CharField(max_length=16, choices=EVENT_TYPES, default="Show")
   # I think eventually this could get replaced by linking to artists
   # participating in the show, but for a rough draft this is good enough.
@@ -63,7 +84,7 @@ class Event(models.Model):
 
 class OpenMicGenerator(models.Model):
   """Showcase yourself!"""
-  venue = models.ForeignKey(Venue, on_delete=models.DO_NOTHING)
+  venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, blank=True, null=True)
   # A lot of open mic nights are just venue name + open mic i.e.
   # Connor Byrne Open Mic, Hidden Door Open Mic. There are some exceptions like
   # Mojam, so we'll add an optional title field just in case.
@@ -77,5 +98,6 @@ class OpenMicGenerator(models.Model):
 ADMIN_MODELS = [
   Event,
   OpenMicGenerator,
-  Venue
+  Venue,
+  VenueAlias
 ]
