@@ -24,7 +24,11 @@ class Venue(models.Model):
   max_capacity = models.IntegerField(default=-1)
 
   # In general we don't want to delete data, we just want to hide it.
-  exists = models.BooleanField(default=True)
+  # We add two controls for this:
+  # 1) Hiding / showing the venue.
+  # 2) Turning off / on data gathering for the venue.
+  show_venue = models.BooleanField(default=True)
+  gather_data = models.BooleanField(default=True)
 
   venue_api = models.CharField(max_length=20, choices=VENUE_APIS, default="Manual")
   venue_api_id = models.CharField(max_length=32, blank=True, null=True)

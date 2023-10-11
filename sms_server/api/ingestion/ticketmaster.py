@@ -41,6 +41,9 @@ def create_or_update_events(events) -> None:
   for event in events["_embedded"]["events"]:
     # Create venues based on the shows first.
     venue = get_or_create_venue(event)
+    if not venue.gather_data:
+      continue
+    
     # Then create the actual events.
     try:
       event, created = Event.objects.get_or_create(
