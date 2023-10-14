@@ -2,7 +2,7 @@ import requests
 import time
 
 from api.models import Event, Venue
-from api.utils import venue_utils
+from api.utils import event_utils, venue_utils
 from pprint import pprint
 from sms_server import settings
 
@@ -39,18 +39,14 @@ def create_or_update_events(events) -> None:
     if not venue.gather_data:
       continue
 
-    # Then create the actual events.
-    try:
-      event, created = Event.objects.get_or_create(
-        venue=venue,
-        title=event["name"],
-        event_day=event["dates"]["start"]["localDate"],
-        start_time=event["dates"]["start"].get("localTime", None),
-        ticket_price_min=0 if "priceRanges" not in event else event["priceRanges"][0]["min"],
-        ticket_price_max=0 if "priceRanges" not in event else event["priceRanges"][0]["max"],
-      )
-    except Exception as e:
-      print(e)
+    event_utils.get_or_create_event(
+      venue=venue,
+      title=event["name"],
+      event_day=event["dates"]["start"]["localDate"],
+      start_time=event["dates"]["start"].get("localTime", None),
+      ticket_price_min=0 if "priceRanges" not in event else event["priceRanges"][0]["min"],
+      ticket_price_max=0 if "priceRanges" not in event else event["priceRanges"][0]["max"],
+    )
 
 
 def import_data(delay: float=0.2) -> None:
