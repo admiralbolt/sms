@@ -71,7 +71,7 @@ def event_request(page=0):
   }
   print(headers)
   print(data)
-  result = requests.post(f"https://venuepilot.co/graphql", headers=headers, params=data)
+  result = requests.post("https://www.venuepilot.co/graphql", headers=headers, json=data)
   print(result.status_code)
   print(result.text)
 
