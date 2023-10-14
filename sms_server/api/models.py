@@ -6,7 +6,7 @@ class Venue(models.Model):
   VENUE_APIS = [
     ("Ticketmaster", "Ticketmaster"),
     ("VenuePilot", "VenuePilot"),
-    ("EventBrite", "EventBrite"),
+    ("Eventbrite", "Eventbrite"),
     ("TIXR", "TIXR"),
     ("Crawler", "Crawler"),
     ("Manual", "Manual"),
@@ -78,6 +78,7 @@ class Event(models.Model):
   doors_open = models.TimeField(default=None, blank=True, null=True)
   ticket_price_min = models.DecimalField(max_digits=8, decimal_places=2, default=0)
   ticket_price_max = models.DecimalField(max_digits=8, decimal_places=2)
+  event_url = models.CharField(max_length=512, blank=True, null=True)
 
   def __str__(self):
     return self.title

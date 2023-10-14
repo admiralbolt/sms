@@ -15,12 +15,7 @@ def get_or_create_venue(data):
     pprint(data)
 
   venue_data = data["_embedded"]["venues"][0]
-
-  venue = venue_utils.get_venue(venue_data["name"], (venue_data["location"]["latitude"], venue_data["location"]["longitude"]))
-  if venue:
-    return venue
-  
-  return Venue.objects.create(
+  return venue_utils.get_or_create_venue(
     name=venue_utils.get_proper_name(venue_data["name"]),
     latitude=venue_data["location"]["latitude"],
     longitude=venue_data["location"]["longitude"],
@@ -43,7 +38,7 @@ def create_or_update_events(events) -> None:
     venue = get_or_create_venue(event)
     if not venue.gather_data:
       continue
-    
+
     # Then create the actual events.
     try:
       event, created = Event.objects.get_or_create(

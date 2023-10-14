@@ -19,5 +19,5 @@ class VenueViewSet(viewsets.ModelViewSet):
 
   def get_queryset(self):
     venues = models.Venue.objects.order_by("name")
-    return venues.filter(exists=True)
+    return venues.filter(show_venue=True)
 
