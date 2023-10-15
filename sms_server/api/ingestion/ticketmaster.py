@@ -7,7 +7,7 @@ import requests
 from api.utils import event_utils, venue_utils
 from sms_server import settings
 
-def event_request(page: int=0):
+def event_list_request(page: int=0):
   """Get event data from Ticketmaster."""
   return requests.get(f"https://app.ticketmaster.com/discovery/v2/events?apikey={settings.TICKET_MASTER_API_KEY}&radius=10&unit=miles&segmentName=Music&geoPoint=c22zp&page={page}", timeout=15).json()
 
@@ -56,7 +56,7 @@ def process_event_list(events) -> None:
 
 def import_data(delay: float=0.2) -> None:
   """Import data from Ticketmaster."""
-  events = event_request(page=0)
+  events = event_list_request(page=0)
   num_pages = events["page"]["totalPages"]
   print(f"Expecting a total of {events['page']['size'] * num_pages} events.")
   process_event_list(events)
@@ -64,5 +64,5 @@ def import_data(delay: float=0.2) -> None:
     # We are only allowed a maximum of 5 QPS worth of traffic, so we insert
     # an artificial delay between requests to avoid hitting it.
     time.sleep(delay)
-    events = event_request(page=page)
+    events = event_list_request(page=page)
     process_event_list(events)
