@@ -1,3 +1,5 @@
-from django.test import TestCase
+"""Tests for the API app.
 
-# Create your tests here.
+Why is this file blank?
+Because fuck you, that's why.
+"""

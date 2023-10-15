@@ -1,5 +1,5 @@
+"""Database models."""
 from django.db import models
-from django_celery_beat.models import CrontabSchedule
 
 class Venue(models.Model):
   """Places to go!"""
@@ -35,7 +35,7 @@ class Venue(models.Model):
 
   def __str__(self):
     return self.name
-  
+
   class Meta:
     unique_together = [["latitude", "longitude"]]
 
@@ -82,7 +82,7 @@ class Event(models.Model):
 
   def __str__(self):
     return self.title
-  
+
   class Meta:
     unique_together = [["venue", "title"]]
 
