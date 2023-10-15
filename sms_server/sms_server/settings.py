@@ -18,7 +18,7 @@ from pathlib import Path
 #  * TICKET_MASTER_API_KEY
 #  * TIXR_CLIENT_KEY
 #  * EVENTBRITE_TOKEN
-from .local_settings import *
+from .local_settings import *  # pylint: disable=wildcard-import,unused-wildcard-import
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent

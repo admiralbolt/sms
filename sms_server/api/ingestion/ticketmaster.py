@@ -1,15 +1,18 @@
-import requests
+"""Ticketmaster integration."""
 import time
-
-from api.models import Event, Venue
-from api.utils import event_utils, venue_utils
 from pprint import pprint
+
+import requests
+
+from api.utils import event_utils, venue_utils
 from sms_server import settings
 
 def event_request(page: int=0):
-  return requests.get(f"https://app.ticketmaster.com/discovery/v2/events?apikey={settings.TICKET_MASTER_API_KEY}&radius=10&unit=miles&segmentName=Music&geoPoint=c22zp&page={page}").json()
+  """Get event data from Ticketmaster."""
+  return requests.get(f"https://app.ticketmaster.com/discovery/v2/events?apikey={settings.TICKET_MASTER_API_KEY}&radius=10&unit=miles&segmentName=Music&geoPoint=c22zp&page={page}", timeout=15).json()
 
 def get_or_create_venue(data):
+  """Get or create a venue."""
   if len(data["_embedded"]["venues"]) > 1:
     print("HUH")
     pprint(data)
@@ -27,12 +30,13 @@ def get_or_create_venue(data):
   )
 
 
-def create_or_update_events(events) -> None:
+def process_event_list(events) -> None:
+  """Process list of Ticketmaster events."""
   if "_embedded" not in events:
     pprint(events)
     print("========\n\n\n\n\n\n\n\n")
     return
-  
+
   for event in events["_embedded"]["events"]:
     # Create venues based on the shows first.
     venue = get_or_create_venue(event)
@@ -50,13 +54,14 @@ def create_or_update_events(events) -> None:
 
 
 def import_data(delay: float=0.2) -> None:
+  """Import data from Ticketmaster."""
   events = event_request(page=0)
   num_pages = events["page"]["totalPages"]
   print(f"Expecting a total of {events['page']['size'] * num_pages} events.")
-  create_or_update_events(events)
+  process_event_list(events)
   for page in range(1, num_pages):
     # We are only allowed a maximum of 5 QPS worth of traffic, so we insert
     # an artificial delay between requests to avoid hitting it.
     time.sleep(delay)
     events = event_request(page=page)
-    create_or_update_events(events)
+    process_event_list(events)

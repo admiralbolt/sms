@@ -1,3 +1,5 @@
+"""Celery is good for you. Also used to schedule tasks."""
+
 import os
 
 from celery import Celery
@@ -10,4 +12,5 @@ app.autodiscover_tasks()
 
 @app.task(bind=True, ignore_result=True)
 def debug_task(self):
+  """Debug task that doesn't do anything!"""
   print(f"Request: {self.request!r}")

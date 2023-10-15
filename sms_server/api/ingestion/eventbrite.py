@@ -15,24 +15,21 @@ https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes,venue,
 
 Don't forget we need to include the `Authorization: Bearer {token}` header.
 """
+from typing import Optional
+
 import json
 import requests
 
 from api.models import Venue
 from api.utils import event_utils, venue_utils
 from sms_server import settings
-from typing import Optional
-
-
-def test_request():
-  return f"curl -X GET 'https://www.eventbriteapi.com/v3/events/705658071287/?expand=ticket_classes,venue,category' -H 'Authorization: Bearer {settings.EVENTBRITE_TOKEN}'" 
-
 
 # Looks like the data returned from the backend search call is dumped into
 # javascript into a `__SERVER_DATA__` variable. There's a line like this
 # `window.__SERVER_DATA__ = {...}`
 # We can can grab this line, parse the JSON, and be off to the races.
 def event_list_request(page: int=1):
+  """Get a list of events from Eventbrite by scraping their UI search page."""
   # As it turns out eventbrite has some protections in place to prevent
   # exactly what I'm attempting to do. Unfortunately for them, their protections
   # are dumb. We can bypass stuff by just spoofing a user-agent seems like.
@@ -40,18 +37,18 @@ def event_list_request(page: int=1):
   headers = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
   }
-  r = requests.get(f"https://www.eventbrite.com/d/wa--seattle/music--events/?page={page}", headers=headers)
-  if r.status_code != 200:
-    print(r.status_code)
-    print(r.text)
+  result = requests.get(f"https://www.eventbrite.com/d/wa--seattle/music--events/?page={page}", headers=headers, timeout=15)
+  if result.status_code != 200:
+    print(result.status_code)
+    print(result.text)
 
-  for line in r.text.split("\n"):
-    s = line.strip()
-    if not s.startswith("window.__SERVER_DATA__"):
+  for line in result.text.split("\n"):
+    line = line.strip()
+    if not line.startswith("window.__SERVER_DATA__"):
       continue
 
     # The line ends with a semicolon since it's javascript.
-    data = json.loads(s[len("window.__SERVER_DATA__ = "):-1])
+    data = json.loads(line[len("window.__SERVER_DATA__ = "):-1])
     return data
   return {}
 
@@ -67,9 +64,10 @@ def event_detail_request(event_id: str):
     "Content-Type": "application/json",
     "Authorization": f"Bearer {settings.EVENTBRITE_TOKEN}"
   }
-  return requests.get(f"https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes", headers=headers).json()
+  return requests.get(f"https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes", headers=headers, timeout=15).json()
 
 def get_or_create_venue(venue_data) -> Optional[Venue]:
+  """Get or create a venue."""
   # Found some "venues" that are just a city. Skip these.
   if "postal_code" not in venue_data:
     return None
@@ -90,14 +88,15 @@ def get_or_create_venue(venue_data) -> Optional[Venue]:
   )
 
 def get_or_create_event(venue, event_detail):
+  """Get or create an event."""
   event_start = event_detail["start"]["local"]
   event_day, start_time = event_start.split("T")
 
   # Eventbrite returns a list of ticket classes -- General Advance, Student
   # Advance, Box Office e.t.c. We aggregate data across the ticket classes to
-  # get an idea of the cost. The cost value field is in cents, so we need to 
+  # get an idea of the cost. The cost value field is in cents, so we need to
   # divide by 100 after the fact.
-  # 
+  #
   # ALSO
   # Occasionally costs is `None` if it's a free / donation event.
   min_cost = 0
@@ -120,6 +119,7 @@ def get_or_create_event(venue, event_detail):
   )
 
 def process_event_list(event_list: list[dict]):
+  """Process the list of events returned from the Eventbrite search UI."""
   for event_data in event_list:
     event_detail = event_detail_request(event_id=event_data["id"])
     venue = get_or_create_venue(event_data["primary_venue"])
@@ -129,10 +129,10 @@ def process_event_list(event_list: list[dict]):
 
 
 def import_data():
+  """Import data from Eventbrite."""
   data = event_list_request(page=1)
   process_event_list(data["search_data"]["events"]["results"])
   for page in range(2, data["page_count"]):
     data = event_list_request(page=page)
     process_event_list(data["search_data"]["events"]["results"])
-
     
