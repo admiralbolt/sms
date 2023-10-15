@@ -25,8 +25,8 @@ def get_or_create_venue(data):
     address=", ".join([venue_data["address"][line] for line in sorted(venue_data["address"].keys())]),
     postal_code=venue_data["postalCode"],
     city=venue_data["city"]["name"],
-    venue_api="Ticketmaster",
-    venue_api_id=venue_data["id"]
+    api_name="Ticketmaster",
+    api_id=venue_data["id"]
   )
 
 
@@ -50,6 +50,7 @@ def process_event_list(events) -> None:
       start_time=event["dates"]["start"].get("localTime", None),
       ticket_price_min=0 if "priceRanges" not in event else event["priceRanges"][0]["min"],
       ticket_price_max=0 if "priceRanges" not in event else event["priceRanges"][0]["max"],
+      event_url=event["url"],
     )
 
 

@@ -2,7 +2,7 @@
 
 from typing import Optional
 
-from api.models import Venue, VenueAlias
+from api.models import Venue, VenueAlias, VenueApi
 
 def get_proper_name(name: str) -> str:
   """Gets the proper name for a venue by replacing aliases if they exist."""
@@ -28,19 +28,32 @@ def get_venue(name: str, latitude: Optional[float], longitude: Optional[float]) 
 
   return None
 
-def get_or_create_venue(name: str, latitude: float, longitude: float, address: str, postal_code: int, city: str, venue_api: str, venue_api_id: int) -> Venue:
+def add_venue_api(venue: Venue, api_name: str, api_id: str) -> None:
+  """Add venue api if it doesn't already exist."""
+  venue_api = VenueApi.objects.filter(venue=venue, api_name=api_name).first()
+  if venue_api:
+    return
+
+  VenueApi.objects.create(
+    venue=venue,
+    api_name=api_name,
+    api_id=api_id
+  )
+
+
+def get_or_create_venue(name: str, latitude: float, longitude: float, address: str, postal_code: int, city: str, api_name: str, api_id: int) -> Venue:
   """Get or create a venue."""
   venue = get_venue(name, latitude=latitude, longitude=longitude)
-  if venue:
-    return venue
+  if not venue:
+    venue = Venue.objects.create(
+      name=get_proper_name(name),
+      latitude=latitude,
+      longitude=longitude,
+      address=address,
+      postal_code=postal_code,
+      city=city,
+    )
 
-  return Venue.objects.create(
-    name=get_proper_name(name),
-    latitude=latitude,
-    longitude=longitude,
-    address=address,
-    postal_code=postal_code,
-    city=city,
-    venue_api=venue_api,
-    venue_api_id=venue_api_id
-  )
+  # Get or create an associated venue API record before returning.
+  add_venue_api(venue=venue, api_name=api_name, api_id=api_id)
+  return venue

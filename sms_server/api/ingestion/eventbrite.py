@@ -19,6 +19,7 @@ from typing import Optional
 
 import json
 import requests
+from pprint import pprint
 
 from api.models import Venue
 from api.utils import event_utils, venue_utils
@@ -69,7 +70,7 @@ def event_detail_request(event_id: str):
 def get_or_create_venue(venue_data) -> Optional[Venue]:
   """Get or create a venue."""
   # Found some "venues" that are just a city. Skip these.
-  if "postal_code" not in venue_data:
+  if "postal_code" not in venue_data["address"]:
     return None
 
   address = venue_data["address"]["address_1"]
@@ -83,8 +84,8 @@ def get_or_create_venue(venue_data) -> Optional[Venue]:
     address=address,
     postal_code=venue_data["address"]["postal_code"],
     city=venue_data["address"]["city"],
-    venue_api="Eventbrite",
-    venue_api_id=venue_data["id"]
+    api_name="Eventbrite",
+    api_id=venue_data["id"]
   )
 
 def get_or_create_event(venue, event_detail):
@@ -101,10 +102,13 @@ def get_or_create_event(venue, event_detail):
   # Occasionally costs is `None` if it's a free / donation event.
   min_cost = 0
   max_cost = 0
+  costs = []
   for ticket_class in event_detail["ticket_classes"]:
     if not ticket_class["cost"]:
       break
-    costs = [ticket_class["cost"]["value"] / 100 for ticket_class in event_detail["ticket_classes"]]
+    costs.append(ticket_class["cost"]["value"] / 100)
+
+  if costs:
     min_cost = min(costs)
     max_cost = max(costs)
 

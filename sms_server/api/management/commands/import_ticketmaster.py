@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from api.models import Event, Venue
-from api.tasks import import_data
+from api.tasks import import_ticketmaster_data
 
 class Command(BaseCommand):
 
@@ -14,6 +14,6 @@ class Command(BaseCommand):
       Event.objects.all().delete()
       Venue.objects.all().delete()
 
-    import_data()
+    import_ticketmaster_data()
 
     

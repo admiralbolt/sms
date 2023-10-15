@@ -1,17 +1,17 @@
 """Database models."""
 from django.db import models
 
-class Venue(models.Model):
-  """Places to go!"""
-  VENUE_APIS = [
+INGESTION_APIS = [
     ("Ticketmaster", "Ticketmaster"),
     ("VenuePilot", "VenuePilot"),
     ("Eventbrite", "Eventbrite"),
     ("TIXR", "TIXR"),
     ("Crawler", "Crawler"),
     ("Manual", "Manual"),
-  ]
+]
 
+class Venue(models.Model):
+  """Places to go!"""
   name = models.CharField(max_length=128, unique=True)
   latitude = models.DecimalField(max_digits=11, decimal_places=8)
   longitude = models.DecimalField(max_digits=11, decimal_places=8)
@@ -30,14 +30,27 @@ class Venue(models.Model):
   show_venue = models.BooleanField(default=True)
   gather_data = models.BooleanField(default=True)
 
-  venue_api = models.CharField(max_length=20, choices=VENUE_APIS, default="Manual")
-  venue_api_id = models.CharField(max_length=32, blank=True, null=True)
-
   def __str__(self):
     return self.name
 
   class Meta:
     unique_together = [["latitude", "longitude"]]
+
+class VenueApi(models.Model):
+  """API information for a venue.
+
+  Venues can potentially use multiple apis, so this is done as a separate model
+  instead of as a field.
+  """
+  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+  api_name = models.CharField(max_length=20, choices=INGESTION_APIS, default="Manual")
+  api_id = models.CharField(max_length=32, blank=True, null=True)
+
+  def __str__(self):
+    return f"{self.venue.name} - {self.api_name}"
+
+  class Meta:
+    unique_together = [["venue", "api_name"]]
 
 
 class VenueAlias(models.Model):
@@ -78,6 +91,7 @@ class Event(models.Model):
   doors_open = models.TimeField(default=None, blank=True, null=True)
   ticket_price_min = models.DecimalField(max_digits=8, decimal_places=2, default=0)
   ticket_price_max = models.DecimalField(max_digits=8, decimal_places=2)
+  event_api = models.CharField(max_length=20, choices=INGESTION_APIS, default="Manual")
   event_url = models.CharField(max_length=512, blank=True, null=True)
 
   def __str__(self):
@@ -104,5 +118,6 @@ ADMIN_MODELS = [
   Event,
   OpenMicGenerator,
   Venue,
-  VenueAlias
+  VenueAlias,
+  VenueApi
 ]
