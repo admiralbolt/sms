@@ -13,7 +13,7 @@ class Map extends React.Component {
 
     this.state = {
       venues: [],
-      shows: {}
+      events: {}
     }
   }
 
@@ -32,20 +32,20 @@ class Map extends React.Component {
     // Shows should be indexed by venue. We do a two layer mapping of
     // venu -> date -> show object.
     axios.get("/api/events").then((res) => {
-      const shows = {};
-      res.data.forEach(show => {
-        shows[show.venue] = shows[show.venue] || {};
-        shows[show.venue][show.show_day] = show;
+      const events = {};
+      res.data.forEach(event => {
+        events[event.venue] = events[event.venue] || {};
+        events[event.venue][event.event_day] = event;
       });
-      this.setState({ shows: shows });
+      this.setState({ events: events });
     });
   }
 
   hasShow(venue, date) {
     if (this.state == undefined) return false;
-    if (this.state.shows == undefined) return false;
-    if (!(venue.id in this.state.shows)) return false;
-    if (!(date in this.state.shows[venue.id])) return false;
+    if (this.state.events == undefined) return false;
+    if (!(venue.id in this.state.events)) return false;
+    if (!(date in this.state.events[venue.id])) return false;
 
     return true;
   }
@@ -54,6 +54,13 @@ class Map extends React.Component {
     return new Date('1970-01-01T' + t + 'Z').toLocaleTimeString('en-US',
       {timeZone:'UTC', hour12:true, hour:'numeric', minute:'numeric'}
     );
+  }
+
+  getTicketPrice(event) {
+    if (event.ticket_price_min == event.ticket_price_max)
+      return `$${event.ticket_price_min}`
+
+    return `$${event.ticket_price_min} - $${event.ticket_price_max}`
   }
 
   render() {
@@ -74,10 +81,11 @@ class Map extends React.Component {
               <div>
                 <hr />
                 <b>SHOW TONIGHT!</b>
-                <div class='show-info'>
-                  <p className='show-title'>{this.state.shows[venue.id][this.props.date].title}</p>
-                  <p className='show-time'>Music Starts at {this.formatTime(this.state.shows[venue.id][this.props.date].start_time)}</p>
-                  <p className='show-price'>${this.state.shows[venue.id][this.props.date].ticket_price}</p>
+                <div className='show-info'>
+                  <p className='show-title'>{this.state.events[venue.id][this.props.date].title}</p>
+                  <p className='show-time'>Music Starts at {this.formatTime(this.state.events[venue.id][this.props.date].start_time)}</p>
+                  <p className='show-price'>{this.getTicketPrice(this.state.events[venue.id][this.props.date])}</p>
+                  <p className='show-price'>{this.state.events[venue.id][this.props.date].ticket_price}</p>
                 </div>
               </div>
               }
