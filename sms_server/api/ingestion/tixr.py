@@ -5,7 +5,6 @@ accessing the API and not scraping those venues is because they are leaking
 their client key in the frontend.
 """
 from datetime import datetime
-from pprint import pprint
 
 import requests
 
@@ -17,7 +16,7 @@ def event_list_request(venue_id: str="", client_key: str=""):
   headers = {
     "Content-Type": "application/json",
   }
-  return requests.get(f"https://tixr.com/v1/groups/{venue_id}/events?cpk={client_key}", headers=headers).json()
+  return requests.get(f"https://tixr.com/v1/groups/{venue_id}/events?cpk={client_key}", headers=headers, timeout=15).json()
 
 def process_event_list(event_list: list[dict]) -> None:
   """Process list of events from TIXR."""
@@ -41,7 +40,6 @@ def process_event_list(event_list: list[dict]) -> None:
 
 def import_data():
   """Import data from TIXR."""
-  for name, venue_id, client_key in settings.TIXR_CLIENTS:
+  for _, venue_id, client_key in settings.TIXR_CLIENTS:
     data = event_list_request(venue_id=venue_id, client_key=client_key)
     process_event_list(data)
-
