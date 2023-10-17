@@ -1,7 +1,4 @@
 """Utils related to Venues."""
-
-from typing import Optional
-
 from api.models import Venue, VenueMask, VenueApi
 
 def clear_api_data(api_name: str) -> None:
@@ -37,12 +34,12 @@ def _get_or_create_venue(venue: Venue) -> Venue:
   db_venue = Venue.objects.filter(name=venue.name)
   if db_venue.exists():
     return db_venue.first()
-  
+
   if venue.latitude and venue.longitude:
     db_venue = Venue.objects.filter(latitude=venue.latitude, longitude=venue.longitude)
     if db_venue.exists():
       return db_venue.first()
-    
+
   venue.save()
   return venue
 

@@ -19,7 +19,7 @@ def get_or_create_venue(data):
 
   venue_data = data["_embedded"]["venues"][0]
   return venue_utils.get_or_create_venue(
-    name=venue_utils.get_proper_name(venue_data["name"]),
+    name=venue_data["name"],
     latitude=venue_data["location"]["latitude"],
     longitude=venue_data["location"]["longitude"],
     address=", ".join([venue_data["address"][line] for line in sorted(venue_data["address"].keys())]),

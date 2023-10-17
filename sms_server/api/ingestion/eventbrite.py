@@ -19,7 +19,6 @@ from typing import Optional
 
 import json
 import requests
-from pprint import pprint
 
 from api.models import Venue
 from api.utils import event_utils, venue_utils

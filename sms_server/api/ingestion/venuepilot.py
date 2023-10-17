@@ -7,7 +7,6 @@ from datetime import datetime
 from typing import Optional
 
 import requests
-from pprint import pprint
 
 from api.models import Event, Venue
 from api.utils import event_utils, venue_utils
@@ -83,7 +82,7 @@ def event_list_request(min_start_date: Optional[str]=None, page: int=0):
     "operationName": "PaginatedEvents",
     "query": REQUEST_TEMPLATE % (page, min_start_date)
   }
-  return requests.post("https://www.venuepilot.co/graphql", headers=headers, json=data).json()
+  return requests.post("https://www.venuepilot.co/graphql", headers=headers, json=data, timeout=15).json()
 
 def get_or_create_venue(venue_data: dict) -> Venue:
   """Get or create a venue!"""

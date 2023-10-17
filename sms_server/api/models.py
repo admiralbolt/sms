@@ -75,10 +75,11 @@ class VenueMask(models.Model):
 
   def __str__(self):
     return f"{self.proper_name}"
-  
+
   def should_apply(self, venue: Venue) -> bool:
+    """Check to see if a mask should apply to a particular venue."""
     for key, regex in self.match.items():
-      if not re.match(regex, venue.__getattribute__(key)):
+      if not re.match(regex, getattr(venue, key)):
         return False
 
     return True
