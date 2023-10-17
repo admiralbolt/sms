@@ -4,6 +4,20 @@ from typing import Optional
 
 from api.models import Venue, VenueAlias, VenueApi
 
+def clear_api_data(api_name: str) -> None:
+  """Clear all venue data associated with a paritcular api."""
+  venue_apis = VenueApi.objects.filter(api_name=api_name)
+  # Gather all venues for potential deletion.
+  venues = [venue_api.venue for venue_api in venue_apis]
+  VenueApi.filter(api_name=api_name).delete()
+  # For each venue, if we deleted an associated API and it was the last one
+  # left, we delete the venues.
+  for venue in venues:
+    if VenueApi.objects.filter(venue=venue).count() > 0:
+      continue
+
+    venue.delete()
+
 def get_proper_name(name: str) -> str:
   """Gets the proper name for a venue by replacing aliases if they exist."""
   alias = VenueAlias.objects.filter(alias=name)

@@ -3,7 +3,7 @@ from django.db import models
 
 INGESTION_APIS = [
     ("Ticketmaster", "Ticketmaster"),
-    ("VenuePilot", "VenuePilot"),
+    ("Venuepilot", "Venuepilot"),
     ("Eventbrite", "Eventbrite"),
     ("TIXR", "TIXR"),
     ("Crawler", "Crawler"),

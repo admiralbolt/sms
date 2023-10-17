@@ -1,8 +1,20 @@
-import requests
+"""Ingest data from Venupilot.
 
-raw = """
+Venuepilot doesn't have any sort of search scope features, so we query all
+events and then filter by city accordingly.
+"""
+from datetime import datetime
+from typing import Optional
+
+import requests
+from pprint import pprint
+
+from api.models import Event, Venue
+from api.utils import event_utils, venue_utils
+
+REQUEST_TEMPLATE = """
 query PaginatedEvents {
-    paginatedEvents(arguments: {limit: 5, page: 0, searchScope: "seattle"}) {
+    paginatedEvents(arguments: {limit: 20, page: %d, startDate: "%s"}) {
       collection {
         date
         description
@@ -61,20 +73,66 @@ query PaginatedEvents {
   }
 """
 
-def event_request(page=0):
+def event_list_request(min_start_date: Optional[str]=None, page: int=0):
+  """Get a list of events from Venuepilot."""
+  min_start_date = min_start_date or datetime.today().strftime("%Y-%m-%d")
   headers = {
-    "content-type": "application/json",
+    "Content-Type": "application/json"
   }
   data = {
     "operationName": "PaginatedEvents",
-    "query": raw
+    "query": REQUEST_TEMPLATE % (page, min_start_date)
   }
-  print(headers)
-  print(data)
-  result = requests.post("https://www.venuepilot.co/graphql", headers=headers, json=data)
-  print(result.status_code)
-  print(result.text)
+  return requests.post("https://www.venuepilot.co/graphql", headers=headers, json=data).json()
+
+def get_or_create_venue(venue_data: dict) -> Venue:
+  """Get or create a venue!"""
+  address = venue_data["street1"]
+  if venue_data["street2"]:
+    address += f" {venue_data['street2']}"
+
+  print(venue_data["name"])
+  print(venue_data["lat"])
+  print(venue_data["long"])
+
+  return venue_utils.get_or_create_venue(
+    name=venue_data["name"],
+    latitude=venue_data["lat"],
+    longitude=venue_data["long"],
+    address=address,
+    postal_code=venue_data["postal"],
+    city=venue_data["city"],
+    api_name="Venuepilot",
+    api_id=venue_data["id"]
+  )
+
+def get_or_create_event(venue: Venue, event: dict) -> Event:
+  """Get or create an event!"""
+  event_utils.get_or_create_event(
+    venue=venue,
+    title=event["name"],
+    event_day=event["date"],
+    start_time=event["startTime"],
+    ticket_price_min=event["priceMin"] or 0,
+    ticket_price_max=event["priceMax"] or 0,
+    event_url=event["ticketsUrl"]
+  )
+
+def process_event_list(event_list) -> None:
+  """Process a list of events from venuepilot."""
+  for event in event_list["data"]["paginatedEvents"]["collection"]:
+    if event["venue"]["city"].lower() != "seattle":
+      continue
+
+    venue = get_or_create_venue(event["venue"])
+    get_or_create_event(venue, event)
 
 
 def import_data():
-  print(event_request())
+  """Import all data from venuepilot."""
+  data = event_list_request(page=0)
+  total_pages = data["data"]["paginatedEvents"]["metadata"]["totalPages"]
+  process_event_list(data)
+  for page in range(1, total_pages):
+    data = event_list_request(page=page)
+    process_event_list(data)
