@@ -7,12 +7,12 @@ API.
 """
 import math
 import time
+from pprint import pprint
 
 import json
 from bs4 import BeautifulSoup
-from pprint import pprint
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+import undetected_chromedriver
 
 from api.utils import event_utils, parsing_utils, venue_utils
 
@@ -21,11 +21,11 @@ PER_PAGE = 15
 
 def create_chrome_driver():
   """Create a headless chrome driver for requests."""
-  options = Options()
-  options.add_argument("--headless=new")
-  options.add_argument("--enable-javascript")
+  options = undetected_chromedriver.ChromeOptions()
+  options.add_argument("--headless")
+  # options.add_argument("--enable-javascript")
   options.add_argument(f"--user-agent={USER_AGENT}")
-  return webdriver.Chrome(options=options)
+  return undetected_chromedriver.Chrome(options=options)
 
 def get_csrf_token(driver: webdriver.Chrome):
   """Get a valid CSRF Token from AXS."""
@@ -85,7 +85,6 @@ def import_data():
   # AXS returns total events, not total pages. Little bit of maths.
   last_page = math.ceil(data["meta"]["total"] / PER_PAGE) + 1
   for page in range(2, last_page):
-    print(f"REQUESTING PAGE={page}\n\n\n\n\n\n\n\n\n\n")
     data = event_list_request(driver, csrf_token, page=page)
     process_event_list(data["events"])
     # Insert artifical delay to avoid hitting any QPS limits.
