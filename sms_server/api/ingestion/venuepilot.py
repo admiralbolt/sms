@@ -110,6 +110,7 @@ def get_or_create_event(venue: Venue, event: dict) -> Event:
     start_time=event["startTime"],
     ticket_price_min=event["priceMin"] or 0,
     ticket_price_max=event["priceMax"] or 0,
+    event_api="Venuepilot",
     event_url=event["ticketsUrl"]
   )
 

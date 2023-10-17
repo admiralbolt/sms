@@ -9,6 +9,7 @@ INGESTION_APIS = [
     ("Eventbrite", "Eventbrite"),
     ("TIXR", "TIXR"),
     ("Crawler", "Crawler"),
+    ("AXS", "AXS"),
     ("Manual", "Manual"),
 ]
 

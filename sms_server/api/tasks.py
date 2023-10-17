@@ -2,7 +2,12 @@
 
 from celery import shared_task
 
-from api.ingestion import eventbrite, ticketmaster, tixr, venuepilot
+from api.ingestion import axs, eventbrite, ticketmaster, tixr, venuepilot
+
+@shared_task
+def import_axs_data():
+  """Import data from AXS api."""
+  axs.import_data()
 
 @shared_task
 def import_eventbrite_data():

@@ -50,6 +50,7 @@ def process_event_list(events) -> None:
       start_time=event["dates"]["start"].get("localTime", None),
       ticket_price_min=0 if "priceRanges" not in event else event["priceRanges"][0]["min"],
       ticket_price_max=0 if "priceRanges" not in event else event["priceRanges"][0]["max"],
+      event_api="Ticketmaster",
       event_url=event["url"],
     )
 

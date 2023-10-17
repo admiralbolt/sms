@@ -35,6 +35,7 @@ def process_event_list(event_list: list[dict]) -> None:
       start_time=absolute_start.strftime("%H:%M"),
       ticket_price_min=event.get("current_price", 0),
       ticket_price_max=event.get("current_price", 0),
+      event_api="TIXR",
       event_url=event["url"]
     )
 

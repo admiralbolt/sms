@@ -7,7 +7,7 @@ def get_event_by_name(venue: Venue, title: str) -> Optional[Event]:
   """Get event object by venue and title."""
   return Event.objects.filter(venue=venue, title=title).first()
 
-def get_or_create_event(venue: Venue, title: str, event_day: str, start_time: str, ticket_price_min: float, ticket_price_max: float, event_url: str = "") -> Event:
+def get_or_create_event(venue: Venue, title: str, event_day: str, start_time: str, ticket_price_min: float, ticket_price_max: float, event_api: str="", event_url: str = "") -> Event:
   """Get or create an event.
   """
   event = get_event_by_name(venue, title)
@@ -21,7 +21,7 @@ def get_or_create_event(venue: Venue, title: str, event_day: str, start_time: st
     start_time=start_time,
     ticket_price_min=ticket_price_min,
     ticket_price_max=ticket_price_max,
+    event_api=event_api,
     event_url=event_url
   )
   return event
-    

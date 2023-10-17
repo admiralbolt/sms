@@ -118,6 +118,7 @@ def get_or_create_event(venue: Venue, event_detail):
     start_time=start_time,
     ticket_price_min=min_cost,
     ticket_price_max=max_cost,
+    event_api="Eventbrite",
     event_url=event_detail["url"]
   )
 
