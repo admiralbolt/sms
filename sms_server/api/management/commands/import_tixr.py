@@ -11,7 +11,6 @@ class Command(BaseCommand):
 
   def handle(self, *args, **kwargs):
     if kwargs["truncate"]:
-      print("Clearing venue AND event data...")
       Event.objects.filter(event_api="TIXR").delete()
       venue_utils.clear_api_data(api_name="TIXR")
 

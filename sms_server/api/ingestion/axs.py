@@ -70,8 +70,8 @@ def process_event_list(event_list: list[dict]) -> None:
       title=event["title"]["eventTitleText"],
       event_day=event_day,
       start_time=start_time,
-      ticket_price_max=parsing_utils.parse_cost(event["doorPriceHigh"]),
-      ticket_price_min=parsing_utils.parse_cost(event["doorPriceLow"]),
+      ticket_price_max=parsing_utils.parse_cost(event["ticketPriceHigh"]),
+      ticket_price_min=parsing_utils.parse_cost(event["ticketPriceLow"]),
       event_api="AXS",
       event_url=event["ticketing"]["url"]
     )

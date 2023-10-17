@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand
 
 from api.models import Event, Venue
 from api.tasks import import_eventbrite_data
+from api.utils import venue_utils
 
 class Command(BaseCommand):
 
@@ -10,8 +11,7 @@ class Command(BaseCommand):
 
   def handle(self, *args, **kwargs):
     if kwargs["truncate"]:
-      print("Clearing venue AND event data...")
-      # Event.objects.all().delete()
-      # Venue.objects.all().delete()
+      Event.objects.filter(event_api="Eventbrite").delete()
+      venue_utils.clear_api_data(api_name="Eventbrite")
 
     import_eventbrite_data()
