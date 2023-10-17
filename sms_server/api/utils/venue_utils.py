@@ -26,6 +26,8 @@ def apply_mask(venue: Venue) -> Venue:
       venue.latitude = mask.latitude
     if mask.longitude:
       venue.longitude = mask.longitude
+    if mask.address:
+      venue.address = mask.address
 
   return venue
 
@@ -55,8 +57,12 @@ def add_venue_api(venue: Venue, api_name: str, api_id: str) -> None:
     api_id=api_id
   )
 
-def get_or_create_venue(name: str, latitude: float, longitude: float, address: str, postal_code: int, city: str, api_name: str, api_id: int) -> Venue:
-  """Get or create a venue."""
+def get_or_create_venue(name: str, latitude: float=0, longitude: float=0, address: str="", postal_code: int=0, city: str="", api_name: str="", api_id: int=0) -> Venue:
+  """Get or create a venue.
+
+  We make the dangerous assumption here, that if you don't supply the proper
+  values for a particular field, they will be inherited via a mask properly.
+  """
   venue = _get_or_create_venue(apply_mask(Venue(
       name=name,
       latitude=latitude,

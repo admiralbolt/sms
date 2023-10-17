@@ -71,6 +71,10 @@ class VenueMask(models.Model):
   match = models.JSONField(max_length=256)
   latitude = models.DecimalField(max_digits=11, decimal_places=8, blank=True, null=True)
   longitude = models.DecimalField(max_digits=11, decimal_places=8, blank=True, null=True)
+  address = models.CharField(max_length=256, blank=True, null=True)
+  postal_code = models.CharField(max_length=8, blank=True, null=True)
+  city = models.CharField(max_length=64, blank=True, null=True)
+
   venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, blank=True, null=True)
 
   def __str__(self):

@@ -15,9 +15,10 @@ from pathlib import Path
 # SOME API KEY THINGS THAT NEED TO BE SET.
 # Put these in a file called `local_settings.py` so they can be loaded.
 # The values to include are:
-#  * TICKET_MASTER_API_KEY
-#  * TIXR_CLIENT_KEY
+#  * BANDSINTOWN_APP_ID
 #  * EVENTBRITE_TOKEN
+#  * TICKET_MASTER_API_KEY
+#  * TIXR_CLIENTS - This should be a list of tuples of the form (name, venue_id, client_key)
 from .local_settings import *  # pylint: disable=wildcard-import,unused-wildcard-import
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
