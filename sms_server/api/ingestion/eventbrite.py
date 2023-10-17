@@ -88,7 +88,7 @@ def get_or_create_venue(venue_data) -> Optional[Venue]:
     api_id=venue_data["id"]
   )
 
-def get_or_create_event(venue, event_detail):
+def get_or_create_event(venue: Venue, event_detail):
   """Get or create an event."""
   event_start = event_detail["start"]["local"]
   event_day, start_time = event_start.split("T")

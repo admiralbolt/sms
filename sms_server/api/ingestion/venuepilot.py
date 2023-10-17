@@ -91,10 +91,6 @@ def get_or_create_venue(venue_data: dict) -> Venue:
   if venue_data["street2"]:
     address += f" {venue_data['street2']}"
 
-  print(venue_data["name"])
-  print(venue_data["lat"])
-  print(venue_data["long"])
-
   return venue_utils.get_or_create_venue(
     name=venue_data["name"],
     latitude=venue_data["lat"],

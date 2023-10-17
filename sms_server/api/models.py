@@ -1,4 +1,6 @@
 """Database models."""
+import re
+
 from django.db import models
 
 INGESTION_APIS = [
@@ -53,25 +55,33 @@ class VenueApi(models.Model):
     unique_together = [["venue", "api_name"]]
 
 
-class VenueAlias(models.Model):
-  """Multiple names for the same venue.
+class VenueMask(models.Model):
+  """Venue Masks.
 
-  This happens when the data source is not the cleaniest. We get duplicate 
-  venues with very similar names e.g. "Tractor" vs. "Tractor Tavern". We want
-  to dedupe these to a single source of truth.
-
-  Ideally the aliases would map directly to a venue id, but we run into a
-  chicken and egg problem here. We want to create aliases to properly map venue
-  names BEFORE we ingest venue data. The primary alias mapping will be for the
-  string name only, and the actual link to the correct venue will be done as
-  a post-processing step.
+  A mask that gets applied to ingested venue data. This happens when the input
+  data is not the cleaniest. We can get duplicate venue venues with very similar
+  names e.g. "Tractor" vs. "Tractor Tavern". Additionally there can be missing
+  fields, we create the mask to clean all the information when we import it.
   """
-  alias = models.CharField(max_length=128, unique=True)
-  proper_name = models.CharField(max_length=128)
+  proper_name = models.CharField(max_length=128, unique=True)
+  # Match is a complicated regex-ish field that controls when we apply a venue
+  # mask. Regexes are keyed by the field are they are applied to, for example:
+  #
+  # {"name": "^(The Funhouse|El Corazon)$"}
+  match = models.JSONField(max_length=256)
+  latitude = models.DecimalField(max_digits=11, decimal_places=8, blank=True, null=True)
+  longitude = models.DecimalField(max_digits=11, decimal_places=8, blank=True, null=True)
   venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, blank=True, null=True)
 
   def __str__(self):
-    return f"{self.alias} -> {self.proper_name}"
+    return f"{self.proper_name}"
+  
+  def should_apply(self, venue: Venue) -> bool:
+    for key, regex in self.match.items():
+      if not re.match(regex, venue.__getattribute__(key)):
+        return False
+
+    return True
 
 
 class Event(models.Model):
@@ -118,6 +128,6 @@ ADMIN_MODELS = [
   Event,
   OpenMicGenerator,
   Venue,
-  VenueAlias,
+  VenueMask,
   VenueApi
 ]
