@@ -109,6 +109,7 @@ class Event(models.Model):
   ticket_price_max = models.DecimalField(max_digits=8, decimal_places=2)
   event_api = models.CharField(max_length=20, choices=INGESTION_APIS, default="Manual")
   event_url = models.CharField(max_length=512, blank=True, null=True)
+  description = models.TextField(blank=True, null=True)
 
   def __str__(self):
     return self.title
