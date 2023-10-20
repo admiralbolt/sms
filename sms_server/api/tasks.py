@@ -25,6 +25,15 @@ def import_tixr_data():
   tixr.import_data()
 
 @shared_task
-def import_venuepilot_data():
+def import_venuepilot_data(debug=False):
   """Import data from venuepilot api."""
-  venuepilot.import_data()
+  venuepilot.import_data(debug=debug)
+
+@shared_task
+def import_all():
+  """Import data from ALL APIs."""
+  import_axs_data()
+  import_eventbrite_data()
+  import_ticketmaster_data()
+  import_tixr_data()
+  import_venuepilot_data()

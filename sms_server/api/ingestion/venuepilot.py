@@ -84,7 +84,7 @@ def event_list_request(min_start_date: Optional[str]=None, page: int=0):
   }
   return requests.post("https://www.venuepilot.co/graphql", headers=headers, json=data, timeout=15).json()
 
-def get_or_create_venue(venue_data: dict) -> Venue:
+def get_or_create_venue(venue_data: dict, debug: bool=False) -> Venue:
   """Get or create a venue!"""
   address = venue_data["street1"]
   if venue_data["street2"]:
@@ -98,7 +98,8 @@ def get_or_create_venue(venue_data: dict) -> Venue:
     postal_code=venue_data["postal"],
     city=venue_data["city"],
     api_name="Venuepilot",
-    api_id=venue_data["id"]
+    api_id=venue_data["id"],
+    debug=debug,
   )
 
 def get_or_create_event(venue: Venue, event: dict) -> Event:
@@ -114,21 +115,21 @@ def get_or_create_event(venue: Venue, event: dict) -> Event:
     event_url=event["ticketsUrl"]
   )
 
-def process_event_list(event_list) -> None:
+def process_event_list(event_list, debug: bool=False) -> None:
   """Process a list of events from venuepilot."""
   for event in event_list["data"]["paginatedEvents"]["collection"]:
     if event["venue"]["city"].lower() != "seattle":
       continue
 
-    venue = get_or_create_venue(event["venue"])
+    venue = get_or_create_venue(event["venue"], debug=debug)
     get_or_create_event(venue, event)
 
 
-def import_data():
+def import_data(debug=False):
   """Import all data from venuepilot."""
   data = event_list_request(page=0)
   total_pages = data["data"]["paginatedEvents"]["metadata"]["totalPages"]
-  process_event_list(data)
+  process_event_list(data, debug=debug)
   for page in range(1, total_pages):
     data = event_list_request(page=page)
-    process_event_list(data)
+    process_event_list(data, debug=debug)

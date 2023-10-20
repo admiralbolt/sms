@@ -1,4 +1,6 @@
 """Utils related to Venues."""
+from pprint import pprint
+
 from api.models import Venue, VenueMask, VenueApi
 
 def clear_api_data(api_name: str) -> None:
@@ -31,8 +33,11 @@ def apply_mask(venue: Venue) -> Venue:
 
   return venue
 
-def _get_or_create_venue(venue: Venue) -> Venue:
+def _get_or_create_venue(venue: Venue, debug: bool=False) -> Venue:
   """See if a venue exists."""
+  if debug:
+    pprint(venue.__dict__)
+
   db_venue = Venue.objects.filter(name=venue.name)
   if db_venue.exists():
     return db_venue.first()
@@ -57,7 +62,7 @@ def add_venue_api(venue: Venue, api_name: str, api_id: str) -> None:
     api_id=api_id
   )
 
-def get_or_create_venue(name: str, latitude: float=0, longitude: float=0, address: str="", postal_code: int=0, city: str="", api_name: str="", api_id: int=0) -> Venue:
+def get_or_create_venue(name: str, latitude: float=0, longitude: float=0, address: str="", postal_code: int=0, city: str="", api_name: str="", api_id: int=0, debug: bool=False) -> Venue:
   """Get or create a venue.
 
   We make the dangerous assumption here, that if you don't supply the proper
@@ -70,7 +75,7 @@ def get_or_create_venue(name: str, latitude: float=0, longitude: float=0, addres
       address=address,
       postal_code=postal_code,
       city=city,
-    )))
+    )), debug=debug)
 
   # Get or create an associated venue API record before returning.
   add_venue_api(venue=venue, api_name=api_name, api_id=api_id)
