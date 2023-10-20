@@ -66,7 +66,7 @@ def event_detail_request(event_id: str):
   }
   return requests.get(f"https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes", headers=headers, timeout=15).json()
 
-def get_or_create_venue(venue_data) -> Optional[Venue]:
+def get_or_create_venue(venue_data: dict, debug: bool=False) -> Optional[Venue]:
   """Get or create a venue."""
   # Found some "venues" that are just a city. Skip these.
   if "postal_code" not in venue_data["address"]:
@@ -84,7 +84,8 @@ def get_or_create_venue(venue_data) -> Optional[Venue]:
     postal_code=venue_data["address"]["postal_code"],
     city=venue_data["address"]["city"],
     api_name="Eventbrite",
-    api_id=venue_data["id"]
+    api_id=venue_data["id"],
+    debug=debug,
   )
 
 def get_or_create_event(venue: Venue, event_detail):
@@ -122,21 +123,21 @@ def get_or_create_event(venue: Venue, event_detail):
     event_url=event_detail["url"]
   )
 
-def process_event_list(event_list: list[dict]):
+def process_event_list(event_list: list[dict], debug: bool=False):
   """Process the list of events returned from the Eventbrite search UI."""
   for event_data in event_list:
     event_detail = event_detail_request(event_id=event_data["id"])
-    venue = get_or_create_venue(event_data["primary_venue"])
+    venue = get_or_create_venue(event_data["primary_venue"], debug=debug)
     if not venue:
       continue
     get_or_create_event(venue, event_detail)
 
 
-def import_data():
+def import_data(debug=False):
   """Import data from Eventbrite."""
   data = event_list_request(page=1)
-  process_event_list(data["search_data"]["events"]["results"])
+  process_event_list(data["search_data"]["events"]["results"], debug=debug)
   for page in range(2, data["page_count"]):
     data = event_list_request(page=page)
-    process_event_list(data["search_data"]["events"]["results"])
+    process_event_list(data["search_data"]["events"]["results"], debug=debug)
     

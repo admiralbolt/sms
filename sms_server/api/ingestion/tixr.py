@@ -18,13 +18,14 @@ def event_list_request(venue_id: str="", client_key: str=""):
   }
   return requests.get(f"https://tixr.com/v1/groups/{venue_id}/events?cpk={client_key}", headers=headers, timeout=15).json()
 
-def process_event_list(event_list: list[dict]) -> None:
+def process_event_list(event_list: list[dict], debug: bool=False) -> None:
   """Process list of events from TIXR."""
   for event in event_list:
     venue = venue_utils.get_or_create_venue(
       name=event["venue"]["name"],
       api_name="TIXR",
-      api_id=event["venue"]["id"]
+      api_id=event["venue"]["id"],
+      debug=debug,
     )
 
     absolute_start = datetime.fromtimestamp(event["start_date"] / 1000)
@@ -39,8 +40,8 @@ def process_event_list(event_list: list[dict]) -> None:
       event_url=event["url"]
     )
 
-def import_data():
+def import_data(debug=False):
   """Import data from TIXR."""
   for _, venue_id, client_key in settings.TIXR_CLIENTS:
     data = event_list_request(venue_id=venue_id, client_key=client_key)
-    process_event_list(data)
+    process_event_list(data, debug=debug)

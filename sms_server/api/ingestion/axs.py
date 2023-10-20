@@ -45,7 +45,7 @@ def event_list_request(driver: webdriver.Chrome, csrf_token: str, page: int=1):
   soup = BeautifulSoup(driver.page_source, "html.parser")
   return json.loads(soup.body.string)
 
-def process_event_list(event_list: list[dict]) -> None:
+def process_event_list(event_list: list[dict], debug: bool=False) -> None:
   """Process a list of AXS events."""
   for event in event_list:
     pprint(event)
@@ -58,7 +58,8 @@ def process_event_list(event_list: list[dict]) -> None:
       postal_code=venue_data["postalCode"],
       city=venue_data["city"],
       api_name="AXS",
-      api_id=venue_data["venueId"]
+      api_id=venue_data["venueId"],
+      debug=debug
     )
 
     if event["eventDateTime"] == "TBD":
@@ -76,16 +77,16 @@ def process_event_list(event_list: list[dict]) -> None:
       event_url=event["ticketing"]["url"]
     )
 
-def import_data():
+def import_data(delay: float=0.5, debug=False):
   """Import data from AXS."""
   driver = create_chrome_driver()
   csrf_token = get_csrf_token(driver)
   data = event_list_request(driver, csrf_token, page=1)
-  process_event_list(data["events"])
+  process_event_list(data["events"], debug=debug)
   # AXS returns total events, not total pages. Little bit of maths.
   last_page = math.ceil(data["meta"]["total"] / PER_PAGE) + 1
   for page in range(2, last_page):
     data = event_list_request(driver, csrf_token, page=page)
-    process_event_list(data["events"])
+    process_event_list(data["events"], debug=debug)
     # Insert artifical delay to avoid hitting any QPS limits.
-    time.sleep(0.5)
+    time.sleep(delay)
