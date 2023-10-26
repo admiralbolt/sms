@@ -3,6 +3,11 @@ import re
 
 from django.db import models
 
+EVENT_TYPES = [
+    ("Open Mic", "Open Mic"),
+    ("Show", "Show")
+]
+
 INGESTION_APIS = [
     ("Ticketmaster", "Ticketmaster"),
     ("Venuepilot", "Venuepilot"),
@@ -14,6 +19,19 @@ INGESTION_APIS = [
     ("Manual", "Manual"),
 ]
 
+MIC_TYPES = [
+  ("All", "All"),
+  ("Comdey", "Comedy"),
+  ("Music", "Music"),
+  ("Spoken Word", "Spoken Word"),
+]
+
+VENUE_TYPES = [
+  ("Bar", "Bar"),
+  ("Coffee Shop", "Coffee Shop"),
+  ("Event Space", "Event Space"),  
+]
+
 class Venue(models.Model):
   """Places to go!"""
   name = models.CharField(max_length=128, unique=True)
@@ -22,6 +40,7 @@ class Venue(models.Model):
   address = models.CharField(max_length=256)
   postal_code = models.CharField(max_length=8)
   city = models.CharField(max_length=64)
+  venue_type = models.CharField(max_length=32, default="Bar")
 
   # Optional.
   description = models.TextField(default="", blank=True, null=True)
@@ -93,11 +112,6 @@ class VenueMask(models.Model):
 
 class Event(models.Model):
   """Shows to be had!"""
-  EVENT_TYPES = [
-    ("Open Mic", "Open Mic"),
-    ("Show", "Show")
-  ]
-
   venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
   event_type = models.CharField(max_length=16, choices=EVENT_TYPES, default="Show")
   # I think eventually this could get replaced by linking to artists
@@ -105,6 +119,7 @@ class Event(models.Model):
   title = models.CharField(max_length=256)
   event_day = models.DateField()
   start_time = models.TimeField(default=None, null=True)
+  end_time = models.TimeField(default=None, null=True)
   doors_open = models.TimeField(default=None, blank=True, null=True)
   is_ticketed = models.BooleanField(default=False)
   ticket_price_min = models.DecimalField(max_digits=8, decimal_places=2, default=0, blank=True, null=True)
@@ -120,22 +135,37 @@ class Event(models.Model):
     unique_together = [["venue", "title", "event_day", "start_time"]]
 
 
-class OpenMicGenerator(models.Model):
-  """Showcase yourself!"""
+class OpenMic(models.Model):
+  """Generic information about an open mic."""
   venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, blank=True, null=True)
   # A lot of open mic nights are just venue name + open mic i.e.
   # Connor Byrne Open Mic, Hidden Door Open Mic. There are some exceptions like
   # Mojam, so we'll add an optional title field just in case.
   title = models.CharField(max_length=256, default="", blank=True, null=True)
+  open_mic_type = models.CharField(max_length=16, choices=MIC_TYPES, default="Music")
   description = models.TextField()
-  crontab_string = models.CharField(max_length=64)
+
+  # Timing details.
+  signup_start_time = models.TimeField()
+  event_start_time = models.TimeField()
+  event_end_time = models.TimeField()
+
+  # Additional information fields.
+  all_ages = models.BooleanField(default=False)
+  house_piano = models.BooleanField(default=False)
+  house_pa = models.BooleanField(default=True)
+
+  # The crontab string that represents the cadence of the open mic.
+  cadence_crontab = models.CharField(max_length=64)
+  # The human readable version of the open mic cadence.
+  cadence_readable = models.CharField(max_length=128)
 
   def __str__(self):
-    return self.title
-
+    return self.title or f"{self.venue.name} Open Mic"
+  
 ADMIN_MODELS = [
   Event,
-  OpenMicGenerator,
+  OpenMic,
   Venue,
   VenueMask,
   VenueApi
