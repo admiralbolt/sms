@@ -30,9 +30,10 @@ def generate_open_mic_events(open_mic: OpenMic, max_diff: datetime.timedelta = d
       break
 
     print(next_date)
-    _ = event_utils.get_or_create_event(
+    _ = event_utils.create_or_update_event(
       venue=open_mic.venue,
       event_type="Open Mic",
+      
       title=open_mic.name(),
       event_day=next_date,
       signup_start_time=open_mic.signup_start_time,

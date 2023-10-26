@@ -104,7 +104,7 @@ def get_or_create_venue(venue_data: dict, debug: bool=False) -> Venue:
 
 def get_or_create_event(venue: Venue, event: dict) -> Event:
   """Get or create an event!"""
-  event_utils.get_or_create_event(
+  event_utils.create_or_update_event(
     venue=venue,
     title=event["name"],
     event_day=event["date"],

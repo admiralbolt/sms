@@ -1,29 +1,56 @@
 """Utils related to Events."""
 from typing import Optional
 
+import deepdiff
+
 from api.models import Event, Venue
+from api.serializers import EventSerializer
 
 
 def get_event(venue: Venue, event_day: str="", start_time: str=""):
   """Get event object by venue, day, and start_time."""
   return Event.objects.filter(venue=venue, event_day=event_day, start_time=start_time).first()
 
-def get_or_create_event(venue: Venue, event_type: str="Show", title: str="", event_day: str="", signup_start_time: str="", start_time: str="", ticket_price_min: float=0, ticket_price_max: float=0, event_api: str="", event_url: str = "") -> Event:
-  """Get or create an event."""
-  event = get_event(venue, event_day, start_time)
-  if event:
-    return event
+def create_or_update_event(venue: Venue, **kwargs) -> Event:
+  """Create or update an event.
 
-  event, _ = Event.objects.get_or_create(
-    venue=venue,
-    event_type=event_type,
-    title=title,
-    event_day=event_day,
-    signup_start_time=signup_start_time,
-    start_time=start_time,
-    ticket_price_min=ticket_price_min,
-    ticket_price_max=ticket_price_max,
-    event_api=event_api,
-    event_url=event_url
+  We can get conflicting sources of information between APIs, or from a single
+  venue -- duplicate events are sometimes created adding "CANCELLED" or
+  "SOLD OUT" to the title. Rather than ignoring the differences entirely, we
+  want a sane way of handling updates.
+  """
+  # Uniqueness of an event is based on venue, event_day and start_time.
+  # Make sure we at least have these.
+  if not kwargs.get("event_day", None) or not kwargs.get("start_time", None):
+    print(f"Can't process event, not enough information to proceed. {venue}, {kwargs}")
+    return None
+
+  # If the event doesn't exist, create it and move on.
+  event = get_event(venue, kwargs["event_day"], kwargs["start_time"])
+  if not event:
+    return Event.objects.create(venue=venue, **kwargs)
+  
+  # If the event does exist we need to determine what the diffs are, and how
+  # to handle them.
+  new_event = Event(venue=venue, **kwargs)
+
+  # Compute diffs on the serialized data.
+  old_event_serialized = EventSerializer(event)
+  new_event_serialized = EventSerializer(new_event)
+
+  diff = deepdiff.DeepDiff(
+    old_event_serialized.data,
+    new_event_serialized.data,
+    ignore_order=True,
+    exclude_paths=["id"]
   )
+
+  # If there's no diff, nothing else to do!
+  if not diff.get("values_changed", None):
+    return event
+  
+  # Otherwise, we need to update the event accordingly based on the diffs.
+  # THIS WILL BE COMPLEX.
+  # For now, we do nothing.
+
   return event

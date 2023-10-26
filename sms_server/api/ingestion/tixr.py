@@ -29,7 +29,7 @@ def process_event_list(event_list: list[dict], debug: bool=False) -> None:
     )
 
     absolute_start = datetime.fromtimestamp(event["start_date"] / 1000)
-    event_utils.get_or_create_event(
+    event_utils.create_or_update_event(
       venue=venue,
       title=event["name"],
       event_day=absolute_start.strftime("%Y-%m-%d"),

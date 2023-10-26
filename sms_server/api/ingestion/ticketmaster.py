@@ -44,7 +44,7 @@ def process_event_list(events, debug: bool=False) -> None:
     if not venue.gather_data:
       continue
 
-    event_utils.get_or_create_event(
+    event_utils.create_or_update_event(
       venue=venue,
       title=event["name"],
       event_day=event["dates"]["start"]["localDate"],

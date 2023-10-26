@@ -66,7 +66,7 @@ def process_event_list(event_list: list[dict], debug: bool=False) -> None:
       continue
 
     event_day, start_time = event["eventDateTime"].split("T")
-    event_utils.get_or_create_event(
+    event_utils.create_or_update_event(
       venue=venue,
       title=event["title"]["eventTitleText"],
       event_day=event_day,

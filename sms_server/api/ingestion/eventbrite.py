@@ -112,7 +112,7 @@ def get_or_create_event(venue: Venue, event_detail):
     min_cost = min(costs)
     max_cost = max(costs)
 
-  event_utils.get_or_create_event(
+  event_utils.create_or_update_event(
     venue=venue,
     title=event_detail["name"]["text"],
     event_day=event_day,
