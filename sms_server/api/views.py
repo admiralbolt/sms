@@ -22,3 +22,13 @@ class VenueViewSet(viewsets.ModelViewSet):
   def get_queryset(self):
     venues = models.Venue.objects.order_by("name")
     return venues.filter(show_venue=True)
+
+class OpenMicViewSet(viewsets.ModelViewSet):
+  """List all open mics."""
+  resource_name = "open_mics"
+  queryset = models.OpenMic.objects.all()
+  serializer_class = serializers.OpenMicSerializer
+
+  def get_queryset(self):
+    mics = models.OpenMic.objects.order_by("name")
+    return mics.filter(generate_events=True)

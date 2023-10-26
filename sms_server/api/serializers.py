@@ -16,3 +16,10 @@ class EventSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.Event
     fields = "__all__"
+
+class OpenMicSerializer(serializers.ModelSerializer):
+  """Serialize OpenMic data."""
+
+  class Meta:
+    model = models.OpenMic
+    fields = "__all__"

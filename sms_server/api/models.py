@@ -127,6 +127,9 @@ class Event(models.Model):
   event_api = models.CharField(max_length=20, choices=INGESTION_APIS, default="Manual")
   event_url = models.CharField(max_length=512, blank=True, null=True)
   description = models.TextField(blank=True, null=True)
+  
+  # Meta control for display of events.
+  show_event = models.BooleanField(default=True)
 
   def __str__(self):
     return self.title
@@ -159,6 +162,9 @@ class OpenMic(models.Model):
   cadence_crontab = models.CharField(max_length=64)
   # The human readable version of the open mic cadence.
   cadence_readable = models.CharField(max_length=128)
+
+  # Should we display / generate events for this open mic?
+  generate_events = models.BooleanField(default=True)
 
   def __str__(self):
     return self.title or f"{self.venue.name} Open Mic"
