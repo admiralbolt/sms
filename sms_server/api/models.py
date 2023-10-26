@@ -10,6 +10,7 @@ INGESTION_APIS = [
     ("TIXR", "TIXR"),
     ("Crawler", "Crawler"),
     ("AXS", "AXS"),
+    ("OpenMicGenerator", "OpenMicGenerator"),
     ("Manual", "Manual"),
 ]
 
@@ -105,8 +106,9 @@ class Event(models.Model):
   event_day = models.DateField()
   start_time = models.TimeField(default=None, null=True)
   doors_open = models.TimeField(default=None, blank=True, null=True)
-  ticket_price_min = models.DecimalField(max_digits=8, decimal_places=2, default=0)
-  ticket_price_max = models.DecimalField(max_digits=8, decimal_places=2)
+  is_ticketed = models.BooleanField(default=False)
+  ticket_price_min = models.DecimalField(max_digits=8, decimal_places=2, default=0, blank=True, null=True)
+  ticket_price_max = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
   event_api = models.CharField(max_length=20, choices=INGESTION_APIS, default="Manual")
   event_url = models.CharField(max_length=512, blank=True, null=True)
   description = models.TextField(blank=True, null=True)
@@ -115,7 +117,7 @@ class Event(models.Model):
     return self.title
 
   class Meta:
-    unique_together = [["venue", "title"]]
+    unique_together = [["venue", "title", "event_day", "start_time"]]
 
 
 class OpenMicGenerator(models.Model):
