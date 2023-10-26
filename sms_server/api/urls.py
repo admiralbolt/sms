@@ -8,6 +8,7 @@ from api import views
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"events", views.EventViewSet)
+router.register(r"open_mics", views.OpenMicViewSet)
 router.register(r"venues", views.VenueViewSet)
 
 urlpatterns = [

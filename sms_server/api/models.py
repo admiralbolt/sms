@@ -118,6 +118,8 @@ class Event(models.Model):
   # participating in the show, but for a rough draft this is good enough.
   title = models.CharField(max_length=256)
   event_day = models.DateField()
+  # Only applicable if an open mic.
+  signup_start_time = models.TimeField(default=None, null=True)
   start_time = models.TimeField(default=None, null=True)
   end_time = models.TimeField(default=None, null=True)
   doors_open = models.TimeField(default=None, blank=True, null=True)
@@ -140,7 +142,7 @@ class Event(models.Model):
 
 class OpenMic(models.Model):
   """Generic information about an open mic."""
-  venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, blank=True, null=True)
+  venue = models.OneToOneField(Venue, on_delete=models.SET_NULL, null=True)
   # A lot of open mic nights are just venue name + open mic i.e.
   # Connor Byrne Open Mic, Hidden Door Open Mic. There are some exceptions like
   # Mojam, so we'll add an optional title field just in case.
@@ -167,6 +169,9 @@ class OpenMic(models.Model):
   generate_events = models.BooleanField(default=True)
 
   def __str__(self):
+    return self.name()
+  
+  def name(self):
     return self.title or f"{self.venue.name} Open Mic"
   
 ADMIN_MODELS = [

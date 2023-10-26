@@ -30,5 +30,5 @@ class OpenMicViewSet(viewsets.ModelViewSet):
   serializer_class = serializers.OpenMicSerializer
 
   def get_queryset(self):
-    mics = models.OpenMic.objects.order_by("name")
+    mics = models.OpenMic.objects.order_by("venue")
     return mics.filter(generate_events=True)
