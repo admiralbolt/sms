@@ -1,7 +1,9 @@
 """Utils related to Venues."""
-from pprint import pprint
+import logging
 
 from api.models import Venue, VenueMask, VenueApi
+
+logger = logging.getLogger(__name__)
 
 def clear_api_data(api_name: str) -> None:
   """Clear all venue data associated with a paritcular api."""
@@ -36,7 +38,7 @@ def apply_mask(venue: Venue) -> Venue:
 def _get_or_create_venue(venue: Venue, debug: bool=False) -> Venue:
   """See if a venue exists."""
   if debug:
-    pprint(venue.__dict__)
+    logger.info(f"Get or create venue: {venue.__dict__}")
 
   db_venue = Venue.objects.filter(name=venue.name)
   if db_venue.exists():
