@@ -1,3 +1,24 @@
+## Running the thing
+
+Make sure the broker is running. Defaults to rabbitmq, I installed and ran via
+brew on my machine:
+
+```
+brew services start rabbitmq
+```
+
+Need to start both the celery beat service and a celery worker:
+
+```
+celery -A sms_server beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler 
+```
+
+```
+celery -A sms_server worker -l INFO 
+```
+
+
+
 ### List of APIs
 
 #### Ticketmaster
