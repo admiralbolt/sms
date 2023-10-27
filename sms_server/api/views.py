@@ -1,5 +1,7 @@
 """Display stuff!"""
 from rest_framework import viewsets
+from rest_framework.generics import ListCreateAPIView
+from rest_framework.response import Response
 
 from api import models
 from api import serializers
@@ -32,3 +34,11 @@ class OpenMicViewSet(viewsets.ModelViewSet):
   def get_queryset(self):
     mics = models.OpenMic.objects.order_by("venue")
     return mics.filter(generate_events=True)
+  
+class VenueEventsView(ListCreateAPIView):
+  """List all events for a particular venue."""
+  serializer_class = serializers.EventSerializer
+
+  def get_queryset(self):
+    venue = models.Venue.objects.filter(id=self.kwargs["venue_id"]).first()
+    return models.Event.objects.filter(venue=venue)
