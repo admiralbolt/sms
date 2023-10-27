@@ -1,4 +1,5 @@
 """Ticketmaster integration."""
+import logging
 import time
 from pprint import pprint
 
@@ -7,6 +8,8 @@ import requests
 from api.utils import event_utils, venue_utils
 from sms_server import settings
 
+logger = logging.getLogger(__name__)
+
 def event_list_request(page: int=0):
   """Get event data from Ticketmaster."""
   return requests.get(f"https://app.ticketmaster.com/discovery/v2/events?apikey={settings.TICKET_MASTER_API_KEY}&radius=10&unit=miles&segmentName=Music&geoPoint=c22zp&page={page}", timeout=15).json()
@@ -14,8 +17,8 @@ def event_list_request(page: int=0):
 def get_or_create_venue(data, debug: bool=False):
   """Get or create a venue."""
   if len(data["_embedded"]["venues"]) > 1:
-    print("HUH")
-    pprint(data)
+    logger.error(f"Multiple venues returned within single event. Full data:")
+    logger.error(data)
 
   venue_data = data["_embedded"]["venues"][0]
   return venue_utils.get_or_create_venue(
@@ -34,8 +37,7 @@ def get_or_create_venue(data, debug: bool=False):
 def process_event_list(events, debug: bool=False) -> None:
   """Process list of Ticketmaster events."""
   if "_embedded" not in events:
-    pprint(events)
-    print("========\n\n\n\n\n\n\n\n")
+    logger.warn(f"Empty events list: {events}")
     return
 
   for event in events["_embedded"]["events"]:
@@ -60,7 +62,6 @@ def import_data(delay: float=0.2, debug=False) -> None:
   """Import data from Ticketmaster."""
   events = event_list_request(page=0)
   num_pages = events["page"]["totalPages"]
-  print(f"Expecting a total of {events['page']['size'] * num_pages} events.")
   process_event_list(events, debug=debug)
   for page in range(1, num_pages):
     # We are only allowed a maximum of 5 QPS worth of traffic, so we insert

@@ -15,6 +15,7 @@ https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes,venue,
 
 Don't forget we need to include the `Authorization: Bearer {token}` header.
 """
+import logging
 from typing import Optional
 
 import json
@@ -23,6 +24,8 @@ import requests
 from api.models import Venue
 from api.utils import event_utils, venue_utils
 from sms_server import settings
+
+logger = logging.getLogger(__name__)
 
 # Looks like the data returned from the backend search call is dumped into
 # javascript into a `__SERVER_DATA__` variable. There's a line like this
@@ -39,8 +42,8 @@ def event_list_request(page: int=1):
   }
   result = requests.get(f"https://www.eventbrite.com/d/wa--seattle/music--events/?page={page}", headers=headers, timeout=15)
   if result.status_code != 200:
-    print(result.status_code)
-    print(result.text)
+    logger.error(result.status_code)
+    logger.error(result.text)
 
   for line in result.text.split("\n"):
     line = line.strip()

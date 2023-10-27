@@ -1,11 +1,12 @@
 """Utils related to Events."""
-from typing import Optional
+import logging
 
 import deepdiff
 
 from api.models import Event, Venue
 from api.serializers import EventSerializer
 
+logger = logging.getLogger(__name__)
 
 def get_event(venue: Venue, event_day: str="", start_time: str=""):
   """Get event object by venue, day, and start_time."""
@@ -22,7 +23,7 @@ def create_or_update_event(venue: Venue, **kwargs) -> Event:
   # Uniqueness of an event is based on venue, event_day and start_time.
   # Make sure we at least have these.
   if not kwargs.get("event_day", None) or not kwargs.get("start_time", None):
-    print(f"Can't process event, not enough information to proceed. {venue}, {kwargs}")
+    logger.warning(f"Can't process event, not enough information to proceed. {venue}, {kwargs}")
     return None
 
   # If the event doesn't exist, create it and move on.
