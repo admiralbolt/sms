@@ -8,6 +8,7 @@ from datetime import datetime
 
 import requests
 
+from api.constants import IngestionApis
 from api.utils import event_utils, venue_utils
 from sms_server import settings
 
@@ -36,7 +37,7 @@ def process_event_list(event_list: list[dict], debug: bool=False) -> None:
       start_time=absolute_start.strftime("%H:%M"),
       ticket_price_min=event.get("current_price", 0),
       ticket_price_max=event.get("current_price", 0),
-      event_api="TIXR",
+      event_api=IngestionApis.TIXR,
       event_url=event["url"]
     )
 

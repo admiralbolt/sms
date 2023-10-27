@@ -21,6 +21,7 @@ from typing import Optional
 import json
 import requests
 
+from api.constants import IngestionApis
 from api.models import Venue
 from api.utils import event_utils, venue_utils
 from sms_server import settings
@@ -86,7 +87,7 @@ def get_or_create_venue(venue_data: dict, debug: bool=False) -> Optional[Venue]:
     address=address,
     postal_code=venue_data["address"]["postal_code"],
     city=venue_data["address"]["city"],
-    api_name="Eventbrite",
+    api_name=IngestionApis.EVENTBRITE,
     api_id=venue_data["id"],
     debug=debug,
   )

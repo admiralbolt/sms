@@ -35,19 +35,19 @@ LOGGING = {
     }
   },
   "handlers": {
-    "file": {
+    "debug_file": {
       "level": "DEBUG",
       "class": "logging.FileHandler",
       "filename": os.path.join(BASE_DIR, "logs", "debug.log"),
       "formatter": "pretty",
     },
-    "file": {
+    "info_file": {
       "level": "INFO",
       "class": "logging.FileHandler",
       "filename": os.path.join(BASE_DIR, "logs", "info.log"),
       "formatter": "pretty"
     },
-    "file": {
+    "warning_file": {
       "level": "WARNING",
       "class": "logging.FileHandler",
       "filename": os.path.join(BASE_DIR, "logs", "warning.log"),
@@ -56,8 +56,7 @@ LOGGING = {
   },
   "loggers": {
     "django": {
-      "handlers": ["file"],
-      "level": "DEBUG",
+      "handlers": ["debug_file", "info_file", "warning_file"],
       "propagate": True,
     },
   },

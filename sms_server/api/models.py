@@ -3,34 +3,7 @@ import re
 
 from django.db import models
 
-EVENT_TYPES = [
-    ("Open Mic", "Open Mic"),
-    ("Show", "Show")
-]
-
-INGESTION_APIS = [
-    ("Ticketmaster", "Ticketmaster"),
-    ("Venuepilot", "Venuepilot"),
-    ("Eventbrite", "Eventbrite"),
-    ("TIXR", "TIXR"),
-    ("Crawler", "Crawler"),
-    ("AXS", "AXS"),
-    ("OpenMicGenerator", "OpenMicGenerator"),
-    ("Manual", "Manual"),
-]
-
-MIC_TYPES = [
-  ("All", "All"),
-  ("Comdey", "Comedy"),
-  ("Music", "Music"),
-  ("Spoken Word", "Spoken Word"),
-]
-
-VENUE_TYPES = [
-  ("Bar", "Bar"),
-  ("Coffee Shop", "Coffee Shop"),
-  ("Event Space", "Event Space"),  
-]
+from api.constants import EventTypes, IngestionApis, OpenMicTypes, VenueTypes
 
 class Venue(models.Model):
   """Places to go!"""
@@ -66,7 +39,7 @@ class VenueApi(models.Model):
   instead of as a field.
   """
   venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
-  api_name = models.CharField(max_length=20, choices=INGESTION_APIS, default="Manual")
+  api_name = models.CharField(max_length=20, choices=IngestionApis.get_choices(), default="Manual")
   api_id = models.CharField(max_length=32, blank=True, null=True)
 
   def __str__(self):
@@ -113,7 +86,7 @@ class VenueMask(models.Model):
 class Event(models.Model):
   """Shows to be had!"""
   venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
-  event_type = models.CharField(max_length=16, choices=EVENT_TYPES, default="Show")
+  event_type = models.CharField(max_length=16, choices=EventTypes.get_choices(), default="Show")
   # I think eventually this could get replaced by linking to artists
   # participating in the show, but for a rough draft this is good enough.
   title = models.CharField(max_length=256)
@@ -126,7 +99,7 @@ class Event(models.Model):
   is_ticketed = models.BooleanField(default=False)
   ticket_price_min = models.DecimalField(max_digits=8, decimal_places=2, default=0, blank=True, null=True)
   ticket_price_max = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
-  event_api = models.CharField(max_length=20, choices=INGESTION_APIS, default="Manual")
+  event_api = models.CharField(max_length=20, choices=IngestionApis.get_choices(), default="Manual")
   event_url = models.CharField(max_length=512, blank=True, null=True)
   description = models.TextField(blank=True, null=True)
   
@@ -147,7 +120,7 @@ class OpenMic(models.Model):
   # Connor Byrne Open Mic, Hidden Door Open Mic. There are some exceptions like
   # Mojam, so we'll add an optional title field just in case.
   title = models.CharField(max_length=256, default="", blank=True, null=True)
-  open_mic_type = models.CharField(max_length=16, choices=MIC_TYPES, default="Music")
+  open_mic_type = models.CharField(max_length=16, choices=OpenMicTypes.get_choices(), default="Music")
   description = models.TextField()
 
   # Timing details.
@@ -172,7 +145,10 @@ class OpenMic(models.Model):
     return self.name()
   
   def name(self):
-    return self.title or f"{self.venue.name} Open Mic"
+    if self.title:
+      return self.title
+
+    return "UNKNOWN_VENUE" if not self.venue else f"{self.venue.name} Open Mic"
   
 ADMIN_MODELS = [
   Event,

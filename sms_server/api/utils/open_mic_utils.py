@@ -1,9 +1,8 @@
 import datetime
-import math
-
 
 import croniter
 
+from api.constants import EventTypes
 from api.models import OpenMic, Venue
 from api.utils import event_utils
 
@@ -32,10 +31,9 @@ def generate_open_mic_events(open_mic: OpenMic, max_diff: datetime.timedelta = d
     print(next_date)
     _ = event_utils.create_or_update_event(
       venue=open_mic.venue,
-      event_type="Open Mic",
-      
+      event_type=EventTypes.OPEN_MIC,
       title=open_mic.name(),
-      event_day=next_date,
+      event_day=next_date.date(),
       signup_start_time=open_mic.signup_start_time,
       start_time=open_mic.event_start_time,
       event_api="OpenMicGenerator"

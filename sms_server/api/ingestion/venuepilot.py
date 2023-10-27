@@ -8,6 +8,7 @@ from typing import Optional
 
 import requests
 
+from api.constants import IngestionApis
 from api.models import Event, Venue
 from api.utils import event_utils, venue_utils
 
@@ -111,7 +112,7 @@ def get_or_create_event(venue: Venue, event: dict) -> Event:
     start_time=event["startTime"],
     ticket_price_min=event["priceMin"] or 0,
     ticket_price_max=event["priceMax"] or 0,
-    event_api="Venuepilot",
+    event_api=IngestionApis.VENUEPILOT,
     event_url=event["ticketsUrl"]
   )
 

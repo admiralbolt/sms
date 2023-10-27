@@ -15,6 +15,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 import undetected_chromedriver
 
+from api.constants import IngestionApis
 from api.utils import event_utils, parsing_utils, venue_utils
 
 logger = logging.getLogger(__name__)
@@ -59,7 +60,7 @@ def process_event_list(event_list: list[dict], debug: bool=False) -> None:
       address=venue_data["address"],
       postal_code=venue_data["postalCode"],
       city=venue_data["city"],
-      api_name="AXS",
+      api_name=IngestionApis.AXS,
       api_id=venue_data["venueId"],
       debug=debug
     )
