@@ -1,2 +1,3 @@
 sms_server/sms_server/local_settings.py
 *.swp
+sms_server/logs/*.log

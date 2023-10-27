@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import os
 
 from pathlib import Path
 
@@ -23,6 +24,44 @@ from .local_settings import *  # pylint: disable=wildcard-import,unused-wildcard
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+LOGGING = {
+  "version": 1,
+  "disable_existing_loggers": False,
+  "formatters": {
+    "pretty": {
+      "format": "[{levelname}] {asctime} ({pathname}:{lineno}) {message}",
+      "style": "{",  
+    }
+  },
+  "handlers": {
+    "file": {
+      "level": "DEBUG",
+      "class": "logging.FileHandler",
+      "filename": os.path.join(BASE_DIR, "logs", "debug.log"),
+      "formatter": "pretty",
+    },
+    "file": {
+      "level": "INFO",
+      "class": "logging.FileHandler",
+      "filename": os.path.join(BASE_DIR, "logs", "info.log"),
+      "formatter": "pretty"
+    },
+    "file": {
+      "level": "WARNING",
+      "class": "logging.FileHandler",
+      "filename": os.path.join(BASE_DIR, "logs", "warning.log"),
+      "formatter": "pretty"
+    }
+  },
+  "loggers": {
+    "django": {
+      "handlers": ["file"],
+      "level": "DEBUG",
+      "propagate": True,
+    },
+  },
+}
 
 
 # Quick-start development settings - unsuitable for production

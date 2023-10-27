@@ -5,6 +5,7 @@ AXS has much better protections in place than the rest of the apis I've been
 to get a valid CSRF Token, and then using that in subsequent requests to their
 API.
 """
+import logging
 import math
 import time
 from pprint import pprint
@@ -15,6 +16,8 @@ from selenium import webdriver
 import undetected_chromedriver
 
 from api.utils import event_utils, parsing_utils, venue_utils
+
+logger = logging.getLogger(__name__)
 
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
 PER_PAGE = 15
@@ -48,7 +51,6 @@ def event_list_request(driver: webdriver.Chrome, csrf_token: str, page: int=1):
 def process_event_list(event_list: list[dict], debug: bool=False) -> None:
   """Process a list of AXS events."""
   for event in event_list:
-    pprint(event)
     venue_data = event["venue"]
     venue = venue_utils.get_or_create_venue(
       name=venue_data["title"],
@@ -79,6 +81,7 @@ def process_event_list(event_list: list[dict], debug: bool=False) -> None:
 
 def import_data(delay: float=0.5, debug=False):
   """Import data from AXS."""
+  logger.info("IMPORT FROM AXS")
   driver = create_chrome_driver()
   csrf_token = get_csrf_token(driver)
   data = event_list_request(driver, csrf_token, page=1)
