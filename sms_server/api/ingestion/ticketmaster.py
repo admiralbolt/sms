@@ -6,12 +6,13 @@ from pprint import pprint
 import requests
 
 from api.constants import IngestionApis
+from api.models import APISample
 from api.utils import event_utils, venue_utils
 from sms_server import settings
 
 logger = logging.getLogger(__name__)
 
-def event_list_request(page: int=0):
+def event_list_request(page: int=0) -> dict:
   """Get event data from Ticketmaster."""
   return requests.get(f"https://app.ticketmaster.com/discovery/v2/events?apikey={settings.TICKET_MASTER_API_KEY}&radius=10&unit=miles&segmentName=Music&geoPoint=c22zp&page={page}", timeout=15).json()
 
@@ -62,6 +63,12 @@ def process_event_list(events, debug: bool=False) -> None:
 def import_data(delay: float=0.2, debug=False) -> None:
   """Import data from Ticketmaster."""
   events = event_list_request(page=0)
+  # Save the response from the first page.
+  APISample.objects.create(
+    name="All data page 1",
+    api_name=IngestionApis.TICKETMASTER,
+    data=events
+  )
   num_pages = events["page"]["totalPages"]
   process_event_list(events, debug=debug)
   for page in range(1, num_pages):

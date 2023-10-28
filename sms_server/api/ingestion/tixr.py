@@ -9,6 +9,7 @@ from datetime import datetime
 import requests
 
 from api.constants import IngestionApis
+from api.models import APISample
 from api.utils import event_utils, venue_utils
 from sms_server import settings
 
@@ -43,6 +44,12 @@ def process_event_list(event_list: list[dict], debug: bool=False) -> None:
 
 def import_data(debug=False):
   """Import data from TIXR."""
-  for _, venue_id, client_key in settings.TIXR_CLIENTS:
+  for venue_name, venue_id, client_key in settings.TIXR_CLIENTS:
     data = event_list_request(venue_id=venue_id, client_key=client_key)
+    # Save the response from the first page.
+    APISample.objects.create(
+      name=f"{venue_name} ALL Data",
+      api_name=IngestionApis.TIXR,
+      data=data
+    )
     process_event_list(data, debug=debug)

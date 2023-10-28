@@ -9,7 +9,7 @@ from typing import Optional
 import requests
 
 from api.constants import IngestionApis
-from api.models import Event, Venue
+from api.models import APISample, Event, Venue
 from api.utils import event_utils, venue_utils
 
 REQUEST_TEMPLATE = """
@@ -129,6 +129,12 @@ def process_event_list(event_list, debug: bool=False) -> None:
 def import_data(debug=False):
   """Import all data from venuepilot."""
   data = event_list_request(page=0)
+  # Save the response from the first page.
+  APISample.objects.create(
+    name="All data page 1",
+    api_name=IngestionApis.VENUEPILOT,
+    data=data
+  )
   total_pages = data["data"]["paginatedEvents"]["metadata"]["totalPages"]
   process_event_list(data, debug=debug)
   for page in range(1, total_pages):

@@ -16,6 +16,7 @@ from selenium import webdriver
 import undetected_chromedriver
 
 from api.constants import IngestionApis
+from api.models import APISample
 from api.utils import event_utils, parsing_utils, venue_utils
 
 logger = logging.getLogger(__name__)
@@ -43,7 +44,7 @@ def get_csrf_token(driver: webdriver.Chrome):
   csrf_token_input = soup.find(id="hdn_csrf_token")
   return csrf_token_input.get("value")
 
-def event_list_request(driver: webdriver.Chrome, csrf_token: str, page: int=1):
+def event_list_request(driver: webdriver.Chrome, csrf_token: str, page: int=1) -> dict:
   """Get a list of events from AXS."""
   driver.get(f"https://www.axs.com/apip/event/category?siteId=999&csrf_token={csrf_token}&majorCat=2&lat=47.63480&long=-122.34510&radius=50&locale=en-US&rows={PER_PAGE}&page={page}")
   soup = BeautifulSoup(driver.page_source, "html.parser")
@@ -86,6 +87,12 @@ def import_data(delay: float=0.5, debug=False):
   driver = create_chrome_driver()
   csrf_token = get_csrf_token(driver)
   data = event_list_request(driver, csrf_token, page=1)
+  # Save the response from the first page.
+  APISample.objects.create(
+    name="All data page 1",
+    api_name=IngestionApis.AXS,
+    data=data
+  )
   process_event_list(data["events"], debug=debug)
   # AXS returns total events, not total pages. Little bit of maths.
   last_page = math.ceil(data["meta"]["total"] / PER_PAGE) + 1

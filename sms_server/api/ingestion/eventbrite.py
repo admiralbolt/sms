@@ -22,7 +22,7 @@ import json
 import requests
 
 from api.constants import IngestionApis
-from api.models import Venue
+from api.models import APISample, Venue
 from api.utils import event_utils, venue_utils
 from sms_server import settings
 
@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 # javascript into a `__SERVER_DATA__` variable. There's a line like this
 # `window.__SERVER_DATA__ = {...}`
 # We can can grab this line, parse the JSON, and be off to the races.
-def event_list_request(page: int=1):
+def event_list_request(page: int=1) -> dict:
   """Get a list of events from Eventbrite by scraping their UI search page."""
   # As it turns out eventbrite has some protections in place to prevent
   # exactly what I'm attempting to do. Unfortunately for them, their protections
@@ -123,7 +123,7 @@ def get_or_create_event(venue: Venue, event_detail):
     start_time=start_time,
     ticket_price_min=min_cost,
     ticket_price_max=max_cost,
-    event_api="Eventbrite",
+    event_api=IngestionApis.EVENTBRITE,
     event_url=event_detail["url"]
   )
 
@@ -140,6 +140,12 @@ def process_event_list(event_list: list[dict], debug: bool=False):
 def import_data(debug=False):
   """Import data from Eventbrite."""
   data = event_list_request(page=1)
+  # Save the response from the first page.
+  APISample.objects.create(
+    name="All data page 1",
+    api_name=IngestionApis.EVENTBRITE,
+    data=data
+  )
   process_event_list(data["search_data"]["events"]["results"], debug=debug)
   for page in range(2, data["page_count"]):
     data = event_list_request(page=page)
