@@ -5,6 +5,15 @@ from django.db import models
 
 from api.constants import EventTypes, IngestionApis, OpenMicTypes, VenueTypes
 
+class APISample(models.Model):
+  """Raw data dumps from the api."""
+  name = models.CharField(max_length=256, unique=True)
+  api_name = models.CharField(max_length=20, choices=IngestionApis.get_choices(), default="Manual")
+  data = models.JSONField()
+
+  def __str__(self):
+    return f"[{self.api_name}] {self.name}"
+
 class Venue(models.Model):
   """Places to go!"""
   name = models.CharField(max_length=128, unique=True)
