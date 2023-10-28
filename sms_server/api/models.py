@@ -8,16 +8,17 @@ from api.constants import EventTypes, IngestionApis, OpenMicTypes, VenueTypes
 class APISample(models.Model):
   """Raw data dumps from the api."""
   name = models.CharField(max_length=256)
-  date = models.DateTimeField(auto_now=True)
+  created_at = models.DateTimeField(auto_now_add=True)
   api_name = models.CharField(max_length=20, choices=IngestionApis.get_choices(), default="Manual")
   data = models.JSONField()
 
   def __str__(self):
-    return f"[{self.api_name}] ({self.date}) {self.name}"
+    return f"[{self.api_name}] ({self.created_at}) {self.name}"
 
 class Venue(models.Model):
   """Places to go!"""
   name = models.CharField(max_length=128, unique=True)
+  created_at = models.DateTimeField(auto_now_add=True)
   latitude = models.DecimalField(max_digits=11, decimal_places=8)
   longitude = models.DecimalField(max_digits=11, decimal_places=8)
   address = models.CharField(max_length=256)
@@ -49,6 +50,7 @@ class VenueApi(models.Model):
   instead of as a field.
   """
   venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+  created_at = models.DateTimeField(auto_now_add=True)
   api_name = models.CharField(max_length=20, choices=IngestionApis.get_choices(), default="Manual")
   api_id = models.CharField(max_length=32, blank=True, null=True)
 
@@ -72,6 +74,7 @@ class VenueMask(models.Model):
   # mask. Regexes are keyed by the field are they are applied to, for example:
   #
   # {"name": "^(The Funhouse|El Corazon)$"}
+  created_at = models.DateTimeField(auto_now_add=True)
   match = models.JSONField(max_length=256)
   latitude = models.DecimalField(max_digits=11, decimal_places=8, blank=True, null=True)
   longitude = models.DecimalField(max_digits=11, decimal_places=8, blank=True, null=True)
@@ -96,6 +99,7 @@ class VenueMask(models.Model):
 class Event(models.Model):
   """Shows to be had!"""
   venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+  created_at = models.DateTimeField(auto_now_add=True)
   event_type = models.CharField(max_length=16, choices=EventTypes.get_choices(), default="Show")
   # I think eventually this could get replaced by linking to artists
   # participating in the show, but for a rough draft this is good enough.
@@ -126,6 +130,7 @@ class Event(models.Model):
 class OpenMic(models.Model):
   """Generic information about an open mic."""
   venue = models.OneToOneField(Venue, on_delete=models.SET_NULL, null=True)
+  created_at = models.DateTimeField(auto_now_add=True)
   # A lot of open mic nights are just venue name + open mic i.e.
   # Connor Byrne Open Mic, Hidden Door Open Mic. There are some exceptions like
   # Mojam, so we'll add an optional title field just in case.
@@ -161,6 +166,7 @@ class OpenMic(models.Model):
     return "UNKNOWN_VENUE" if not self.venue else f"{self.venue.name} Open Mic"
   
 ADMIN_MODELS = [
+  APISample,
   Event,
   OpenMic,
   Venue,

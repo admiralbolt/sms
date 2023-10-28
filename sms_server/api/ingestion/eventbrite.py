@@ -16,6 +16,7 @@ https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes,venue,
 Don't forget we need to include the `Authorization: Bearer {token}` header.
 """
 import logging
+import time
 from typing import Optional
 
 import json
@@ -68,7 +69,8 @@ def event_detail_request(event_id: str):
     "Content-Type": "application/json",
     "Authorization": f"Bearer {settings.EVENTBRITE_TOKEN}"
   }
-  return requests.get(f"https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes", headers=headers, timeout=15).json()
+  print(f"https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes")
+  return requests.get(f"https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes", headers=headers, timeout=35).json()
 
 def get_or_create_venue(venue_data: dict, debug: bool=False) -> Optional[Venue]:
   """Get or create a venue."""
@@ -127,7 +129,7 @@ def get_or_create_event(venue: Venue, event_detail):
     event_url=event_detail["url"]
   )
 
-def process_event_list(event_list: list[dict], debug: bool=False):
+def process_event_list(event_list: list[dict], delay: float=1.5, debug: bool=False):
   """Process the list of events returned from the Eventbrite search UI."""
   for event_data in event_list:
     event_detail = event_detail_request(event_id=event_data["id"])
@@ -135,9 +137,11 @@ def process_event_list(event_list: list[dict], debug: bool=False):
     if not venue:
       continue
     get_or_create_event(venue, event_detail)
+    # Insert artifical delay to avoid hitting QPS limits.
+    time.sleep(delay)
 
 
-def import_data(debug=False):
+def import_data(delay: float=1.5, debug=False):
   """Import data from Eventbrite."""
   data = event_list_request(page=1)
   # Save the response from the first page.
@@ -146,8 +150,8 @@ def import_data(debug=False):
     api_name=IngestionApis.EVENTBRITE,
     data=data
   )
-  process_event_list(data["search_data"]["events"]["results"], debug=debug)
+  process_event_list(data["search_data"]["events"]["results"], delay=delay, debug=debug)
   for page in range(2, data["page_count"]):
     data = event_list_request(page=page)
-    process_event_list(data["search_data"]["events"]["results"], debug=debug)
+    process_event_list(data["search_data"]["events"]["results"], delay=delay, debug=debug)
     
