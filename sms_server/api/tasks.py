@@ -18,6 +18,9 @@ def generate_open_mic_events(name_filter: str="", max_diff: datetime.timedelta =
 
   open_mics = [mic] if name_filter else OpenMic.objects.all()
   for mic in open_mics:
+    # Make sure we only generate events for mics that have a venue attached.
+    if not mic.venue:
+      continue
     open_mic_utils.generate_open_mic_events(mic, max_diff=max_diff)
 
 

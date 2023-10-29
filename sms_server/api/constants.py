@@ -41,3 +41,11 @@ VenueTypes = StringChoiceEnum(choices=[
   "Coffee Shop",
   "Event Space",
 ])
+
+AUTOMATIC_APIS = [
+  IngestionApis.AXS,
+  IngestionApis.EVENTBRITE,
+  IngestionApis.TICKETMASTER,
+  IngestionApis.TIXR,
+  IngestionApis.VENUEPILOT
+]

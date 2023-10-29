@@ -141,7 +141,7 @@ def process_event_list(event_list: list[dict], delay: float=1.5, debug: bool=Fal
     time.sleep(delay)
 
 
-def import_data(delay: float=1.5, debug=False):
+def import_data(delay: float=0.5, debug=False):
   """Import data from Eventbrite."""
   data = event_list_request(page=1)
   # Save the response from the first page.

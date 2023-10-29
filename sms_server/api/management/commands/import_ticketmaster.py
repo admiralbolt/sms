@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 
-from api.models import Event, Venue
+from api.constants import IngestionApis
+from api.models import Event
 from api.tasks import import_ticketmaster_data
 from api.utils import venue_utils
 
@@ -12,8 +13,8 @@ class Command(BaseCommand):
 
   def handle(self, *args, **kwargs):
     if kwargs["truncate"]:
-      Event.objects.filter(event_api="Ticketmaster").delete()
-      venue_utils.clear_api_data(api_name="Ticketmaster")
+      Event.objects.filter(event_api=IngestionApis.TICKETMASTER).delete()
+      venue_utils.clear_api_data(api_name=IngestionApis.TICKETMASTER)
 
     import_ticketmaster_data(debug=kwargs["debug"])
 

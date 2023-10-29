@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 
+from api.constants import IngestionApis
 from api.models import Event
 from api.tasks import import_axs_data
 from api.utils import venue_utils
@@ -12,7 +13,7 @@ class Command(BaseCommand):
 
   def handle(self, *args, **kwargs):
     if kwargs["truncate"]:
-      Event.objects.filter(event_api="AXS").delete()
-      venue_utils.clear_api_data(api_name="AXS")
+      Event.objects.filter(event_api=IngestionApis.AXS).delete()
+      venue_utils.clear_api_data(api_name=IngestionApis.AXS)
 
     import_axs_data(debug=kwargs["debug"])
