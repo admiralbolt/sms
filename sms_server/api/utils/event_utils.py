@@ -52,6 +52,10 @@ def create_or_update_event(venue: Venue, **kwargs) -> Event:
   
   # Otherwise, we need to update the event accordingly based on the diffs.
   # THIS WILL BE COMPLEX.
-  # For now, we do nothing.
+  # For now, we log the diff!
+  logger.warning(f"Event diff detected\n============\n")
+  logger.warning(diff.get("values_changed"))
+  logger.warning(f"Original event\n===========\n")
+  logger.warning(event)
 
   return event
