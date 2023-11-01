@@ -24,7 +24,7 @@ class Venue(models.Model):
   address = models.CharField(max_length=256)
   postal_code = models.CharField(max_length=8)
   city = models.CharField(max_length=64)
-  venue_type = models.CharField(max_length=32, default="Bar")
+  venue_type = models.CharField(max_length=32, choices=VenueTypes.get_choices(), default="Bar")
 
   # Optional.
   description = models.TextField(default="", blank=True, null=True)
@@ -129,7 +129,7 @@ class Event(models.Model):
 
 class OpenMic(models.Model):
   """Generic information about an open mic."""
-  venue = models.OneToOneField(Venue, on_delete=models.SET_NULL, null=True)
+  venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, null=True)
   created_at = models.DateTimeField(auto_now_add=True)
   # A lot of open mic nights are just venue name + open mic i.e.
   # Connor Byrne Open Mic, Hidden Door Open Mic. There are some exceptions like
@@ -147,6 +147,7 @@ class OpenMic(models.Model):
   all_ages = models.BooleanField(default=False)
   house_piano = models.BooleanField(default=False)
   house_pa = models.BooleanField(default=True)
+  drums = models.BooleanField(default=False)
 
   # The crontab string that represents the cadence of the open mic.
   cadence_crontab = models.CharField(max_length=64)
