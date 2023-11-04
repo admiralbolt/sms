@@ -1,5 +1,7 @@
 from django.core.management.base import BaseCommand
 
+from api.constants import IngestionApis
+from api.models import Event
 from api.tasks import generate_open_mic_events
 
 class Command(BaseCommand):
@@ -10,4 +12,6 @@ class Command(BaseCommand):
     parser.add_argument("--name", dest="name", default="", help="Filter for a specific open mic.")
 
   def handle(self, *args, **kwargs):
+    if kwargs["truncate"]:
+      Event.objects.filter(event_api=IngestionApis.OPEN_MIC_GENERATOR).delete()
     generate_open_mic_events(name_filter=kwargs["name"])
