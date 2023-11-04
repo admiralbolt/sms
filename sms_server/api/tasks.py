@@ -3,6 +3,7 @@ import datetime
 
 from celery import shared_task
 
+from api.constants import AUTOMATIC_APIS, IngestionApis
 from api.models import OpenMic
 from api.ingestion import axs, eventbrite, ticketmaster, tixr, venuepilot
 from api.utils import open_mic_utils
@@ -25,35 +26,17 @@ def generate_open_mic_events(name_filter: str="", max_diff: datetime.timedelta =
 
 
 @shared_task
-def import_axs_data(debug: bool=False):
-  """Import data from AXS api."""
-  axs.import_data(debug=debug)
-
-@shared_task
-def import_eventbrite_data(debug: bool=False):
-  """Import data from eventbrite api."""
-  eventbrite.import_data(debug=debug)
-
-@shared_task
-def import_ticketmaster_data(debug: bool=False):
-  """Import data from ticketmaster api."""
-  ticketmaster.import_data(debug=debug)
-
-@shared_task
-def import_tixr_data(debug: bool=False):
-  """Import data from TIXR api."""
-  tixr.import_data(debug=debug)
-
-@shared_task
-def import_venuepilot_data(debug: bool=False):
-  """Import data from venuepilot api."""
-  venuepilot.import_data(debug=debug)
+def import_data(api_name: str, debug: bool=False):
+  {
+    IngestionApis.AXS: axs.import_data,
+    IngestionApis.EVENTBRITE: eventbrite.import_data,
+    IngestionApis.TICKETMASTER: ticketmaster.import_data,
+    IngestionApis.TIXR: tixr.import_data,
+    IngestionApis.VENUEPILOT: venuepilot.import_data,
+  }[api_name](debug=debug)
 
 @shared_task
 def import_all(debug: bool=False):
   """Import data from ALL APIs."""
-  import_axs_data(debug=debug)
-  import_eventbrite_data(debug=debug)
-  import_ticketmaster_data(debug=debug)
-  import_tixr_data(debug=debug)
-  import_venuepilot_data(debug=debug)
+  for api_name in AUTOMATIC_APIS:
+    import_data(api_name=api_name, debug=debug)
