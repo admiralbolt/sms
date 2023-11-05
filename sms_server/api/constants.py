@@ -49,11 +49,3 @@ AUTOMATIC_APIS = [
   IngestionApis.TIXR,
   IngestionApis.VENUEPILOT
 ]
-
-CRAWLERS = [
-  "skylark"
-]
-
-CRALWER_TO_ID = {
-  "skylark": 5645
-}

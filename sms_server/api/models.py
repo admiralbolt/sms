@@ -53,6 +53,7 @@ class VenueApi(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
   api_name = models.CharField(max_length=20, choices=IngestionApis.get_choices(), default="Manual")
   api_id = models.CharField(max_length=32, blank=True, null=True)
+  crawler_name = models.CharField(max_length=32, blank=True, null=True)
 
   def __str__(self):
     return f"{self.venue.name} - {self.api_name}"

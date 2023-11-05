@@ -1,5 +1,7 @@
 """Utils related to Venues."""
+import importlib
 import logging
+from typing import Any, Optional
 
 from api.models import Venue, VenueMask, VenueApi
 
@@ -82,3 +84,31 @@ def get_or_create_venue(name: str, latitude: float=0, longitude: float=0, addres
   # Get or create an associated venue API record before returning.
   add_venue_api(venue=venue, api_name=api_name, api_id=api_id)
   return venue
+
+def get_crawl_function(crawler_module_name: str) -> Any:
+  """Get a reference to the literal crawl() method on a crawler module."""
+  crawler_module = importlib.import_module(f"api.ingestion.crawlers.{crawler_module_name}")
+  if not hasattr(crawler_module, "crawl"):
+    logger.warning(f"Crawler module api.ingestion.crawlers.{crawler_module_name} does not have a 'crawl' method.")
+    return None
+  
+  return getattr(crawler_module, "crawl")
+
+def get_crawler_info(crawler_name: str) -> tuple[Optional[Venue], Any]:
+  """Load crawler info by crawler name.
+
+  This should match the corresponding crawler name field on the api exactly.
+  Similarly, there should be a definition for the crawler logic in
+  ingestion/crawlers/
+  """
+  venue_apis = VenueApi.objects.filter(crawler_name=crawler_name)
+  if len(venue_apis) != 1:
+    logger.warning(f"Found {len(venue_apis)} matches for {crawler_name=}")
+    return None, None
+
+  venue_api = venue_apis.first()
+  crawler_function = get_crawl_function(venue_api.crawler_name)
+  if crawler_function is None:
+    return None, None
+  
+  return venue_api.venue, crawler_function
