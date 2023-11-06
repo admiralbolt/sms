@@ -48,7 +48,7 @@ def crawl_data(crawler_name: str, debug: bool=False):
   if venue is None:
     print(f"Couldn't find venue information for crawler {crawler_name}")
 
-  crawl_method(debug=debug)
+  crawl_method(venue=venue, debug=debug)
 
 @shared_task
 def import_all(debug: bool=False):

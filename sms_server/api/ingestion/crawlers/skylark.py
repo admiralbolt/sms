@@ -6,17 +6,37 @@ Upcoming shows are contained within divs emulating list items.
 Very sparse information about the shows themselves, but it's a start.
 """
 import requests
+from datetime import datetime
 
 from bs4 import BeautifulSoup
 
-def crawl(debug: bool=False):
-  print("GETING HERE")
-  skylark_request = requests.get("https://www.skylarkcafe.com/calendar")
+from api.constants import IngestionApis
+from api.models import Venue
+from api.utils import event_utils
+
+SKYLARK_ROOT = "https://www.skylarkcafe.com"
+
+def crawl(venue: Venue, debug: bool=False):
+  skylark_request = requests.get(f"{SKYLARK_ROOT}/calendar")
   soup = BeautifulSoup(skylark_request.text, "html.parser")
   all_events = soup.find_all("div", class_="w-dyn-items")
   # Old events are hidden on the page.
   list = all_events[0]
-  children = list.findChildren("div", recusrive=False)
+  children = list.findChildren("div", recursive=False)
   for child in children:
-    # Need to do more parsing here but hey, that's not bad.
-    print(child)
+    event_titles = child.find_all("div", class_="text-block-12")
+
+    learn_more = child.find_all("a", class_="link-block-4")
+    event_url = f"{SKYLARK_ROOT}/{learn_more[0]['href']}"
+
+    event_dates = child.find_all("div", class_="date")
+    start_date = datetime.strptime(event_dates[0].text, "%B %d, %Y %I:%M %p")
+
+    event = event_utils.create_or_update_event(
+      venue=venue,
+      title=event_titles[0].text,
+      event_day=start_date.date(),
+      start_time=start_date.time(),
+      event_api=IngestionApis.CRAWLER,
+      event_url=event_url,
+    )
