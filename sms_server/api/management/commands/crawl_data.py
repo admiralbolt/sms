@@ -26,7 +26,7 @@ class Command(BaseCommand):
       venue_apis = VenueApi.objects.filter(api_name=IngestionApis.CRAWLER)
       for venue_api in venue_apis:
         crawl_method = venue_utils.get_crawl_function(venue_api.crawler_name)
-        crawl_method(venue=venue, debug=kwargs["debug"])
+        crawl_method(venue=venue_api.venue, debug=kwargs["debug"])
       return
     
     venue, crawl_method = venue_utils.get_crawler_info(kwargs["crawler"])

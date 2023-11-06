@@ -4,7 +4,7 @@ import datetime
 from celery import shared_task
 
 from api.constants import AUTOMATIC_APIS, IngestionApis
-from api.models import OpenMic
+from api.models import OpenMic, VenueApi
 from api.ingestion import axs, eventbrite, ticketmaster, tixr, venuepilot
 from api.ingestion.crawlers import skylark
 from api.utils import open_mic_utils, venue_utils
@@ -55,3 +55,8 @@ def import_all(debug: bool=False):
   """Import data from ALL APIs."""
   for api_name in AUTOMATIC_APIS:
     import_data(api_name=api_name, debug=debug)
+  # Run all the crawlers.
+  venue_apis = VenueApi.objects.filter(api_name=IngestionApis.CRAWLER)
+  for venue_api in venue_apis:
+    crawl_method = venue_utils.get_crawl_function(venue_api.crawler_name)
+    crawl_method(venue=venue_api.venue, debug=debug)
