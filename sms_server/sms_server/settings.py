@@ -125,6 +125,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sms_server.wsgi.application'
 
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_TIMEZONE = "America/Los_Angeles"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60

@@ -15,7 +15,7 @@ def generate_open_mic_events(name_filter: str="", max_diff: datetime.timedelta =
   if name_filter:
     mic = open_mic_utils.get_open_mic_by_venue_name(name_filter)
     if not mic:
-      print(f"Couldn't find open mic with name = {name_filter}")
+      print(f"Couldn't find open mic with name=({name_filter})")
       return
 
   open_mics = [mic] if name_filter else OpenMic.objects.all()

@@ -69,7 +69,6 @@ def event_detail_request(event_id: str):
     "Content-Type": "application/json",
     "Authorization": f"Bearer {settings.EVENTBRITE_TOKEN}"
   }
-  print(f"https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes")
   return requests.get(f"https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes", headers=headers, timeout=35).json()
 
 def get_or_create_venue(venue_data: dict, debug: bool=False) -> Optional[Venue]:
