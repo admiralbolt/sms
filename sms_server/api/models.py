@@ -108,7 +108,9 @@ class Event(models.Model):
   event_day = models.DateField()
   # Only applicable if an open mic.
   signup_start_time = models.TimeField(default=None, blank=True, null=True)
-  start_time = models.TimeField(default=None, null=True)
+
+  cash_only = models.BooleanField(default=False)
+  start_time = models.TimeField(default=None, blank=True, null=True)
   end_time = models.TimeField(default=None, blank=True, null=True)
   doors_open = models.TimeField(default=None, blank=True, null=True)
   is_ticketed = models.BooleanField(default=False)

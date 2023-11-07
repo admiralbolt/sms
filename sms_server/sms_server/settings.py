@@ -60,6 +60,10 @@ LOGGING = {
       "propagate": True,
     },
   },
+  "root": {
+    "handlers": ["debug_file", "info_file", "warning_file"],
+    "level": "INFO",
+  }
 }
 
 
