@@ -124,10 +124,10 @@ class Event(models.Model):
   show_event = models.BooleanField(default=True)
 
   def __str__(self):
-    return self.title
+    return f"[{self.venue}] ({self.event_day}) {self.title}"
 
   class Meta:
-    unique_together = [["venue", "title", "event_day", "start_time"]]
+    unique_together = [["venue", "event_day", "start_time"]]
 
 
 class OpenMic(models.Model):
