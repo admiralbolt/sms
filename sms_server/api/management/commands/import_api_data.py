@@ -16,6 +16,7 @@ class Command(BaseCommand):
   def handle(self, *args, **kwargs):
     if not kwargs["api"] and not kwargs["all"]:
       print("Please provide one of --api or --all")
+      return
 
     if kwargs["all"]:
       if kwargs["truncate"]:
@@ -24,6 +25,7 @@ class Command(BaseCommand):
           for api in AUTOMATIC_APIS:
             Event.objects.filter(event_api=api).delete()
             venue_utils.clear_api_data(api_name=api)
+        return
       import_all(debug=kwargs["debug"])
       return
 
@@ -35,6 +37,7 @@ class Command(BaseCommand):
     if kwargs["truncate"]:
       Event.objects.filter(event_api=api_name).delete()
       venue_utils.clear_api_data(api_name=api_name)
+      return
 
     import_data(api_name, debug=kwargs["debug"])
     

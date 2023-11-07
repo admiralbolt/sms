@@ -15,13 +15,14 @@ class Command(BaseCommand):
 
   def handle(self, *args, **kwargs):
     if not kwargs["crawler"] and not kwargs["all"]:
-      print("Please provide one of --venue or --all")
+      print("Please provide one of --crawler or --all")
 
     if kwargs["all"]:
       if kwargs["truncate"]:
         result = input("Clearing ALL crawled Event data. Are you SURE? [Y/n]: ")
         if result == "Y":
-          Event.objects.filter(event_api=IngestionApis.CRALWER).delete()
+          Event.objects.filter(event_api=IngestionApis.CRAWLER).delete()
+        return
       
       venue_apis = VenueApi.objects.filter(api_name=IngestionApis.CRAWLER)
       for venue_api in venue_apis:
@@ -31,6 +32,7 @@ class Command(BaseCommand):
     
     venue, crawl_method = venue_utils.get_crawler_info(kwargs["crawler"])
     if kwargs["truncate"]:
-      Event.objects.filter(venue=venue, event_api=IngestionApis.CRALWER).delete()
+      Event.objects.filter(venue=venue, event_api=IngestionApis.CRAWLER).delete()
+      return
 
     crawl_method(venue=venue, debug=kwargs["debug"])

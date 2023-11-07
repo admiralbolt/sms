@@ -14,4 +14,6 @@ class Command(BaseCommand):
   def handle(self, *args, **kwargs):
     if kwargs["truncate"]:
       Event.objects.filter(event_api=IngestionApis.OPEN_MIC_GENERATOR).delete()
+      return
+
     generate_open_mic_events(name_filter=kwargs["name"])
