@@ -28,7 +28,7 @@ def apply_diff(event: Event, values_changed: dict, fields: Optional[list[str]]=N
 
 def handle_open_mic_gen_diff(event: Event, values_changed: dict) -> Event:
   """Handle open mic event generation for events that are already in the API."""
-  if values_changed["root['event_api']"].get("new_value", None) != IngestionApis.OPEN_MIC_GENERATOR:
+  if values_changed.get("root['event_api']", {}).get("new_value", None) != IngestionApis.OPEN_MIC_GENERATOR:
     return event
   
   event = apply_diff(event, values_changed, fields=["event_type", "title", "event_api"])

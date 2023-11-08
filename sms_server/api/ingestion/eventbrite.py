@@ -57,6 +57,21 @@ def event_list_request(page: int=1) -> dict:
     return data
   return {}
 
+def get_full_event_description(event_id: str) -> str:
+  """Loads full HTML body of the event description."""
+  headers = {
+    "Content-Type": "application/json",
+    "Authorization": f"Bearer {settings.EVENTBRITE_TOKEN}"
+  }
+  response = requests.get(f"https://www.eventbriteapi.com/v3/events/{event_id}/structured_content/?purpose=listing", headers=headers, timeout=10).json()
+  for module in response["modules"]:
+    if module["type"] != "text":
+      continue
+
+    return module.get("data", {}).get("body", {}).get("text", None)
+
+  return None
+
 def event_detail_request(event_id: str):
   """Get detailed info about an event.
 
@@ -125,10 +140,11 @@ def get_or_create_event(venue: Venue, event_detail):
     ticket_price_min=min_cost,
     ticket_price_max=max_cost,
     event_api=IngestionApis.EVENTBRITE,
-    event_url=event_detail["url"]
+    event_url=event_detail["url"],
+    description=get_full_event_description(event_detail["id"]) or event_detail.get("summary", "")
   )
 
-def process_event_list(event_list: list[dict], delay: float=1.5, debug: bool=False):
+def process_event_list(event_list: list[dict], delay: float=0.5, debug: bool=False):
   """Process the list of events returned from the Eventbrite search UI."""
   for event_data in event_list:
     event_detail = event_detail_request(event_id=event_data["id"])
