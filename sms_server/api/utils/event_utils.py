@@ -28,12 +28,10 @@ def apply_diff(event: Event, values_changed: dict, fields: Optional[list[str]]=N
 
 def handle_open_mic_gen_diff(event: Event, values_changed: dict) -> Event:
   """Handle open mic event generation for events that are already in the API."""
-  print(values_changed)
   if values_changed["root['event_api']"].get("new_value", None) != IngestionApis.OPEN_MIC_GENERATOR:
     return event
   
   event = apply_diff(event, values_changed, fields=["event_type", "title", "event_api"])
-  print(event)
   event.save()
 
 
@@ -45,6 +43,11 @@ def create_or_update_event(venue: Venue, **kwargs) -> Event:
   "SOLD OUT" to the title. Rather than ignoring the differences entirely, we
   want a sane way of handling updates.
   """
+  # Special handling for importing "open mic" events that come from the apis.
+  # We want to use the open mic generators instead of the apis directly.
+  if kwargs["event_api"] != IngestionApis.OPEN_MIC_GENERATOR and "open mic" in kwargs["title"].lower():
+    return None
+
   # Uniqueness of an event is based on venue, event_day and start_time.
   # Make sure we at least have these.
   if not kwargs.get("event_day", None) or not kwargs.get("start_time", None):
@@ -89,6 +92,5 @@ def create_or_update_event(venue: Venue, **kwargs) -> Event:
   handle_open_mic_gen_diff(event, values_changed)
 
   event.save()
-
 
   return event
