@@ -39,7 +39,8 @@ def process_event_list(event_list: list[dict], debug: bool=False) -> None:
       ticket_price_min=event.get("current_price", 0),
       ticket_price_max=event.get("current_price", 0),
       event_api=IngestionApis.TIXR,
-      event_url=event["url"]
+      event_url=event["url"],
+      description=event["description"],
     )
 
 def import_data(debug=False):
