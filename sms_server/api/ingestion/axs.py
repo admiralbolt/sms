@@ -78,7 +78,8 @@ def process_event_list(event_list: list[dict], debug: bool=False) -> None:
       ticket_price_max=parsing_utils.parse_cost(event["ticketPriceHigh"]),
       ticket_price_min=parsing_utils.parse_cost(event["ticketPriceLow"]),
       event_api="AXS",
-      event_url=event["ticketing"]["url"]
+      event_url=event["ticketing"]["url"],
+      description=event["description"],
     )
 
 def import_data(delay: float=0.5, debug=False):

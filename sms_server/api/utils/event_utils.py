@@ -32,8 +32,39 @@ def handle_open_mic_gen_diff(event: Event, values_changed: dict) -> Event:
     return event
   
   event = apply_diff(event, values_changed, fields=["event_type", "title", "event_api"])
-  event.save()
 
+def handle_new_fields_diff(event: Event, values_changed: dict) -> Event:
+  """If new fields are added, add them!
+
+  This time if they are "changed" i.e. we go from an empty to field to one that
+  has stuff in it.
+  """
+  fields_to_change = []
+  for field_with_root, info in values_changed.items():
+    if info["old_value"] or not info["new_value"]:
+      continue
+
+    fields_to_change.append(field_with_root.split("'")[1])
+  
+  if fields_to_change:
+    apply_diff(event, values_changed, fields=fields_to_change)
+
+  return event
+
+def handle_new_fields(event: Event, new_event_data: dict, diff: deepdiff.DeepDiff) -> Event:
+  """If new fields are added, add them!"""
+  fields_added = diff.get("dictionary_item_added", [])
+  if not fields_added:
+    return event
+  
+  for field_with_root in fields_added:
+    field = field_with_root.split("'")[1]
+    setattr(event, field, new_event_data[field])
+
+  event.save()
+  return event
+
+  
 
 def create_or_update_event(venue: Venue, **kwargs) -> Event:
   """Create or update an event.‘
@@ -74,6 +105,9 @@ def create_or_update_event(venue: Venue, **kwargs) -> Event:
     exclude_paths=["id"]
   )
 
+  # If brand new fields are added, add them!
+  handle_new_fields(event, new_event_serialized, diff)
+
   # If there's no diff, nothing else to do!
   values_changed = diff.get("values_changed", None)
   if not values_changed:
@@ -87,8 +121,11 @@ def create_or_update_event(venue: Venue, **kwargs) -> Event:
   logger.warning(f"Original event\n===========\n")
   logger.warning(event)
 
-  # 1. In some cases open mics are listed as events in the API. When we generate
-  #    open mic events we want to override the existing event.
+  # Handle "new" fields. Cases where old fields are blank / empty strings.
+  handle_new_fields_diff(event, values_changed)
+
+  # In some cases open mics are listed as events in the API. When we generate
+  # open mic events we want to override the existing event.
   handle_open_mic_gen_diff(event, values_changed)
 
   event.save()
