@@ -84,7 +84,7 @@ limit-inference-results=100
 load-plugins=pylint_django
 
 # Load django settings.
-django-settings-module=sms_server.sms_server.settings
+django-settings-module=sms_server
 
 # Pickle collected data for later comparisons.
 persistent=yes
