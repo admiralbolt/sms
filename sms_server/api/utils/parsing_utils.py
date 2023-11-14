@@ -1,5 +1,6 @@
 """Utils for parsing garbage data from the APIs."""
 import re
+import time
 from typing import Optional
 
 COST_REGEX = "\$([0-9]+(\.[0-9]+)?)"
@@ -30,3 +31,14 @@ def find_cost(description: str) -> Optional[float]:
     return None
 
   return parse_cost(match.group(1))
+
+def parse_12hr_time(time_str: str) -> str:
+  """Parse a time from 12 hour to 24 hour format."""
+  t = time_str.lower().replace(" ","")
+  hour, info = t.split(":")
+  minute, am_pm = info[1][:2], info[1][2:]
+  hour = int(hour)
+  minute = int(minute)
+  if am_pm == "pm":
+    hour += 12
+  return f"{hour:02}:{minute:02}"
