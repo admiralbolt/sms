@@ -103,19 +103,6 @@ def get_or_create_venue(venue_data: dict, debug: bool=False) -> Venue:
     debug=debug,
   )
 
-def get_or_create_event(venue: Venue, event: dict) -> Event:
-  """Get or create an event!"""
-  event_utils.create_or_update_event(
-    venue=venue,
-    title=event["name"],
-    event_day=event["date"],
-    start_time=event["startTime"],
-    ticket_price_min=event["priceMin"] or 0,
-    ticket_price_max=event["priceMax"] or 0,
-    event_api=IngestionApis.VENUEPILOT,
-    event_url=event["ticketsUrl"]
-  )
-
 def process_event_list(event_list, debug: bool=False) -> None:
   """Process a list of events from venuepilot."""
   for event in event_list["data"]["paginatedEvents"]["collection"]:
@@ -123,8 +110,17 @@ def process_event_list(event_list, debug: bool=False) -> None:
       continue
 
     venue = get_or_create_venue(event["venue"], debug=debug)
-    get_or_create_event(venue, event)
-
+    event_utils.create_or_update_event(
+      venue=venue,
+      title=event["name"],
+      event_day=event["date"],
+      start_time=event["startTime"],
+      ticket_price_min=event["priceMin"] or 0,
+      ticket_price_max=event["priceMax"] or 0,
+      event_api=IngestionApis.VENUEPILOT,
+      event_url=event["ticketsUrl"],
+      description=event["description"]
+    )
 
 def import_data(debug=False):
   """Import all data from venuepilot."""
