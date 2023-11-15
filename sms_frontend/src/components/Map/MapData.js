@@ -9,14 +9,17 @@ const SHOW_COLOR = '#0070ff';
 const OPEN_MIC_COLOR = '#ee6600';
 const NO_EVENT_COLOR = '#989898';
 
-const zoom = 13;
-const maxCircle = 90;
+const defaultZoom = 13;
+
+const CIRCLE_SIZES = [
+  100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
+  100, 90,  90,  90,  60,  37,  25,  20,  20]
 
 const Map = (props) => {
   let date = props.date;
   const [venues, setVenues] = useState([]);
   const [events, setEvents] = useState({});
-  const [circleSize, setCircleSize] = useState(maxCircle);
+  const [circleSize, setCircleSize] = useState(CIRCLE_SIZES[defaultZoom]);
 
   useEffect(() => {
     loadVenues();
@@ -25,7 +28,7 @@ const Map = (props) => {
 
   const mapEvents = useMapEvents({
     zoomend: () => {
-      setCircleSize(maxCircle - 15 * Math.abs(mapEvents.getZoom() - zoom));
+      setCircleSize(CIRCLE_SIZES[mapEvents.getZoom()]);
     },
   });
 
