@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 
 from api.constants import AUTOMATIC_APIS, IngestionApis
 from api.models import Event
-from api.tasks import import_all, import_data
+from api.tasks import import_all, import_api_data
 from api.utils import venue_utils
 
 class Command(BaseCommand):
@@ -39,5 +39,5 @@ class Command(BaseCommand):
       venue_utils.clear_api_data(api_name=api_name)
       return
 
-    import_data(api_name, debug=kwargs["debug"])
+    import_api_data(api_name, debug=kwargs["debug"])
     

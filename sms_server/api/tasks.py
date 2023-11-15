@@ -23,11 +23,11 @@ def generate_open_mic_events(name_filter: str="", max_diff: datetime.timedelta =
     # Make sure we only generate events for mics that have a venue attached.
     if not mic.venue:
       continue
-    open_mic_utils.generate_open_mic_events(mic, max_diff=max_diff)
-
+    open_mic_utils.generate_open_mic_events(mic, max_diff=max_diff, debug=debug)
 
 @shared_task
-def import_data(api_name: str, debug: bool=False):
+def import_api_data(api_name: str, debug: bool=False):
+  """Import data from apis!"""
   import_call_dict = {
     IngestionApis.AXS: axs.import_data,
     IngestionApis.EVENTBRITE: eventbrite.import_data,
@@ -44,6 +44,7 @@ def import_data(api_name: str, debug: bool=False):
 
 @shared_task
 def crawl_data(crawler_name: str, debug: bool=False):
+  """Crawl data from individual venues!"""
   venue, crawl_method = venue_utils.get_crawler_info(crawler_name=crawler_name)
   if venue is None:
     print(f"Couldn't find venue information for crawler {crawler_name}")
@@ -54,7 +55,7 @@ def crawl_data(crawler_name: str, debug: bool=False):
 def import_all(debug: bool=False):
   """Import data from ALL APIs."""
   for api_name in AUTOMATIC_APIS:
-    import_data(api_name=api_name, debug=debug)
+    import_api_data(api_name=api_name, debug=debug)
   # Run all the crawlers.
   venue_apis = VenueApi.objects.filter(api_name=IngestionApis.CRAWLER)
   for venue_api in venue_apis:

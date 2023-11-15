@@ -16,7 +16,7 @@ def get_open_mic_by_venue_name(venue_name: str) -> OpenMic:
   return OpenMic.objects.filter(venue=venue).first()
   
 
-def generate_open_mic_events(open_mic: OpenMic, max_diff: datetime.timedelta = datetime.timedelta(days=45)) -> None:
+def generate_open_mic_events(open_mic: OpenMic, max_diff: datetime.timedelta = datetime.timedelta(days=45), debug: bool=False) -> None:
   """Generate calendar events for an open mic.
 
   Dates are generated based on the open mics cadence crontab, starting from the
@@ -24,9 +24,12 @@ def generate_open_mic_events(open_mic: OpenMic, max_diff: datetime.timedelta = d
   """
   now = datetime.datetime.now()
   date_generator = croniter.croniter(open_mic.cadence_crontab, now)
-  while next_date := date_generator.get_next(datetime.datetime):    
+  while next_date := date_generator.get_next(datetime.datetime):
     if (next_date - now) > max_diff:
       break
+
+    if debug:
+      print(next_date)
 
     _ = event_utils.create_or_update_event(
       venue=open_mic.venue,

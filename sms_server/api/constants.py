@@ -1,46 +1,30 @@
 """Some things always change, but one thing stays the same, constants."""
+# pylint: disable=invalid-name
 
-class StringChoiceEnum:
-  """Easier to use list of string options."""
-  def __init__(self, choices: list[str]):
-    self.data = {}
-    for choice in choices:
-      formatted_choice = choice.upper().replace(" ", "_")
-      self.data[formatted_choice] = choice
-      setattr(self, formatted_choice, choice)
+class EventTypes:
+  OPEN_MIC = "Open Mic"
+  SHOW = "Show"
 
-  def get_choices(self):
-    return [(value, value) for value in self.data.values()]
+class IngestionApis:
+  AXS = "AXS"
+  CRAWLER = "Crawler"
+  EVENTBRITE = "Eventbrite"
+  MANUAL = "Manual"
+  OPEN_MIC_GENERATOR = "Open Mic Generator"
+  TICKETMASTER = "Ticketmaster"
+  TIXR = "TIXR"
+  VENUEPILOT = "Venuepilot"
 
+class OpenMicTypes:
+  ALL = "All"
+  COMEDY = "Comedy"
+  MUSIC = "Music"
+  SPOKEN_WORD = "Spoken Word"
 
-EventTypes = StringChoiceEnum(choices=[
-  "Open Mic",
-  "Show",
-])
-
-IngestionApis = StringChoiceEnum(choices=[
-  "Ticketmaster",
-  "Venuepilot",
-  "Eventbrite",
-  "TIXR",
-  "AXS",
-  "Crawler",
-  "Open Mic Generator",
-  "Manual",
-])
-
-OpenMicTypes = StringChoiceEnum(choices=[
-  "All",
-  "Comedy",
-  "Music",
-  "Spoken Word",
-])
-
-VenueTypes = StringChoiceEnum(choices=[
-  "Bar",
-  "Coffee Shop",
-  "Event Space",
-])
+class VenueTypes:
+  BAR = "Bar"
+  COFFEE_SHOP = "Coffee Shop"
+  EVENT_SPACE = "Event Space"
 
 AUTOMATIC_APIS = [
   IngestionApis.AXS,
@@ -49,3 +33,15 @@ AUTOMATIC_APIS = [
   IngestionApis.TIXR,
   IngestionApis.VENUEPILOT
 ]
+
+def get_choices(cls) -> list[tuple[str, str]]:
+  """Get a list of choices for models.py based on the attrs of the input."""
+  instance = cls()
+  choices = []
+  for attr in dir(instance):
+    if not attr.isupper():
+      continue
+
+    val = getattr(instance, attr)
+    choices.append((val, val))
+  return choices

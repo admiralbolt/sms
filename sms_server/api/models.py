@@ -3,13 +3,13 @@ import re
 
 from django.db import models
 
-from api.constants import EventTypes, IngestionApis, OpenMicTypes, VenueTypes
+from api.constants import get_choices, EventTypes, IngestionApis, OpenMicTypes, VenueTypes
 
 class APISample(models.Model):
   """Raw data dumps from the api."""
   name = models.CharField(max_length=256)
   created_at = models.DateTimeField(auto_now_add=True)
-  api_name = models.CharField(max_length=20, choices=IngestionApis.get_choices(), default="Manual")
+  api_name = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
   data = models.JSONField()
 
   def __str__(self):
@@ -24,7 +24,7 @@ class Venue(models.Model):
   address = models.CharField(max_length=256)
   postal_code = models.CharField(max_length=8)
   city = models.CharField(max_length=64)
-  venue_type = models.CharField(max_length=32, choices=VenueTypes.get_choices(), default="Bar")
+  venue_type = models.CharField(max_length=32, choices=get_choices(VenueTypes), default="Bar")
 
   # Optional.
   description = models.TextField(default="", blank=True, null=True)
@@ -51,7 +51,7 @@ class VenueApi(models.Model):
   """
   venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
   created_at = models.DateTimeField(auto_now_add=True)
-  api_name = models.CharField(max_length=20, choices=IngestionApis.get_choices(), default="Manual")
+  api_name = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
   api_id = models.CharField(max_length=32, blank=True, null=True)
   crawler_name = models.CharField(max_length=32, blank=True, null=True)
 
@@ -101,7 +101,7 @@ class Event(models.Model):
   """Shows to be had!"""
   venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
   created_at = models.DateTimeField(auto_now_add=True)
-  event_type = models.CharField(max_length=16, choices=EventTypes.get_choices(), default="Show")
+  event_type = models.CharField(max_length=16, choices=get_choices(EventTypes), default="Show")
   # I think eventually this could get replaced by linking to artists
   # participating in the show, but for a rough draft this is good enough.
   title = models.CharField(max_length=256)
@@ -116,7 +116,7 @@ class Event(models.Model):
   is_ticketed = models.BooleanField(default=False)
   ticket_price_min = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
   ticket_price_max = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
-  event_api = models.CharField(max_length=20, choices=IngestionApis.get_choices(), default="Manual")
+  event_api = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
   event_url = models.CharField(max_length=512, blank=True, null=True)
   description = models.TextField(blank=True)
   
@@ -138,7 +138,7 @@ class OpenMic(models.Model):
   # Connor Byrne Open Mic, Hidden Door Open Mic. There are some exceptions like
   # Mojam, so we'll add an optional title field just in case.
   title = models.CharField(max_length=256, default="", blank=True, null=True)
-  open_mic_type = models.CharField(max_length=16, choices=OpenMicTypes.get_choices(), default="Music")
+  open_mic_type = models.CharField(max_length=16, choices=get_choices(OpenMicTypes), default="Music")
   description = models.TextField()
 
   # Timing details.
