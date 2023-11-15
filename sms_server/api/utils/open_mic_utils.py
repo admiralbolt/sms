@@ -23,7 +23,10 @@ def generate_open_mic_events(open_mic: OpenMic, max_diff: datetime.timedelta = d
   current time. The dates generated are bounded by the max_diff timedelta.
   """
   now = datetime.datetime.now()
-  date_generator = croniter.croniter(open_mic.cadence_crontab, now)
+  # Crontab conditionals are logical OR not logical AND. So a crontab like:
+  # 0 0 8-14,22-28 * THU, actually generates for all thursdays, AND for days
+  # that are numbered 8-14, 22-28. Thankfully we can just specify day_or=False
+  date_generator = croniter.croniter(open_mic.cadence_crontab, now, day_or=False)
   while next_date := date_generator.get_next(datetime.datetime):
     if (next_date - now) > max_diff:
       break
