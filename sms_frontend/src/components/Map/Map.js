@@ -19,7 +19,9 @@ const Map = ({ date }) => {
     <MapContainer
       center={position}
       zoom={zoom}
+      zoomControl={false}
       scrollWheelZoom={false}
+      touchZoom={true}
     >
       <MapData date={date} />
     </MapContainer>

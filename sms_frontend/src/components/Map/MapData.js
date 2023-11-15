@@ -13,7 +13,7 @@ const defaultZoom = 13;
 
 const CIRCLE_SIZES = [
   100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-  100, 90,  90,  90,  60,  37,  25,  20,  20]
+  100, 80,  80,  80,  60,  37,  25,  20,  20]
 
 const Map = (props) => {
   let date = props.date;
@@ -71,6 +71,42 @@ const Map = (props) => {
     return `$${event.ticket_price_min} - $${event.ticket_price_max}`
   }
 
+  const renderVenue = (venue) => {
+    if (!hasShow(events, venue, props.date))
+      return '';
+
+    return (
+      <Circle
+            key={venue.id}
+            center={[venue.latitude, venue.longitude]}
+            pathOptions={{
+              color: (hasShow(events, venue, props.date) ? (events[venue.id][props.date].event_type == 'Open Mic' ? OPEN_MIC_COLOR : SHOW_COLOR) : NO_EVENT_COLOR),
+              fillColor: (hasShow(events, venue, props.date) ? (events[venue.id][props.date].event_type == 'Open Mic' ? OPEN_MIC_COLOR : SHOW_COLOR) : NO_EVENT_COLOR),
+            }}
+            radius={circleSize}
+          >
+            <Tooltip>
+              <h2 className='venue-name'>{venue.name}</h2>
+              <hr />
+              <p className='venue-address'>{venue.address}</p>
+              <p className='venu-description'>"{venue.description}"</p>
+              {hasShow(events, venue, props.date) &&
+              <div>
+                <hr />
+                <b>SHOW TONIGHT!</b>
+                <div className='show-info'>
+                  <p className='show-title'>{events[venue.id][props.date].title}</p>
+                  <p className='show-time'>Music Starts at {formatTime(events[venue.id][props.date].start_time)}</p>
+                  <p className='show-price'>{getTicketPrice(events[venue.id][props.date])}</p>
+                  <p className='show-price'>{events[venue.id][props.date].ticket_price}</p>
+                </div>
+              </div>
+              }
+            </Tooltip>
+          </Circle>
+    );
+  }
+
   
   return (
     <div>
@@ -79,34 +115,7 @@ const Map = (props) => {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {venues.map((venue) => (
-        <Circle
-          key={venue.id}
-          center={[venue.latitude, venue.longitude]}
-          pathOptions={{
-            color: (hasShow(events, venue, props.date) ? (events[venue.id][props.date].event_type == 'Open Mic' ? OPEN_MIC_COLOR : SHOW_COLOR) : NO_EVENT_COLOR),
-            fillColor: (hasShow(events, venue, props.date) ? (events[venue.id][props.date].event_type == 'Open Mic' ? OPEN_MIC_COLOR : SHOW_COLOR) : NO_EVENT_COLOR),
-          }}
-          radius={circleSize}
-        >
-          <Tooltip>
-            <h2 className='venue-name'>{venue.name}</h2>
-            <hr />
-            <p className='venue-address'>{venue.address}</p>
-            <p className='venu-description'>"{venue.description}"</p>
-            {hasShow(events, venue, props.date) &&
-            <div>
-              <hr />
-              <b>SHOW TONIGHT!</b>
-              <div className='show-info'>
-                <p className='show-title'>{events[venue.id][props.date].title}</p>
-                <p className='show-time'>Music Starts at {formatTime(events[venue.id][props.date].start_time)}</p>
-                <p className='show-price'>{getTicketPrice(events[venue.id][props.date])}</p>
-                <p className='show-price'>{events[venue.id][props.date].ticket_price}</p>
-              </div>
-            </div>
-            }
-          </Tooltip>
-        </Circle>
+          renderVenue(venue)
       ))}
     </div>
   );
