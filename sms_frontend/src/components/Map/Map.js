@@ -71,7 +71,15 @@ class Map extends React.Component {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         {this.state.venues.map((venue) => (
-          <Circle key={venue.id} center={[venue.latitude, venue.longitude]} pathOptions={{ fillColor: 'blue' }} radius={60}>
+          <Circle
+            key={venue.id}
+            center={[venue.latitude, venue.longitude]}
+            pathOptions={{
+              color: (this.hasShow(venue, this.props.date) ? (this.state.events[venue.id][this.props.date].event_type == 'Open Mic' ? 'red' : 'blue') : 'gray'),
+              fillColor: (this.hasShow(venue, this.props.date) ? 'purple' : 'gray')
+            }}
+            radius={60}
+          >
             <Tooltip>
               <h2 className='venue-name'>{venue.name}</h2>
               <hr />

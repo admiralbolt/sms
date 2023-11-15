@@ -1,4 +1,6 @@
 """Display stuff!"""
+import datetime
+
 from rest_framework import viewsets
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
@@ -13,7 +15,7 @@ class EventViewSet(viewsets.ModelViewSet):
   serializer_class = serializers.EventSerializer
 
   def get_queryset(self):
-    return models.Event.objects.order_by("event_day")
+    return models.Event.objects.order_by("event_day").filter(event_day__gte=datetime.date.today())
 
 class VenueViewSet(viewsets.ModelViewSet):
   """List all venues."""
