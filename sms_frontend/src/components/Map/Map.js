@@ -5,6 +5,10 @@ import axios from "axios";
 
 import { MapContainer, TileLayer, Marker, Popup, Tooltip, Circle } from 'react-leaflet'
 
+const SHOW_COLOR = '#0070ff';
+const OPEN_MIC_COLOR = '#ee6600';
+const NO_EVENT_COLOR = '#989898';
+
 const position = [47.65113, -122.3400]
 
 class Map extends React.Component {
@@ -75,8 +79,8 @@ class Map extends React.Component {
             key={venue.id}
             center={[venue.latitude, venue.longitude]}
             pathOptions={{
-              color: (this.hasShow(venue, this.props.date) ? (this.state.events[venue.id][this.props.date].event_type == 'Open Mic' ? 'red' : 'blue') : 'gray'),
-              fillColor: (this.hasShow(venue, this.props.date) ? 'purple' : 'gray')
+              color: (this.hasShow(venue, this.props.date) ? (this.state.events[venue.id][this.props.date].event_type == 'Open Mic' ? OPEN_MIC_COLOR : SHOW_COLOR) : NO_EVENT_COLOR),
+              fillColor: (this.hasShow(venue, this.props.date) ? (this.state.events[venue.id][this.props.date].event_type == 'Open Mic' ? OPEN_MIC_COLOR : SHOW_COLOR) : NO_EVENT_COLOR),
             }}
             radius={60}
           >
