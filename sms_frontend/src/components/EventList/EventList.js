@@ -1,4 +1,4 @@
-import { useEvents, useVenues } from '../../api/api';
+import { useEvents, useVenues } from '../../hooks/api';
 
 const EventList = () => {
   const [eventsByVenue, eventsByDate, eventTypes] = useEvents();

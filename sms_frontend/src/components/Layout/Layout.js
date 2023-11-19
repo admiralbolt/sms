@@ -13,27 +13,10 @@ import InfoIcon from '@mui/icons-material/Info';
 
 import './Layout.css';
 
-
-const drawerWidth = 240;
-const navItems = [
-  {
-    'link': 'map',
-    'icon': 'FaMapLocationDot'
-  },
-  {
-    'link': 'calendar',
-    'icon': 'FaCalendar'
-  },
-  {
-    'link': 'about',
-    'icon': 'FaCircleInfo'
-  }
-];
-
 const NavBar = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="fixed" sx={{ zIndex: 999999}}>
         <Toolbar>
           <Link to="/map">
             <IconButton
