@@ -3,8 +3,6 @@ import './Map.css';
 
 import MapData from './MapData.js';
 
-import axios from 'axios';
-
 import { useMap, useMapEvents, MapContainer, TileLayer, Marker, Popup, Tooltip, Circle } from 'react-leaflet'
 
 const SHOW_COLOR = '#0070ff';
