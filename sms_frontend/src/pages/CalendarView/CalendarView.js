@@ -1,6 +1,7 @@
+import EventList from '../../components/EventList/EventList.js';
 
 const CalendarView = () => {
-  return (<h1>CALENDAR</h1>);
+  return (<EventList />);
 }
 
 export default CalendarView;
