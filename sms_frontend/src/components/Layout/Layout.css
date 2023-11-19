@@ -1,0 +1,45 @@
+#sms-nav {
+  top: 0;
+  position: fixed;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: calc(10vh + 10px);
+  background-color: magenta;
+  z-index: 999;
+}
+
+#sms-nav ul {
+  height: 100%;
+}
+
+#sms-nav ul li {
+  float: left;
+  margin-left: 20px;
+  margin-right: 20px;
+  list-style-type: none;
+  border: 1px solid black;
+  height: 100%;
+}
+
+#sms-nav ul li a {
+  text-decoration: none;
+  height: 100%;
+  display: flex;
+  font-size: 32px;
+  padding: 5px;
+  align-items: center;
+  justify-items: center;
+}
+
+#sms-content {
+  margin-top: 10vh;
+  position: absolute;
+}
+
+.flex-center {
+  display: flex;
+  margin: auto;
+  align-items: center;
+  justify-items: center;
+}
