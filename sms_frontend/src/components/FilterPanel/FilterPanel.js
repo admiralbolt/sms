@@ -1,27 +1,28 @@
 import React, { useState } from 'react';
-import SlidingPanel from 'react-sliding-side-panel';
+
+import { useEvents, useVenues } from '../../api/api';
 
 import './FilterPanel.css';
 
 const FilterPanel = () => {
-  const [openPanel, setOpenPanel] = useState(true);
+  const [eventsByVenue, eventsByDate, eventTypes] = useEvents();
+  const [venues, venueTypes] = useVenues();
+
   return (
     <div class='filter-panel-wrapper'>
-      <div>
-        <button onClick={() => setOpenPanel(true)}>Open</button>
-      </div>
-      <SlidingPanel
-        type={'left'}
-        isOpen={openPanel}
-        size={30}
-      >
-        <div>
-          <h1>MY PANEL CONTENT</h1>
-          <button onClick={() => setOpenPanel(false)}>close</button>
-        </div>
-      </SlidingPanel>
+      <ul>
+        {eventTypes.map((type) => (
+          <li>{type}</li>
+        ))}
+      </ul>
+
+      <ul>
+        {venueTypes.map((type) => (
+          <li>{type}</li>
+        ))}
+      </ul>
     </div>
-  );
+  )
 };
  
 export default FilterPanel

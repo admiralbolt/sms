@@ -1,8 +1,8 @@
 import { useEvents, useVenues } from '../../api/api';
 
 const EventList = () => {
-  const [eventsByVenue, eventsByDate] = useEvents();
-  const [venues] = useVenues();
+  const [eventsByVenue, eventsByDate, eventTypes] = useEvents();
+  const [venues, venueTypes] = useVenues();
 
   console.log('(EventList) keys.length: ' + Object.keys(eventsByDate).length);
 
