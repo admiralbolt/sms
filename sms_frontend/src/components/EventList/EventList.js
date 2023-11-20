@@ -1,20 +1,14 @@
-import { useEvents, useVenues } from '../../hooks/api';
+import { useFilteredEvents } from '../../hooks/filteredData';
 
 const EventList = () => {
-  const [eventsByVenue, eventsByDate, eventTypes] = useEvents();
-  const [venues, venueTypes] = useVenues();
+  const filteredEvents = useFilteredEvents();
 
-  console.log('(EventList) keys.length: ' + Object.keys(eventsByDate).length);
+  console.log(filteredEvents.length);
 
   return (
     <>
-    {Object.keys(eventsByDate).map((day) => (
-      <div key={day}>
-        <h2>{day}</h2>
-        {eventsByDate[day].map((event) => (
-          <p key={event.id}>{event.title}</p>
-        ))}
-      </div>
+    {filteredEvents.map((event) => (
+      <p key={event.id}>{event.title}</p>
     ))}
     </>
   )
