@@ -28,7 +28,7 @@ const useFilteredEvents = () => {
         return selectedEventTypes.includes(event.event_type)
       }));
     }
-  }, [eventsByDate, selectedEventTypes]);
+  }, [eventsByDate, selectedEventTypes, selectedDate]);
 
   return filteredEvents;
 }
