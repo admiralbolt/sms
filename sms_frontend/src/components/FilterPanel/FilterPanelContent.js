@@ -27,7 +27,7 @@ import { LocalStorageContextProvider } from '../../contexts/LocalStorageContext'
 const FilterPanelContent = () => {
   const [eventsByVenue, eventsByDate, eventTypes] = useEvents();
   const [venues, venueTypes] = useVenues();
-  const { selectedEventTypes, setSelectedEventTypes, selectedVenueTypes, setSelectedVenueTypes } = useContext(LocalStorageContext);
+  const { selectedEventTypes, setSelectedEventTypes, selectedVenueTypes, setSelectedVenueTypes, selectedDate, setSelectedDate } = useContext(LocalStorageContext);
 
   const updateEventFilters = (event) => {
     if (event.target.checked && !selectedEventTypes.includes(event.target.value)) {
@@ -51,7 +51,7 @@ const FilterPanelContent = () => {
     <Box sx={{ overflow: 'auto' }}>
       <Typography>Date</Typography>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DatePicker defaultValue={dayjs('2022-04-17')} />
+        <DatePicker onChange={(newValue) => setSelectedDate(newValue)} defaultValue={selectedDate} />
       </LocalizationProvider>
 
       <Typography>Event Types</Typography>
