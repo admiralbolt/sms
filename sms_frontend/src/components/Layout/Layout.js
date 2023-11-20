@@ -3,10 +3,7 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import MapIcon from '@mui/icons-material/Map';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import InfoIcon from '@mui/icons-material/Info';
@@ -53,30 +50,10 @@ const NavBar = () => {
           </Link>
         </Toolbar>
       </AppBar>
+      <Toolbar />
       <Outlet />
     </Box>
   );
 }
-
-
-//   return (
-//     <>
-    
-//       <nav id="sms-nav">
-//         <ul>
-//           <li><Link to="/map">
-//               <FaMapLocationDot />
-//           </Link></li>
-//           <li><Link to="/calendar">Calendar</Link></li>
-//           <li><Link to="/about">About</Link></li>
-//         </ul>
-//       </nav>
-
-//       <div id="sms-content">
-//         <Outlet />
-//       </div>
-//     </>
-//   );
-// }
 
 export default NavBar;

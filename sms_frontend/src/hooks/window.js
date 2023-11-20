@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 
+const MOBILE_THRESHOLD = 600;
+
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
   return {
@@ -10,7 +12,7 @@ function getWindowDimensions() {
   };
 }
 
-export default function useWindowDimensions() {
+const useWindowDimensions = () => {
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
   useEffect(() => {
@@ -24,3 +26,16 @@ export default function useWindowDimensions() {
 
   return windowDimensions;
 }
+
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  const { height, width } = useWindowDimensions();
+
+  useEffect(() => {
+    setIsMobile(width <= MOBILE_THRESHOLD);
+  });
+
+  return isMobile;
+}
+
+export { useWindowDimensions, useIsMobile };
