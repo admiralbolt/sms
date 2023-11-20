@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import { useEvents, useVenues } from '../../hooks/api';
 import { useIsMobile } from '../../hooks/window';
 
 import Drawer from '@mui/material/Drawer';
@@ -13,30 +12,12 @@ const drawerWidth = 240;
 const drawerBleeding = 30;
 
 const FilterPanel = () => {
-  const [eventsByVenue, eventsByDate, eventTypes] = useEvents();
-  const [venues, venueTypes] = useVenues();
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
-
-  // return (
-  //   <div class='filter-panel-wrapper'>
-  //     <ul>
-  //       {eventTypes.map((type) => (
-  //         <li>{type}</li>
-  //       ))}
-  //     </ul>
-
-  //     <ul>
-  //       {venueTypes.map((type) => (
-  //         <li>{type}</li>
-  //       ))}
-  //     </ul>
-  //   </div>
-  // )
 
   if (!isMobile) {
     return (
