@@ -59,12 +59,4 @@ const useVenues = () => {
   return [venues, venueTypes];
 }
 
-const hasShow = (events, venue, date) => {
-  if (!(venue.id in events)) return false;
-  if (!(date in events[venue.id])) return false;
-
-  return true;
-}
-
-
-export { hasShow, useEvents, useVenues};
+export { useEvents, useVenues};

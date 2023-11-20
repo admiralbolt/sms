@@ -10,7 +10,7 @@ import { useMap, useMapEvents, MapContainer, TileLayer, Marker, Popup, Tooltip, 
 const position = [47.65113, -122.3400];
 const zoom = 13;
 
-const Map = ({ date }) => {
+const Map = () => {
   const { height, width } = useWindowDimensions();
   const isMobile = useIsMobile();
   const appBarHeight = useAppBarHeight();
@@ -25,7 +25,7 @@ const Map = ({ date }) => {
         scrollWheelZoom={false}
         touchZoom={true}
       >
-        <MapData date={date} />
+        <MapData />
       </MapContainer>
     </div>
   );

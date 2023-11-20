@@ -33,4 +33,19 @@ const useFilteredEvents = () => {
   return filteredEvents;
 }
 
-export { useFilteredEvents, useFilteredVenues }
+const useFilteredEventsByVenue = () => {
+  const [filteredEventsByVenue, setFilteredEventsByVenue] = useState({});
+  const filteredEvents = useFilteredEvents();
+
+  useEffect(() => {
+    let eventMap = {};
+    filteredEvents.forEach((event) => {
+      eventMap[event.venue] = event;
+    });
+    setFilteredEventsByVenue(eventMap);
+  }, [filteredEvents]);
+
+  return filteredEventsByVenue;
+}
+
+export { useFilteredEvents, useFilteredEventsByVenue, useFilteredVenues }

@@ -7,7 +7,7 @@ const MapView = () => {
   return (
     <div>
       <FilterPanel />
-      <Map date="2023-11-29" />
+      <Map />
     </div>
   );
 }
