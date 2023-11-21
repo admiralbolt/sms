@@ -7,7 +7,7 @@ const EventList = () => {
   const filteredEvents = useFilteredEvents();
 
   return (
-    <Box sx={{ padding: 1.5 }}>
+    <Box>
       {filteredEvents.map((event) => (
         <EventDetail venue={filteredVenues[event.venue]} event={event} />
       ))}

@@ -20,7 +20,6 @@ const NavBar = () => {
   const { drawerOpen, setDrawerOpen } = useContext(DrawerContext);
 
   const huh = () => {
-    console.log("HUH");
     setDrawerOpen(!drawerOpen);
   }
 
