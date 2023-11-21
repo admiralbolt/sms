@@ -8,7 +8,7 @@ import FilterPanelContent from './FilterPanelContent.js';
 
 import './FilterPanel.css';
 
-const drawerWidth = 240;
+const drawerWidth = 280;
 const drawerBleeding = 30;
 
 const FilterPanel = () => {

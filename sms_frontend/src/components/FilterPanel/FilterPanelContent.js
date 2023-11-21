@@ -48,53 +48,27 @@ const FilterPanelContent = () => {
   return (
     <>
     <Toolbar />
-    <Box sx={{ overflow: 'auto' }}>
+    <Box sx={{ overflow: 'auto', padding: 1 }}>
       <Typography>Date</Typography>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker onChange={(newValue) => setSelectedDate(newValue)} defaultValue={selectedDate} />
       </LocalizationProvider>
 
-      <Typography>Event Types</Typography>
+      <Typography sx={{ marginTop: 1 }}>Event Types</Typography>
+      <Divider />
       <FormGroup id="event-type-filters">
         {eventTypes.map((type) => (
           <FormControlLabel key={type} control={<Checkbox checked={selectedEventTypes.includes(type)} value={type} onChange={updateEventFilters} />} label={type} />
         ))}
       </FormGroup>
 
-      <Typography>Venue Types</Typography>
+      <Typography sx={{ marginTop: 1 }}>Venue Types</Typography>
+      <Divider />
       <FormGroup id="venue-type-filters">
         {venueTypes.map((type) => (
           <FormControlLabel key={type} control={<Checkbox checked={selectedVenueTypes.includes(type)} value={type} onChange={updateVenueFilters} />} label={type} />
         ))}
       </FormGroup>
-
-
-
-      {/* <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List> */}
     </Box>
     </>
   );
