@@ -1,13 +1,15 @@
-import { useFilteredEvents } from '../../hooks/filteredData';
+import { useFilteredEvents, useFilteredVenues } from '../../hooks/filteredData';
 import { Box } from '@mui/material';
+import EventDetail from './EventDetail';
 
 const EventList = () => {
+  const filteredVenues = useFilteredVenues();
   const filteredEvents = useFilteredEvents();
 
   return (
     <Box sx={{ padding: 1.5 }}>
       {filteredEvents.map((event) => (
-        <p key={event.id}>{event.title}</p>
+        <EventDetail venue={filteredVenues[event.venue]} event={event} />
       ))}
     </Box>
   )

@@ -5,12 +5,18 @@ import { useContext, useEffect, useState } from 'react';
 const useFilteredVenues = () => {
   const [venues, venueTypes] = useVenues();
   const { selectedEventTypes, setSelectedEventTypes, selectedVenueTypes, setSelectedVenueTypes, selectedDate, setSelectedDate } = useContext(LocalStorageContext);
-  const [filteredVenues, setFilteredVenues] = useState([]);
+  const [filteredVenues, setFilteredVenues] = useState({});
 
   useEffect(() => {
-    setFilteredVenues(venues.filter((venue) => {
-      return selectedVenueTypes.includes(venue.venue_type);
-    }));
+    let tmpVenues = {};
+
+    venues.forEach((venue) => {
+      if (!selectedVenueTypes.includes(venue.venue_type)) return;
+
+      tmpVenues[venue.id] = venue;
+    });
+
+    setFilteredVenues(tmpVenues);
   }, [venues, selectedVenueTypes]);
   
   return filteredVenues;
