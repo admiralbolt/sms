@@ -17,8 +17,6 @@ const FilterPanel = () => {
   const isMobile = useIsMobile();
   const { drawerOpen, setDrawerOpen } = useContext(DrawerContext);
 
-  console.log(drawerOpen);
-
   const closeDrawer = (set) => () => {
     setDrawerOpen(set);
   }
