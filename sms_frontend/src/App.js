@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 import Layout from './components/Layout/Layout.js';
 import AboutView from './pages/AboutView/AboutView.js';
-import CalendarView from './pages/CalendarView/CalendarView.js';
+import ListView from './pages/ListView/ListView.js';
 import MapView from './pages/MapView/MapView.js';
 
 import { LocalStorageContextProvider } from './contexts/LocalStorageContext.js';
@@ -24,7 +24,7 @@ const App = () => {
               <Route path="/" element={<Layout />}>
                 <Route index element={<Navigate to="/map" />} />
                 <Route path="map" element={<MapView />} />
-                <Route path="calendar" element={<CalendarView />} />
+                <Route path="list" element={<ListView />} />
                 <Route path="about" element={<AboutView />} />
               </Route>
             </Routes>

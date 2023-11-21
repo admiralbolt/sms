@@ -1,14 +1,15 @@
 import { useFilteredEvents } from '../../hooks/filteredData';
+import { Box } from '@mui/material';
 
 const EventList = () => {
   const filteredEvents = useFilteredEvents();
 
   return (
-    <>
-    {filteredEvents.map((event) => (
-      <p key={event.id}>{event.title}</p>
-    ))}
-    </>
+    <Box sx={{ padding: 1.5 }}>
+      {filteredEvents.map((event) => (
+        <p key={event.id}>{event.title}</p>
+      ))}
+    </Box>
   )
 }
 

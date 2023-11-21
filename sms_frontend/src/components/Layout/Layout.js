@@ -6,6 +6,7 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import MapIcon from '@mui/icons-material/Map';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import ListIcon from '@mui/icons-material/List';
 import InfoIcon from '@mui/icons-material/Info';
 
 import './Layout.css';
@@ -19,29 +20,29 @@ const NavBar = () => {
             <IconButton
               size="large"
               edge="start"
-              color="inherit"
+              color="primary"
               aria-label="menu"
               sx={{ mr: 4 }}
             >
               <MapIcon />
             </IconButton>
           </Link>
-          <Link to="/calendar">
+          <Link to="/list">
             <IconButton
               size="large"
               edge="start"
-              color="inherit"
+              color="primary"
               aria-label="menu"
               sx={{ mr: 4 }}
             >
-              <CalendarMonthIcon />
+              <ListIcon />
             </IconButton>
           </Link>
           <Link to="/about">
             <IconButton
               size="large"
               edge="start"
-              color="inherit"
+              color="primary"
               aria-label="menu"
               sx={{ mr: 4 }}
             >
