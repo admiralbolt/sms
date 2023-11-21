@@ -3,9 +3,22 @@
   width: 100%;
 }
 
+/**
+ * You know whenever you start slapping !important on css rules it's gonna be
+ * a good time.
+ */
 .leaflet-tooltip {
-  width: 300px;
-  text-wrap: wrap;
+  border: rgb(37, 37, 47) !important;
+  background-color: rgb(37, 37, 47) !important;
+  color: white !important;
+}
+
+.leaflet-tooltip-left::before {
+  border-left-color: rgb(37, 37, 47) !important;
+}
+
+.leaflet-tooltip-right::before {
+  border-right-color: rgb(37, 37, 47) !important;
 }
 
 .venue-name {

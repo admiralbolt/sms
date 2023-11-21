@@ -7,6 +7,8 @@ import { useFilteredEventsByVenue, useFilteredVenues } from '../../hooks/filtere
 
 import { useIsMobile } from '../../hooks/window';
 
+import { Box, Typography } from '@mui/material';
+
 const SHOW_COLOR = '#0070ff';
 const OPEN_MIC_COLOR = '#ee6600';
 const NO_EVENT_COLOR = '#989898';
@@ -68,24 +70,15 @@ const Map = ({ setBannerOpen, setSelectedEvent, setSelectedVenue }) => {
           color: event.event_type == 'Open Mic' ? OPEN_MIC_COLOR : SHOW_COLOR,
           fillColor: event.event_type == 'Open Mic' ? OPEN_MIC_COLOR : SHOW_COLOR,
         }}
+        
         eventHandlers={{ click: (e) => handleEventClick(e, venue, event)}}
         radius={circleSize}
       >
         {!isMobile &&
           <Tooltip>
-            <h2 className='venue-name'>{venue.name}</h2>
-            <hr />
-            <p className='venue-address'>{venue.address}</p>
-            <p className='venu-description'>"{venue.description}"</p>
-            <div>
-              <hr />
-              <b>SHOW TONIGHT!</b>
-              <div className='show-info'>
-                <p className='show-title'>{event.title}</p>
-                <p className='show-time'>Music Starts at {formatTime(event.start_time)}</p>
-                <p className='show-price'>{getTicketPrice(event)}</p>
-              </div>
-            </div>
+            <Box>
+              <Typography>{venue.name}</Typography>
+            </Box>
           </Tooltip>
         }
       </Circle>
