@@ -7,17 +7,21 @@ import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import FilterPanelContent from './FilterPanelContent.js';
 
 import './FilterPanel.css';
+import { DrawerContext } from '../../contexts/DrawerContext.js';
+import { useContext } from 'react';
 
 const drawerWidth = 280;
 const drawerBleeding = 30;
 
 const FilterPanel = () => {
   const isMobile = useIsMobile();
-  const [open, setOpen] = useState(false);
+  const { drawerOpen, setDrawerOpen } = useContext(DrawerContext);
 
-  const toggleDrawer = (newOpen) => () => {
-    setOpen(newOpen);
-  };
+  console.log(drawerOpen);
+
+  const closeDrawer = (set) => () => {
+    setDrawerOpen(set);
+  }
 
   if (!isMobile) {
     return (
@@ -37,9 +41,9 @@ const FilterPanel = () => {
 
   return ( <SwipeableDrawer
         anchor="right"
-        open={open}
-        onClose={toggleDrawer(false)}
-        onOpen={toggleDrawer(true)}
+        open={drawerOpen}
+        onClose={closeDrawer(false)}
+        onOpen={closeDrawer(true)}
         swipeAreaWidth={drawerBleeding}
         disableSwipeToOpen={false}
         ModalProps={{

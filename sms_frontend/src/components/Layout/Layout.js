@@ -8,10 +8,22 @@ import MapIcon from '@mui/icons-material/Map';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ListIcon from '@mui/icons-material/List';
 import InfoIcon from '@mui/icons-material/Info';
-
+import { useContext } from 'react';
+import { LocalStorageContext } from '../../contexts/LocalStorageContext';
 import './Layout.css';
+import { Typography } from '@mui/material';
+import { useDrawer } from '../../hooks/materialHacks';
+import { DrawerContext } from '../../contexts/DrawerContext';
 
 const NavBar = () => {
+  const { selectedDate } = useContext(LocalStorageContext);
+  const { drawerOpen, setDrawerOpen } = useContext(DrawerContext);
+
+  const huh = () => {
+    console.log("HUH");
+    setDrawerOpen(!drawerOpen);
+  }
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" sx={{ zIndex: 999999}}>
@@ -49,6 +61,11 @@ const NavBar = () => {
               <InfoIcon />
             </IconButton>
           </Link>
+          <Box style={{ flex: 1}}>
+            <Typography onClick={huh} style={{ float: "right" }}>
+              {selectedDate.format('ddd, MMM. D')}
+            </Typography>
+          </Box>
         </Toolbar>
       </AppBar>
       <Toolbar />
