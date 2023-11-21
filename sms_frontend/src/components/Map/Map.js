@@ -10,7 +10,6 @@ import { useMap, useMapEvents, MapContainer, TileLayer, Marker, Popup, Tooltip, 
 import { Box, Button, Fade, Paper, Stack, Typography } from '@mui/material';
 import EventDetail from '../EventList/EventDetail.js';
 
-const position = [47.65113, -122.3400];
 const zoom = 13;
 
 const Map = () => {
@@ -19,6 +18,7 @@ const Map = () => {
   const appBarHeight = useAppBarHeight();
   const filterPanelWidth = useFilterPanelWidth();
 
+  const [mapPosition, setMapPosition] = useState([47.65113, -122.3400]);
   const [bannerOpen, setBannerOpen] = React.useState(false);
   const [selectedEvent, setSelectedEvent] = React.useState({});
   const [selectedVenue, setSelectedVenue] = React.useState({});
@@ -43,13 +43,13 @@ const Map = () => {
   return (
     <div className="map-container" style={{ height: `${height - appBarHeight}px`, width: `${(isMobile) ? width : width - filterPanelWidth}px` }}>
       <MapContainer
-        center={position}
+        center={mapPosition}
         zoom={zoom}
         zoomControl={false}
         scrollWheelZoom={false}
         touchZoom={true}
       >
-        <MapData setBannerOpen={setBannerOpen} setSelectedEvent={setSelectedEvent} setSelectedVenue={setSelectedVenue} />
+        <MapData setBannerOpen={setBannerOpen} setSelectedEvent={setSelectedEvent} setSelectedVenue={setSelectedVenue} setMapPosition={setMapPosition} />
       </MapContainer>
 
       <Fade appear={false} in={bannerOpen}>

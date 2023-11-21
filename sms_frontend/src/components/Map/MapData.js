@@ -19,7 +19,8 @@ const CIRCLE_SIZES = [
   100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
   100, 80,  80,  80,  60,  37,  25,  20,  20]
 
-const Map = ({ setBannerOpen, setSelectedEvent, setSelectedVenue }) => {
+const Map = ({ setBannerOpen, setSelectedEvent, setSelectedVenue, setMapPosition }) => {
+  const map = useMap();
   const filteredVenues = useFilteredVenues();
   const filteredEventsByVenue = useFilteredEventsByVenue();
   const isMobile = useIsMobile();
@@ -37,6 +38,20 @@ const Map = ({ setBannerOpen, setSelectedEvent, setSelectedVenue }) => {
   });
 
   const handleEventClick = (e, venue, event) => {
+    // We want to center the clicked circle on screen. The math for this gets
+    // a little fuzzy. Depends on if we are on mobile or desktop, and we need
+    // to adjust the final latitude and longitude accordingly.
+    let latlng = [e.latlng.lat, e.latlng.lng];
+    const zoomScale = map.getZoomScale(defaultZoom, map.getZoom());
+    if (isMobile) {
+      latlng[0] -= .02 * zoomScale;
+    } else {
+      latlng[0] -= .022 * zoomScale;
+      latlng[1] += .015 * zoomScale;
+    }
+
+    setMapPosition(latlng);
+    map.flyTo(latlng);
     e.originalEvent.view.L.DomEvent.stopPropagation(e);
     setSelectedVenue(venue);
     setSelectedEvent(event);
