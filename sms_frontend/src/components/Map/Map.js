@@ -23,6 +23,23 @@ const Map = () => {
   const [selectedEvent, setSelectedEvent] = React.useState({});
   const [selectedVenue, setSelectedVenue] = React.useState({});
 
+  const eventBox = () => {
+    if (isMobile) {
+      return (
+        <Box sx={{ display: "flex", justifyContent: "center", flex: 1, zIndex: 100000, position: "fixed", bottom: 0, margin: "auto"}}>
+          <EventDetail venue={selectedVenue} event={selectedEvent} />
+        </Box>
+      );
+    }
+
+    const pct = 100 * (width - filterPanelWidth) / (width * 2);
+    return (
+      <Box sx={{ left: `${pct}%`, transform: `translate(-${pct}%, 0)`, display: "flex", justifyContent: "center", flex: 1, zIndex: 100000, position: "fixed", bottom: 0, margin: "auto"}}>
+        <EventDetail venue={selectedVenue} event={selectedEvent} />
+      </Box>
+    );
+  }
+
   return (
     <div className="map-container" style={{ height: `${height - appBarHeight}px`, width: `${(isMobile) ? width : width - filterPanelWidth}px` }}>
       <MapContainer
@@ -36,9 +53,7 @@ const Map = () => {
       </MapContainer>
 
       <Fade appear={false} in={bannerOpen}>
-        <Box sx={{ display: "flex", justifyContent: "center", flex: 1, zIndex: 100000, position: "fixed", bottom: 0, margin: "auto"}}>
-          <EventDetail venue={selectedVenue} event={selectedEvent} />
-        </Box>
+        {eventBox()}
       </Fade>
     </div>
   );
