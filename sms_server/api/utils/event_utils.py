@@ -7,6 +7,7 @@ import deepdiff
 from api.constants import IngestionApis
 from api.models import Event, Venue
 from api.serializers import EventSerializer
+from api.utils import diff_utils
 
 logger = logging.getLogger(__name__)
 
@@ -14,55 +15,12 @@ def get_event(venue: Venue, event_day: str="", start_time: str=""):
   """Get event object by venue, day, and start_time."""
   return Event.objects.filter(venue=venue, event_day=event_day, start_time=start_time).first()
 
-def apply_diff(event: Event, values_changed: dict, fields: Optional[list[str]]=None) -> Event:
-  """Apply a diff to an event based on the provided fields.
-
-  If fields is left empty, all are applied.
-  """
-  fields = [f"root['{field}']" for field in fields] or values_changed.keys()
-  for field in fields:
-    proper_field_name = field.split("'")[1]
-    setattr(event, proper_field_name, values_changed[field]["new_value"])
-  return event
-
-
 def handle_open_mic_gen_diff(event: Event, values_changed: dict) -> Event:
   """Handle open mic event generation for events that are already in the API."""
   if values_changed.get("root['event_api']", {}).get("new_value", None) != IngestionApis.OPEN_MIC_GENERATOR:
     return event
   
-  event = apply_diff(event, values_changed, fields=["event_type", "title", "event_api"])
-
-def handle_new_fields_diff(event: Event, values_changed: dict) -> Event:
-  """If new fields are added, add them!
-
-  This time if they are "changed" i.e. we go from an empty to field to one that
-  has stuff in it.
-  """
-  fields_to_change = []
-  for field_with_root, info in values_changed.items():
-    if info["old_value"] or not info["new_value"]:
-      continue
-
-    fields_to_change.append(field_with_root.split("'")[1])
-  
-  if fields_to_change:
-    apply_diff(event, values_changed, fields=fields_to_change)
-
-  return event
-
-def handle_new_fields(event: Event, new_event_data: dict, diff: deepdiff.DeepDiff) -> Event:
-  """If new fields are added, add them!"""
-  fields_added = diff.get("dictionary_item_added", [])
-  if not fields_added:
-    return event
-  
-  for field_with_root in fields_added:
-    field = field_with_root.split("'")[1]
-    setattr(event, field, new_event_data[field])
-
-  event.save()
-  return event
+  event = diff_utils.apply_diff(event, values_changed, fields=["event_type", "title", "event_api"])
 
   
 
@@ -106,7 +64,9 @@ def create_or_update_event(venue: Venue, **kwargs) -> Event:
   )
 
   # If brand new fields are added, add them!
-  handle_new_fields(event, new_event_serialized, diff)
+  changed, _ = diff_utils.handle_new_fields(event, new_event_serialized, diff)
+  if changed:
+    event.save()
 
   # If there's no diff, nothing else to do!
   values_changed = diff.get("values_changed", None)
@@ -122,7 +82,7 @@ def create_or_update_event(venue: Venue, **kwargs) -> Event:
   logger.warning(event)
 
   # Handle "new" fields. Cases where old fields are blank / empty strings.
-  handle_new_fields_diff(event, values_changed)
+  diff_utils.handle_new_fields_diff(event, values_changed)
 
   # In some cases open mics are listed as events in the API. When we generate
   # open mic events we want to override the existing event.

@@ -13,13 +13,15 @@ import os
 
 from pathlib import Path
 
-# SOME API KEY THINGS THAT NEED TO BE SET.
+# LOCAL SETTINGS!
 # Put these in a file called `local_settings.py` so they can be loaded.
-# The values to include are:
+# API Keys to include are:
 #  * BANDSINTOWN_APP_ID
 #  * EVENTBRITE_TOKEN
 #  * TICKET_MASTER_API_KEY
 #  * TIXR_CLIENTS - This should be a list of tuples of the form (name, venue_id, client_key)
+# Other important settings:
+#  * MEDIA_ROOT
 from .local_settings import *  # pylint: disable=wildcard-import,unused-wildcard-import
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -204,4 +206,4 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/uploads/'
-MEDIA_ROOT = '/Users/admiralbolt/misc/'
+MEDIA_ROOT = MEDIA_ROOT
