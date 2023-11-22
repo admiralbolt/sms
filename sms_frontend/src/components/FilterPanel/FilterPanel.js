@@ -1,12 +1,9 @@
-import React, { useState } from 'react';
-
 import { useIsMobile } from '../../hooks/window';
 
 import Drawer from '@mui/material/Drawer';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import FilterPanelContent from './FilterPanelContent.js';
 
-import './FilterPanel.css';
 import { DrawerContext } from '../../contexts/DrawerContext.js';
 import { useContext } from 'react';
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './MapData.css';
 
-import { useMap, useMapEvents, MapContainer, TileLayer, Marker, Popup, Tooltip, Circle } from 'react-leaflet'
+import { useMap, useMapEvents, TileLayer, Tooltip, Circle } from 'react-leaflet'
 
 import { useFilteredEventsByVenue, useFilteredVenues } from '../../hooks/filteredData';
 

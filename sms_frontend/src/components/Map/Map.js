@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import './Map.css';
+import React, { useState } from 'react';
 
 import MapData from './MapData.js';
 import { useIsMobile, useWindowDimensions } from '../../hooks/window';
 import { useAppBarHeight, useFilterPanelWidth } from '../../hooks/materialHacks';
 
-import { useMap, useMapEvents, MapContainer, TileLayer, Marker, Popup, Tooltip, Circle } from 'react-leaflet'
+import { MapContainer } from 'react-leaflet'
 
-import { Box, Button, Fade, Paper, Stack, Typography } from '@mui/material';
+import { Box, Fade } from '@mui/material';
 import EventDetail from '../EventList/EventDetail.js';
 
 const zoom = 13;

@@ -1,18 +1,14 @@
 import { Outlet, Link } from 'react-router-dom';
-import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import MapIcon from '@mui/icons-material/Map';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ListIcon from '@mui/icons-material/List';
 import InfoIcon from '@mui/icons-material/Info';
 import { useContext } from 'react';
 import { LocalStorageContext } from '../../contexts/LocalStorageContext';
-import './Layout.css';
 import { Typography } from '@mui/material';
-import { useDrawer } from '../../hooks/materialHacks';
 import { DrawerContext } from '../../contexts/DrawerContext';
 
 const NavBar = () => {

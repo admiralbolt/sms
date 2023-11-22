@@ -1,11 +1,8 @@
-import { Divider, Link, Typography } from '@mui/material';
+import { Link, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import FilterPanel from '../../components/FilterPanel/FilterPanel';
-import { useIsMobile } from '../../hooks/window';
 
 const AboutView = () => {
-  const isMobile = useIsMobile();
-
   return (
     <>
     <FilterPanel />

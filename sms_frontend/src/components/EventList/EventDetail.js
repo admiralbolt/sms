@@ -2,9 +2,6 @@ import { Box, Card, CardMedia, Link, Typography } from '@mui/material';
 import PlaceIcon from '@mui/icons-material/Place';
 import LinkIcon from '@mui/icons-material/Link';
 import IconButton from '@mui/material/IconButton';
-import Divider from '@mui/material/Divider';
-
-
 
 const EventDetail = ({ venue, event}) => {
 
