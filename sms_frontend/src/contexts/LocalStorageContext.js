@@ -8,7 +8,12 @@ const loadFromStorage = (key, defaultValue) => {
 
 const loadDateFromStorage = (key, defaultValue) => {
   const item = localStorage.getItem(key);
-  return (item && item != "undefined") ? dayjs(item) : dayjs(defaultValue);
+  const today = dayjs(dayjs().format('YYYY-MM-DD'));
+
+  if (!item || item == "undefined") return today;
+
+  const day = dayjs(item);
+  return (day.isBefore(today)) ? today : day;
 }
 
 const LocalStorageContext = createContext();
@@ -16,7 +21,7 @@ const LocalStorageContext = createContext();
 const LocalStorageContextProvider = ({ children }) => {
   const [selectedEventTypes, setSelectedEventTypes] = useState(loadFromStorage('selectedEventTypes', []));
   const [selectedVenueTypes, setSelectedVenueTypes] = useState(loadFromStorage('selectedVenueTypes', []));
-  const [selectedDate, setSelectedDate] = useState(loadDateFromStorage('selectedDate'), dayjs().format('YYYY-MM-DD'));
+  const [selectedDate, setSelectedDate] = useState(loadDateFromStorage('selectedDate'));
 
   useEffect(() => {
     localStorage.setItem('selectedEventTypes', JSON.stringify(selectedEventTypes));
