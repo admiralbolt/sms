@@ -1,6 +1,8 @@
 """Database models."""
 import re
+import requests
 
+from django.core.files.base import ContentFile
 from django.db import models
 
 from api.constants import get_choices, EventTypes, IngestionApis, OpenMicTypes, VenueTypes
@@ -26,6 +28,7 @@ class Venue(models.Model):
   city = models.CharField(max_length=64)
   venue_type = models.CharField(max_length=32, choices=get_choices(VenueTypes), default="Bar")
   venue_url = models.CharField(max_length=256, blank=True, null=True)
+  venue_image_url = models.CharField(max_length=256, blank=True, null=True)
   venue_image = models.ImageField(upload_to="venue_images", blank=True)
 
   # Optional.
@@ -38,6 +41,19 @@ class Venue(models.Model):
   # 2) Turning off / on data gathering for the venue.
   show_venue = models.BooleanField(default=True)
   gather_data = models.BooleanField(default=True)
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self._original_venue_image_url = self.venue_image_url
+
+  def save(self, force_insert=False, force_update=False, *args, **kwargs):
+    super().save(force_insert, force_update, *args, **kwargs)
+    if self.venue_image_url != self._original_venue_image_url:
+      image_request = requests.get(self.venue_image_url)
+      file_extension = image_request.headers["Content-Type"].split("/")[1]
+      content_file = ContentFile(image_request.content)
+      self._original_venue_image_url = self.venue_image_url
+      self.venue_image.save(f"{self.name}.{file_extension}", content_file)
 
   def __str__(self):
     return self.name
