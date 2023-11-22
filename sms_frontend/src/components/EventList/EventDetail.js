@@ -15,13 +15,19 @@ const EventDetail = ({ venue, event}) => {
     );
   }
 
+  const displayImage = () => {
+    if (event.event_image) return event.event_image;
+
+    return `${process.env.PUBLIC_URL}/placeholder.jpeg`
+  }
+
   return (
-    <Card sx={{ display: 'flex', flexDirection: 'column', margin: 1, padding: 1.5, maxWidth: 'sm' }}>
+    <Card key={event.id} sx={{ display: 'flex', flexDirection: 'column', margin: 1, padding: 1.5, maxWidth: 'sm' }}>
       <Box position="relative">
         <CardMedia
           component="img"
-          image={`${process.env.PUBLIC_URL}/placeholder.jpeg`}
-          sx={{ filter: "brightness(65%)" }}
+          image={displayImage()}
+          sx={{ filter: "brightness(65%)", maxWidth: 576, maxHeight: 288 }}
         />
         <Typography sx={{ width: "100%", top: 0, position: "absolute", fontWeight: "bold", fontSize: "1rem", zIndex: 10, textAlign: "center"}}>{event.title}</Typography>
       </Box>
