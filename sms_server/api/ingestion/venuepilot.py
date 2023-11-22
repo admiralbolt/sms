@@ -85,31 +85,28 @@ def event_list_request(min_start_date: Optional[str]=None, page: int=0):
   }
   return requests.post("https://www.venuepilot.co/graphql", headers=headers, json=data, timeout=15).json()
 
-def get_or_create_venue(venue_data: dict, debug: bool=False) -> Venue:
-  """Get or create a venue!"""
-  address = venue_data["street1"]
-  if venue_data["street2"]:
-    address += f" {venue_data['street2']}"
-
-  return venue_utils.get_or_create_venue(
-    name=venue_data["name"],
-    latitude=venue_data["lat"],
-    longitude=venue_data["long"],
-    address=address,
-    postal_code=venue_data["postal"],
-    city=venue_data["city"],
-    api_name="Venuepilot",
-    api_id=venue_data["id"],
-    debug=debug,
-  )
-
 def process_event_list(event_list, debug: bool=False) -> None:
   """Process a list of events from venuepilot."""
   for event in event_list["data"]["paginatedEvents"]["collection"]:
     if event["venue"]["city"].lower() != "seattle":
       continue
 
-    venue = get_or_create_venue(event["venue"], debug=debug)
+    venue_data = event["venue"]
+    address = venue_data["street1"]
+    if venue_data["street2"]:
+      address += f" {venue_data['street2']}"
+    venue = venue_utils.create_or_update_venue(
+      name=venue_data["name"],
+      latitude=venue_data["lat"],
+      longitude=venue_data["long"],
+      address=address,
+      postal_code=venue_data["postal"],
+      city=venue_data["city"],
+      api_name="Venuepilot",
+      api_id=venue_data["id"],
+      debug=debug,
+    )
+
     event_utils.create_or_update_event(
       venue=venue,
       title=event["name"],
@@ -119,7 +116,8 @@ def process_event_list(event_list, debug: bool=False) -> None:
       ticket_price_max=event["priceMax"] or 0,
       event_api=IngestionApis.VENUEPILOT,
       event_url=event["ticketsUrl"],
-      description=event["description"]
+      description=event["description"],
+      event_image_url=event["highlightedImage"],
     )
 
 def import_data(debug=False):

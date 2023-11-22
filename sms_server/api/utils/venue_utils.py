@@ -78,7 +78,7 @@ def add_venue_api(venue: Venue, api_name: str, api_id: str) -> None:
     api_id=api_id
   )
 
-def create_or_update_venue(**kwargs) -> Venue:
+def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, **kwargs) -> Venue:
   """Create or update a venue.
 
   Venue bbq.
@@ -86,9 +86,11 @@ def create_or_update_venue(**kwargs) -> Venue:
   new_venue = apply_mask(Venue(**kwargs))
 
   # If the venue doesn't exist, create it and move on.
-  db_venue = _get_venue(new_venue, debug=kwargs["debug"])
+  db_venue = _get_venue(new_venue)
   if not db_venue:
-    return Venue.objects.create(**kwargs)
+    db_venue = Venue.objects.create(**kwargs)
+    add_venue_api(venue=db_venue, api_name=api_name, api_id=api_id)
+    return db_venue
   
   # If the venue does exist we need to determine what the diffs are, and how
   # to handle them.
@@ -109,6 +111,7 @@ def create_or_update_venue(**kwargs) -> Venue:
 
   values_changed = diff.get("values_changed", None)
   if not values_changed:
+    add_venue_api(venue=db_venue, api_name=api_name, api_id=api_id)
     return db_venue
 
   logger.warning(f"Venue diff detected\n============\n")
@@ -120,6 +123,7 @@ def create_or_update_venue(**kwargs) -> Venue:
   diff_utils.handle_new_fields_diff(db_venue, values_changed)
 
   db_venue.save()
+  add_venue_api(venue=db_venue, api_name=api_name, api_id=api_id)
   return db_venue
 
 def get_or_create_venue(name: str, latitude: float=0, longitude: float=0, address: str="", postal_code: int=0, city: str="", api_name: str="", api_id: int=0, debug: bool=False) -> Venue:

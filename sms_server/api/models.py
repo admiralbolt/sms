@@ -146,11 +146,11 @@ class Event(models.Model):
 
   def save(self, force_insert=False, force_update=False, *args, **kwargs):
     super().save(force_insert, force_update, *args, **kwargs)
-    if self.event_image_url != self._original_venue_image_url:
+    if self.event_image_url != self._original_event_image_url:
       image_request = requests.get(self.event_image_url)
       file_extension = image_request.headers["Content-Type"].split("/")[1]
       content_file = ContentFile(image_request.content)
-      self._original_venue_image_url = self.event_image_url
+      self._original_event_image_url = self.event_image_url
       self.event_image.save(f"{self.title.replace(' ', '_')}.{file_extension}", content_file)
   
   # Meta control for display of events.

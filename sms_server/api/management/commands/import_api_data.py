@@ -29,9 +29,9 @@ class Command(BaseCommand):
       import_all(debug=kwargs["debug"])
       return
 
-    api_name = IngestionApis.data.get(kwargs["api"].upper(), None)
+    api_name = getattr(IngestionApis, kwargs["api"].upper(), None)
     if not api_name:
-      print(f"Couldn't find api {kwargs['api']}, valid values are: {IngestionApis.data.values()}")
+      print(f"Couldn't find api {kwargs['api']}, valid values are: {AUTOMATIC_APIS}")
       return
     
     if kwargs["truncate"]:
