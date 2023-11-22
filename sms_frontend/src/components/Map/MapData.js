@@ -34,8 +34,18 @@ const Map = ({ setBannerOpen, setSelectedEvent, setSelectedVenue, setMapPosition
       setBannerOpen(false);
       setSelectedVenue({});
       setSelectedEvent({});
+      clearAllHighlights();
     }
   });
+
+  const clearAllHighlights = () => {
+    map.eachLayer((layer) => {
+      if (!layer.options || layer.options.pane != 'overlayPane') return;
+      if (layer._path == undefined) return;
+      
+      layer._path.classList.remove('active');
+    });
+  }
 
   const handleEventClick = (e, venue, event) => {
     // We want to center the clicked circle on screen. The math for this gets
@@ -44,11 +54,14 @@ const Map = ({ setBannerOpen, setSelectedEvent, setSelectedVenue, setMapPosition
     let latlng = [e.latlng.lat, e.latlng.lng];
     const zoomScale = map.getZoomScale(defaultZoom, map.getZoom());
     if (isMobile) {
-      latlng[0] -= .02 * zoomScale;
+      latlng[0] -= .015 * zoomScale;
     } else {
       latlng[0] -= .022 * zoomScale;
-      latlng[1] += .015 * zoomScale;
+      latlng[1] += .016 * zoomScale;
     }
+
+    clearAllHighlights();
+    e.target._path.classList.add("active");
 
     setMapPosition(latlng);
     map.flyTo(latlng);
@@ -85,7 +98,6 @@ const Map = ({ setBannerOpen, setSelectedEvent, setSelectedVenue, setMapPosition
           color: event.event_type == 'Open Mic' ? OPEN_MIC_COLOR : SHOW_COLOR,
           fillColor: event.event_type == 'Open Mic' ? OPEN_MIC_COLOR : SHOW_COLOR,
         }}
-        
         eventHandlers={{ click: (e) => handleEventClick(e, venue, event)}}
         radius={circleSize}
       >

@@ -21,6 +21,11 @@
   border-right-color: rgb(37, 37, 47) !important;
 }
 
+.leaflet-interactive.active {
+  outline: 7px solid rgba(255, 255, 190, 0.75);
+  border-radius: 50%;
+}
+
 .venue-name {
   font-size: 18px;
   margin: auto;

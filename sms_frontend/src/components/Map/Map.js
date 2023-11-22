@@ -26,7 +26,7 @@ const Map = () => {
   const eventBox = () => {
     if (isMobile) {
       return (
-        <Box sx={{ display: "flex", justifyContent: "center", flex: 1, zIndex: 100000, position: "fixed", bottom: 0, margin: "auto"}}>
+        <Box sx={{ display: "flex", justifyContent: "center", flex: 1, zIndex: 900, position: "fixed", bottom: 0, margin: "auto"}}>
           <EventDetail venue={selectedVenue} event={selectedEvent} />
         </Box>
       );
@@ -34,7 +34,7 @@ const Map = () => {
 
     const pct = 100 * (width - filterPanelWidth) / (width * 2);
     return (
-      <Box sx={{ left: `${pct}%`, transform: `translate(-${pct}%, 0)`, display: "flex", justifyContent: "center", flex: 1, zIndex: 100000, position: "fixed", bottom: 0, margin: "auto"}}>
+      <Box sx={{ left: `${pct}%`, transform: `translate(-${pct}%, 0)`, display: "flex", justifyContent: "center", flex: 1, zIndex: 900, position: "fixed", bottom: 0, margin: "auto"}}>
         <EventDetail venue={selectedVenue} event={selectedEvent} />
       </Box>
     );
