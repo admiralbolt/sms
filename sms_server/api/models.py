@@ -153,7 +153,7 @@ class Event(models.Model):
         file_extension = image_request.headers["Content-Type"].split("/")[1]
         content_file = ContentFile(image_request.content)
         self._original_event_image_url = self.event_image_url
-        self.event_image.save(f"{self.title.replace(' ', '_')}.{file_extension}", content_file)
+        self.event_image.save(f"{self.title.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
   
   # Meta control for display of events.
   show_event = models.BooleanField(default=True)
