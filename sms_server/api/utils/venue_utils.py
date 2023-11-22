@@ -107,7 +107,7 @@ def create_or_update_venue(**kwargs) -> Venue:
   if changed:
     db_venue.save()
 
-  values_changed = diff.get("valuse_changed", None)
+  values_changed = diff.get("values_changed", None)
   if not values_changed:
     return db_venue
 
