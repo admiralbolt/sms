@@ -84,6 +84,11 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
   Venue bbq.
   """
   new_venue = apply_mask(Venue(**kwargs))
+
+  # THIS IS AMERICA.
+  if new_venue.postal_code.startswith("V8"):
+    return None
+  
   if debug:
     print(new_venue.latitude, new_venue.longitude)
     logger.info(f"Create or update venue: ({new_venue.__dict__})")

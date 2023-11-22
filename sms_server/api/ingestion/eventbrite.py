@@ -96,7 +96,7 @@ def get_or_create_venue(venue_data: dict, debug: bool=False) -> Optional[Venue]:
   if venue_data["address"]["address_2"]:
     address += f" {venue_data['address']['address_2']}"
 
-  return venue_utils.get_or_create_venue(
+  return venue_utils.create_or_update_venue(
     name=venue_data["name"],
     latitude=venue_data["address"]["latitude"],
     longitude=venue_data["address"]["longitude"],
@@ -132,6 +132,12 @@ def get_or_create_event(venue: Venue, event_detail):
     min_cost = min(costs)
     max_cost = max(costs)
 
+  event_image_url = ""
+  logo = event_detail.get("logo", {})
+  if logo:
+    event_image_url = logo.get("url", "")
+  
+
   event_utils.create_or_update_event(
     venue=venue,
     title=event_detail["name"]["text"],
@@ -141,6 +147,7 @@ def get_or_create_event(venue: Venue, event_detail):
     ticket_price_max=max_cost,
     event_api=IngestionApis.EVENTBRITE,
     event_url=event_detail["url"],
+    event_image_url=event_image_url,
     description=get_full_event_description(event_detail["id"]) or event_detail.get("summary", "")
   )
 
@@ -151,6 +158,11 @@ def process_event_list(event_list: list[dict], delay: float=0.5, debug: bool=Fal
     venue = get_or_create_venue(event_data["primary_venue"], debug=debug)
     if not venue:
       continue
+
+    if not event_detail:
+      print(event_data)
+      continue
+
     get_or_create_event(venue, event_detail)
     # Insert artifical delay to avoid hitting QPS limits.
     time.sleep(delay)
