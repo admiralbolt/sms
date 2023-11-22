@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './MapData.css';
 
 import { useMap, useMapEvents, MapContainer, TileLayer, Marker, Popup, Tooltip, Circle } from 'react-leaflet'
@@ -25,6 +25,10 @@ const Map = ({ setBannerOpen, setSelectedEvent, setSelectedVenue, setMapPosition
   const filteredEventsByVenue = useFilteredEventsByVenue();
   const isMobile = useIsMobile();
   const [circleSize, setCircleSize] = useState(CIRCLE_SIZES[defaultZoom]);
+
+  useEffect(() => {
+    if (isMobile) map.removeControl(map.zoomControl);
+  }, [map, isMobile]);
 
   const mapEvents = useMapEvents({
     zoomend: () => {

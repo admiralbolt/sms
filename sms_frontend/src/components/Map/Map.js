@@ -45,7 +45,7 @@ const Map = () => {
       <MapContainer
         center={mapPosition}
         zoom={zoom}
-        zoomControl={false}
+        zoomControl={!isMobile}
         scrollWheelZoom={false}
         touchZoom={true}
       >
