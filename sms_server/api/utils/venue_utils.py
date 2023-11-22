@@ -84,13 +84,16 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
   Venue bbq.
   """
   new_venue = apply_mask(Venue(**kwargs))
+  if debug:
+    print(new_venue.latitude, new_venue.longitude)
+    logger.info(f"Create or update venue: ({new_venue.__dict__})")
 
   # If the venue doesn't exist, create it and move on.
   db_venue = _get_venue(new_venue)
   if not db_venue:
-    db_venue = Venue.objects.create(**kwargs)
-    add_venue_api(venue=db_venue, api_name=api_name, api_id=api_id)
-    return db_venue
+    new_venue.save()
+    add_venue_api(venue=new_venue, api_name=api_name, api_id=api_id)
+    return new_venue
   
   # If the venue does exist we need to determine what the diffs are, and how
   # to handle them.

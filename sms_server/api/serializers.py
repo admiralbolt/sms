@@ -12,6 +12,7 @@ class VenueSerializer(serializers.ModelSerializer):
 
 class EventSerializer(serializers.ModelSerializer):
   """Serialize Event data."""
+  event_image = serializers.ImageField(max_length=None, use_url=True)
 
   class Meta:
     model = models.Event

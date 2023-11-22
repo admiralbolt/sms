@@ -44,7 +44,9 @@ def create_or_update_event(venue: Venue, **kwargs) -> Event:
   # If the event doesn't exist, create it and move on.
   event = get_event(venue, kwargs["event_day"], kwargs["start_time"])
   if not event:
-    return Event.objects.create(venue=venue, **kwargs)
+    event = Event(venue=venue, **kwargs)
+    event.save()
+    return event
   
   # If the event does exist we need to determine what the diffs are, and how
   # to handle them.
