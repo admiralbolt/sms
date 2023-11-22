@@ -50,17 +50,39 @@ def event_list_request(driver: webdriver.Chrome, csrf_token: str, page: int=1) -
   soup = BeautifulSoup(driver.page_source, "html.parser")
   return json.loads(soup.body.string)
 
+def get_biggest_non_default_image(media: dict) -> str:
+  """Returns the biggest non default image from a media dict from axs resp."""
+  if not media:
+    return ""
+  
+  max_key = None
+  max_width = 0
+  for key, info in media.items():
+    if "default" in info["file_name"]:
+      continue
+
+    if info["width"] > max_width:
+      max_key = key
+      max_width = info["width"]
+
+  if not max_key:
+    return ""
+  
+  return media[max_key]["file_name"]
+    
+
 def process_event_list(event_list: list[dict], debug: bool=False) -> None:
   """Process a list of AXS events."""
   for event in event_list:
     venue_data = event["venue"]
-    venue = venue_utils.get_or_create_venue(
+    venue = venue_utils.create_or_update_venue(
       name=venue_data["title"],
       latitude=venue_data["latitude"],
       longitude=venue_data["longitude"],
       address=venue_data["address"],
       postal_code=venue_data["postalCode"],
       city=venue_data["city"],
+      venue_image_url=get_biggest_non_default_image(venue_data["media"]),
       api_name=IngestionApis.AXS,
       api_id=venue_data["venueId"],
       debug=debug
@@ -79,6 +101,7 @@ def process_event_list(event_list: list[dict], debug: bool=False) -> None:
       ticket_price_min=parsing_utils.parse_cost(event["ticketPriceLow"]),
       event_api="AXS",
       event_url=event["ticketing"]["url"],
+      event_image_url=get_biggest_non_default_image(event["media"]),
       description=event["description"],
     )
 
