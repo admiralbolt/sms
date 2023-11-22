@@ -2,7 +2,7 @@ from pprint import pprint
 
 from django.core.management.base import BaseCommand
 
-from api.constants import IngestionApis
+from api.constants import AUTOMATIC_APIS, IngestionApis
 from api.models import APISample
 
 class Command(BaseCommand):
@@ -11,9 +11,9 @@ class Command(BaseCommand):
     parser.add_argument("--api", dest="api", required=True, help="Which API to import data from.")
 
   def handle(self, *args, **kwargs):
-    api_name = IngestionApis.data.get(kwargs["api"].upper(), None)
+    api_name = getattr(IngestionApis, kwargs["api"].upper(), None)
     if not api_name:
-      print(f"Couldn't find api {kwargs['api']}, valid values are: {IngestionApis.data.values()}")
+      print(f"Couldn't find api {kwargs['api']}, valid values are: {AUTOMATIC_APIS}")
       return
     
     # Get and print the latest sample of the corresponding type.
