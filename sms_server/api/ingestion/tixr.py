@@ -40,6 +40,7 @@ def process_event_list(event_list: list[dict], debug: bool=False) -> None:
       ticket_price_max=event.get("current_price", 0),
       event_api=IngestionApis.TIXR,
       event_url=event["url"],
+      event_image_url=event.get("flyer_url", ""),
       description=event["description"],
     )
 
