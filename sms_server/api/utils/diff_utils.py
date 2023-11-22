@@ -39,12 +39,21 @@ def handle_new_fields_diff(obj: object, values_changed: dict) -> object:
 
 def handle_new_fields(obj: object, new_event_data: dict, diff: deepdiff.DeepDiff) -> tuple[bool, object]:
   """If new fields are added, add them!"""
+  changed = False
   fields_added = diff.get("dictionary_item_added", [])
-  if not fields_added:
-    return False, obj
-  
-  for field_with_root in fields_added:
-    field = field_with_root.split("'")[1]
-    setattr(obj, field, new_event_data[field])
+  if fields_added:
+    changed = True
+    for field_with_root in fields_added:
+      field = field_with_root.split("'")[1]
+      setattr(obj, field, new_event_data[field])
 
-  return True, obj
+  type_changes = diff.get("type_changes", {})
+  for field_with_root, change_dict in type_changes.items():
+    if change_dict["old_type"] != type(None) or not change_dict["new_value"]:
+      continue
+
+    changed = True
+    field = field_with_root.split("'")[1]
+    setattr(obj, field, change_dict["new_value"])
+
+  return changed, obj
