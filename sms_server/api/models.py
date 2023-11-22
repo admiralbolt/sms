@@ -48,12 +48,13 @@ class Venue(models.Model):
 
   def save(self, force_insert=False, force_update=False, *args, **kwargs):
     super().save(force_insert, force_update, *args, **kwargs)
-    if self.venue_image_url != self._original_venue_image_url:
-      image_request = requests.get(self.venue_image_url)
-      file_extension = image_request.headers["Content-Type"].split("/")[1]
-      content_file = ContentFile(image_request.content)
-      self._original_venue_image_url = self.venue_image_url
-      self.venue_image.save(f"{self.name}.{file_extension}", content_file)
+    if self.venue_image_url:
+      if self.venue_image_url != self._original_venue_image_url or not self.venue_image:
+        image_request = requests.get(self.venue_image_url)
+        file_extension = image_request.headers["Content-Type"].split("/")[1]
+        content_file = ContentFile(image_request.content)
+        self._original_venue_image_url = self.venue_image_url
+        self.venue_image.save(f"{self.name}.{file_extension}", content_file)
 
   def __str__(self):
     return self.name

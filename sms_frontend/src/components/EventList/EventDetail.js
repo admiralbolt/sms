@@ -17,8 +17,9 @@ const EventDetail = ({ venue, event}) => {
 
   const displayImage = () => {
     if (event.event_image) return event.event_image;
+    if (venue.venue_image) return venue.venue_image;
 
-    return `${process.env.PUBLIC_URL}/placeholder.jpeg`
+    return `${process.env.PUBLIC_URL}/placeholder.png`
   }
 
   return (
