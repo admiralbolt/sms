@@ -25,6 +25,8 @@ class Venue(models.Model):
   postal_code = models.CharField(max_length=8)
   city = models.CharField(max_length=64)
   venue_type = models.CharField(max_length=32, choices=get_choices(VenueTypes), default="Bar")
+  venue_url = models.CharField(max_length=256, blank=True, null=True)
+  venue_image = models.ImageField(upload_to="venue_images", blank=True)
 
   # Optional.
   description = models.TextField(default="", blank=True, null=True)
@@ -119,6 +121,7 @@ class Event(models.Model):
   event_api = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
   event_url = models.CharField(max_length=512, blank=True, null=True)
   description = models.TextField(blank=True)
+  event_image_url = models.CharField(max_length=256, blank=True, null=True)
   
   # Meta control for display of events.
   show_event = models.BooleanField(default=True)
