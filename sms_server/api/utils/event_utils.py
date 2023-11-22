@@ -22,8 +22,6 @@ def handle_open_mic_gen_diff(event: Event, values_changed: dict) -> Event:
   
   event = diff_utils.apply_diff(event, values_changed, fields=["event_type", "title", "event_api"])
 
-  
-
 def create_or_update_event(venue: Venue, **kwargs) -> Event:
   """Create or update an event.‘
 
