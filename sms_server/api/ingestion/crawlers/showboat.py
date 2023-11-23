@@ -9,13 +9,10 @@ that contains a json dump of data used to populate the page.
 """
 import json
 import logging
-import requests
-
-from bs4 import BeautifulSoup
 
 from api.constants import IngestionApis
 from api.models import Venue
-from api.utils import event_utils, parsing_utils
+from api.utils import crawler_utils, event_utils, parsing_utils
 
 logger = logging.getLogger(__name__)
 
@@ -32,11 +29,8 @@ def get_events(data: dict) -> list[dict]:
 
 def crawl(venue: Venue, debug: bool=False):
   """Crawl data for showboat!"""
-  headers = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
-  }
-  raw_request = requests.get(SHOWBOAT_SHOWS_URL, headers=headers, timeout=15)
-  soup = BeautifulSoup(raw_request.text, "html.parser")
+  driver = crawler_utils.create_chrome_driver()
+  soup = crawler_utils.get_html_soup(driver, SHOWBOAT_SHOWS_URL)
   warmup_element = soup.find(id="wix-warmup-data")
   data = json.loads(warmup_element.text)
   events = get_events(data)
@@ -57,4 +51,5 @@ def crawl(venue: Venue, debug: bool=False):
       start_time=start_time,
       event_api=IngestionApis.CRAWLER,
       event_url=event_url,
+      event_image_url=event["mainImage"]["url"]
     )
