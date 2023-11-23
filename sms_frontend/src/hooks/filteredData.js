@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 
 const useFilteredVenues = () => {
   const venues = useVenues();
-  const { selectedEventTypes, setSelectedEventTypes, selectedVenueTypes, setSelectedVenueTypes, selectedDate, setSelectedDate } = useContext(LocalStorageContext);
+  const { selectedVenueTypes } = useContext(LocalStorageContext);
   const [filteredVenues, setFilteredVenues] = useState({});
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const useFilteredVenues = () => {
 
 const useFilteredEvents = () => {
   const [eventsByVenue, eventsByDate] = useEvents();
-  const { selectedEventTypes, setSelectedEventTypes, selectedVenueTypes, setSelectedVenueTypes, selectedDate, setSelectedDate } = useContext(LocalStorageContext);
+  const { selectedEventTypes, selectedDate } = useContext(LocalStorageContext);
   const [filteredEvents, setFilteredEvents] = useState([]);
 
   useEffect(() => {

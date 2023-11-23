@@ -84,19 +84,6 @@ const Map = ({ setBannerOpen, setSelectedEvent, setSelectedVenue, setMapPosition
     setBannerOpen(true);
   }
 
-  const formatTime = (t) => {
-    return new Date('1970-01-01T' + t + 'Z').toLocaleTimeString('en-US',
-      {timeZone:'UTC', hour12:true, hour:'numeric', minute:'numeric'}
-    );
-  }
-
-  const getTicketPrice = (event) => {
-    if (event.ticket_price_min == event.ticket_price_max)
-      return `$${event.ticket_price_min}`
-
-    return `$${event.ticket_price_min} - $${event.ticket_price_max}`
-  }
-
   const renderVenue = (venue) => {
     if (!(venue.id in filteredEventsByVenue))
       return '';
