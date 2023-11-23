@@ -63,7 +63,7 @@ class Venue(models.Model):
 
 class VenueTag(models.Model):
   """Tags for venue types."""
-  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+  venue = models.ForeignKey(Venue, related_name="venue_tags", on_delete=models.CASCADE)
   created_at = models.DateTimeField(auto_now_add=True)
   venue_type = models.CharField(max_length=32, choices=get_choices(VenueTypes))
 
