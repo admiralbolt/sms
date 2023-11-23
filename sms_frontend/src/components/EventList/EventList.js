@@ -6,6 +6,9 @@ const EventList = () => {
   const filteredVenues = useFilteredVenues();
   const filteredEvents = useFilteredEvents();
 
+  console.log(filteredVenues);
+  console.log(filteredEvents);
+
   const hasVenue = (event) => {
     return event.venue in filteredVenues;
   }

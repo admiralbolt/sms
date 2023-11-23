@@ -3,7 +3,7 @@ import { useEvents, useVenues } from './api.js';
 import { useContext, useEffect, useState } from 'react';
 
 const useFilteredVenues = () => {
-  const [venues, venueTypes] = useVenues();
+  const venues = useVenues();
   const { selectedEventTypes, setSelectedEventTypes, selectedVenueTypes, setSelectedVenueTypes, selectedDate, setSelectedDate } = useContext(LocalStorageContext);
   const [filteredVenues, setFilteredVenues] = useState({});
 
@@ -11,7 +11,7 @@ const useFilteredVenues = () => {
     let tmpVenues = {};
 
     venues.forEach((venue) => {
-      if (!selectedVenueTypes.includes(venue.venue_type)) return;
+      // if (!(venue.venue_tags.some((venue_type) => selectedVenueTypes.includes(venue_type)))) return;
 
       tmpVenues[venue.id] = venue;
     });
@@ -23,7 +23,7 @@ const useFilteredVenues = () => {
 }
 
 const useFilteredEvents = () => {
-  const [eventsByVenue, eventsByDate, eventTypes] = useEvents();
+  const [eventsByVenue, eventsByDate] = useEvents();
   const { selectedEventTypes, setSelectedEventTypes, selectedVenueTypes, setSelectedVenueTypes, selectedDate, setSelectedDate } = useContext(LocalStorageContext);
   const [filteredEvents, setFilteredEvents] = useState([]);
 

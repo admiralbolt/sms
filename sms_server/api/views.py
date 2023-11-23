@@ -51,9 +51,9 @@ class VenueEventsView(ListCreateAPIView):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def get_all_event_types(request):
-  return JsonResponse(get_all(EventTypes), safe=False)
+  return JsonResponse(sorted(get_all(EventTypes)), safe=False)
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def get_all_venue_types(request):
-  return JsonResponse(get_all(VenueTypes), safe=False)
+  return JsonResponse(sorted(get_all(VenueTypes)), safe=False)

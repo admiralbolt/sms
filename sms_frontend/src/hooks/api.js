@@ -4,15 +4,25 @@ import { useEffect, useState } from 'react';
 
 const axios = setupCache(Axios);
 
+const useEventTypes = () => {
+  const [eventTypes, setEventTypes] = useState([]);
+
+  useEffect(() => {
+    axios.get('/api/get_all_event_types').then((res) => {
+      setEventTypes(res.data);
+    });
+  }, []);
+
+  return eventTypes;
+}
+
 const useEvents = () => {
   const [eventsByVenue, setEventsByVenue] = useState({});
   const [eventsByDate, setEventsByDate] = useState({});
-  const [eventTypes, setEventTypes] = useState([]);
 
   useEffect(() => {
     let tmpEventsByVenue = {};
     let tmpEventsByDate = {};
-    let tmpEventTypes = new Set();
 
     axios.get('/api/events').then((res) => {
       res.data.forEach(event => {
@@ -22,41 +32,39 @@ const useEvents = () => {
         if (!(event.event_day in tmpEventsByDate))
           tmpEventsByDate[event.event_day] = [];
         tmpEventsByDate[event.event_day].push(event);
-        tmpEventTypes.add(event.event_type);
       });
 
       setEventsByVenue(tmpEventsByVenue);
       setEventsByDate(tmpEventsByDate);
-      let data = Array.from(tmpEventTypes);
-      data.sort();
-      setEventTypes(data);
     });
     
   }, []);
 
-  return [eventsByVenue, eventsByDate, eventTypes];
+  return [eventsByVenue, eventsByDate];
+}
+
+const useVenueTypes = () => {
+  const [venueTypes, setVenueTypes] = useState([]);
+
+  useEffect(() => {
+    axios.get('/api/get_all_venue_types').then((res) => {
+      setVenueTypes(res.data);
+    });
+  }, []);
+
+  return venueTypes;
 }
 
 const useVenues = () => {
   const [venues, setVenues] = useState([]);
-  const [venueTypes, setVenueTypes] = useState([]);
 
   useEffect(() => {
-    let tmpVenueTypes = new Set();
-
     axios.get('/api/venues').then((res) => {
       setVenues(res.data);
-      res.data.forEach((venue) => {
-        tmpVenueTypes.add(venue.venue_type);
-      });
-      
-      let data = Array.from(tmpVenueTypes);
-      data.sort();
-      setVenueTypes(data);
     });
   }, []);
 
-  return [venues, venueTypes];
+  return venues;
 }
 
-export { useEvents, useVenues};
+export { useEvents, useEventTypes, useVenues, useVenueTypes};

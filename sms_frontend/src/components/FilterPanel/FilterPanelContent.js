@@ -6,15 +6,15 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Checkbox, FormControlLabel } from '@mui/material';
-import { useEvents, useVenues } from '../../hooks/api';
+import { useEventTypes, useVenueTypes } from '../../hooks/api';
 import FormGroup from '@mui/material/FormGroup';
 import { LocalStorageContext } from '../../contexts/LocalStorageContext';
 import { useContext } from 'react';
 
 
 const FilterPanelContent = () => {
-  const [eventsByVenue, eventsByDate, eventTypes] = useEvents();
-  const [venues, venueTypes] = useVenues();
+  const eventTypes = useEventTypes();
+  const venueTypes = useVenueTypes();
   const { selectedEventTypes, setSelectedEventTypes, selectedVenueTypes, setSelectedVenueTypes, selectedDate, setSelectedDate } = useContext(LocalStorageContext);
 
   const updateEventFilters = (event) => {
