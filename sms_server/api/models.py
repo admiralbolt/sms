@@ -26,7 +26,6 @@ class Venue(models.Model):
   address = models.CharField(max_length=256)
   postal_code = models.CharField(max_length=8)
   city = models.CharField(max_length=64)
-  venue_type = models.CharField(max_length=32, choices=get_choices(VenueTypes), default="Bar")
   venue_url = models.CharField(max_length=256, blank=True, null=True)
   venue_image_url = models.CharField(max_length=256, blank=True, null=True)
   venue_image = models.ImageField(upload_to="venue_images", blank=True)

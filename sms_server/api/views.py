@@ -1,12 +1,15 @@
 """Display stuff!"""
 import datetime
 
+from django.http import JsonResponse
 from rest_framework import viewsets
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import ListCreateAPIView
-from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 
 from api import models
 from api import serializers
+from api.constants import get_all, EventTypes, VenueTypes
 
 class EventViewSet(viewsets.ModelViewSet):
   """List all events."""
@@ -44,3 +47,13 @@ class VenueEventsView(ListCreateAPIView):
   def get_queryset(self):
     venue = models.Venue.objects.filter(id=self.kwargs["venue_id"]).first()
     return models.Event.objects.filter(venue=venue)
+  
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_all_event_types(request):
+  return JsonResponse(get_all(EventTypes), safe=False)
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_all_venue_types(request):
+  return JsonResponse(get_all(VenueTypes), safe=False)

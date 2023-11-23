@@ -5,6 +5,7 @@ from api import models
 
 class VenueSerializer(serializers.ModelSerializer):
   """Serialize Venue data."""
+  venue_image = serializers.ImageField(max_length=None, use_url=True)
 
   class Meta:
     model = models.Venue

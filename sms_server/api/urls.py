@@ -14,4 +14,6 @@ router.register(r"venues", views.VenueViewSet)
 urlpatterns = [
   path("api/", include(router.urls)),
   path("api/venues/<int:venue_id>/events", views.VenueEventsView.as_view(), name="venue_events"),
+  path("api/get_all_event_types", views.get_all_event_types),
+  path("api/get_all_venue_types", views.get_all_venue_types),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
