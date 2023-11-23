@@ -10,6 +10,7 @@ import { useIsMobile } from '../../hooks/window';
 import { Box, Typography } from '@mui/material';
 
 const SHOW_COLOR = '#0070ff';
+const OPEN_JAM_COLOR = '#ff5500';
 const OPEN_MIC_COLOR = '#ee6600';
 const NO_EVENT_COLOR = '#989898';
 
@@ -25,6 +26,14 @@ const Map = ({ setBannerOpen, setSelectedEvent, setSelectedVenue, setMapPosition
   const filteredEventsByVenue = useFilteredEventsByVenue();
   const isMobile = useIsMobile();
   const [circleSize, setCircleSize] = useState(CIRCLE_SIZES[defaultZoom]);
+
+  const getColor = (event_type) => {
+    if (event_type == 'Open Mic') return OPEN_MIC_COLOR;
+    if (event_type == 'Open Jam') return OPEN_JAM_COLOR;
+    if (event_type == 'Show') return SHOW_COLOR;
+
+    return NO_EVENT_COLOR;
+  }
 
   useEffect(() => {
     if (isMobile) map.removeControl(map.zoomControl);
@@ -99,8 +108,8 @@ const Map = ({ setBannerOpen, setSelectedEvent, setSelectedVenue, setMapPosition
         key={venue.id}
         center={[venue.latitude, venue.longitude]}
         pathOptions={{
-          color: event.event_type == 'Open Mic' ? OPEN_MIC_COLOR : SHOW_COLOR,
-          fillColor: event.event_type == 'Open Mic' ? OPEN_MIC_COLOR : SHOW_COLOR,
+          color: getColor(event.event_type),
+          fillColor: getColor(event.event_type)
         }}
         eventHandlers={{ click: (e) => handleEventClick(e, venue, event)}}
         radius={circleSize}
