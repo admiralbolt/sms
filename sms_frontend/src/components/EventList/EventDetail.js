@@ -22,6 +22,14 @@ const EventDetail = ({ venue, event}) => {
     return `${process.env.PUBLIC_URL}/placeholder.png`
   }
 
+  const venueLink = () => {
+    if (venue.venue_url == null || venue.venue_url.length == 0) return venue.name;
+
+    return (
+      <Link target="_blank" href={venue.venue_url}>{venue.name}</Link>
+    )
+  }
+
   return (
     <Card key={event.id} sx={{ display: 'flex', flexDirection: 'column', margin: 1, padding: 1.5, maxWidth: 'sm' }}>
       <Box position="relative">
@@ -35,7 +43,7 @@ const EventDetail = ({ venue, event}) => {
       <Box sx={{ display: 'flex', flexDirection: 'row', mt: 1 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start', justifyContent: 'center' }}>
           <Typography>{formatTime(event.start_time)}</Typography>
-          <Typography>{venue.name}</Typography>
+          <Typography>{venueLink()}</Typography>
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'end', flex: 1, marginTop: 1}}>
           <Link target="_blank" href={mapsLink(venue)}>
