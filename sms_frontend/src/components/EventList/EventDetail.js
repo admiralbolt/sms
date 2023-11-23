@@ -23,7 +23,7 @@ const EventDetail = ({ venue, event}) => {
   }
 
   const venueLink = () => {
-    if (venue.venue_url == null || venue.venue_url.length == 0) return venue.name;
+    if (venue.venue_url == null || venue.venue_url == undefined || venue.venue_url.length == 0) return venue.name;
 
     return (
       <Link target="_blank" href={venue.venue_url}>{venue.name}</Link>
