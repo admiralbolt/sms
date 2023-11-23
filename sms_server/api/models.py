@@ -173,15 +173,6 @@ class Event(models.Model):
   class Meta:
     unique_together = [["venue", "event_day", "start_time"]]
 
-class EventTags(models.Model):
-  """Tags for event types!"""
-  event = models.ForeignKey(Event, on_delete=models.CASCADE)
-  created_at = models.DateTimeField(auto_now_add=True)
-  event_type = models.CharField(max_length=32, choices=get_choices(EventTypes))
-
-  class Meta:
-    unique_together = [["event", "event_type"]]
-
 
 class OpenMic(models.Model):
   """Generic information about an open mic."""
@@ -226,7 +217,6 @@ class OpenMic(models.Model):
 ADMIN_MODELS = [
   APISample,
   Event,
-  EventTags,
   OpenMic,
   Venue,
   VenueApi,
