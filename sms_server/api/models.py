@@ -62,11 +62,14 @@ class Venue(models.Model):
   class Meta:
     unique_together = [["latitude", "longitude"]]
 
-class VenueTags(models.Model):
+class VenueTag(models.Model):
   """Tags for venue types."""
   venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
   created_at = models.DateTimeField(auto_now_add=True)
   venue_type = models.CharField(max_length=32, choices=get_choices(VenueTypes))
+
+  def __str__(self):
+    return f"{self.venue.name} - {self.venue_type}"
 
   class Meta:
     unique_together = [["venue", "venue_type"]]
@@ -221,5 +224,5 @@ ADMIN_MODELS = [
   Venue,
   VenueApi,
   VenueMask,
-  VenueTags,
+  VenueTag,
 ]

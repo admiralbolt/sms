@@ -5,7 +5,8 @@ from typing import Any, Optional
 
 import deepdiff
 
-from api.models import Venue, VenueMask, VenueApi
+from api.constants import get_all, VenueTypes
+from api.models import Venue, VenueMask, VenueTag, VenueApi
 from api.serializers import VenueSerializer
 from api.utils import diff_utils
 
@@ -77,6 +78,17 @@ def add_venue_api(venue: Venue, api_name: str, api_id: str) -> None:
     api_name=api_name,
     api_id=api_id
   )
+
+def add_venue_tags(venue: Venue, tags: list[str]) -> None:
+  """Add venue tags if they don't exist."""
+  for tag in tags:
+    if tag not in get_all(VenueTypes):
+      continue
+
+    VenueTag.objects.get_or_create(
+      venue=venue,
+      venue_type=tag
+    )
 
 def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, **kwargs) -> Venue:
   """Create or update a venue.
