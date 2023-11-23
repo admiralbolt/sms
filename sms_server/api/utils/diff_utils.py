@@ -15,6 +15,9 @@ def apply_diff(obj: object, values_changed: dict, fields: Optional[list[str]]=No
   """
   fields = [f"root['{field}']" for field in fields] or values_changed.keys()
   for field in fields:
+    if field not in values_changed:
+      continue
+
     proper_field_name = field.split("'")[1]
     setattr(obj, proper_field_name, values_changed[field]["new_value"])
   return obj
