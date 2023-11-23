@@ -3,6 +3,7 @@
 
 class EventTypes:
   OPEN_MIC = "Open Mic"
+  OPEN_JAM = "Open Jam"
   SHOW = "Show"
 
 class IngestionApis:

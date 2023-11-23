@@ -62,6 +62,15 @@ class Venue(models.Model):
   class Meta:
     unique_together = [["latitude", "longitude"]]
 
+class VenueTags(models.Model):
+  """Tags for venue types."""
+  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+  created_at = models.DateTimeField(auto_now_add=True)
+  venue_type = models.CharField(max_length=32, choices=get_choices(VenueTypes))
+
+  class Meta:
+    unique_together = [["venue", "venue_type"]]
+
 class VenueApi(models.Model):
   """API information for a venue.
 
@@ -164,6 +173,15 @@ class Event(models.Model):
   class Meta:
     unique_together = [["venue", "event_day", "start_time"]]
 
+class EventTags(models.Model):
+  """Tags for event types!"""
+  event = models.ForeignKey(Event, on_delete=models.CASCADE)
+  created_at = models.DateTimeField(auto_now_add=True)
+  event_type = models.CharField(max_length=32, choices=get_choices(EventTypes))
+
+  class Meta:
+    unique_together = [["event", "event_type"]]
+
 
 class OpenMic(models.Model):
   """Generic information about an open mic."""
@@ -173,7 +191,8 @@ class OpenMic(models.Model):
   # Connor Byrne Open Mic, Hidden Door Open Mic. There are some exceptions like
   # Mojam, so we'll add an optional title field just in case.
   title = models.CharField(max_length=256, default="", blank=True, null=True)
-  open_mic_type = models.CharField(max_length=16, choices=get_choices(OpenMicTypes), default="Music")
+  event_mic_type = models.CharField(max_length=32, choices=get_choices(EventTypes), default=EventTypes.OPEN_MIC)
+  open_mic_type = models.CharField(max_length=16, choices=get_choices(OpenMicTypes), default=OpenMicTypes.MUSIC)
   description = models.TextField()
 
   # Timing details.
@@ -207,8 +226,10 @@ class OpenMic(models.Model):
 ADMIN_MODELS = [
   APISample,
   Event,
+  EventTags,
   OpenMic,
   Venue,
+  VenueApi,
   VenueMask,
-  VenueApi
+  VenueTags,
 ]
