@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 SHOWBOAT_SHOWS_URL = "https://www.showboatseattle.com/shows"
 
 def get_events(data: dict) -> list[dict]:
+  """Get events from wix-warmup-data dict."""
   for _, val in data["appsWarmupData"].items():
     for sub_key, sub_val in val.items():
       if "widgetcomp" not in sub_key:

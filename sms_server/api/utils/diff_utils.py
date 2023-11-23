@@ -1,12 +1,7 @@
 """Utils related to diffing!"""
-import logging
 from typing import Optional
 
 import deepdiff
-
-from api.constants import IngestionApis
-from api.models import Event, Venue
-from api.serializers import EventSerializer
 
 def apply_diff(obj: object, values_changed: dict, fields: Optional[list[str]]=None) -> object:
   """Apply a diff to an event based on the provided fields.
@@ -34,7 +29,7 @@ def handle_new_fields_diff(obj: object, values_changed: dict) -> object:
       continue
 
     fields_to_change.append(field_with_root.split("'")[1])
-  
+
   if fields_to_change:
     apply_diff(obj, values_changed, fields=fields_to_change)
 

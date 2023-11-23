@@ -52,7 +52,7 @@ def _get_venue(venue: Venue) -> Venue:
     db_venue = Venue.objects.filter(latitude=venue.latitude, longitude=venue.longitude)
     if db_venue.exists():
       return db_venue.first()
-    
+
   return None
 
 def _get_or_create_venue(venue: Venue, debug: bool=False) -> Venue:
@@ -100,7 +100,7 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
   # THIS IS AMERICA.
   if new_venue.postal_code.startswith("V8"):
     return None
-  
+
   if debug:
     print(new_venue.latitude, new_venue.longitude)
     logger.info(f"Create or update venue: ({new_venue.__dict__})")
@@ -111,7 +111,7 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
     new_venue.save()
     add_venue_api(venue=new_venue, api_name=api_name, api_id=api_id)
     return new_venue
-  
+
   # If the venue does exist we need to determine what the diffs are, and how
   # to handle them.
   db_venue_serialized = VenueSerializer(db_venue)
@@ -134,9 +134,9 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
     add_venue_api(venue=db_venue, api_name=api_name, api_id=api_id)
     return db_venue
 
-  logger.warning(f"Venue diff detected\n============\n")
+  logger.warning("Venue diff detected\n============\n")
   logger.warning(values_changed)
-  logger.warning(f"Original venue\n===========\n")
+  logger.warning("Original venue\n===========\n")
   logger.warning(db_venue)
 
   # Handle "new" fields. Cases where old fields are blank / empty strings.
@@ -171,7 +171,7 @@ def get_crawl_function(crawler_module_name: str) -> Any:
   if not hasattr(crawler_module, "crawl"):
     logger.warning(f"Crawler module api.ingestion.crawlers.{crawler_module_name} does not have a 'crawl' method.")
     return None
-  
+
   return getattr(crawler_module, "crawl")
 
 def get_crawler_info(crawler_name: str) -> tuple[Optional[Venue], Any]:
@@ -190,5 +190,5 @@ def get_crawler_info(crawler_name: str) -> tuple[Optional[Venue], Any]:
   crawler_function = get_crawl_function(venue_api.crawler_name)
   if crawler_function is None:
     return None, None
-  
+
   return venue_api.venue, crawler_function

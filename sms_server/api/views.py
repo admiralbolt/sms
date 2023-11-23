@@ -39,7 +39,7 @@ class OpenMicViewSet(viewsets.ReadOnlyModelViewSet):
   def get_queryset(self):
     mics = models.OpenMic.objects.order_by("venue")
     return mics.filter(generate_events=True)
-  
+
 class VenueEventsView(ListAPIView):
   """List all events for a particular venue."""
   serializer_class = serializers.EventSerializer
@@ -47,13 +47,15 @@ class VenueEventsView(ListAPIView):
   def get_queryset(self):
     venue = models.Venue.objects.filter(id=self.kwargs["venue_id"]).first()
     return models.Event.objects.filter(venue=venue)
-  
+
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def get_all_event_types(request):
+  """List all event types."""
   return JsonResponse(sorted(get_all(EventTypes)), safe=False)
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def get_all_venue_types(request):
+  """List all venue types."""
   return JsonResponse(sorted(get_all(VenueTypes)), safe=False)

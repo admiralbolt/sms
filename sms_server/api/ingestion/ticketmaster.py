@@ -1,7 +1,6 @@
 """Ticketmaster integration."""
 import logging
 import time
-from pprint import pprint
 
 import requests
 
@@ -33,7 +32,7 @@ def select_image(images: list[dict]) -> str:
   """
   if not images:
     return ""
-  
+
   ratio_priority = {
     '16_9': 3,
     '3_2': 2,
@@ -56,7 +55,7 @@ def select_image(images: list[dict]) -> str:
 def get_or_create_venue(data, debug: bool=False):
   """Get or create a venue."""
   if len(data["_embedded"]["venues"]) > 1:
-    logger.error(f"Multiple venues returned within single event. Full data:")
+    logger.error("Multiple venues returned within single event. Full data:")
     logger.error(data)
 
   venue_data = data["_embedded"]["venues"][0]
@@ -72,11 +71,10 @@ def get_or_create_venue(data, debug: bool=False):
     debug=debug,
   )
 
-
 def process_event_list(events, debug: bool=False) -> None:
   """Process list of Ticketmaster events."""
   if "_embedded" not in events:
-    logger.warn(f"Empty events list: {events}")
+    logger.warning(f"Empty events list: {events}")
     return
 
   for event in events["_embedded"]["events"]:
@@ -96,7 +94,6 @@ def process_event_list(events, debug: bool=False) -> None:
       event_url=event["url"],
       event_image_url=select_image(event["images"]),
     )
-
 
 def import_data(delay: float=0.2, debug=False) -> None:
   """Import data from Ticketmaster."""

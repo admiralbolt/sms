@@ -9,7 +9,7 @@ from typing import Optional
 import requests
 
 from api.constants import IngestionApis
-from api.models import APISample, Event, Venue
+from api.models import APISample
 from api.utils import event_utils, venue_utils
 
 REQUEST_TEMPLATE = """

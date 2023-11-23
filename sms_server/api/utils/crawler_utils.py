@@ -1,3 +1,4 @@
+"""Utilities for crawling things!"""
 from selenium import webdriver
 
 import bs4

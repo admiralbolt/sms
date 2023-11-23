@@ -3,7 +3,7 @@ import re
 import time
 from typing import Optional
 
-COST_REGEX = "\$([0-9]+(\.[0-9]+)?)"
+COST_REGEX = r"\$([0-9]+(\.[0-9]+)?)"
 NO_COVER_REGEX = "(no cover)"
 
 def parse_cost(cost: str) -> float:
@@ -34,8 +34,8 @@ def find_cost(description: str) -> Optional[float]:
 
 def parse_12hr_time(time_str: str) -> str:
   """Parse a time from 12 hour to 24 hour format."""
-  t = time_str.lower().replace(" ","")
-  hour, info = t.split(":")
+  time_no_space = time_str.lower().replace(" ","")
+  hour, info = time_no_space.split(":")
   minute, am_pm = info[1][:2], info[1][2:]
   hour = int(hour)
   minute = int(minute)

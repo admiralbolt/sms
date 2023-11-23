@@ -1,6 +1,5 @@
 """Utils related to Events."""
 import logging
-from typing import Optional
 
 import deepdiff
 
@@ -19,8 +18,9 @@ def handle_open_mic_gen_diff(event: Event, values_changed: dict) -> Event:
   """Handle open mic event generation for events that are already in the API."""
   if values_changed.get("root['event_api']", {}).get("new_value", None) != IngestionApis.OPEN_MIC_GENERATOR:
     return event
-  
+
   event = diff_utils.apply_diff(event, values_changed, fields=["event_type", "title", "event_api"])
+  return event
 
 def create_or_update_event(venue: Venue, **kwargs) -> Event:
   """Create or update an event.‘
@@ -47,7 +47,7 @@ def create_or_update_event(venue: Venue, **kwargs) -> Event:
     event = Event(venue=venue, **kwargs)
     event.save()
     return event
-  
+
   # If the event does exist we need to determine what the diffs are, and how
   # to handle them.
   new_event = Event(venue=venue, **kwargs)
@@ -72,13 +72,13 @@ def create_or_update_event(venue: Venue, **kwargs) -> Event:
   values_changed = diff.get("values_changed", None)
   if not values_changed:
     return event
-  
+
   # Otherwise, we need to update the event accordingly based on the diffs.
   # THIS WILL BE COMPLEX.
   # For now, we log the diff!
-  logger.warning(f"Event diff detected\n============\n")
+  logger.warning("Event diff detected\n============\n")
   logger.warning(values_changed)
-  logger.warning(f"Original event\n===========\n")
+  logger.warning("Original event\n===========\n")
   logger.warning(event)
 
   # Handle "new" fields. Cases where old fields are blank / empty strings.

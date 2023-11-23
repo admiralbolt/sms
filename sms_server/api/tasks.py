@@ -6,7 +6,6 @@ from celery import shared_task
 from api.constants import AUTOMATIC_APIS, IngestionApis
 from api.models import OpenMic, VenueApi
 from api.ingestion import axs, eventbrite, ticketmaster, tixr, venuepilot
-from api.ingestion.crawlers import skylark
 from api.utils import open_mic_utils, venue_utils
 
 @shared_task

@@ -8,37 +8,24 @@ API.
 import logging
 import math
 import time
-from pprint import pprint
 
 import json
-from bs4 import BeautifulSoup
 from selenium import webdriver
-import undetected_chromedriver
 
 from api.constants import IngestionApis
 from api.models import APISample
-from api.utils import event_utils, parsing_utils, venue_utils
+from api.utils import crawler_utils, event_utils, parsing_utils, venue_utils
 
 logger = logging.getLogger(__name__)
 
-USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
 PER_PAGE = 15
-
-def create_chrome_driver():
-  """Create a headless chrome driver for requests."""
-  options = undetected_chromedriver.ChromeOptions()
-  options.add_argument("--headless")
-  # options.add_argument("--enable-javascript")
-  options.add_argument(f"--user-agent={USER_AGENT}")
-  return undetected_chromedriver.Chrome(options=options)
 
 def get_csrf_token(driver: webdriver.Chrome):
   """Get a valid CSRF Token from AXS."""
   # We first query the search page to get a valid CSRF token, then reuse that
   # token to make a validated request to the API. In order to bypass the
   # protections AXS has in place, we use selenium and a "normal" user agent.
-  driver.get("https://www.axs.com/browse/music?q=seattle")
-  soup = BeautifulSoup(driver.page_source, "html.parser")
+  soup = crawler_utils.get_html_soup(driver, "https://www.axs.com/browse/music?q=seattle")
   # We then look for the "hdn_csrf_token" input -- something like this:
   # <input id="hdn_csrf_token" type="hidden" value="Wrt06Y2wRCus0d7_YxlmLuQsg90KS45zwhozujtNjnY"/>
   csrf_token_input = soup.find(id="hdn_csrf_token")
@@ -46,15 +33,17 @@ def get_csrf_token(driver: webdriver.Chrome):
 
 def event_list_request(driver: webdriver.Chrome, csrf_token: str, page: int=1) -> dict:
   """Get a list of events from AXS."""
-  driver.get(f"https://www.axs.com/apip/event/category?siteId=999&csrf_token={csrf_token}&majorCat=2&lat=47.63480&long=-122.34510&radius=50&locale=en-US&rows={PER_PAGE}&page={page}")
-  soup = BeautifulSoup(driver.page_source, "html.parser")
+  soup = crawler_utils.get_html_soup(
+    driver,
+    f"https://www.axs.com/apip/event/category?siteId=999&csrf_token={csrf_token}&majorCat=2&lat=47.63480&long=-122.34510&radius=50&locale=en-US&rows={PER_PAGE}&page={page}"
+  )
   return json.loads(soup.body.string)
 
 def get_biggest_non_default_image(media: dict) -> str:
   """Returns the biggest non default image from a media dict from axs resp."""
   if not media:
     return ""
-  
+
   max_key = None
   max_width = 0
   for key, info in media.items():
@@ -67,9 +56,9 @@ def get_biggest_non_default_image(media: dict) -> str:
 
   if not max_key:
     return ""
-  
+
   return media[max_key]["file_name"]
-    
+
 
 def process_event_list(event_list: list[dict], debug: bool=False) -> None:
   """Process a list of AXS events."""
@@ -108,7 +97,7 @@ def process_event_list(event_list: list[dict], debug: bool=False) -> None:
 def import_data(delay: float=0.5, debug=False):
   """Import data from AXS."""
   logger.info("IMPORT FROM AXS")
-  driver = create_chrome_driver()
+  driver = crawler_utils.create_chrome_driver()
   csrf_token = get_csrf_token(driver)
   data = event_list_request(driver, csrf_token, page=1)
   # Save the response from the first page.

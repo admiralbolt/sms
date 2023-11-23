@@ -1,15 +1,12 @@
 """Some things always change, but one thing stays the same, constants."""
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,missing-class-docstring
 
-class Choices:
-  """Helper class for choices of things!"""
-
-class EventTypes(Choices):
+class EventTypes:
   OPEN_MIC = "Open Mic"
   OPEN_JAM = "Open Jam"
   SHOW = "Show"
 
-class IngestionApis(Choices):
+class IngestionApis:
   AXS = "AXS"
   CRAWLER = "Crawler"
   EVENTBRITE = "Eventbrite"
@@ -19,13 +16,13 @@ class IngestionApis(Choices):
   TIXR = "TIXR"
   VENUEPILOT = "Venuepilot"
 
-class OpenMicTypes(Choices):
+class OpenMicTypes:
   ALL = "All"
   COMEDY = "Comedy"
   MUSIC = "Music"
   SPOKEN_WORD = "Spoken Word"
 
-class VenueTypes(Choices):
+class VenueTypes:
   BAR = "Bar"
   BREWERY = "Brewery"
   COFFEE_SHOP = "Coffee Shop"

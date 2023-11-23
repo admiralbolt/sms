@@ -14,7 +14,7 @@ const EventList = () => {
     <Box>
       {filteredEvents.map((event) => (
         hasVenue(event) &&
-          <EventDetail venue={filteredVenues[event.venue]} event={event} />
+          <EventDetail key={event.id} venue={filteredVenues[event.venue]} event={event} />
       ))}
     </Box>
   )

@@ -136,7 +136,7 @@ def get_or_create_event(venue: Venue, event_detail):
   logo = event_detail.get("logo", {})
   if logo:
     event_image_url = logo.get("url", "")
-  
+
 
   event_utils.create_or_update_event(
     venue=venue,
