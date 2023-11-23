@@ -5,6 +5,7 @@ Entry point: https://www.skylarkcafe.com/calendar
 Upcoming shows are contained within divs emulating list items.
 Very sparse information about the shows themselves, but it's a start.
 """
+import re
 import requests
 from datetime import datetime
 
@@ -32,6 +33,11 @@ def crawl(venue: Venue, debug: bool=False):
     event_dates = child.find_all("div", class_="date")
     start_date = datetime.strptime(event_dates[0].text, "%B %d, %Y %I:%M %p")
 
+    image_div = child.find_all("div", class_="artist-image")[0]
+    # Quick n' dirty. This WILL break.
+    urls = re.findall('url\([\'"](.*?)[\'"]\)', image_div["style"])
+    event_image_url = "" if not urls else urls[0]
+
     event = event_utils.create_or_update_event(
       venue=venue,
       title=event_titles[0].text,
@@ -39,4 +45,5 @@ def crawl(venue: Venue, debug: bool=False):
       start_time=start_date.time(),
       event_api=IngestionApis.CRAWLER,
       event_url=event_url,
+      event_image_url=event_image_url,
     )
