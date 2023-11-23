@@ -36,7 +36,7 @@ const EventDetail = ({ venue, event}) => {
         <CardMedia
           component="img"
           image={displayImage()}
-          sx={{ filter: "brightness(65%)", maxWidth: 576, maxHeight: 288 }}
+          sx={{ filter: "brightness(65%)", width:576, height: 288 }}
         />
         <Typography sx={{ width: "100%", top: 0, position: "absolute", fontWeight: "bold", fontSize: "1rem", zIndex: 10, textAlign: "center"}}>{event.title}</Typography>
       </Box>
