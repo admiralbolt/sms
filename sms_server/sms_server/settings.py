@@ -78,8 +78,15 @@ SECRET_KEY = 'django-insecure-p$95w)svi6dn3yw04zq0ggwl1w=t+xw#1lpr!tbr21=3smu5&8
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Eventually I will need to figure out reasonable settings here.
+# For now, just let everyone and their mom come hang out in the server.
+ALLOWED_HOSTS = [
+  '*',
+]
 
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_HEADERS = ['*']
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
@@ -98,6 +105,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
