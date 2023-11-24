@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/bash
 
 git_base=/home/admiralbolt/git/sms/
 deployment_base=/home/admiralbolt/deployments/
@@ -16,11 +16,14 @@ mkdir $deployment_base/$today
 # 2. Copy all backend files over to the deployment folder.
 #    IDK why I thought renaming it to backend was a good idea.
 cp -r $git_base/sms_server $deployment_base/$today/sms_backend
+cp $deployment_base/latest/sms_backend/db.sqlite3 $deployment_base/$today/sms_backend/db.sqlite3
+cp $deployment_base/latest/sms_backend/sms_server/local_settings.py $deployment_base/$today/sms_backend/sms_server/local_settings.py
 # And make the logs folder!
 mkdir $deployment_base/$today/sms_backend/logs
 
 # Activate virtualenv and collect static files.
-source $deployment_base/venv/activate
+echo $deployment_base/venv/bin/activate
+source $deployment_base/venv/bin/activate
 cd $deployment_base/$today/sms_backend/
 python manage.py collectstatic --noinput
 
@@ -28,10 +31,6 @@ python manage.py collectstatic --noinput
 cd $git_base/sms_frontend
 npm run build
 cp -r $git_base/sms_frontend/build $deployment_base/$today/sms_frontend
-
-# 4. Duplicate the latest version of the db / local settings.
-cp $deployment_base/latest/sms_backend/db.sqlite3 $deployment_base/$today/sms_backend/db.sqlite3
-cp $deployment_base/latest/sms_backend/sms_server/local_settings.py $deployment_base/$today/sms_backend/sms_server/local_settings.py
 
 # 5. Update latest symlink to point to todays date.
 ln -sfn $deployment_base/$today $deployment_base/latest
