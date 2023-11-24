@@ -3,12 +3,13 @@ import { setupCache } from 'axios-cache-interceptor';
 import { useEffect, useState } from 'react';
 
 const axios = setupCache(Axios);
+const baseUrl = (process.env.NODE_ENV === 'production') ? 'https://seattlemusicscene.info:8000' : 'http://localhost:8000';
 
 const useEventTypes = () => {
   const [eventTypes, setEventTypes] = useState([]);
 
   useEffect(() => {
-    axios.get('/api/get_all_event_types').then((res) => {
+    axios.get(`${baseUrl}/api/get_all_event_types`).then((res) => {
       setEventTypes(res.data);
     });
   }, []);
@@ -24,7 +25,7 @@ const useEvents = () => {
     let tmpEventsByVenue = {};
     let tmpEventsByDate = {};
 
-    axios.get('/api/events').then((res) => {
+    axios.get(`${baseUrl}/api/events`).then((res) => {
       res.data.forEach(event => {
         tmpEventsByVenue[event.venue] = tmpEventsByVenue[event.venue] || {};
         tmpEventsByVenue[event.venue][event.event_day] = event;
@@ -47,7 +48,7 @@ const useVenueTypes = () => {
   const [venueTypes, setVenueTypes] = useState([]);
 
   useEffect(() => {
-    axios.get('/api/get_all_venue_types').then((res) => {
+    axios.get(`${baseUrl}/api/get_all_venue_types`).then((res) => {
       setVenueTypes(res.data);
     });
   }, []);
@@ -59,7 +60,7 @@ const useVenues = () => {
   const [venues, setVenues] = useState([]);
 
   useEffect(() => {
-    axios.get('/api/venues').then((res) => {
+    axios.get(`${baseUrl}/api/venues`).then((res) => {
       setVenues(res.data);
     });
   }, []);
