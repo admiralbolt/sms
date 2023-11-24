@@ -27,7 +27,7 @@ class Venue(models.Model):
   postal_code = models.CharField(max_length=8)
   city = models.CharField(max_length=64)
   venue_url = models.CharField(max_length=256, blank=True, null=True)
-  venue_image_url = models.CharField(max_length=256, blank=True, null=True)
+  venue_image_url = models.CharField(max_length=1024, blank=True, null=True)
   venue_image = models.ImageField(upload_to="venue_images", blank=True)
 
   # Optional.
@@ -149,7 +149,7 @@ class Event(models.Model):
   event_api = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
   event_url = models.CharField(max_length=512, blank=True, null=True)
   description = models.TextField(blank=True, null=True)
-  event_image_url = models.CharField(max_length=256, blank=True, null=True)
+  event_image_url = models.CharField(max_length=1024, blank=True, null=True)
   event_image = models.ImageField(upload_to="event_images", blank=True)
 
   def __init__(self, *args, **kwargs):
