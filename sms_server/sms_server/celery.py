@@ -1,14 +1,16 @@
 """Celery is good for you. Also used to schedule tasks."""
 import os
-
 import django
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sms_server.settings")
+django.setup()
+
 from celery import Celery
 from celery.schedules import crontab
 
 from api.tasks import generate_open_mic_events, import_all
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sms_server.settings")
-django.setup()
+
 
 app = Celery("sms_server")
 app.config_from_object("django.conf:settings", namespace="CELERY")
