@@ -2,8 +2,24 @@ import { Box, Card, CardMedia, Link, Typography } from '@mui/material';
 import PlaceIcon from '@mui/icons-material/Place';
 import LinkIcon from '@mui/icons-material/Link';
 import IconButton from '@mui/material/IconButton';
+import { useState, useEffect } from 'react';
+
+import { useIsMobile, useWindowDimensions } from '../../hooks/window';
 
 const EventDetail = ({ venue, event}) => {
+
+  const { height, width } = useWindowDimensions();
+  const isMobile = useIsMobile();
+
+  const [cardWidth, setCardWidth] = useState(576);
+
+  useEffect(() => {
+    if (isMobile) {
+      setCardWidth(width * 0.91);
+    } else {
+      setCardWidth(576);
+    }
+  }, [isMobile, width]);
 
   const mapsLink = (venue) => {
     return `https://www.google.com/maps/search/?api=1&query=${venue.name}  ${venue.address} ${venue.city} ${venue.postal_code}`;
@@ -36,7 +52,7 @@ const EventDetail = ({ venue, event}) => {
         <CardMedia
           component="img"
           image={displayImage()}
-          sx={{ filter: "brightness(65%)", width:576, height: 288 }}
+          sx={{ filter: "brightness(65%)", width: cardWidth, height: cardWidth / 2 }}
         />
         <Typography sx={{ width: "100%", top: 0, position: "absolute", fontWeight: "bold", fontSize: "1rem", zIndex: 10, textAlign: "center"}}>{event.title}</Typography>
       </Box>
@@ -72,7 +88,6 @@ const EventDetail = ({ venue, event}) => {
         </Box>
       </Box>
     </Card>
-    
   )
 }
 
