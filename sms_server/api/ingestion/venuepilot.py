@@ -134,3 +134,20 @@ def import_data(debug=False):
   for page in range(1, total_pages):
     data = event_list_request(page=page)
     process_event_list(data, debug=debug)
+
+def debug_event_list(event_list):
+  """Debug list of events."""
+  for event in event_list["data"]["paginatedEvents"]["collection"]:
+    print(event["name"], event["date"])
+    print(event["venue"])
+    print()
+
+
+def debug():
+  """WTF IS GOING ON DAWG."""
+  data = event_list_request(page=0)
+  total_pages = data["data"]["paginatedEvents"]["metadata"]["totalPages"]
+  debug_event_list(data)
+  for page in range(1, total_pages):
+    data = event_list_request(page=page)
+    debug_event_list(data)
