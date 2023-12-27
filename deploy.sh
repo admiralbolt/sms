@@ -21,11 +21,14 @@ cp $deployment_base/latest/sms_backend/sms_server/local_settings.py $deployment_
 # And make the logs folder!
 mkdir $deployment_base/$today/sms_backend/logs
 
-# Activate virtualenv and collect static files.
+# Activate virtualenv.
 echo $deployment_base/venv/bin/activate
 source $deployment_base/venv/bin/activate
 cd $deployment_base/$today/sms_backend/
+# Collect static files.
 python manage.py collectstatic --noinput
+# Run migrations.
+python manage.py migrate
 
 # 3. Create a build of the frontend, then copy it to deployment folder.
 cd $git_base/sms_frontend
