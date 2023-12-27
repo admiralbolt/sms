@@ -5,7 +5,7 @@ import requests
 from django.core.files.base import ContentFile
 from django.db import models
 
-from api.constants import get_choices, EventTypes, IngestionApis, OpenMicTypes, VenueTypes
+from api.constants import get_choices, EventTypes, IngestionApis, Neighborhoods, OpenMicTypes, VenueTypes
 
 class APISample(models.Model):
   """Raw data dumps from the api."""
@@ -29,6 +29,7 @@ class Venue(models.Model):
   venue_url = models.CharField(max_length=256, blank=True, null=True)
   venue_image_url = models.CharField(max_length=1024, blank=True, null=True)
   venue_image = models.ImageField(upload_to="venue_images", blank=True)
+  neighborhood = models.CharField(max_length=64, blank=True, null=True, choices=get_choices(Neighborhoods))
 
   # Optional.
   description = models.TextField(default="", blank=True, null=True)

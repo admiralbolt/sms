@@ -29,6 +29,15 @@ class VenueTypes:
   EVENT_SPACE = "Event Space"
   SHOP = "Shop"
 
+class Neighborhoods:
+  BALLARD = "Ballard"
+  CAPITOL_HILL = "Capitol Hill"
+  FREMONT = "Fremont"
+  GREENLAKE = "Greenlake"
+  PHINNEY_RIDGE = "Phinney Ridge"
+  UNIVERSITY_DISTRICT = "University District"
+  WEST_SEATTLE = "West Seattle"
+
 AUTOMATIC_APIS = [
   IngestionApis.AXS,
   IngestionApis.EVENTBRITE,
