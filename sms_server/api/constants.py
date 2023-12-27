@@ -31,7 +31,9 @@ class VenueTypes:
 
 class Neighborhoods:
   BALLARD = "Ballard"
+  BELLTOWN = "Belltown"
   CAPITOL_HILL = "Capitol Hill"
+  DOWNTOWN = "Downtown"
   FREMONT = "Fremont"
   GREENLAKE = "Greenlake"
   PHINNEY_RIDGE = "Phinney Ridge"
