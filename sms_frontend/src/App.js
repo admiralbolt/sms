@@ -8,10 +8,17 @@ import AboutView from './pages/AboutView/AboutView.js';
 import ListView from './pages/ListView/ListView.js';
 import MapView from './pages/MapView/MapView.js';
 
+import ReactGA from 'react-ga4';
+
 import { LocalStorageContextProvider } from './contexts/LocalStorageContext.js';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import theme from './hooks/theme.js';
 import { DrawerContextProvider } from './contexts/DrawerContext.js';
+
+// We only want to run Google Analytics in production.
+if (process.env.NODE_ENV === 'production') {
+  ReactGA.initialize('G-HGEJWK9DS2');
+}
 
 const App = () => {
   
@@ -37,5 +44,7 @@ const App = () => {
     </div>
   )
 }
+
+
 
 export default App;
