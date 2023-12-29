@@ -36,7 +36,9 @@ class Neighborhoods:
   DOWNTOWN = "Downtown"
   FREMONT = "Fremont"
   GREENLAKE = "Greenlake"
+  MAGNOLIA = "Magnolia"
   PHINNEY_RIDGE = "Phinney Ridge"
+  QUEEN_ANNE = "Queen Anne"
   UNIVERSITY_DISTRICT = "University District"
   WEST_SEATTLE = "West Seattle"
 
