@@ -8,8 +8,7 @@ django.setup()
 from celery import Celery
 from celery.schedules import crontab
 
-from api.tasks import generate_open_mic_events, import_all
-
+from api.tasks import generate_open_mic_events, import_all, write_latest_data
 
 
 app = Celery("sms_server")
@@ -23,3 +22,5 @@ def setup_periodic_tasks(sender, **kwargs):
   sender.add_periodic_task(crontab(hour=3, minute=0), import_all, name="Import Data")
   # Generate open mic events once a week, sunday at 1am.
   sender.add_periodic_task(crontab(day_of_week="sun", hour=1, minute=0), generate_open_mic_events, name="Generate Open Mics")
+  # Write new versions of the flat files once an hour.
+  sender.add_periodic_task(crontab(hour="*", minute=0), write_latest_data, name="Write Flat API Files")

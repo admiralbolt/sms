@@ -25,7 +25,7 @@ const useEvents = () => {
     let tmpEventsByVenue = {};
     let tmpEventsByDate = {};
 
-    axios.get(`${baseUrl}/api/events`).then((res) => {
+    axios.get(`${baseUrl}/uploads/latest_events.json`).then((res) => {
       res.data.forEach(event => {
         tmpEventsByVenue[event.venue] = tmpEventsByVenue[event.venue] || {};
         tmpEventsByVenue[event.venue][event.event_day] = event;
@@ -60,7 +60,7 @@ const useVenues = () => {
   const [venues, setVenues] = useState([]);
 
   useEffect(() => {
-    axios.get(`${baseUrl}/api/venues`).then((res) => {
+    axios.get(`${baseUrl}/uploads/latest_venues.json`).then((res) => {
       setVenues(res.data);
     });
   }, []);
