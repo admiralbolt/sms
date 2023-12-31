@@ -23,4 +23,4 @@ def setup_periodic_tasks(sender, **kwargs):
   # Generate open mic events once a week, sunday at 1am.
   sender.add_periodic_task(crontab(day_of_week="sun", hour=1, minute=0), generate_open_mic_events, name="Generate Open Mics")
   # Write new versions of the flat files once an hour.
-  sender.add_periodic_task(crontab(hour="*", minute=0), write_latest_data, name="Write Flat API Files")
+  sender.add_periodic_task(crontab(hour="*", minute=10), write_latest_data, name="Write Flat API Files")
