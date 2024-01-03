@@ -10,7 +10,7 @@ from api.constants import AUTOMATIC_APIS, IngestionApis
 from api.ingestion import axs, eventbrite, ticketmaster, tixr, venuepilot
 from api.models import OpenMic, VenueApi
 from api.utils import open_mic_utils, venue_utils
-from sms_server.settings import MEDIA_ROOT
+from sms_server.settings import IS_PROD, MEDIA_ROOT
 
 @shared_task
 def generate_open_mic_events(name_filter: str="", max_diff: datetime.timedelta = datetime.timedelta(days=45), debug: bool=False):
@@ -71,12 +71,13 @@ def write_latest_data():
   # On plane so can't google, will eventually need to get a server name in
   # here somewhere to distinguish localhost / prod. For now we hardcode to
   # localhost.
-  venues_request = requests.get("http://localhost:8000/api/venues")
+  base_url = "http://localhost" if not IS_PROD else "https://seattlemusicscene.info"
+  venues_request = requests.get(f"{base_url}:8000/api/venues")
   all_venues = venues_request.json()
   with open(os.path.join(MEDIA_ROOT, "latest_venues.json"), "w") as wh:
     json.dump(all_venues, wh)
 
-  events_request = requests.get("http://localhost:8000/api/events")
+  events_request = requests.get(f"{base_url}:8000/api/events")
   all_events = events_request.json()
   with open(os.path.join(MEDIA_ROOT, "latest_events.json"), "w") as wh:
     json.dump(all_events, wh)

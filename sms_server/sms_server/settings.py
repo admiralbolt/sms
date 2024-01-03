@@ -22,6 +22,7 @@ from pathlib import Path
 #  * TIXR_CLIENTS - This should be a list of tuples of the form (name, venue_id, client_key)
 # Other important settings:
 #  * MEDIA_ROOT
+#  * IS_PROD
 from .local_settings import *  # pylint: disable=wildcard-import,unused-wildcard-import
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -216,3 +217,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/uploads/'
 MEDIA_ROOT = MEDIA_ROOT
+
+# Should be specified in local settings!
+IS_PROD = IS_PROD
