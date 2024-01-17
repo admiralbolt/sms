@@ -16,7 +16,7 @@ const DateSelectorTabs = () => {
   const { selectedDate, setSelectedDate } = useContext(LocalStorageContext);
   const [value, setValue] = useState(today.format('YYYY-MM-DD'));
   const isMobile = useIsMobile();
-  const minOffset = Math.trunc(total / 2);
+  const minOffset = -Math.trunc(total / 2);
 
   const scroller = useScroller();
 
@@ -25,15 +25,8 @@ const DateSelectorTabs = () => {
   }, [isMobile]);
 
   const handleChange = (event, newValue) => {
-    // Get a tab, and calculate it's width.
-    const allTabs = document.getElementsByClassName("MuiTab-textColorPrimary");
-    let totalWidth = 0;
-    for (let i = 0; i < allTabs.length; ++i) {
-      totalWidth += allTabs[i].offsetWidth;
-    }
     setValue(newValue);
     setSelectedDate(dayjs(newValue));
-    scroller.scrollLeft = (totalWidth - scroller.offsetWidth) / 2;
   };
 
   useEffect(() => {
@@ -41,15 +34,27 @@ const DateSelectorTabs = () => {
     let dateList = [];
     const djs = dayjs(selectedDate);
 
-    let start = Math.max(-minOffset, today.diff(selectedDate, "days"));
+    let start = Math.max(minOffset, today.diff(selectedDate, "days"));
     let end = start + total;
 
     for (let i = start; i < end; ++i) {
       dateList.push(djs.add(i, "day"));
     }
-
-    setDateRange(dateList);
+    
+    if (JSON.stringify(dateList) != JSON.stringify(dateRange)) {
+      setDateRange(dateList);
+    }
   }, [selectedDate, total]);
+
+  const centerSelected = () => {
+    const allTabs = document.getElementsByClassName("MuiTab-textColorPrimary");
+    let totalWidth = 0;
+    for (let i = 0; i < allTabs.length; ++i) {
+      totalWidth += allTabs[i].offsetWidth;
+    }
+
+    scroller.scrollLeft = (totalWidth - scroller.offsetWidth) / 2;
+  }
 
   return (
     <Tabs value={value} onChange={handleChange} variant="scrollable" scrollButtons={true} allowScrollButtonsMobile={true}>
