@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import MapIcon from '@mui/icons-material/Map';
 import ListIcon from '@mui/icons-material/List';
 import InfoIcon from '@mui/icons-material/Info';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import DateSelectorTabs from '../DateSelectorTabs/DateSelectorTabs';
 import { useContext } from 'react';
 import { LocalStorageContext } from '../../contexts/LocalStorageContext';
@@ -59,10 +60,10 @@ const NavBar = () => {
               <InfoIcon />
             </IconButton>
           </Link>
-          <Box style={{ flex: 1}}>
-            <Typography onClick={huh} style={{ float: "right" }}>
-              {selectedDate.format('ddd, MMM. D')}
-            </Typography>
+          <Box sx={{ display: "flex", flex: 1, alignItems: "flex-end", justifyContent: "flex-end" }}>
+            <IconButton onClick={huh} size="large" edge="start" color="secondary">
+              <FilterListIcon />
+            </IconButton>
           </Box>
         </Toolbar>
         <DateSelectorTabs />
