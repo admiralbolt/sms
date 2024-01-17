@@ -1,4 +1,4 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -27,39 +27,45 @@ const NavBar = () => {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" sx={{ zIndex: 999999, padding: 0, margin: 0}}>
         <Toolbar>
-          <Link to="/map">
-            <IconButton
-              size="large"
-              edge="start"
-              color="primary"
-              aria-label="menu"
-              sx={{ mr: 4 }}
-            >
-              <MapIcon />
-            </IconButton>
-          </Link>
-          <Link to="/list">
-            <IconButton
-              size="large"
-              edge="start"
-              color="primary"
-              aria-label="menu"
-              sx={{ mr: 4 }}
-            >
-              <ListIcon />
-            </IconButton>
-          </Link>
-          <Link to="/about">
-            <IconButton
-              size="large"
-              edge="start"
-              color="primary"
-              aria-label="menu"
-              sx={{ mr: 4 }}
-            >
-              <InfoIcon />
-            </IconButton>
-          </Link>
+          <NavLink to="/map">
+            {({ isActive, isPending, isTransitioning }) => (
+              <IconButton
+                size="large"
+                edge="start"
+                aria-label="menu"
+                color={(isActive) ? "primary" : ""}
+                sx={{ mr: 4 }}
+              >
+                <MapIcon />
+              </IconButton>
+            )}
+          </NavLink>
+          <NavLink to="/list">
+            {({ isActive, isPending, isTransitioning }) => (
+              <IconButton
+                size="large"
+                edge="start"
+                aria-label="menu"
+                color={(isActive) ? "primary" : ""}
+                sx={{ mr: 4 }}
+              >
+                <ListIcon />
+              </IconButton>
+            )}
+          </NavLink>
+          <NavLink to="/about">
+            {({ isActive, isPending, isTransitioning }) => (
+              <IconButton
+                size="large"
+                edge="start"
+                aria-label="menu"
+                color={(isActive) ? "primary" : ""}
+                sx={{ mr: 4 }}
+              >
+                <InfoIcon />
+              </IconButton>
+            )}
+          </NavLink>
           <Box sx={{ display: "flex", flex: 1, alignItems: "flex-end", justifyContent: "flex-end" }}>
             <IconButton onClick={huh} size="large" edge="start" color="secondary">
               <FilterListIcon />
