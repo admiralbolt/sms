@@ -31,9 +31,9 @@ const App = () => {
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Layout />}>
-                  <Route index element={<Navigate to="/map" />} />
-                  <Route path="map" element={<MapView />} />
+                  <Route index element={<Navigate to="/list" />} />
                   <Route path="list" element={<ListView />} />
+                  <Route path="map" element={<MapView />} />
                   <Route path="about" element={<AboutView />} />
                 </Route>
               </Routes>

@@ -27,6 +27,19 @@ const NavBar = () => {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" sx={{ zIndex: 999999, padding: 0, margin: 0}}>
         <Toolbar>
+        <NavLink to="/list">
+            {({ isActive, isPending, isTransitioning }) => (
+              <IconButton
+                size="large"
+                edge="start"
+                aria-label="menu"
+                color={(isActive) ? "primary" : ""}
+                sx={{ mr: 4 }}
+              >
+                <ListIcon />
+              </IconButton>
+            )}
+          </NavLink>
           <NavLink to="/map">
             {({ isActive, isPending, isTransitioning }) => (
               <IconButton
@@ -37,19 +50,6 @@ const NavBar = () => {
                 sx={{ mr: 4 }}
               >
                 <MapIcon />
-              </IconButton>
-            )}
-          </NavLink>
-          <NavLink to="/list">
-            {({ isActive, isPending, isTransitioning }) => (
-              <IconButton
-                size="large"
-                edge="start"
-                aria-label="menu"
-                color={(isActive) ? "primary" : ""}
-                sx={{ mr: 4 }}
-              >
-                <ListIcon />
               </IconButton>
             )}
           </NavLink>
