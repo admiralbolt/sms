@@ -9,7 +9,7 @@ import { Checkbox, FormControlLabel } from '@mui/material';
 import { useEventTypes, useVenueTypes } from '../../hooks/api';
 import FormGroup from '@mui/material/FormGroup';
 import { LocalStorageContext } from '../../contexts/LocalStorageContext';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import { useAppBarHeight, useFilterPanelWidth } from '../../hooks/materialHacks';
 
@@ -20,6 +20,11 @@ const FilterPanelContent = () => {
   const venueTypes = useVenueTypes();
   const appBarHeight = useAppBarHeight();
   const { selectedEventTypes, setSelectedEventTypes, selectedVenueTypes, setSelectedVenueTypes, selectedDate, setSelectedDate } = useContext(LocalStorageContext);
+  const [filterPanelDate, setFilterPanelDate] = useState(selectedDate);
+
+  useEffect(() => {
+    setFilterPanelDate(selectedDate);
+  }, [selectedDate]);
 
   const updateEventFilters = (event) => {
     if (event.target.checked && !selectedEventTypes.includes(event.target.value)) {
@@ -42,7 +47,7 @@ const FilterPanelContent = () => {
     <Box sx={{ overflow: 'auto', padding: 1, marginTop: `${appBarHeight}px` }}>
       <Typography>Date</Typography>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <DatePicker onChange={(newValue) => setSelectedDate(newValue)} defaultValue={selectedDate} />
+        <DatePicker onChange={(newValue) => setSelectedDate(newValue)} defaultValue={filterPanelDate} value={filterPanelDate} />
       </LocalizationProvider>
 
       <Typography sx={{ marginTop: 1 }}>Event Types</Typography>

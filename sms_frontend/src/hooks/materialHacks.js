@@ -22,4 +22,15 @@ const useFilterPanelWidth = () => {
   return filterPanelWidth;
 }
 
-export { useAppBarHeight, useFilterPanelWidth };
+const useScroller = () => {
+  const [scroller, setScroller] = useState({});
+
+    useEffect(() => {
+      const scroller = document.getElementsByClassName('MuiTabs-scroller')[0];
+      setScroller(scroller);
+    }, []);
+
+  return scroller;
+}
+
+export { useAppBarHeight, useFilterPanelWidth, useScroller };
