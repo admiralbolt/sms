@@ -38,6 +38,8 @@ cp -r $git_base/sms_frontend/build $deployment_base/$today/sms_frontend
 # 5. Update latest symlink to point to todays date.
 ln -sfn $deployment_base/$today $deployment_base/latest
 
-# 6. Restart the servers!
+# 6. Restart all the service!
+sudo systemctl restart celerybeat
+sudo systemctl restart celeryd
 sudo service uwsgi restart
 sudo service nginx restart
