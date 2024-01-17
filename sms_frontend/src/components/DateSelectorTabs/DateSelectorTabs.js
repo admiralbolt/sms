@@ -26,10 +26,14 @@ const DateSelectorTabs = () => {
 
   const handleChange = (event, newValue) => {
     // Get a tab, and calculate it's width.
-    const randomTab = document.getElementsByClassName("MuiTab-textColorPrimary")[0]
+    const allTabs = document.getElementsByClassName("MuiTab-textColorPrimary");
+    let totalWidth = 0;
+    for (let i = 0; i < allTabs.length; ++i) {
+      totalWidth += allTabs[i].offsetWidth;
+    }
     setValue(newValue);
     setSelectedDate(dayjs(newValue));
-    scroller.scrollLeft = (total * randomTab.offsetWidth - scroller.offsetWidth) / 2 - randomTab.offsetWidth / 20;
+    scroller.scrollLeft = (totalWidth - scroller.offsetWidth) / 2;
   };
 
   useEffect(() => {
