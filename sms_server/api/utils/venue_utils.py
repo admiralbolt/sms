@@ -98,7 +98,7 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
   new_venue = apply_mask(Venue(**kwargs))
 
   # THIS IS AMERICA.
-  if new_venue.postal_code.startswith("V8"):
+  if isinstance(new_venue.postal_code, str) and new_venue.postal_code.startswith("V8"):
     return None
 
   if debug:
