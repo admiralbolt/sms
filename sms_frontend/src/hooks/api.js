@@ -3,7 +3,7 @@ import { setupCache } from 'axios-cache-interceptor';
 import { useEffect, useState } from 'react';
 
 const axios = setupCache(Axios);
-const baseUrl = (process.env.NODE_ENV === 'production') ? 'https://seattlemusicscene.info:8000' : 'http://localhost:8000';
+const baseUrl = (process.env.NODE_ENV === 'production') ? 'https://seattlemusicscene.info:8000' : 'http://192.168.1.2:8000';
 
 const useEventTypes = () => {
   const [eventTypes, setEventTypes] = useState([]);

@@ -6,14 +6,17 @@ import IconButton from '@mui/material/IconButton';
 import MapIcon from '@mui/icons-material/Map';
 import ListIcon from '@mui/icons-material/List';
 import InfoIcon from '@mui/icons-material/Info';
+import DateSelectorTabs from '../DateSelectorTabs/DateSelectorTabs';
 import { useContext } from 'react';
 import { LocalStorageContext } from '../../contexts/LocalStorageContext';
 import { Typography } from '@mui/material';
 import { DrawerContext } from '../../contexts/DrawerContext';
+import { useAppBarHeight, useFilterPanelWidth } from '../../hooks/materialHacks';
 
 const NavBar = () => {
   const { selectedDate } = useContext(LocalStorageContext);
   const { drawerOpen, setDrawerOpen } = useContext(DrawerContext);
+  const appBarHeight = useAppBarHeight();
 
   const huh = () => {
     setDrawerOpen(!drawerOpen);
@@ -21,7 +24,7 @@ const NavBar = () => {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed" sx={{ zIndex: 999999}}>
+      <AppBar position="fixed" sx={{ zIndex: 999999, padding: 0, margin: 0}}>
         <Toolbar>
           <Link to="/map">
             <IconButton
@@ -62,8 +65,9 @@ const NavBar = () => {
             </Typography>
           </Box>
         </Toolbar>
+        <DateSelectorTabs />
       </AppBar>
-      <Toolbar />
+      <Toolbar sx={{ height: `${appBarHeight}px` }} />
       <Outlet />
     </Box>
   );

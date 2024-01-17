@@ -11,10 +11,14 @@ import FormGroup from '@mui/material/FormGroup';
 import { LocalStorageContext } from '../../contexts/LocalStorageContext';
 import { useContext } from 'react';
 
+import { useAppBarHeight, useFilterPanelWidth } from '../../hooks/materialHacks';
+
+
 
 const FilterPanelContent = () => {
   const eventTypes = useEventTypes();
   const venueTypes = useVenueTypes();
+  const appBarHeight = useAppBarHeight();
   const { selectedEventTypes, setSelectedEventTypes, selectedVenueTypes, setSelectedVenueTypes, selectedDate, setSelectedDate } = useContext(LocalStorageContext);
 
   const updateEventFilters = (event) => {
@@ -35,8 +39,7 @@ const FilterPanelContent = () => {
 
   return (
     <>
-    <Toolbar />
-    <Box sx={{ overflow: 'auto', padding: 1 }}>
+    <Box sx={{ overflow: 'auto', padding: 1, marginTop: `${appBarHeight}px` }}>
       <Typography>Date</Typography>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker onChange={(newValue) => setSelectedDate(newValue)} defaultValue={selectedDate} />
