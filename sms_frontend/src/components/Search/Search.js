@@ -6,6 +6,8 @@ import { useEvents, useVenueMap } from '../../hooks/api';
 import Fuse from 'fuse.js';
 import { Typography } from '@mui/material';
 
+const MAX_RESULTS = 50;
+
 const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [eventsByVenue, eventsByDate, allEventsList] = useEvents();
@@ -37,9 +39,7 @@ const Search = () => {
     if (fuse == null) return;
 
     const matchList = fuse.search(searchTerm);
-    if (matchList.length <= 50) {
-      setMatches(matchList);
-    }
+    setMatches(matchList.slice(0, MAX_RESULTS));
   }, [fuse, searchTerm]);
 
   return (
@@ -47,7 +47,7 @@ const Search = () => {
       <TextField id="search-input" label="Search!" variant="outlined" fullWidth={true} value={searchTerm}
         onChange={(event) => { setSearchTerm(event.target.value); }} />
         { matches.length > 0 && 
-          <Typography>{matches.length} results</Typography>
+          <Typography>{(matches.length == MAX_RESULTS) ? `${MAX_RESULTS}+` : matches.length} results</Typography>
         }
         <div>
           { matches.map((match) => (
