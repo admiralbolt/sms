@@ -6,6 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import MapIcon from '@mui/icons-material/Map';
 import ListIcon from '@mui/icons-material/List';
 import InfoIcon from '@mui/icons-material/Info';
+import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DateSelectorTabs from '../DateSelectorTabs/DateSelectorTabs';
 import React, { useEffect, useState, useContext } from 'react';
@@ -55,6 +56,19 @@ const NavBar = () => {
                 sx={{ mr: 4 }}
               >
                 <MapIcon />
+              </IconButton>
+            )}
+          </NavLink>
+          <NavLink to="/search">
+            {({ isActive, isPending, isTransitioning }) => (
+              <IconButton
+                size="large"
+                edge="start"
+                aria-label="menu"
+                color={(isActive) ? "primary" : ""}
+                sx={{ mr: 4 }}
+              >
+                <SearchIcon />
               </IconButton>
             )}
           </NavLink>

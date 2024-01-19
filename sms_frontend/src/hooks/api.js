@@ -68,4 +68,21 @@ const useVenues = () => {
   return venues;
 }
 
-export { useEvents, useEventTypes, useVenues, useVenueTypes};
+const useVenueMap = () => {
+  const [venueMap, setVenueMap] = useState({});
+  const venues = useVenues();
+
+  useEffect(() => {
+    let tmpVenues = {};
+
+    venues.forEach((venue) => {
+      tmpVenues[venue.id] = venue;
+    });
+
+    setVenueMap(tmpVenues);
+  }, [venues]);
+
+  return venueMap;
+}
+
+export { useEvents, useEventTypes, useVenues, useVenueTypes, useVenueMap};

@@ -7,6 +7,7 @@ import Layout from './components/Layout/Layout.js';
 import AboutView from './pages/AboutView/AboutView.js';
 import ListView from './pages/ListView/ListView.js';
 import MapView from './pages/MapView/MapView.js';
+import SearchView from './pages/SearchView/SearchView.js';
 
 import ReactGA from 'react-ga4';
 
@@ -34,6 +35,7 @@ const App = () => {
                   <Route index element={<Navigate to="/list" />} />
                   <Route path="list" element={<ListView />} />
                   <Route path="map" element={<MapView />} />
+                  <Route path="search" element={<SearchView />} />
                   <Route path="about" element={<AboutView />} />
                 </Route>
               </Routes>

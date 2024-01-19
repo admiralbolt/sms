@@ -5,7 +5,6 @@ import FilterPanel from '../../components/FilterPanel/FilterPanel';
 const AboutView = () => {
   return (
     <>
-    <FilterPanel />
     <Box sx={{ padding: 1.5, maxWidth: 'md' }}>
       <Typography variant={"h4"}>
         All<sup style={{ fontSize: "6px" }}>(most)</sup> Seattle shows & open mics in one place!
