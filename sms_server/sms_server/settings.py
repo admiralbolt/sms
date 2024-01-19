@@ -77,7 +77,7 @@ LOGGING = {
 SECRET_KEY = 'django-insecure-p$95w)svi6dn3yw04zq0ggwl1w=t+xw#1lpr!tbr21=3smu5&8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = not IS_PROD
 
 # Eventually I will need to figure out reasonable settings here.
 # For now, just let everyone and their mom come hang out in the server.
