@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import { useEvents, useVenueMap } from '../../hooks/api';
 import Fuse from 'fuse.js';
+import { Typography } from '@mui/material';
 
 const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -45,6 +46,9 @@ const Search = () => {
     <Box>
       <TextField id="search-input" label="Search!" variant="outlined" fullWidth={true} value={searchTerm}
         onChange={(event) => { setSearchTerm(event.target.value); }} />
+        { matches.length > 0 && 
+          <Typography>{matches.length} results</Typography>
+        }
         <div>
           { matches.map((match) => (
             <EventDetail key={ `event-${match.item.id}`} venue={venueMap[match.item.venue]} event={match.item} showDate={true} />
