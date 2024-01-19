@@ -18,9 +18,9 @@ const AboutView = () => {
       </Typography>
       <br />
       <Typography sx={{ fontSize: "1.1rem"}}>
-        If you have any comments, bug reports, feature requests, or funny jokes, please
-        reach out to me via <Link href="mailto:aviknecht@gmail.com">aviknecht@gmail.com</Link>&nbsp;OR message me on instagram&nbsp;
-        <Link href="https://instagram.com/wanderingbluemusic">@wanderingbluemusic</Link>.
+        If you notice any information is incorrect, venues are missing, or have
+        bug reports / feature requests, please reach out to me via <Link href="mailto:aviknecht@gmail.com">aviknecht@gmail.com</Link> OR
+        message me on instagram <Link href="https://instagram.com/wanderingbluemusic">@wanderingbluemusic</Link>.
       </Typography>
     </Box>
     </>
