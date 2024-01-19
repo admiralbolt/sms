@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const useAppBarHeight = () => {
   const [appBarHeight, setAppBarHeight] = useState(0);
+  const pathname = useLocation();
 
   useEffect(() => {
-    const appBars = document.getElementsByClassName('MuiAppBar-root');
-    setAppBarHeight(appBars.length > 0 ? appBars[0].clientHeight : 0);
-  }, []);
+    setTimeout(() => {
+      const appBars = document.getElementsByClassName('MuiAppBar-root');
+      setAppBarHeight(appBars.length > 0 ? appBars[0].clientHeight : 0);
+    }, 0);
+  }, [pathname]);
 
   return appBarHeight;
 }

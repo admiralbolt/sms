@@ -1,4 +1,4 @@
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -8,20 +8,25 @@ import ListIcon from '@mui/icons-material/List';
 import InfoIcon from '@mui/icons-material/Info';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import DateSelectorTabs from '../DateSelectorTabs/DateSelectorTabs';
-import { useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { LocalStorageContext } from '../../contexts/LocalStorageContext';
-import { Typography } from '@mui/material';
 import { DrawerContext } from '../../contexts/DrawerContext';
 import { useAppBarHeight, useFilterPanelWidth } from '../../hooks/materialHacks';
 
 const NavBar = () => {
+  const [showFilters, setShowFilters] = useState(false);
   const { selectedDate } = useContext(LocalStorageContext);
   const { drawerOpen, setDrawerOpen } = useContext(DrawerContext);
+  const { pathname } = useLocation();
   const appBarHeight = useAppBarHeight();
 
   const huh = () => {
     setDrawerOpen(!drawerOpen);
   }
+
+  useEffect(() => {
+    setShowFilters(['/list', '/map'].includes(pathname));
+  }, [pathname]);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -66,15 +71,19 @@ const NavBar = () => {
               </IconButton>
             )}
           </NavLink>
-          <Box sx={{ display: "flex", flex: 1, alignItems: "flex-end", justifyContent: "flex-end" }}>
-            <IconButton onClick={huh} size="large" edge="start" color="secondary">
-              <FilterListIcon />
-            </IconButton>
-          </Box>
+          {showFilters &&
+            <Box sx={{ display: "flex", flex: 1, alignItems: "flex-end", justifyContent: "flex-end" }}>
+              <IconButton onClick={huh} size="large" edge="start" color="secondary">
+                <FilterListIcon />
+              </IconButton>
+            </Box>
+          }
         </Toolbar>
-        <DateSelectorTabs />
+        {showFilters &&
+          <DateSelectorTabs />
+        }
       </AppBar>
-      <Toolbar sx={{ height: `${appBarHeight}px` }} />
+      <Toolbar style={{ height: appBarHeight }} />
       <Outlet />
     </Box>
   );

@@ -39,8 +39,7 @@ const FilterPanel = () => {
         open={drawerOpen}
         onClose={closeDrawer(false)}
         onOpen={closeDrawer(true)}
-        swipeAreaWidth={drawerBleeding}
-        disableSwipeToOpen={false}
+        disableSwipeToOpen={true}
         ModalProps={{
           keepMounted: true
         }}
