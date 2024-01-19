@@ -32,6 +32,7 @@ python manage.py migrate
 
 # 3. Create a build of the frontend, then copy it to deployment folder.
 cd $git_base/sms_frontend
+npm install
 npm run build
 cp -r $git_base/sms_frontend/build $deployment_base/$today/sms_frontend
 
