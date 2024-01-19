@@ -2,9 +2,10 @@ import { Box, Card, CardMedia, Link, Typography } from '@mui/material';
 import PlaceIcon from '@mui/icons-material/Place';
 import LinkIcon from '@mui/icons-material/Link';
 import IconButton from '@mui/material/IconButton';
+import dayjs from 'dayjs';
 
-const EventDetail = ({ venue, event}) => {
-
+const EventDetail = ({ venue, event, showDate = false }) => {
+  
   const mapsLink = (venue) => {
     return `https://www.google.com/maps/search/?api=1&query=${venue.name}  ${venue.address} ${venue.city} ${venue.postal_code}`;
   }
@@ -13,6 +14,18 @@ const EventDetail = ({ venue, event}) => {
     return new Date('1970-01-01T' + t + 'Z').toLocaleTimeString('en-US',
       {timeZone:'UTC', hour12:true, hour:'numeric', minute:'numeric'}
     );
+  }
+
+  const formatDay = (day) => {
+    return dayjs(day).format('ddd, MMM. D');
+  }
+
+  const timeAndDate = (event) => {
+    if (showDate) {
+      return `${formatTime(event.start_time)} - ${formatDay(event.event_day)}`;
+    }
+    
+    return formatTime(event.start_time);
   }
 
   const displayImage = () => {
@@ -42,7 +55,7 @@ const EventDetail = ({ venue, event}) => {
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'row', mt: 1 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start', justifyContent: 'center' }}>
-          <Typography>{formatTime(event.start_time)}</Typography>
+          <Typography>{timeAndDate(event)}</Typography>
           <Typography>{venueLink()}</Typography>
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'end', flex: 1, marginTop: 1}}>

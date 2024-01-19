@@ -37,7 +37,6 @@ const Search = () => {
 
     const matchList = fuse.search(searchTerm);
     if (matchList.length <= 50) {
-      console.log(matchList);
       setMatches(matchList);
     }
   }, [fuse, searchTerm]);
@@ -48,7 +47,7 @@ const Search = () => {
         onChange={(event) => { setSearchTerm(event.target.value); }} />
         <div>
           { matches.map((match) => (
-            <EventDetail key={ `event-${match.item.id}`} venue={venueMap[match.item.venue]} event={match.item} />
+            <EventDetail key={ `event-${match.item.id}`} venue={venueMap[match.item.venue]} event={match.item} showDate={true} />
           ))}
         </div>
     </Box>
