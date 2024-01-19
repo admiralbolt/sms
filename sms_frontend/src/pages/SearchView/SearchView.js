@@ -2,7 +2,7 @@ import Search from '../../components/Search/Search.js';
 
 const SearchView = () => {
   return (
-    <div style={{ padding: "10px 5px 5px 5px" }}>
+    <div style={{ padding: "12px 5px 5px 5px" }}>
       <Search />
     </div>
   );

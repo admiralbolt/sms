@@ -20,12 +20,15 @@ const useEventTypes = () => {
 const useEvents = () => {
   const [eventsByVenue, setEventsByVenue] = useState({});
   const [eventsByDate, setEventsByDate] = useState({});
+  const [allEventsList, setAllEventsList] = useState([]);
 
   useEffect(() => {
     let tmpEventsByVenue = {};
     let tmpEventsByDate = {};
 
     axios.get(`${baseUrl}/uploads/latest_events.json`).then((res) => {
+      setAllEventsList(res.data);
+      
       res.data.forEach(event => {
         tmpEventsByVenue[event.venue] = tmpEventsByVenue[event.venue] || {};
         tmpEventsByVenue[event.venue][event.event_day] = event;
@@ -41,7 +44,7 @@ const useEvents = () => {
     
   }, []);
 
-  return [eventsByVenue, eventsByDate];
+  return [eventsByVenue, eventsByDate, allEventsList];
 }
 
 const useVenueTypes = () => {

@@ -3,50 +3,54 @@ import EventDetail from '../EventList/EventDetail';
 import { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import { useEvents, useVenueMap } from '../../hooks/api';
+import Fuse from 'fuse.js';
 
 const Search = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [eventsByVenue, eventsByDate] = useEvents();
+  const [eventsByVenue, eventsByDate, allEventsList] = useEvents();
   const venueMap = useVenueMap();
 
-  const [matches, setMatches] = useState({});
+  const [matches, setMatches] = useState([]);
+  const [fuse, setFuse] = useState(null);
 
+  const fuseOptions = {
+    isCaseSensitive: false,
+    includeScore: true,
+    shouldSort: true,
+    includeMatches: true,
+    findAllMatches: true,
+    minMatchCharLength: 2,
+    threshold: 0.2,
+    ignoreLocation: true,
+    ignoreFieldNorm: true,
+    keys: [
+      'title'
+    ]
+  };
 
   useEffect(() => {
-    let totalMatches = 0;
-    let tmpMatches = {};
-    for (const [day, eventList] of Object.entries(eventsByDate)) {
-      eventList.forEach((event) => {
-        if (!event.title.toLowerCase().includes(searchTerm)) return;
+    setFuse(new Fuse(allEventsList, fuseOptions));
+  }, [allEventsList]);
 
-        if (!(day in tmpMatches)) {
-          tmpMatches[day] = [];
-        }
+  useEffect(() => {
+    if (fuse == null) return;
 
-        tmpMatches[day].push(event);
-        totalMatches++;
-      });
+    const matchList = fuse.search(searchTerm);
+    if (matchList.length <= 50) {
+      console.log(matchList);
+      setMatches(matchList);
     }
-
-    if (totalMatches <= 60) {
-      setMatches(tmpMatches);
-    }
-  }, [eventsByDate, searchTerm]);    
+  }, [fuse, searchTerm]);
 
   return (
     <Box>
       <TextField id="search-input" label="Search!" variant="outlined" fullWidth={true} value={searchTerm}
         onChange={(event) => { setSearchTerm(event.target.value); }} />
-        
-      { Object.entries(matches).map(([day, eventList], i) => (
-        <div key={`wrapper-${day}`}>
-          <p key={day}>{day}</p>
-          <Divider />
-          { eventList.map((event) => (
-            <EventDetail key={event.id} venue={venueMap[event.venue]} event={event} />
+        <div>
+          { matches.map((match) => (
+            <EventDetail key={ `event-${match.item.id}`} venue={venueMap[match.item.venue]} event={match.item} />
           ))}
         </div>
-      ))}
     </Box>
   )
 }
