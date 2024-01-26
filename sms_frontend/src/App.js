@@ -8,6 +8,7 @@ import AboutView from './pages/AboutView/AboutView.js';
 import ListView from './pages/ListView/ListView.js';
 import MapView from './pages/MapView/MapView.js';
 import SearchView from './pages/SearchView/SearchView.js';
+import NotFoundView from './pages/NotFoundView/NotFoundView.js';
 
 import ReactGA from 'react-ga4';
 
@@ -37,6 +38,7 @@ const App = () => {
                   <Route path="map" element={<MapView />} />
                   <Route path="search" element={<SearchView />} />
                   <Route path="about" element={<AboutView />} />
+                  <Route path="*" element={<NotFoundView />} />
                 </Route>
               </Routes>
             </BrowserRouter>
