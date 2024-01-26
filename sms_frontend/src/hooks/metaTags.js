@@ -4,7 +4,6 @@ const usePageTitle = (title) => {
   const defaultTitle = 'Seattle Music Scene';
 
   useEffect(() => {
-    console.log(`TITLE = ${title}, default = ${defaultTitle}`);
     document.title = title || defaultTitle;
   }, [defaultTitle, title]);
 }
