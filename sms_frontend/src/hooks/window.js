@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-const MOBILE_THRESHOLD = 600;
+const MOBILE_THRESHOLD = 800;
 
 function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
