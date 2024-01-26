@@ -48,6 +48,7 @@ const EventDetail = ({ venue, event, showDate = false }) => {
       <Box position="relative">
         <CardMedia
           component="img"
+          alt={`Poster for ${event.title}`}
           image={displayImage()}
           sx={{ filter: "brightness(65%)", width: 'sm', aspectRatio: 2}}
         />
