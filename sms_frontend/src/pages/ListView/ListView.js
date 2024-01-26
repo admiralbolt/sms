@@ -1,12 +1,11 @@
 import EventList from '../../components/EventList/EventList.js';
 import FilterPanel from '../../components/FilterPanel/FilterPanel.js';
-import { useEffect } from 'react';
+import { usePageTitle, usePageDescription } from '../../hooks/metaTags.js';
 
 
 const ListView = () => {
-  useEffect(() => {
-    document.title = "Seattle Show & Open Mic List"
-  });
+  usePageTitle("Seattle Show & Open Mic List");
+  usePageDescription("See a list of all shows & open mics in Seattle.");
 
   return (
     <div>

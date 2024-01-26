@@ -1,11 +1,10 @@
 import Search from '../../components/Search/Search.js';
-import { useEffect } from 'react';
+import { usePageTitle, usePageDescription } from '../../hooks/metaTags.js';
 
 
 const SearchView = () => {
-  useEffect(() => {
-    document.title = "Seattle Show & Open Mic Search"
-  });
+  usePageTitle("Seattle Show & Open Mic Search");
+  usePageDescription("Search all shows & open mics happening in Seattle.");
 
   return (
     <div style={{ padding: "12px 5px 5px 5px" }}>

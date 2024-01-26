@@ -1,14 +1,13 @@
 import FilterPanel from '../../components/FilterPanel/FilterPanel.js';
 import Map from '../../components/Map/Map.js';
 import 'leaflet/dist/leaflet.css';
-import { useEffect } from 'react';
+import { usePageTitle, usePageDescription } from '../../hooks/metaTags.js';
 
 
 
 const MapView = () => {
-  useEffect(() => {
-    document.title = "Seattle Show & Open Mic Map"
-  });
+  usePageTitle("Seattle Show & Open Mic Map");
+  usePageDescription("See all shows & open mics in Seattle on a map.");
 
   return (
     <div>

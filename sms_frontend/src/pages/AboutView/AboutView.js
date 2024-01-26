@@ -1,12 +1,10 @@
-import { Link, Typography } from '@mui/material';
+import { Divider, Link, List, ListItem, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
-
-import { useEffect } from 'react';
+import { usePageTitle, usePageDescription } from '../../hooks/metaTags';
 
 const AboutView = () => {
-  useEffect(() => {
-    document.title = "Seattle Music Scene - About"
-  });
+  usePageTitle("Seattle Music Scene - About");
+  usePageDescription("Information about the seattle music scene website");
 
   return (
     <>
@@ -27,6 +25,19 @@ const AboutView = () => {
         bug reports / feature requests, please reach out to me via <Link href="mailto:aviknecht@gmail.com">aviknecht@gmail.com</Link> OR
         message me on instagram <Link href="https://instagram.com/wanderingbluemusic">@wanderingbluemusic</Link>.
       </Typography>
+
+      <Divider sx={{ marginTop: "1.5rem", marginBottom: "1.5rem" }} />
+      <Typography variant={"h5"}>
+        Changelog
+      </Typography>
+      <br />
+
+      <Typography sx={{ fontSize: "1.3rem" }}>
+        <b>V1.0.0</b> -- January 26th, 2024 <br />
+      </Typography>
+      <List sx={{ listStyleType: 'disc', pl: 4 }}>
+        <ListItem sx={{ display: 'list-item' }}>Launched initial site!</ListItem>
+      </List>
     </Box>
     </>
   );
