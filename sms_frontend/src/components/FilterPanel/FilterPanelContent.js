@@ -58,13 +58,13 @@ const FilterPanelContent = () => {
         ))}
       </FormGroup>
 
-      <Typography sx={{ marginTop: 1 }}>Venue Types</Typography>
+      {/* <Typography sx={{ marginTop: 1 }}>Venue Types</Typography>
       <Divider />
       <FormGroup id="venue-type-filters">
         {venueTypes.map((type) => (
           <FormControlLabel key={type} control={<Checkbox checked={selectedVenueTypes.includes(type)} value={type} onChange={updateVenueFilters} />} label={type} />
         ))}
-      </FormGroup>
+      </FormGroup> */}
     </Box>
     </>
   );

@@ -11,7 +11,8 @@ const useFilteredVenues = () => {
     let tmpVenues = {};
 
     venues.forEach((venue) => {
-      if (!(venue.venue_tags.some((venue_type) => selectedVenueTypes.includes(venue_type)))) return;
+      // TODO(admiralbolt): Put this back -- Temporarily removing venue filters.
+      // if (!(venue.venue_tags.some((venue_type) => selectedVenueTypes.includes(venue_type)))) return;
 
       tmpVenues[venue.id] = venue;
     });
