@@ -1,8 +1,13 @@
 import { Link, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
-import FilterPanel from '../../components/FilterPanel/FilterPanel';
+
+import { useEffect } from 'react';
 
 const AboutView = () => {
+  useEffect(() => {
+    document.title = "Seattle Music Scene - About"
+  });
+
   return (
     <>
     <Box sx={{ padding: 1.5, maxWidth: 'md' }}>
