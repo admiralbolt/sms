@@ -9,7 +9,7 @@ const useAppBarHeight = () => {
     setTimeout(() => {
       const appBars = document.getElementsByClassName('MuiAppBar-root');
       setAppBarHeight(appBars.length > 0 ? appBars[0].clientHeight : 0);
-    }, 0);
+    }, 1);
   }, [pathname]);
 
   return appBarHeight;
