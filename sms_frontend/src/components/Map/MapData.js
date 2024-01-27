@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './MapData.css';
 
+import { LocalStorageContext } from '../../contexts/LocalStorageContext';
+
 import { useMap, useMapEvents, TileLayer, Tooltip, Circle } from 'react-leaflet'
-
 import { useFilteredEventsByVenue, useFilteredVenues } from '../../hooks/filteredData';
-
 import { useIsMobile } from '../../hooks/window';
 
 import { Box, Typography } from '@mui/material';
@@ -26,6 +26,7 @@ const Map = ({ setBannerOpen, setSelectedEvent, setSelectedVenue, setMapPosition
   const filteredEventsByVenue = useFilteredEventsByVenue();
   const isMobile = useIsMobile();
   const [circleSize, setCircleSize] = useState(CIRCLE_SIZES[defaultZoom]);
+  const { selectedDate } = useContext(LocalStorageContext);
 
   const getColor = (event_type) => {
     if (event_type == 'Open Mic') return OPEN_MIC_COLOR;
@@ -34,6 +35,11 @@ const Map = ({ setBannerOpen, setSelectedEvent, setSelectedVenue, setMapPosition
 
     return NO_EVENT_COLOR;
   }
+
+  useEffect(() => {
+    setBannerOpen(false);
+    clearAllHighlights();
+  }, [selectedDate]);
 
   useEffect(() => {
     if (isMobile) map.removeControl(map.zoomControl);
