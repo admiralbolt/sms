@@ -1,4 +1,4 @@
-import { Box, Divider } from '@mui/material';
+import { Box, Divider, List, ListItem } from '@mui/material';
 import EventDetail from '../EventList/EventDetail';
 import { useEffect, useState } from 'react';
 import TextField from '@mui/material/TextField';
@@ -49,11 +49,11 @@ const Search = () => {
         { matches.length > 0 && 
           <Typography>{(matches.length == MAX_RESULTS) ? `${MAX_RESULTS}+` : matches.length} results</Typography>
         }
-        <div>
+        <List sx={{ maxHeight: "100vh", paddingBottom: "10rem", overflow: "auto" }}>
           { matches.map((match) => (
-            <EventDetail key={ `event-${match.item.id}`} venue={venueMap[match.item.venue]} event={match.item} showDate={true} />
+            <ListItem key={`event-${match.item.id}`}><EventDetail venue={venueMap[match.item.venue]} event={match.item} showDate={true} /></ListItem>
           ))}
-        </div>
+        </List>
     </Box>
   )
 }
