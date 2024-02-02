@@ -18,7 +18,7 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
   serializer_class = serializers.EventSerializer
 
   def get_queryset(self):
-    return models.Event.objects.order_by("event_day").filter(event_day__gte=datetime.date.today())
+    return models.Event.objects.order_by("event_day", "venue__name").filter(event_day__gte=datetime.date.today(), venue__show_venue=True, show_event=True)
 
 class VenueViewSet(viewsets.ReadOnlyModelViewSet):
   """List all venues."""
