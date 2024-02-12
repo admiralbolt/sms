@@ -20,6 +20,7 @@ class APISample(models.Model):
 class Venue(models.Model):
   """Places to go!"""
   name = models.CharField(max_length=128, unique=True)
+  name_lower = models.CharField(max_length=128, unique=True)
   created_at = models.DateTimeField(auto_now_add=True)
   latitude = models.DecimalField(max_digits=11, decimal_places=8)
   longitude = models.DecimalField(max_digits=11, decimal_places=8)
@@ -47,6 +48,7 @@ class Venue(models.Model):
     self._original_venue_image_url = self.venue_image_url
 
   def save(self, *args, **kwargs):
+    self.name_lower = self.name.lower()
     super().save(*args, **kwargs)
     if self.venue_image_url:
       if self.venue_image_url != self._original_venue_image_url or not self.venue_image:
