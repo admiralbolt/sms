@@ -7,7 +7,7 @@ import requests
 from celery import shared_task
 
 from api.constants import AUTOMATIC_APIS, IngestionApis
-from api.ingestion import axs, eventbrite, ticketmaster, tixr, venuepilot
+from api.ingestion import axs, dice, eventbrite, ticketmaster, tixr, venuepilot
 from api.models import OpenMic, VenueApi
 from api.utils import open_mic_utils, venue_utils
 from sms_server.settings import IS_PROD, MEDIA_ROOT
@@ -33,6 +33,7 @@ def import_api_data(api_name: str, debug: bool=False):
   """Import data from apis!"""
   import_call_dict = {
     IngestionApis.AXS: axs.import_data,
+    IngestionApis.DICE: dice.import_data,
     IngestionApis.EVENTBRITE: eventbrite.import_data,
     IngestionApis.TICKETMASTER: ticketmaster.import_data,
     IngestionApis.TIXR: tixr.import_data,

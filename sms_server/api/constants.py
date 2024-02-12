@@ -9,6 +9,7 @@ class EventTypes:
 class IngestionApis:
   AXS = "AXS"
   CRAWLER = "Crawler"
+  DICE = "Dice"
   EVENTBRITE = "Eventbrite"
   MANUAL = "Manual"
   OPEN_MIC_GENERATOR = "Open Mic Generator"
