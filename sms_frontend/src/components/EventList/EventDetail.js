@@ -70,7 +70,7 @@ const EventDetail = ({ venue, event, showDate = false }) => {
           sx={{ filter: "brightness(65%)", width: 'sm', aspectRatio: 2}}
         />
         <Typography sx={{ width: "100%", top: 0, position: "absolute", fontWeight: "bold", fontSize: "1rem", zIndex: 10, textAlign: "center"}}>{event.title}</Typography>
-        <Box sx={{ position: "absolute", left: 0, bottom: 0, padding: "0.2em", opacity: 0.3, backgroundColor: "black", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Box sx={{ position: "absolute", left: 0, bottom: 0, padding: "0.2em", opacity: 0.4, backgroundColor: "black", display: "flex", alignItems: "center", justifyContent: "center" }}>
           {getEventIcon(event.event_type)}
         </Box>
         <Box sx={{ position: "absolute", left: 0, bottom: 0, padding: "0.2em", display: "flex", alignItems: "center", justifyContent: "center" }}>
