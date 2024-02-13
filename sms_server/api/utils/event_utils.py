@@ -34,6 +34,11 @@ def create_or_update_event(venue: Venue, **kwargs) -> Event:
   # We want to use the open mic generators instead of the apis directly.
   if kwargs["event_api"] != IngestionApis.OPEN_MIC_GENERATOR and "open mic" in kwargs["title"].lower():
     return None
+  
+  # Similarly, we want to handle some special cases. We don't want to include
+  # trivia or karaoke events.
+  if "trivia" in kwargs["title"].lower() or "karaoke" in kwargs["title"].lower():
+    return None
 
   # Uniqueness of an event is based on venue, event_day and start_time.
   # Make sure we at least have these.
