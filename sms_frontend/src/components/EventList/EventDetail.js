@@ -3,6 +3,14 @@ import PlaceIcon from '@mui/icons-material/Place';
 import LinkIcon from '@mui/icons-material/Link';
 import IconButton from '@mui/material/IconButton';
 import dayjs from 'dayjs';
+import MicIcon from '@mui/icons-material/Mic';
+import { PiMicrophoneStageFill } from 'react-icons/pi';
+import { FaGuitar } from "react-icons/fa6";
+
+const SHOW_COLOR = '#0070ff';
+const OPEN_JAM_COLOR = '#ff5500';
+const OPEN_MIC_COLOR = '#ee6600';
+
 
 const EventDetail = ({ venue, event, showDate = false }) => {
   
@@ -43,6 +51,15 @@ const EventDetail = ({ venue, event, showDate = false }) => {
     )
   }
 
+  const getEventIcon = (event_type) => {
+    event_type = (event_type != undefined) ? event_type.toLowerCase() : "";
+    if (event_type == "open mic" || event_type == "open jam") {
+      return (<PiMicrophoneStageFill size={24} color={(event_type == "open jam") ? OPEN_JAM_COLOR : OPEN_MIC_COLOR} />);
+    }
+      
+    return (<FaGuitar size={24} color={SHOW_COLOR} />);
+  }
+
   return (
     <Card key={event.id} sx={{ display: 'flex', flexDirection: 'column', margin: 1, padding: 1.5, width: '600px', maxWidth: '600px' }}>
       <Box position="relative">
@@ -53,6 +70,12 @@ const EventDetail = ({ venue, event, showDate = false }) => {
           sx={{ filter: "brightness(65%)", width: 'sm', aspectRatio: 2}}
         />
         <Typography sx={{ width: "100%", top: 0, position: "absolute", fontWeight: "bold", fontSize: "1rem", zIndex: 10, textAlign: "center"}}>{event.title}</Typography>
+        <Box sx={{ position: "absolute", left: 0, bottom: 0, padding: "0.2em", opacity: 0.3, backgroundColor: "black", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          {getEventIcon(event.event_type)}
+        </Box>
+        <Box sx={{ position: "absolute", left: 0, bottom: 0, padding: "0.2em", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          {getEventIcon(event.event_type)}
+        </Box>
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'row', mt: 1 }}>
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start', justifyContent: 'center' }}>
