@@ -33,6 +33,7 @@ def apply_mask(venue: Venue) -> Venue:
       continue
 
     venue.name = mask.proper_name
+    venue.name_lower = venue.name.lower()
     if mask.latitude:
       venue.latitude = mask.latitude
     if mask.longitude:
@@ -44,7 +45,7 @@ def apply_mask(venue: Venue) -> Venue:
 
 def _get_venue(venue: Venue) -> Venue:
   """Get a venue by name OR lat/long fields."""
-  db_venue = Venue.objects.filter(name=venue.name)
+  db_venue = Venue.objects.filter(name_lower=venue.name.lower())
   if db_venue.exists():
     return db_venue.first()
 
