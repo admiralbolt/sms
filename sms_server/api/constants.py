@@ -45,6 +45,7 @@ class Neighborhoods:
 
 AUTOMATIC_APIS = [
   IngestionApis.AXS,
+  IngestionApis.DICE,
   IngestionApis.EVENTBRITE,
   IngestionApis.TICKETMASTER,
   IngestionApis.TIXR,
