@@ -25,7 +25,7 @@ def get_csrf_token(driver: webdriver.Chrome):
   # We first query the search page to get a valid CSRF token, then reuse that
   # token to make a validated request to the API. In order to bypass the
   # protections AXS has in place, we use selenium and a "normal" user agent.
-  soup = crawler_utils.get_html_soup(driver, "https://www.axs.com/browse/music?q=seattle")
+  soup = crawler_utils.get_html_soup(driver, "https://www.axs.com/")
   # We then look for the "hdn_csrf_token" input -- something like this:
   # <input id="hdn_csrf_token" type="hidden" value="Wrt06Y2wRCus0d7_YxlmLuQsg90KS45zwhozujtNjnY"/>
   csrf_token_input = soup.find(id="hdn_csrf_token")
