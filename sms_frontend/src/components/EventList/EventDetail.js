@@ -61,7 +61,7 @@ const EventDetail = ({ venue, event, showDate = false }) => {
   }
 
   return (
-    <Card key={event.id} sx={{ display: 'flex', flexDirection: 'column', margin: 1, padding: 1.5, width: '600px', maxWidth: '600px' }}>
+    <Card key={event.id} sx={{ display: 'flex', flexDirection: 'column', margin: 1, padding: 1.5, width: '600px', maxWidth: '96vw' }}>
       <Box position="relative">
         <CardMedia
           component="img"
