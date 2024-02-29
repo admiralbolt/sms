@@ -83,7 +83,7 @@ def event_list_request(min_start_date: Optional[str]=None, page: int=0):
     "operationName": "PaginatedEvents",
     "query": REQUEST_TEMPLATE % (page, min_start_date)
   }
-  return requests.post("https://www.venuepilot.co/graphql", headers=headers, json=data, timeout=15).json()
+  return requests.post("https://www.venuepilot.co/graphql", headers=headers, json=data, timeout=30).json()
 
 def process_event_list(event_list, debug: bool=False) -> None:
   """Process a list of events from venuepilot."""
