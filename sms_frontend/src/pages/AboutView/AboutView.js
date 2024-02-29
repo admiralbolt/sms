@@ -8,7 +8,7 @@ const AboutView = () => {
 
   return (
     <>
-    <Box sx={{ padding: 1.5, maxWidth: 'md' }}>
+    <Box sx={{ padding: 1.5, maxWidth: "md", overflowY: "scroll", height: "100vh", paddingBottom: "10vh" }}>
       <Typography variant={"h4"}>
         All<sup style={{ fontSize: "6px" }}>(most)</sup> Seattle shows & open mics in one place!
       </Typography>
@@ -33,10 +33,22 @@ const AboutView = () => {
       <br />
 
       <Typography sx={{ fontSize: "1.3rem" }}>
+        <b>V1.1.0</b> -- February 29th, 2024 <br />
+      </Typography>
+      <List sx={{ listStyleType: 'disc', pl: 4}}>
+        <ListItem sx={{ display: 'list-item', paddingBottom: 0, paddingTop: 0 }}>Integration with dice.fm added! This adds shows for these venues: Sunset Tavern, Rabbit Box, Kremwerk, Belltown Yacht Club, Vera Project, Black Lodge</ListItem>
+        <ListItem sx={{ display: 'list-item', paddingBottom: 0, paddingTop: 0 }}>Added open mics for Outlander, Peace of Mind, C&P Coffee, and Boneyard!</ListItem>
+        <ListItem sx={{ display: 'list-item', paddingBottom: 0, paddingTop: 0 }}>Fixed a bug where some non music events (like trivia) were incorrectly showing up.</ListItem>
+        <ListItem sx={{ display: 'list-item', paddingBottom: 0, paddingTop: 0 }}>Updating listing page to sort by venue.</ListItem>
+        <ListItem sx={{ display: 'list-item', paddingBottom: 0, paddingTop: 0 }}>Added icons to distinguish between shows & open mics.</ListItem>
+        <ListItem sx={{ display: 'list-item', paddingBottom: 0, paddingTop: 0 }}>Fixed the event detail cards to have consistent sizes.</ListItem>
+      </List>
+
+      <Typography sx={{ fontSize: "1.3rem" }}>
         <b>V1.0.0</b> -- January 26th, 2024 <br />
       </Typography>
       <List sx={{ listStyleType: 'disc', pl: 4 }}>
-        <ListItem sx={{ display: 'list-item' }}>Launched initial site!</ListItem>
+        <ListItem sx={{ display: 'list-item', paddingBottom: 0, paddingTop: 0 }}>Launched initial site!</ListItem>
       </List>
     </Box>
     </>
