@@ -49,7 +49,7 @@ const Search = () => {
         { matches.length > 0 && 
           <Typography>{(matches.length == MAX_RESULTS) ? `${MAX_RESULTS}+` : matches.length} results</Typography>
         }
-        <List sx={{ maxHeight: "100vh", paddingBottom: "10rem", overflow: "auto" }}>
+        <List sx={{ maxHeight: "100vh", paddingBottom: "20rem", overflow: "auto" }}>
           { matches.map((match) => (
             <ListItem key={`event-${match.item.id}`}><EventDetail venue={venueMap[match.item.venue]} event={match.item} showDate={true} /></ListItem>
           ))}
