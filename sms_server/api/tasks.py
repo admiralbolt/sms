@@ -72,7 +72,7 @@ def write_latest_data():
   # On plane so can't google, will eventually need to get a server name in
   # here somewhere to distinguish localhost / prod. For now we hardcode to
   # localhost.
-  base_url = "http://192.168.1.2" if not IS_PROD else "https://seattlemusicscene.info"
+  base_url = "localhost" if not IS_PROD else "https://seattlemusicscene.info"
   venues_request = requests.get(f"{base_url}:8000/api/venues")
   all_venues = venues_request.json()
   with open(os.path.join(MEDIA_ROOT, "latest_venues.json"), "w") as wh:
