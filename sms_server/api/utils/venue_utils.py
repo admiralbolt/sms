@@ -33,7 +33,6 @@ def apply_mask(venue: Venue) -> Venue:
       continue
 
     venue.name = mask.proper_name
-    venue.name_lower = venue.name.lower()
     if mask.latitude:
       venue.latitude = mask.latitude
     if mask.longitude:
@@ -41,6 +40,7 @@ def apply_mask(venue: Venue) -> Venue:
     if mask.address:
       venue.address = mask.address
 
+  venue.make_pretty()
   return venue
 
 def _get_venue(venue: Venue) -> Venue:

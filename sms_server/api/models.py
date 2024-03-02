@@ -47,6 +47,15 @@ class Venue(models.Model):
     super().__init__(*args, **kwargs)
     self._original_venue_image_url = self.venue_image_url
 
+  def make_pretty(self):
+    # Helper method for cleaning venue information.
+    # Ideally I'd just trigger whatever black magic is happening in pre_save(),
+    # but judging from: https://code.djangoproject.com/ticket/27825#comment:9
+    # seems unlikely.
+    self.name_lower = self.name.lower()
+    self.latitude = round(float(self.latitude), 6)
+    self.longitude = round(float(self.longitude), 6)
+
   def save(self, *args, **kwargs):
     self.name_lower = self.name.lower()
     super().save(*args, **kwargs)
