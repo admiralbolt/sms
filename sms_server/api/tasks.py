@@ -1,6 +1,7 @@
 """Schedulable / repeatable tasks for data gathering and processing."""
 import datetime
 import json
+import logging
 import os
 
 import requests
@@ -11,6 +12,8 @@ from api.ingestion import axs, dice, eventbrite, ticketmaster, tixr, venuepilot
 from api.models import OpenMic, VenueApi
 from api.utils import open_mic_utils, venue_utils
 from sms_server.settings import IS_PROD, MEDIA_ROOT
+
+logger = logging.getLogger(__name__)
 
 @shared_task
 def generate_open_mic_events(name_filter: str="", max_diff: datetime.timedelta = datetime.timedelta(days=45), debug: bool=False):
@@ -59,7 +62,10 @@ def crawl_data(crawler_name: str, debug: bool=False):
 def import_all(debug: bool=False):
   """Import data from ALL APIs."""
   for api_name in AUTOMATIC_APIS:
-    import_api_data(api_name=api_name, debug=debug)
+    try:
+      import_api_data(api_name=api_name, debug=debug)
+    except Exception as e:
+      logger.warning("[INGESTER_FAILED] API: %s, error: %s", api_name, e)
   # Run all the crawlers.
   venue_apis = VenueApi.objects.filter(api_name=IngestionApis.CRAWLER)
   for venue_api in venue_apis:
