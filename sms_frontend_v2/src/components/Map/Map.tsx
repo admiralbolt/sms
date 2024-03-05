@@ -11,6 +11,8 @@ import { MapContainer } from "react-leaflet";
 
 import { Box, Fade } from "@mui/material";
 import EventDetail from "../EventList/EventDetail";
+import { LatLngExpression } from "leaflet";
+import { Event, Venue } from "@/types";
 
 const zoom = 13;
 
@@ -20,10 +22,12 @@ const Map = () => {
   const appBarHeight = useAppBarHeight();
   const filterPanelWidth = useFilterPanelWidth();
 
-  const [mapPosition, setMapPosition] = useState([47.65113, -122.34]);
+  const [mapPosition, setMapPosition] = useState<LatLngExpression>([
+    47.65113, -122.34,
+  ]);
   const [bannerOpen, setBannerOpen] = React.useState(false);
-  const [selectedEvent, setSelectedEvent] = React.useState({});
-  const [selectedVenue, setSelectedVenue] = React.useState({});
+  const [selectedEvent, setSelectedEvent] = useState<Event>();
+  const [selectedVenue, setSelectedVenue] = useState<Venue>();
 
   const eventBox = () => {
     if (isMobile) {
@@ -39,7 +43,9 @@ const Map = () => {
             margin: "auto",
           }}
         >
-          <EventDetail venue={selectedVenue} event={selectedEvent} />
+          {selectedVenue && selectedEvent && (
+            <EventDetail venue={selectedVenue} event={selectedEvent} />
+          )}
         </Box>
       );
     }
@@ -59,7 +65,9 @@ const Map = () => {
           margin: "auto",
         }}
       >
-        <EventDetail venue={selectedVenue} event={selectedEvent} />
+        {selectedVenue && selectedEvent && (
+          <EventDetail venue={selectedVenue} event={selectedEvent} />
+        )}
       </Box>
     );
   };

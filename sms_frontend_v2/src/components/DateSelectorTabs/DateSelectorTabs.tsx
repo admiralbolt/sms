@@ -29,6 +29,7 @@ const DateSelectorTabs = () => {
     event: React.SyntheticEvent<Element, Event>,
     newValue: string
   ) => {
+    console.log({ event });
     setValue(newValue);
     setSelectedDate?.(dayjs(newValue));
   };

@@ -35,11 +35,11 @@ const useEvents = (): [EventsByVenue, EventsByDate, Event[]] => {
 
       res.data.forEach((event: Event) => {
         tmpEventsByVenue[event.venue] = tmpEventsByVenue[event.venue] || {};
-        tmpEventsByVenue[event.venue][event.event_day] = event;
+        tmpEventsByVenue[event.venue][event.event_day.toDateString()] = event;
 
-        if (!(event.event_day in tmpEventsByDate))
-          tmpEventsByDate[event.event_day] = [];
-        tmpEventsByDate[event.event_day].push(event);
+        if (!(event.event_day.toDateString() in tmpEventsByDate))
+          tmpEventsByDate[event.event_day.toDateString()] = [];
+        tmpEventsByDate[event.event_day.toDateString()].push(event);
       });
 
       setEventsByVenue(tmpEventsByVenue);

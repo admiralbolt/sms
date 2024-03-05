@@ -12,6 +12,7 @@ const MAX_RESULTS = 50;
 const Search = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [eventsByVenue, eventsByDate, allEventsList] = useEvents();
+  console.log({ eventsByDate, eventsByVenue });
   const venueMap = useVenueMap();
 
   const [matches, setMatches] = useState<FuseResult<Event>[]>([]);
@@ -65,11 +66,15 @@ const Search = () => {
       >
         {matches.map((match) => (
           <ListItem key={`event-${match.item.id}`}>
-            <EventDetail
-              venue={venueMap?.[match?.item?.venue]}
-              event={match.item}
-              showDate={true}
-            />
+            {venueMap?.[match?.item?.venue] ? (
+              <EventDetail
+                venue={venueMap?.[match.item.venue]}
+                event={match.item}
+                showDate={true}
+              />
+            ) : (
+              <>Unable to find event</>
+            )}
           </ListItem>
         ))}
       </List>
