@@ -3,7 +3,13 @@ import PlaceIcon from "@mui/icons-material/Place";
 import LinkIcon from "@mui/icons-material/Link";
 import IconButton from "@mui/material/IconButton";
 import dayjs from "dayjs";
-import { Event, Venue } from "@/types";
+import { Event, EventType, Venue } from "@/types";
+import { PiMicrophoneStageFill } from "react-icons/pi";
+import { FaGuitar } from "react-icons/fa6";
+
+const SHOW_COLOR = "#0070ff";
+const OPEN_JAM_COLOR = "#ff5500";
+const OPEN_MIC_COLOR = "#ee6600";
 
 interface Props {
   venue: Venue;
@@ -37,6 +43,23 @@ const EventDetail = ({ venue, event, showDate = false }: Props) => {
     return formatTime(event.start_time);
   };
 
+  const getEventIcon = (event_type: EventType) => {
+    const lowercaseEventType =
+      event_type != undefined ? event_type.toLowerCase() : "";
+    if (lowercaseEventType == "open mic" || lowercaseEventType == "open jam") {
+      return (
+        <PiMicrophoneStageFill
+          size={24}
+          color={
+            lowercaseEventType == "open jam" ? OPEN_JAM_COLOR : OPEN_MIC_COLOR
+          }
+        />
+      );
+    }
+
+    return <FaGuitar size={24} color={SHOW_COLOR} />;
+  };
+
   const displayImage = () => {
     if (event.event_image) return event.event_image;
     if (venue.venue_image) return venue.venue_image;
@@ -67,7 +90,8 @@ const EventDetail = ({ venue, event, showDate = false }: Props) => {
         flexDirection: "column",
         margin: 1,
         padding: 1.5,
-        maxWidth: "sm",
+        width: "600px",
+        maxWidth: "96vw",
       }}
     >
       <Box position="relative">
@@ -90,6 +114,34 @@ const EventDetail = ({ venue, event, showDate = false }: Props) => {
         >
           {event.title}
         </Typography>
+        <Box
+          sx={{
+            position: "absolute",
+            left: 0,
+            bottom: 0,
+            padding: "0.2em",
+            opacity: 0.4,
+            backgroundColor: "black",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {getEventIcon(event.event_type)}
+        </Box>
+        <Box
+          sx={{
+            position: "absolute",
+            left: 0,
+            bottom: 0,
+            padding: "0.2em",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {getEventIcon(event.event_type)}
+        </Box>
       </Box>
       <Box sx={{ display: "flex", flexDirection: "row", mt: 1 }}>
         <Box

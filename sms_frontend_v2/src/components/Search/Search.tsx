@@ -62,7 +62,7 @@ const Search = () => {
         </Typography>
       )}
       <List
-        sx={{ maxHeight: "100vh", paddingBottom: "10rem", overflow: "auto" }}
+        sx={{ maxHeight: "100vh", paddingBottom: "20rem", overflow: "auto" }}
       >
         {matches.map((match) => (
           <ListItem key={`event-${match.item.id}`}>
