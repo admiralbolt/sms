@@ -11,9 +11,9 @@ root.render(
   </React.StrictMode>
 );
 
-// Entirely for type fixin 
-function onPerfEntry(performanceEntries: PerformanceEntry[]): void {
-  performanceEntries.forEach((entry) => {
+// Entirely for type fixin
+function onPerfEntry({ entries }: { entries: PerformanceEntry[] }): void {
+  entries.forEach((entry) => {
     console.log(entry);
     // Here, you can check the `entry.name` to log specific performance entries
     // or send them to an analytics endpoint.

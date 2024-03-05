@@ -4,6 +4,7 @@ export interface Event {
   venue: string;
   event_day: string;
   event_type: EventType;
+  id: string;
   // Add other properties of event here as needed
 }
 

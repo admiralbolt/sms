@@ -1,10 +1,11 @@
-import { Box, Divider, List, ListItem } from "@mui/material";
+import { Box, List, ListItem } from "@mui/material";
 import EventDetail from "../EventList/EventDetail";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import { useEvents, useVenueMap } from "../../hooks/api";
-import Fuse from "fuse";
+import Fuse, { FuseResult } from "fuse.js";
 import { Typography } from "@mui/material";
+import { Event } from "@/types";
 
 const MAX_RESULTS = 50;
 
@@ -13,9 +14,10 @@ const Search = () => {
   const [eventsByVenue, eventsByDate, allEventsList] = useEvents();
   const venueMap = useVenueMap();
 
-  const [matches, setMatches] = useState([]);
-  const [fuse, setFuse] = useState(null);
+  const [matches, setMatches] = useState<FuseResult<Event>[]>([]);
+  const [fuse, setFuse] = useState<Fuse<Event>>();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fuseOptions = {
     isCaseSensitive: false,
     includeScore: true,
@@ -31,7 +33,7 @@ const Search = () => {
 
   useEffect(() => {
     setFuse(new Fuse(allEventsList, fuseOptions));
-  }, [allEventsList]);
+  }, [allEventsList, fuseOptions]);
 
   useEffect(() => {
     if (fuse == null) return;
@@ -64,7 +66,7 @@ const Search = () => {
         {matches.map((match) => (
           <ListItem key={`event-${match.item.id}`}>
             <EventDetail
-              venue={venueMap[match.item.venue]}
+              venue={venueMap?.[match?.item?.venue]}
               event={match.item}
               showDate={true}
             />
