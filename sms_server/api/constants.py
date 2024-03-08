@@ -1,6 +1,12 @@
 """Some things always change, but one thing stays the same, constants."""
 # pylint: disable=invalid-name,missing-class-docstring
 
+class ChangeTypes:
+  CREATE = "Create"
+  DELETE = "Delete"
+  ERROR = "Error"
+  UPDATE = "Update"
+
 class EventTypes:
   OPEN_MIC = "Open Mic"
   OPEN_JAM = "Open Jam"

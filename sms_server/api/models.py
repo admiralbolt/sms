@@ -5,7 +5,7 @@ import requests
 from django.core.files.base import ContentFile
 from django.db import models
 
-from api.constants import get_choices, EventTypes, IngestionApis, Neighborhoods, OpenMicTypes, VenueTypes
+from api.constants import get_choices, ChangeTypes, EventTypes, IngestionApis, Neighborhoods, OpenMicTypes, VenueTypes
 
 class APISample(models.Model):
   """Raw data dumps from the api."""
@@ -229,9 +229,35 @@ class OpenMic(models.Model):
 
     return "UNKNOWN_VENUE" if not self.venue else f"{self.venue.name} Open Mic"
 
+class IngestionRun(models.Model):
+  """Logs for runs from the ingester."""
+  created_at = models.DateTimeField(auto_now_add=True)
+
+  def __str__(self):
+    return self.created_at
+
+class IngestionRecordBase(models.Model):
+  """Parent class for tracking individual changes from ingester run."""
+  created_at = models.DateTimeField(auto_now_add=True)
+  ingestion_run = models.ForeignKey(IngestionRun, on_delete=models.CASCADE)
+  api_name = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
+  change_type = models.CharField(max_length=16, choices=get_choices(ChangeTypes))
+  change_log = models.TextField(blank=True, null=True)
+
+class IngestionRecordEvent(IngestionRecordBase):
+  """Tracking changes to events."""
+  event = models.ForeignKey(Event, on_delete=models.DO_NOTHING)
+
+class IngestionRecordVenue(IngestionRecordBase):
+  """Tracking changes to venues."""
+  venue = models.ForeignKey(Venue, on_delete=models.DO_NOTHING)
+
 ADMIN_MODELS = [
   APISample,
   Event,
+  IngestionRun,
+  IngestionRecordEvent,
+  IngestionRecordVenue,
   OpenMic,
   Venue,
   VenueApi,
