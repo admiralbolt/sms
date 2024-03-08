@@ -232,9 +232,10 @@ class OpenMic(models.Model):
 class IngestionRun(models.Model):
   """Logs for runs from the ingester."""
   created_at = models.DateTimeField(auto_now_add=True)
+  name = models.CharField(max_length=64)
 
   def __str__(self):
-    return self.created_at
+    return f"{self.name} (self.created_at)"
 
 class IngestionRecordBase(models.Model):
   """Parent class for tracking individual changes from ingester run."""
