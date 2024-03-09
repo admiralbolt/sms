@@ -9,8 +9,8 @@ from datetime import datetime
 import requests
 
 from api.constants import IngestionApis
-from api.models import APISample
-from api.utils import event_utils, venue_utils
+from api.ingestion.ingester import Ingester
+from api.models import APISample, IngestionRun
 from sms_server import settings
 
 def event_list_request(venue_id: str="", client_key: str=""):
@@ -20,38 +20,40 @@ def event_list_request(venue_id: str="", client_key: str=""):
   }
   return requests.get(f"https://tixr.com/v1/groups/{venue_id}/events?cpk={client_key}", headers=headers, timeout=15).json()
 
-def process_event_list(event_list: list[dict], debug: bool=False) -> None:
-  """Process list of events from TIXR."""
-  for event in event_list:
-    venue = venue_utils.get_or_create_venue(
-      name=event["venue"]["name"],
-      api_name="TIXR",
-      api_id=event["venue"]["id"],
-      debug=debug,
-    )
+class TIXRIngester(Ingester):
 
-    absolute_start = datetime.fromtimestamp(event["start_date"] / 1000)
-    event_utils.create_or_update_event(
-      venue=venue,
-      title=event["name"],
-      event_day=absolute_start.strftime("%Y-%m-%d"),
-      start_time=absolute_start.strftime("%H:%M"),
-      ticket_price_min=event.get("current_price", 0),
-      ticket_price_max=event.get("current_price", 0),
-      event_api=IngestionApis.TIXR,
-      event_url=event["url"],
-      event_image_url=event.get("flyer_url", ""),
-      description=event["description"],
-    )
+  def __init__(self) -> object:
+    super().__init__(api_name=IngestionApis.TIXR)
 
-def import_data(debug=False):
-  """Import data from TIXR."""
-  for venue_name, venue_id, client_key in settings.TIXR_CLIENTS:
-    data = event_list_request(venue_id=venue_id, client_key=client_key)
-    # Save the response from the first page.
-    APISample.objects.create(
-      name=f"{venue_name} ALL Data",
-      api_name=IngestionApis.TIXR,
-      data=data
-    )
-    process_event_list(data, debug=debug)
+  def get_venue_kwargs(self, event_data: dict) -> dict:
+    return {
+      "name": event_data["venue"]["name"],
+      "api_id": event_data["venue"]["id"]
+    }
+  
+  def get_event_kwargs(self, event_data: dict) -> dict:
+    absolute_start = datetime.fromtimestamp(event_data["start_date"] / 1000)
+    return {
+      "title": event_data["name"],
+      "event_day": absolute_start.strftime("%Y-%m-%d"),
+      "start_time": absolute_start.strftime("%H:%M"),
+      "ticket_price_min": event_data.get("current_price", 0),
+      "ticket_price_max": event_data.get("current_price", 0),
+      "event_api": IngestionApis.TIXR,
+      "event_url": event_data["url"],
+      "event_image_url": event_data.get("flyer_url", ""),
+      "description": event_data["description"],
+    }
+  
+  def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
+    for venue_name, venue_id, client_key in settings.TIXR_CLIENTS:
+      event_list = event_list_request(venue_id=venue_id, client_key=client_key)
+      # Save the response from the first page.
+      APISample.objects.create(
+        name=f"{venue_name} ALL Data",
+        api_name=IngestionApis.TIXR,
+        data=event_list
+      )
+
+      for event in event_list:
+        self.process_event(ingestion_run=ingestion_run, event_data=event, debug=debug)

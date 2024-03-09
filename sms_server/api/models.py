@@ -235,7 +235,10 @@ class IngestionRun(models.Model):
   name = models.CharField(max_length=64)
 
   def __str__(self):
-    return f"{self.name} (self.created_at)"
+    return f"{self.name} ({self.created_at})"
+  
+  def aggregate_results(self):
+    pass
 
 class IngestionRecordBase(models.Model):
   """Parent class for tracking individual changes from ingester run."""
@@ -247,11 +250,21 @@ class IngestionRecordBase(models.Model):
 
 class IngestionRecordEvent(IngestionRecordBase):
   """Tracking changes to events."""
-  event = models.ForeignKey(Event, on_delete=models.DO_NOTHING)
+  # In cases where we skip creating an event, we won't have an event to link to
+  # in the DB. For this reason, this field has to be nullable.
+  event = models.ForeignKey(Event, on_delete=models.DO_NOTHING, blank=True, null=True)
+
+  def __str__(self):
+    return f"{self.ingestion_run} - {self.api_name}: ({self.event}, {self.change_type})"
 
 class IngestionRecordVenue(IngestionRecordBase):
   """Tracking changes to venues."""
-  venue = models.ForeignKey(Venue, on_delete=models.DO_NOTHING)
+  # In cases where we skip creating a venue, we won't have a venue to link to
+  # in the DB. For this reason, this field has to be nullable.
+  venue = models.ForeignKey(Venue, on_delete=models.DO_NOTHING, blank=True, null=True)
+
+  def __str__(self):
+    return f"{self.ingestion_run} - {self.api_name}: ({self.venue}, {self.change_type})"
 
 ADMIN_MODELS = [
   APISample,

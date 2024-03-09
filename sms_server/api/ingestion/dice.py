@@ -11,8 +11,8 @@ import requests
 from scourgify import normalize_address_record
 
 from api.constants import IngestionApis
-from api.models import APISample
-from api.utils import event_utils, venue_utils
+from api.ingestion.ingester import Ingester
+from api.models import APISample, IngestionRun
 
 logger = logging.getLogger(__name__)
 
@@ -41,42 +41,41 @@ def event_list_request() -> Iterator[dict]:
       yield event
 
 
-def process_event(event: dict, debug: bool=False) -> None:
-  venue_data = event["venues"][0]
-  address_data = normalize_address_record(venue_data["address"])
-  venue = venue_utils.create_or_update_venue(
-    name=venue_data["name"],
-    latitude=venue_data["location"]["lat"],
-    longitude=venue_data["location"]["lng"],
-    address=address_data["address_line_1"],
-    city=venue_data["city"]["name"],
-    postal_code=address_data["postal_code"],
-    venue_image_url=(venue_data["image"] or {}).get("url", None),
-    api_name=IngestionApis.DICE,
-    api_id=venue_data["id"],
-    debug=debug
-  )
+class DiceIngester(Ingester):
 
-  event_day, start_time = event["dates"]["event_start_date"].split("T")
-  # Need to remove the -07:00 from the start time.
-  start_time = start_time[:8]
-  price = (event["price"]["amount"] or event["price"]["amount_from"] or 0) / 100
+  def __init__(self) -> object:
+    super().__init__(api_name=IngestionApis.DICE)
 
-  event_utils.create_or_update_event(
-    venue=venue,
-    title=event["name"],
-    event_day=event_day,
-    start_time=start_time,
-    ticket_price_min=price,
-    ticket_price_max=price,
-    event_api=IngestionApis.DICE,
-    event_url=event["social_links"]["event_share"],
-    event_image_url=event["images"]["landscape"],
-    description=event["about"]["description"]
-  )
- 
+  def get_venue_kwargs(self, event_data: dict) -> dict:
+    venue_data = event_data["venues"][0]
+    address_data = normalize_address_record(venue_data["address"])
+    return {
+      "name": venue_data["name"],
+      "latitude": venue_data["location"]["lat"],
+      "longitude": venue_data["location"]["lng"],
+      "address": address_data["address_line_1"],
+      "city": venue_data["city"]["name"],
+      "postal_code": address_data["postal_code"],
+      "venue_image_url": (venue_data["image"] or {}).get("url", None),
+      "api_id": venue_data["id"]
+    }
 
-def import_data(debug=False):
-  """Import data from dice."""
-  for event in event_list_request():
-    process_event(event, debug=debug)
+  def get_event_kwargs(self, event_data: dict) -> dict:
+    event_day, start_time = event_data["dates"]["event_start_date"].split("T")
+    # Need to remove the -07:00 from the start time.
+    start_time = start_time[:8]
+    price = (event_data["price"]["amount"] or event_data["price"]["amount_from"] or 0) / 100
+    return {
+      "title": event_data["name"],
+      "event_day": event_day,
+      "start_time": start_time,
+      "ticket_price_min": price,
+      "ticket_price_max": price,
+      "event_url": event_data["social_links"]["event_share"],
+      "event_image_url": event_data["images"]["landscape"],
+      "description": event_data["about"]["description"]
+    }
+  
+  def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
+    for event in event_list_request():
+      self.process_event(ingestion_run=ingestion_run, event_data=event, debug=debug)

@@ -5,6 +5,8 @@ class ChangeTypes:
   CREATE = "Create"
   DELETE = "Delete"
   ERROR = "Error"
+  NOOP = "NO OP"
+  SKIP = "Skip"
   UPDATE = "Update"
 
 class EventTypes:

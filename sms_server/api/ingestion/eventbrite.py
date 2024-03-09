@@ -17,14 +17,13 @@ Don't forget we need to include the `Authorization: Bearer {token}` header.
 """
 import logging
 import time
-from typing import Optional
 
 import json
 import requests
 
 from api.constants import IngestionApis
-from api.models import APISample, Venue
-from api.utils import event_utils, venue_utils
+from api.ingestion.ingester import Ingester
+from api.models import APISample, IngestionRun
 from sms_server import settings
 
 logger = logging.getLogger(__name__)
@@ -86,99 +85,86 @@ def event_detail_request(event_id: str):
   }
   return requests.get(f"https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes", headers=headers, timeout=35).json()
 
-def get_or_create_venue(venue_data: dict, debug: bool=False) -> Optional[Venue]:
-  """Get or create a venue."""
-  # Found some "venues" that are just a city. Skip these.
-  if "postal_code" not in venue_data["address"]:
-    return None
+class EventbriteIngester(Ingester):
 
-  address = venue_data["address"]["address_1"]
-  if venue_data["address"]["address_2"]:
-    address += f" {venue_data['address']['address_2']}"
+  delay: float = 0.5
 
-  return venue_utils.create_or_update_venue(
-    name=venue_data["name"],
-    latitude=venue_data["address"]["latitude"],
-    longitude=venue_data["address"]["longitude"],
-    address=address,
-    postal_code=venue_data["address"]["postal_code"],
-    city=venue_data["address"]["city"],
-    api_name=IngestionApis.EVENTBRITE,
-    api_id=venue_data["id"],
-    debug=debug,
-  )
+  def __init__(self) -> object:
+    super().__init__(api_name=IngestionApis.EVENTBRITE)
 
-def get_or_create_event(venue: Venue, event_detail):
-  """Get or create an event."""
-  event_start = event_detail["start"]["local"]
-  event_day, start_time = event_start.split("T")
+  def get_venue_kwargs(self, event_data: dict) -> dict:
+    venue_data = event_data["primary_venue"]
 
-  # Eventbrite returns a list of ticket classes -- General Advance, Student
-  # Advance, Box Office e.t.c. We aggregate data across the ticket classes to
-  # get an idea of the cost. The cost value field is in cents, so we need to
-  # divide by 100 after the fact.
-  #
-  # ALSO
-  # Occasionally costs is `None` if it's a free / donation event.
-  min_cost = 0
-  max_cost = 0
-  costs = []
-  for ticket_class in event_detail["ticket_classes"]:
-    if not ticket_class["cost"]:
-      break
-    costs.append(ticket_class["cost"]["value"] / 100)
+    address = venue_data["address"]["address_1"]
+    if venue_data["address"]["address_2"]:
+      address += f" {venue_data['address']['address_2']}"
 
-  if costs:
-    min_cost = min(costs)
-    max_cost = max(costs)
-
-  event_image_url = ""
-  logo = event_detail.get("logo", {})
-  if logo:
-    event_image_url = logo.get("url", "")
-
-
-  event_utils.create_or_update_event(
-    venue=venue,
-    title=event_detail["name"]["text"],
-    event_day=event_day,
-    start_time=start_time,
-    ticket_price_min=min_cost,
-    ticket_price_max=max_cost,
-    event_api=IngestionApis.EVENTBRITE,
-    event_url=event_detail["url"],
-    event_image_url=event_image_url,
-    description=get_full_event_description(event_detail["id"]) or event_detail.get("summary", "")
-  )
-
-def process_event_list(event_list: list[dict], delay: float=0.5, debug: bool=False):
-  """Process the list of events returned from the Eventbrite search UI."""
-  for event_data in event_list:
+    return {
+      "name": venue_data["name"],
+      "latitude": venue_data["address"]["latitude"],
+      "longitude": venue_data["address"]["longitude"],
+      "address": address,
+      "postal_code": venue_data["address"]["postal_code"],
+      "city": venue_data["address"]["city"],
+      "api_id": venue_data["id"],
+    }
+  
+  def get_event_kwargs(self, event_data: dict) -> dict:
+    # Funny spot to include this, but because we make a request to get full
+    # details, we add our artificial delay here.
+    time.sleep(self.delay)
     event_detail = event_detail_request(event_id=event_data["id"])
-    venue = get_or_create_venue(event_data["primary_venue"], debug=debug)
-    if not venue:
-      continue
-
     if not event_detail:
-      print(event_data)
-      continue
-
-    get_or_create_event(venue, event_detail)
-    # Insert artifical delay to avoid hitting QPS limits.
-    time.sleep(delay)
-
-
-def import_data(delay: float=0.5, debug=False):
-  """Import data from Eventbrite."""
-  data = event_list_request(page=1)
-  # Save the response from the first page.
-  APISample.objects.create(
-    name="All data page 1",
-    api_name=IngestionApis.EVENTBRITE,
-    data=data
-  )
-  process_event_list(data["search_data"]["events"]["results"], delay=delay, debug=debug)
-  for page in range(2, data["page_count"]):
-    data = event_list_request(page=page)
-    process_event_list(data["search_data"]["events"]["results"], delay=delay, debug=debug)
+      return {}
     
+    event_start = event_detail["start"]["local"]
+    event_day, start_time = event_start.split("T")
+
+    # Eventbrite returns a list of ticket classes -- General Advance, Student
+    # Advance, Box Office e.t.c. We aggregate data across the ticket classes to
+    # get an idea of the cost. The cost value field is in cents, so we need to
+    # divide by 100 after the fact.
+    #
+    # ALSO
+    # Occasionally costs is `None` if it's a free / donation event.
+    min_cost = 0
+    max_cost = 0
+    costs = []
+    for ticket_class in event_detail["ticket_classes"]:
+      if not ticket_class["cost"]:
+        break
+      costs.append(ticket_class["cost"]["value"] / 100)
+
+    if costs:
+      min_cost = min(costs)
+      max_cost = max(costs)
+
+    event_image_url = event_detail.get("logo", {}).get("url", "")
+
+    return {
+      "title": event_detail["name"]["text"],
+      "event_day": event_day,
+      "start_time": start_time,
+      "ticket_price_min": min_cost,
+      "ticket_price_max": max_cost,
+      "event_url": event_detail["url"],
+      "event_image_url": event_image_url,
+      "description": get_full_event_description(event_detail["id"]) or event_detail.get("summary", "")
+    }
+
+  def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
+    """Import data from Eventbrite."""
+    data = event_list_request(page=1)
+    # Save the response from the first page.
+    APISample.objects.create(
+      name="All data page 1",
+      api_name=IngestionApis.EVENTBRITE,
+      data=data
+    )
+    for event_data in data["search_data"]["events"]["results"]:
+      self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)
+      
+    for page in range(2, data["page_count"]):
+      data = event_list_request(page=page)
+      for event_data in data["search_data"]["events"]["results"]:
+        self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)

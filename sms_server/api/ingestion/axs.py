@@ -13,8 +13,9 @@ import json
 from selenium import webdriver
 
 from api.constants import IngestionApis
-from api.models import APISample
-from api.utils import crawler_utils, event_utils, parsing_utils, venue_utils
+from api.ingestion.ingester import Ingester
+from api.models import APISample, IngestionRun
+from api.utils import crawler_utils, parsing_utils
 
 logger = logging.getLogger(__name__)
 
@@ -59,58 +60,59 @@ def get_biggest_non_default_image(media: dict) -> str:
 
   return media[max_key]["file_name"]
 
+class AXSIngester(Ingester):
 
-def process_event_list(event_list: list[dict], debug: bool=False) -> None:
-  """Process a list of AXS events."""
-  for event in event_list:
-    venue_data = event["venue"]
-    venue = venue_utils.create_or_update_venue(
-      name=venue_data["title"],
-      latitude=venue_data["latitude"],
-      longitude=venue_data["longitude"],
-      address=venue_data["address"],
-      postal_code=venue_data["postalCode"],
-      city=venue_data["city"],
-      venue_image_url=get_biggest_non_default_image(venue_data["media"]),
+  delay: float = 0.5
+
+  def __init__(self):
+    super().__init__(api_name=IngestionApis.AXS)
+
+  def get_venue_kwargs(self, event_data: dict) -> dict:
+    venue_data = event_data["venue"]
+    return {
+      "name": venue_data["title"],
+      "latitude": venue_data["latitude"],
+      "longitude": venue_data["longitude"],
+      "address": venue_data["address"],
+      "postal_code": venue_data["postalCode"],
+      "city": venue_data["city"],
+      "venue_image_url": get_biggest_non_default_image(venue_data["media"]),
+      "api_id": venue_data["venueId"],
+    }
+  
+  def get_event_kwargs(self, event_data: dict) -> dict:
+    event_day, start_time = None, None
+    if event_data["eventDateTime"] != "TBD":
+      event_day, start_time = event_data["eventDateTime"].split("T")
+
+    return {
+      "title": event_data["title"]["eventTitleText"],
+      "event_day": event_day,
+      "start_time": start_time,
+      "ticket_price_max": parsing_utils.parse_cost(event_data["ticketPriceHigh"]),
+      "ticket_price_min": parsing_utils.parse_cost(event_data["ticketPriceLow"]),
+      "event_url": event_data["ticketing"]["url"],
+      "event_image_url": get_biggest_non_default_image(event_data["media"]),
+      "description": event_data["description"],
+    }
+  
+  def import_data(self, ingestion_run: IngestionRun, debug: bool=False) -> None:
+    driver = crawler_utils.create_chrome_driver()
+    csrf_token = get_csrf_token(driver)
+    data = event_list_request(driver, csrf_token, page=1)
+    # Save the response from the first page.
+    APISample.objects.create(
+      name="All data page 1",
       api_name=IngestionApis.AXS,
-      api_id=venue_data["venueId"],
-      debug=debug
+      data=data
     )
-
-    if event["eventDateTime"] == "TBD":
-      continue
-
-    event_day, start_time = event["eventDateTime"].split("T")
-    event_utils.create_or_update_event(
-      venue=venue,
-      title=event["title"]["eventTitleText"],
-      event_day=event_day,
-      start_time=start_time,
-      ticket_price_max=parsing_utils.parse_cost(event["ticketPriceHigh"]),
-      ticket_price_min=parsing_utils.parse_cost(event["ticketPriceLow"]),
-      event_api="AXS",
-      event_url=event["ticketing"]["url"],
-      event_image_url=get_biggest_non_default_image(event["media"]),
-      description=event["description"],
-    )
-
-def import_data(delay: float=0.5, debug=False):
-  """Import data from AXS."""
-  logger.info("IMPORT FROM AXS")
-  driver = crawler_utils.create_chrome_driver()
-  csrf_token = get_csrf_token(driver)
-  data = event_list_request(driver, csrf_token, page=1)
-  # Save the response from the first page.
-  APISample.objects.create(
-    name="All data page 1",
-    api_name=IngestionApis.AXS,
-    data=data
-  )
-  process_event_list(data["events"], debug=debug)
-  # AXS returns total events, not total pages. Little bit of maths.
-  last_page = math.ceil(data["meta"]["total"] / PER_PAGE) + 1
-  for page in range(2, last_page):
-    data = event_list_request(driver, csrf_token, page=page)
-    process_event_list(data["events"], debug=debug)
-    # Insert artifical delay to avoid hitting any QPS limits.
-    time.sleep(delay)
+    for event_data in data["events"]:
+      self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)
+    # AXS returns total events, not total pages. Little bit of maths.
+    last_page = math.ceil(data["meta"]["total"] / PER_PAGE) + 1
+    for page in range(2, last_page):
+      # Insert artifical delay to avoid hitting any QPS limits.
+      time.sleep(self.delay)
+      data = event_list_request(driver, csrf_token, page=page)
+      for event_data in data["events"]:
+        self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)

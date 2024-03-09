@@ -9,8 +9,8 @@ from typing import Optional
 import requests
 
 from api.constants import IngestionApis
-from api.models import APISample
-from api.utils import event_utils, venue_utils
+from api.ingestion.ingester import Ingester
+from api.models import APISample, IngestionRun
 
 REQUEST_TEMPLATE = """
 query PaginatedEvents {
@@ -85,69 +85,54 @@ def event_list_request(min_start_date: Optional[str]=None, page: int=0):
   }
   return requests.post("https://www.venuepilot.co/graphql", headers=headers, json=data, timeout=30).json()
 
-def process_event_list(event_list, debug: bool=False) -> None:
-  """Process a list of events from venuepilot."""
-  for event in event_list["data"]["paginatedEvents"]["collection"]:
-    if event["venue"]["city"].lower() != "seattle":
-      continue
+class VenuepilotIngester(Ingester):
 
-    venue_data = event["venue"]
+  def __init__(self) -> object:
+    super().__init__(api_name=IngestionApis.VENUEPILOT)
+
+  def get_venue_kwargs(self, event_data: dict) -> dict:
+    venue_data = event_data["venue"]
     address = venue_data["street1"]
     if venue_data["street2"]:
       address += f" {venue_data['street2']}"
-    venue = venue_utils.create_or_update_venue(
-      name=venue_data["name"],
-      latitude=venue_data["lat"],
-      longitude=venue_data["long"],
-      address=address,
-      postal_code=venue_data["postal"],
-      city=venue_data["city"],
-      api_name="Venuepilot",
-      api_id=venue_data["id"],
-      debug=debug,
+    return {
+      "name": venue_data["name"],
+      "latitude": venue_data["lat"],
+      "longitude": venue_data["long"],
+      "address": address,
+      "postal_code": venue_data["postal"],
+      "city": venue_data["city"],
+      "api_id": venue_data["id"],
+    }
+  
+  def get_event_kwargs(self, event_data: dict) -> dict:
+    return {
+      "title": event_data["name"],
+      "event_day": event_data["date"],
+      "start_time": event_data["startTime"],
+      "ticket_price_min": event_data["priceMin"] or 0,
+      "ticket_price_max": event_data["priceMax"] or 0,
+      "event_url": event_data["ticketsUrl"],
+      "description": event_data["description"],
+      "event_image_url": event_data["highlightedImage"],
+    }
+  
+  def process_event_list(self, ingestion_run: IngestionRun, event_list: list[dict], debug: bool=False):
+    for event_data in event_list["data"]["paginatedEvents"]["collection"]:
+      if event_data["venue"]["city"].lower() != "seattle":
+        continue
+      self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)
+  
+  def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
+    event_list = event_list_request(page=0)
+    # Save the response from the first page.
+    APISample.objects.create(
+      name="All data page 1",
+      api_name=IngestionApis.VENUEPILOT,
+      data=event_list
     )
-
-    event_utils.create_or_update_event(
-      venue=venue,
-      title=event["name"],
-      event_day=event["date"],
-      start_time=event["startTime"],
-      ticket_price_min=event["priceMin"] or 0,
-      ticket_price_max=event["priceMax"] or 0,
-      event_api=IngestionApis.VENUEPILOT,
-      event_url=event["ticketsUrl"],
-      description=event["description"],
-      event_image_url=event["highlightedImage"],
-    )
-
-def import_data(debug=False):
-  """Import all data from venuepilot."""
-  data = event_list_request(page=0)
-  # Save the response from the first page.
-  APISample.objects.create(
-    name="All data page 1",
-    api_name=IngestionApis.VENUEPILOT,
-    data=data
-  )
-  total_pages = data["data"]["paginatedEvents"]["metadata"]["totalPages"]
-  process_event_list(data, debug=debug)
-  for page in range(1, total_pages):
-    data = event_list_request(page=page)
-    process_event_list(data, debug=debug)
-
-def debug_event_list(event_list):
-  """Debug list of events."""
-  for event in event_list["data"]["paginatedEvents"]["collection"]:
-    print(event["name"], event["date"])
-    print(event["venue"])
-    print()
-
-
-def debug():
-  """WTF IS GOING ON DAWG."""
-  data = event_list_request(page=0)
-  total_pages = data["data"]["paginatedEvents"]["metadata"]["totalPages"]
-  debug_event_list(data)
-  for page in range(1, total_pages):
-    data = event_list_request(page=page)
-    debug_event_list(data)
+    total_pages = event_list["data"]["paginatedEvents"]["metadata"]["totalPages"]
+    self.process_event_list(ingestion_run=ingestion_run, event_list=event_list, debug=debug)
+    for page in range(1, total_pages):
+      event_list = event_list_request(page=page)
+      self.process_event_list(ingestion_run=ingestion_run, event_list=event_list, debug=debug)

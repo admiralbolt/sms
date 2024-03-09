@@ -9,7 +9,8 @@ from celery import shared_task
 
 from api.constants import AUTOMATIC_APIS, IngestionApis
 from api.ingestion import axs, dice, eventbrite, ticketmaster, tixr, venuepilot
-from api.models import OpenMic, VenueApi
+from api.ingestion.ingester import Ingester
+from api.models import IngestionRun, OpenMic, VenueApi
 from api.utils import open_mic_utils, venue_utils
 from sms_server.settings import IS_PROD, MEDIA_ROOT
 
@@ -32,38 +33,40 @@ def generate_open_mic_events(name_filter: str="", max_diff: datetime.timedelta =
     open_mic_utils.generate_open_mic_events(mic, max_diff=max_diff, debug=debug)
 
 @shared_task
-def import_api_data(api_name: str, debug: bool=False):
+def import_api_data(api_name: str, ingestion_run: IngestionRun, debug: bool=False):
   """Import data from apis!"""
-  import_call_dict = {
-    IngestionApis.AXS: axs.import_data,
-    IngestionApis.DICE: dice.import_data,
-    IngestionApis.EVENTBRITE: eventbrite.import_data,
-    IngestionApis.TICKETMASTER: ticketmaster.import_data,
-    IngestionApis.TIXR: tixr.import_data,
-    IngestionApis.VENUEPILOT: venuepilot.import_data,
+  ingester_dict: dict[str, Ingester] = {
+    IngestionApis.AXS: axs.AXSIngester,
+    IngestionApis.DICE: dice.DiceIngester,
+    IngestionApis.EVENTBRITE: eventbrite.EventbriteIngester,
+    IngestionApis.TICKETMASTER: ticketmaster.TicketmasterIngester,
+    IngestionApis.TIXR: tixr.TIXRIngester,
+    IngestionApis.VENUEPILOT: venuepilot.VenuepilotIngester,
   }
 
-  if api_name not in import_call_dict:
+  if api_name not in ingester_dict:
     print("Invalid api name specified.")
     return
-
-  import_call_dict[api_name](debug=debug)
+  
+  ingester = ingester_dict[api_name]()
+  ingester.import_data(ingestion_run=ingestion_run, debug=debug)
 
 @shared_task
-def crawl_data(crawler_name: str, debug: bool=False):
+def crawl_data(crawler_name: str, ingestion_run: IngestionRun, debug: bool=False):
   """Crawl data from individual venues!"""
   venue, crawl_method = venue_utils.get_crawler_info(crawler_name=crawler_name)
   if venue is None:
     print(f"Couldn't find venue information for crawler {crawler_name}")
 
-  crawl_method(venue=venue, debug=debug)
+  crawl_method(venue=venue, ingestion_run=ingestion_run, debug=debug)
 
 @shared_task
 def import_all(debug: bool=False):
   """Import data from ALL APIs."""
+  ingestion_run = IngestionRun.objects.create(name="Full Run")
   for api_name in AUTOMATIC_APIS:
     try:
-      import_api_data(api_name=api_name, debug=debug)
+      import_api_data(api_name=api_name, ingestion_run=ingestion_run, debug=debug)
     except Exception as e:
       logger.warning("[INGESTER_FAILED] API: %s, error: %s", api_name, e)
   # Run all the crawlers.

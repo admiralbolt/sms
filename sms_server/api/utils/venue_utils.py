@@ -5,7 +5,7 @@ from typing import Any, Optional
 
 import deepdiff
 
-from api.constants import get_all, VenueTypes
+from api.constants import get_all, ChangeTypes, VenueTypes
 from api.models import Venue, VenueMask, VenueTag, VenueApi
 from api.serializers import VenueSerializer
 from api.utils import diff_utils
@@ -91,19 +91,21 @@ def add_venue_tags(venue: Venue, tags: list[str]) -> None:
       venue_type=tag
     )
 
-def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, **kwargs) -> Venue:
+def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, **kwargs) -> tuple[str, str, Venue]:
   """Create or update a venue.
 
-  Venue bbq.
+  Returns a tuple of (change_type, change_log, Venue). The change_type will be 
+  the changes applied (if any), and the change_log will include more information
+  about the changes applied / fields created. The Venue returned will be the 
+  finalized version of the created or updated venue.
   """
   new_venue = apply_mask(Venue(**kwargs))
 
   # THIS IS AMERICA.
   if isinstance(new_venue.postal_code, str) and new_venue.postal_code.startswith("V8"):
-    return None
+    return ChangeTypes.SKIP, f"Skipping venue with canadian postal code: {new_venue.__dict__}", None
 
   if debug:
-    print(new_venue.latitude, new_venue.longitude)
     logger.info(f"Create or update venue: ({new_venue.__dict__})")
 
   # If the venue doesn't exist, create it and move on.
@@ -111,7 +113,7 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
   if not db_venue:
     new_venue.save()
     add_venue_api(venue=new_venue, api_name=api_name, api_id=api_id)
-    return new_venue
+    return ChangeTypes.CREATE, str(new_venue.__dict__), new_venue
 
   # If the venue does exist we need to determine what the diffs are, and how
   # to handle them.
@@ -126,26 +128,27 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
   )
 
   # If brand new fields are added, add them!
-  changed, _ = diff_utils.handle_new_fields(db_venue, new_venue_serialized, diff)
-  if changed:
-    db_venue.save()
-
-  values_changed = diff.get("values_changed", None)
-  if not values_changed:
-    add_venue_api(venue=db_venue, api_name=api_name, api_id=api_id)
-    return db_venue
-
-  logger.warning("Venue diff detected\n============\n")
-  logger.warning(values_changed)
-  logger.warning("Original venue\n===========\n")
-  logger.warning(db_venue)
-
+  fields_added, _ = diff_utils.handle_new_fields(db_venue, new_venue_serialized, diff)
   # Handle "new" fields. Cases where old fields are blank / empty strings.
-  diff_utils.handle_new_fields_diff(db_venue, values_changed)
+  fields_updated, _ = diff_utils.handle_new_fields_diff(db_venue, diff.get("values_changed", None))
 
-  db_venue.save()
+  change_type = ChangeTypes.NOOP
+  change_log = ""
+  if fields_added or fields_updated:
+    change_type = ChangeTypes.UPDATE
+    # Takes some extra effort, but we serialize the final diffs to json.
+    final_db_serialized = VenueSerializer(db_venue)
+    final_diff = deepdiff.DeepDiff(
+      db_venue_serialized.data,
+      final_db_serialized.data,
+      ignore_order=True,
+      exclude_paths=["id"]
+    )
+    change_log = final_diff.to_json()
+    db_venue.save()
+  
   add_venue_api(venue=db_venue, api_name=api_name, api_id=api_id)
-  return db_venue
+  return change_type, change_log, db_venue
 
 def get_or_create_venue(name: str, latitude: float=0, longitude: float=0, address: str="", postal_code: int=0, city: str="", api_name: str="", api_id: int=0, debug: bool=False) -> Venue:
   """Get or create a venue.
