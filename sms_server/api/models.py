@@ -269,7 +269,7 @@ class IngestionRecordBase(models.Model):
   """Parent class for tracking individual changes from ingester run."""
   created_at = models.DateTimeField(auto_now_add=True)
   ingestion_run = models.ForeignKey(IngestionRun, on_delete=models.CASCADE)
-  api_name = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
+  api_name = models.CharField(max_length=32, default="Manual")
   change_type = models.CharField(max_length=16, choices=get_choices(ChangeTypes))
   change_log = models.TextField(blank=True, null=True)
 
