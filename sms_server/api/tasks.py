@@ -74,6 +74,7 @@ def import_all(debug: bool=False):
   for venue_api in venue_apis:
     crawl_method = venue_utils.get_crawl_function(venue_api.crawler_name)
     crawl_method(venue=venue_api.venue, debug=debug)
+  ingestion_run.aggregate_results()
 
 @shared_task
 def write_latest_data():

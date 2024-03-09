@@ -238,7 +238,32 @@ class IngestionRun(models.Model):
     return f"{self.name} ({self.created_at})"
   
   def aggregate_results(self):
-    pass
+    for record_type in ["event", "venue"]:
+      record_class = IngestionRecordEvent if record_type == "event" else IngestionRecordVenue
+      change_set = record_class.objects.filter(ingestion_run=self).values("api_name", "change_type").annotate(total=models.Count("id"))
+      for aggregate in change_set:
+        IngestionRecordAggregate.objects.update_or_create(
+          ingestion_run=self,
+          api_name=aggregate["api_name"],
+          change_type=aggregate["change_type"],
+          record_type=record_type,
+          count=aggregate["total"],
+        )
+
+class IngestionRecordAggregate(models.Model):
+  """Aggregate information about ingester run."""
+  created_at = models.DateTimeField(auto_now_add=True)
+  ingestion_run = models.ForeignKey(IngestionRun, on_delete=models.CASCADE)
+  api_name = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
+  change_type = models.CharField(max_length=16, choices=get_choices(ChangeTypes))
+  record_type = models.CharField(max_length=16, choices=[("Event", "Event"), ("Venue", "Venue")])
+  count = models.IntegerField()
+
+  class Meta:
+    unique_together = [["ingestion_run", "api_name", "change_type", "record_type"]]
+
+  def __str__(self):
+    return f"{self.ingestion_run} - {self.api_name} - {self.record_type} - {self.change_type}: {self.count}"
 
 class IngestionRecordBase(models.Model):
   """Parent class for tracking individual changes from ingester run."""
@@ -270,6 +295,7 @@ ADMIN_MODELS = [
   APISample,
   Event,
   IngestionRun,
+  IngestionRecordAggregate,
   IngestionRecordEvent,
   IngestionRecordVenue,
   OpenMic,
