@@ -54,11 +54,11 @@ def import_api_data(api_name: str, ingestion_run: IngestionRun, debug: bool=Fals
 @shared_task
 def crawl_data(crawler_name: str, ingestion_run: IngestionRun, debug: bool=False):
   """Crawl data from individual venues!"""
-  venue, crawl_method = venue_utils.get_crawler_info(crawler_name=crawler_name)
+  venue, crawler = venue_utils.get_crawler_info(crawler_name=crawler_name)
   if venue is None:
     print(f"Couldn't find venue information for crawler {crawler_name}")
 
-  crawl_method(venue=venue, ingestion_run=ingestion_run, debug=debug)
+  crawler.import_data(ingestion_run=ingestion_run, venue=venue, debug=debug)
 
 @shared_task
 def import_all(debug: bool=False):

@@ -17,7 +17,6 @@ class Ingester(ABC):
     self.api_name = api_name
     self.venue_logs = collections.defaultdict(set)
 
-
   @abstractmethod
   def get_venue_kwargs(self, event_data: dict) -> dict:
     pass

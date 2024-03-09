@@ -6,6 +6,7 @@ from typing import Any, Optional
 import deepdiff
 
 from api.constants import get_all, ChangeTypes, VenueTypes
+from api.ingestion.crawlers.crawler import Crawler
 from api.models import Venue, VenueMask, VenueTag, VenueApi
 from api.serializers import VenueSerializer
 from api.utils import diff_utils
@@ -169,16 +170,16 @@ def get_or_create_venue(name: str, latitude: float=0, longitude: float=0, addres
   add_venue_api(venue=venue, api_name=api_name, api_id=api_id)
   return venue
 
-def get_crawl_function(crawler_module_name: str) -> Any:
-  """Get a reference to the literal crawl() method on a crawler module."""
+def get_crawler(crawler_module_name: str) -> Crawler:
+  """Get an instance of a Crawler class from the module name."""
   crawler_module = importlib.import_module(f"api.ingestion.crawlers.{crawler_module_name}")
-  if not hasattr(crawler_module, "crawl"):
-    logger.warning(f"Crawler module api.ingestion.crawlers.{crawler_module_name} does not have a 'crawl' method.")
-    return None
+  for attr in dir(crawler_module):
+    if attr.endswith("Crawler"):
+      return getattr(crawler_module)()
 
-  return getattr(crawler_module, "crawl")
+  return None
 
-def get_crawler_info(crawler_name: str) -> tuple[Optional[Venue], Any]:
+def get_crawler_info(crawler_name: str) -> tuple[Optional[Venue], Crawler]:
   """Load crawler info by crawler name.
 
   This should match the corresponding crawler name field on the api exactly.
@@ -191,8 +192,8 @@ def get_crawler_info(crawler_name: str) -> tuple[Optional[Venue], Any]:
     return None, None
 
   venue_api = venue_apis.first()
-  crawler_function = get_crawl_function(venue_api.crawler_name)
-  if crawler_function is None:
+  crawler = get_crawler(venue_api.crawler_name)
+  if crawler is None:
     return None, None
 
-  return venue_api.venue, crawler_function
+  return venue_api.venue, crawler
