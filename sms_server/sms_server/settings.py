@@ -34,7 +34,7 @@ LOGGING = {
   "formatters": {
     "pretty": {
       "format": "[{levelname}] {asctime} ({pathname}:{lineno}) {message}",
-      "style": "{",  
+      "style": "{",
     }
   },
   "handlers": {
@@ -55,16 +55,22 @@ LOGGING = {
       "class": "logging.FileHandler",
       "filename": os.path.join(BASE_DIR, "logs", "warning.log"),
       "formatter": "pretty"
-    }
+    },
+    "error_file": {
+      "level": "ERROR",
+      "class": "logging.FileHandler",
+      "filename": os.path.join(BASE_DIR, "logs", "error.log"),
+      "formatter": "pretty",
+    },
   },
   "loggers": {
     "django": {
-      "handlers": ["debug_file", "info_file", "warning_file"],
+      "handlers": ["debug_file", "info_file", "warning_file", "error_file"],
       "propagate": True,
     },
   },
   "root": {
-    "handlers": ["debug_file", "info_file", "warning_file"],
+    "handlers": ["debug_file", "info_file", "warning_file", "error_file"],
     "level": "INFO",
   }
 }
