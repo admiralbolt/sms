@@ -174,8 +174,8 @@ def get_crawler(crawler_module_name: str) -> Crawler:
   """Get an instance of a Crawler class from the module name."""
   crawler_module = importlib.import_module(f"api.ingestion.crawlers.{crawler_module_name}")
   for attr in dir(crawler_module):
-    if attr.endswith("Crawler"):
-      return getattr(crawler_module)()
+    if attr != "Crawler" and attr.endswith("Crawler"):
+      return getattr(crawler_module, attr)()
 
   return None
 

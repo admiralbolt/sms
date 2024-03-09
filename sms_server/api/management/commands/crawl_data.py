@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from api.constants import IngestionApis
-from api.models import Event, Venue, VenueApi
+from api.models import Event, IngestionRun, VenueApi
 from api.tasks import crawl_data
 from api.utils import venue_utils
 
@@ -24,15 +24,18 @@ class Command(BaseCommand):
           Event.objects.filter(event_api=IngestionApis.CRAWLER).delete()
         return
       
+      ingestion_run = IngestionRun.objects.create(name="Manual Crawl Data All")
       venue_apis = VenueApi.objects.filter(api_name=IngestionApis.CRAWLER)
       for venue_api in venue_apis:
-        crawl_method = venue_utils.get_crawl_function(venue_api.crawler_name)
-        crawl_method(venue=venue_api.venue, debug=kwargs["debug"])
+        crawl_data(crawler_name=venue_api.crawler_name, ingestion_run=ingestion_run, debug=kwargs["debug"])
+      ingestion_run.aggregate_results()
       return
     
-    venue, crawl_method = venue_utils.get_crawler_info(kwargs["crawler"])
+    venue, _ = venue_utils.get_crawler(kwargs["crawler"])
     if kwargs["truncate"]:
       Event.objects.filter(venue=venue, event_api=IngestionApis.CRAWLER).delete()
       return
 
-    crawl_method(venue=venue, debug=kwargs["debug"])
+    ingestion_run = IngestionRun.objects.create(name=f"Manual Crawl Data ({venue.name})")
+    crawl_data(crawler_name=venue_api.crawler_name, ingestion_run=ingestion_run, debug=kwargs["debug"])
+    ingestion_run.aggregate_results()

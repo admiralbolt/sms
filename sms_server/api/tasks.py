@@ -72,8 +72,7 @@ def import_all(debug: bool=False):
   # Run all the crawlers.
   venue_apis = VenueApi.objects.filter(api_name=IngestionApis.CRAWLER)
   for venue_api in venue_apis:
-    crawl_method = venue_utils.get_crawl_function(venue_api.crawler_name)
-    crawl_method(venue=venue_api.venue, debug=debug)
+    crawl_data(crawler_name=venue_api.crawler_name, ingestion_run=ingestion_run, debug=debug)
   ingestion_run.aggregate_results()
 
 @shared_task
