@@ -11,9 +11,6 @@ interface LocalStorageContextType {
   setSelectedDate: (date: dayjs.Dayjs) => void;
 }
 
-// Assuming eventTypes and venueTypes hooks return string arrays
-// Adjust if their return types are different
-
 const loadFromStorage = (key: string, defaultValue: unknown): any => {
   const item = localStorage.getItem(key);
   return item && item !== "undefined" ? JSON.parse(item) : defaultValue;
