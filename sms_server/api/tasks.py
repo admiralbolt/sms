@@ -30,6 +30,11 @@ def generate_open_mic_events(name_filter: str="", max_diff: datetime.timedelta =
     # Make sure we only generate events for mics that have a venue attached.
     if not mic.venue:
       continue
+
+    # Make sure we only generate events for mics that have generate_events set.
+    if not mic.generate_events:
+      continue
+
     open_mic_utils.generate_open_mic_events(mic, max_diff=max_diff, debug=debug)
 
 @shared_task
