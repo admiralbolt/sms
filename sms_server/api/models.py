@@ -227,7 +227,7 @@ class OpenMic(models.Model):
     if self.title:
       return self.title
 
-    return "UNKNOWN_VENUE" if not self.venue else f"{self.venue.name} Open Mic"
+    return "UNKNOWN_VENUE" if not self.venue else f"{self.venue.name} {self.event_mic_type}"
 
 class IngestionRun(models.Model):
   """Logs for runs from the ingester."""
