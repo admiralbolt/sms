@@ -27,8 +27,7 @@ const useFilteredVenues = () => {
 };
 
 const useFilteredEvents = () => {
-  const [eventsByVenue, eventsByDate] = useEvents();
-  console.log({ eventsByVenue });
+  const [_, eventsByDate] = useEvents();
   const { selectedEventTypes, selectedDate } =
     useContext(LocalStorageContext) || {};
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);

@@ -31,7 +31,7 @@ const EventDetail = ({ venue, event, showDate = false }: Props) => {
     });
   };
 
-  const formatDay = (day: Date) => {
+  const formatDay = (day: string) => {
     return dayjs(day).format("ddd, MMM. D");
   };
 
@@ -64,7 +64,7 @@ const EventDetail = ({ venue, event, showDate = false }: Props) => {
     if (event.event_image) return event.event_image;
     if (venue.venue_image) return venue.venue_image;
 
-    return `${process.env.PUBLIC_URL}/placeholder.png`;
+    return "/placeholder.png";
   };
 
   const venueLink = () => {
