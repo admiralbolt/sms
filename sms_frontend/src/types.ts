@@ -2,7 +2,7 @@ export type EventType = "Open Mic" | "Open Jam" | "Show";
 
 export interface Event {
   venue: string;
-  event_day: Date;
+  event_day: string;
   event_type: EventType;
   id: string;
   start_time: string;

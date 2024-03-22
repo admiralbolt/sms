@@ -7,7 +7,7 @@ const axios = setupCache(Axios);
 const baseUrl =
   process.env.NODE_ENV === "production"
     ? "https://seattlemusicscene.info:8000"
-    : "http://192.168.1.2:8000";
+    : "http://localhost:8000";
 
 const useEventTypes = () => {
   const [eventTypes, setEventTypes] = useState([]);
@@ -35,11 +35,11 @@ const useEvents = (): [EventsByVenue, EventsByDate, Event[]] => {
 
       res.data.forEach((event: Event) => {
         tmpEventsByVenue[event.venue] = tmpEventsByVenue[event.venue] || {};
-        tmpEventsByVenue[event.venue][event.event_day.toDateString()] = event;
+        tmpEventsByVenue[event.venue][event.event_day] = event;
 
-        if (!(event.event_day.toDateString() in tmpEventsByDate))
-          tmpEventsByDate[event.event_day.toDateString()] = [];
-        tmpEventsByDate[event.event_day.toDateString()].push(event);
+        if (!(event.event_day in tmpEventsByDate))
+          tmpEventsByDate[event.event_day] = [];
+        tmpEventsByDate[event.event_day].push(event);
       });
 
       setEventsByVenue(tmpEventsByVenue);
