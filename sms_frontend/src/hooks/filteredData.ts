@@ -38,7 +38,7 @@ const useFilteredEvents = () => {
       const events = eventsByDate[targetDate];
       setFilteredEvents(
         events.filter((event) => {
-          return selectedEventTypes?.includes(event.event_type) || [];
+          return selectedEventTypes?.includes(event.event_type)
         })
       );
     }
