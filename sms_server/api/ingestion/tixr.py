@@ -39,7 +39,6 @@ class TIXRIngester(Ingester):
       "start_time": absolute_start.strftime("%H:%M"),
       "ticket_price_min": event_data.get("current_price", 0),
       "ticket_price_max": event_data.get("current_price", 0),
-      "event_api": IngestionApis.TIXR,
       "event_url": event_data["url"],
       "event_image_url": event_data.get("flyer_url", ""),
       "description": event_data["description"],

@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from api.constants import AUTOMATIC_APIS, IngestionApis
-from api.models import Event
+from api.models import Event, IngestionRun
 from api.tasks import import_all, import_api_data
 from api.utils import venue_utils
 
@@ -39,5 +39,7 @@ class Command(BaseCommand):
       venue_utils.clear_api_data(api_name=api_name)
       return
 
-    import_api_data(api_name, debug=kwargs["debug"])
+    ingestion_run = IngestionRun.objects.create(name=f"Manual Run {api_name}")
+    import_api_data(api_name, debug=kwargs["debug"], ingestion_run=ingestion_run)
+    ingestion_run.aggregate_results()
     
