@@ -1,4 +1,3 @@
-import React from "react";
 import { Divider, Link, List, ListItem, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import { usePageTitle, usePageDescription } from "../../hooks/metaTags";

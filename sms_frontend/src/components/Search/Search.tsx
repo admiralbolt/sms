@@ -11,7 +11,7 @@ const MAX_RESULTS = 50;
 
 const Search = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [eventsByVenue, eventsByDate, allEventsList] = useEvents();
+  const [,, allEventsList] = useEvents();
   const venueMap = useVenueMap();
 
   const [matches, setMatches] = useState<FuseResult<Event>[]>([]);
