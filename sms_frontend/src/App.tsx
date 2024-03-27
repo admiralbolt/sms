@@ -1,31 +1,29 @@
-import React from 'react';
-import './App.css';
+import "./App.css";
 
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import Layout from './components/Layout/Layout.js';
-import AboutView from './pages/AboutView/AboutView.js';
-import ListView from './pages/ListView/ListView.js';
-import MapView from './pages/MapView/MapView.js';
-import SearchView from './pages/SearchView/SearchView.js';
-import NotFoundView from './pages/NotFoundView/NotFoundView.js';
+import Layout from "./components/Layout/Layout";
+import AboutView from "./pages/AboutView/AboutView";
+import ListView from "./pages/ListView/ListView";
+import MapView from "./pages/MapView/MapView";
+import SearchView from "./pages/SearchView/SearchView";
+import NotFoundView from "./pages/NotFoundView/NotFoundView";
 
-import ReactGA from 'react-ga4';
+import ReactGA from "react-ga4";
 
-import { LocalStorageContextProvider } from './contexts/LocalStorageContext.js';
-import { CssBaseline, ThemeProvider } from '@mui/material';
-import theme from './hooks/theme.js';
-import { DrawerContextProvider } from './contexts/DrawerContext.js';
+import { LocalStorageContextProvider } from "./contexts/LocalStorageContext";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import theme from "./hooks/theme";
+import { DrawerContextProvider } from "./contexts/DrawerContext";
 
 // We only want to run Google Analytics in production.
-if (process.env.NODE_ENV === 'production') {
-  ReactGA.initialize('G-HGEJWK9DS2');
+if (process.env.NODE_ENV === "production") {
+  ReactGA.initialize("G-HGEJWK9DS2");
 }
 
 const App = () => {
-  
   return (
-    <div id='app-wrapper' style={{ height: '100vh', width: '100vw' }}>
+    <div id="app-wrapper" style={{ height: "100vh", width: "100vw" }}>
       <LocalStorageContextProvider>
         <DrawerContextProvider>
           <ThemeProvider theme={theme}>
@@ -46,9 +44,7 @@ const App = () => {
         </DrawerContextProvider>
       </LocalStorageContextProvider>
     </div>
-  )
-}
-
-
+  );
+};
 
 export default App;

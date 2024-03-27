@@ -1,9 +1,13 @@
-import Axios from 'axios';
-import { setupCache } from 'axios-cache-interceptor';
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import Axios from "axios";
+import { setupCache } from "axios-cache-interceptor";
+import { EventsByDate, EventsByVenue, Event, Venue } from "@/types";
 
 const axios = setupCache(Axios);
-const baseUrl = (process.env.NODE_ENV === 'production') ? 'https://seattlemusicscene.info:8000' : 'http://localhost:8000';
+const baseUrl =
+  process.env.NODE_ENV === "production"
+    ? "https://seattlemusicscene.info:8000"
+    : "http://localhost:8000";
 
 const useEventTypes = () => {
   const [eventTypes, setEventTypes] = useState([]);
@@ -15,21 +19,21 @@ const useEventTypes = () => {
   }, []);
 
   return eventTypes;
-}
+};
 
-const useEvents = () => {
-  const [eventsByVenue, setEventsByVenue] = useState({});
-  const [eventsByDate, setEventsByDate] = useState({});
-  const [allEventsList, setAllEventsList] = useState([]);
+const useEvents = (): [EventsByVenue, EventsByDate, Event[]] => {
+  const [eventsByVenue, setEventsByVenue] = useState<EventsByVenue>({});
+  const [eventsByDate, setEventsByDate] = useState<EventsByDate>({});
+  const [allEventsList, setAllEventsList] = useState<Event[]>([]);
 
   useEffect(() => {
-    let tmpEventsByVenue = {};
-    let tmpEventsByDate = {};
+    const tmpEventsByVenue: EventsByVenue = {};
+    const tmpEventsByDate: EventsByDate = {};
 
     axios.get(`${baseUrl}/uploads/latest_events.json`).then((res) => {
       setAllEventsList(res.data);
-      
-      res.data.forEach(event => {
+
+      res.data.forEach((event: Event) => {
         tmpEventsByVenue[event.venue] = tmpEventsByVenue[event.venue] || {};
         tmpEventsByVenue[event.venue][event.event_day] = event;
 
@@ -41,11 +45,10 @@ const useEvents = () => {
       setEventsByVenue(tmpEventsByVenue);
       setEventsByDate(tmpEventsByDate);
     });
-    
   }, []);
 
   return [eventsByVenue, eventsByDate, allEventsList];
-}
+};
 
 const useVenueTypes = () => {
   const [venueTypes, setVenueTypes] = useState([]);
@@ -57,10 +60,10 @@ const useVenueTypes = () => {
   }, []);
 
   return venueTypes;
-}
+};
 
-const useVenues = () => {
-  const [venues, setVenues] = useState([]);
+const useVenues = (): Venue[] => {
+  const [venues, setVenues] = useState<Venue[]>([]);
 
   useEffect(() => {
     axios.get(`${baseUrl}/uploads/latest_venues.json`).then((res) => {
@@ -69,14 +72,14 @@ const useVenues = () => {
   }, []);
 
   return venues;
-}
+};
 
 const useVenueMap = () => {
-  const [venueMap, setVenueMap] = useState({});
+  const [venueMap, setVenueMap] = useState<{ [id: string]: Venue }>();
   const venues = useVenues();
 
   useEffect(() => {
-    let tmpVenues = {};
+    const tmpVenues: { [id: string]: Venue } = {};
 
     venues.forEach((venue) => {
       tmpVenues[venue.id] = venue;
@@ -86,6 +89,6 @@ const useVenueMap = () => {
   }, [venues]);
 
   return venueMap;
-}
+};
 
-export { useEvents, useEventTypes, useVenues, useVenueTypes, useVenueMap};
+export { useEvents, useEventTypes, useVenues, useVenueTypes, useVenueMap };

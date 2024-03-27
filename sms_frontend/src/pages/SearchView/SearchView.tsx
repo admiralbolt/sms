@@ -1,5 +1,5 @@
-import Search from '../../components/Search/Search.js';
-import { usePageTitle, usePageDescription } from '../../hooks/metaTags.js';
+import Search from '../../components/Search/Search';
+import { usePageTitle, usePageDescription } from '../../hooks/metaTags';
 
 
 const SearchView = () => {
