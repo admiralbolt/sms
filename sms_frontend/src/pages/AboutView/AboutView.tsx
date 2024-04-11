@@ -1,5 +1,6 @@
 import { Divider, Link, List, ListItem, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import { usePageTitle, usePageDescription } from "../../hooks/metaTags";
 
 const AboutView = () => {
@@ -44,7 +45,51 @@ const AboutView = () => {
       <br />
 
       <Typography sx={{ fontSize: "1.3rem" }}>
-        <b>V1.1.0</b> -- February 29th, 2024 <br />
+        <b>V1.2.0</b> -- Apr 1st, 2024 <br />
+      </Typography>
+      <List sx={{ listStyleType: "disc", pl: 4 }}>
+        <ListItem
+          sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}
+        >
+          Frontend rewrite! Now sporting vite.js and tailwind!
+        </ListItem>
+        <ListItem
+          sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}
+        >
+          Fixed a couple bugs with the data ingester, and added stats
+          tracking for runs of the ingester. The couple bugs are things like:
+
+          <ListItem sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}>
+            One failed import would break the entire ingester.
+          </ListItem>
+          <ListItem sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}>
+          Venues that have very similar latitude / longitude breaking the ingester.
+          </ListItem>
+          <ListItem sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}>
+          Venues that have the same name but different latitude / longitude breaking the ingester.
+          </ListItem>
+        </ListItem>
+      </List>
+      Open Mic/Jam Adjustments <br />
+      <Grid container borderTop={"1px solid white"} padding={0.5}>
+        <Grid item xs={6} md={3} paddingTop={0}>
+          + Sea Monster <br />
+          + Supernova <br />
+          + Cottontail <br />
+          + Rabbit Box <br />
+        </Grid>
+        <Grid item xs={6} md={3} paddingTop={0}>
+          - Last Call <br />
+          - Lottie's <br />
+          - Conor Byrne <br />
+        </Grid>
+      </Grid>
+
+      <br />
+      <br />
+
+      <Typography sx={{ fontSize: "1.3rem" }}>
+        <b>V1.1.0</b> -- Mar 1st, 2024 <br />
       </Typography>
       <List sx={{ listStyleType: "disc", pl: 4 }}>
         <ListItem
@@ -82,6 +127,8 @@ const AboutView = () => {
           Fixed the event detail cards to have consistent sizes.
         </ListItem>
       </List>
+
+      <br />
 
       <Typography sx={{ fontSize: "1.3rem" }}>
         <b>V1.0.0</b> -- January 26th, 2024 <br />
