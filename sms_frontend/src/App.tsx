@@ -11,6 +11,7 @@ import LogoutView from "./pages/LogoutView";
 import LoginView from "./pages/LoginView";
 import MapView from "./pages/MapView";
 import NotFoundView from "./pages/NotFoundView";
+import OpenMicView from "./pages/OpenMicView";
 import SearchView from "./pages/SearchView";
 import VenueView from "./pages/VenueView";
 
@@ -47,6 +48,7 @@ const App = () => {
                   <Route path="admin" element={<RequireAuth><AdminView /></RequireAuth>} />
                   <Route path="api/venues/:id" element={<RequireAuth><VenueView /></RequireAuth>} />
                   <Route path="api/events/:id" element={<RequireAuth><EventView /></RequireAuth>} />
+                  <Route path="api/open_mics/:id" element={<RequireAuth><OpenMicView /></RequireAuth>} />
                   <Route path="*" element={<NotFoundView />} />
                 </Route>
               </Routes>

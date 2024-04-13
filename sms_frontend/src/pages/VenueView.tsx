@@ -5,8 +5,8 @@ import { useParams } from "react-router-dom";
 import { Venue } from "@/types";
 
 const VenueView = () => {
-  let { id } = useParams();
-  let [venue, setVenue] = useState<Venue>({});
+  const { id } = useParams();
+  const [venue, setVenue] = useState<Venue>({});
 
   useEffect(() => {
     (async () => {

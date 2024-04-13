@@ -1,5 +1,5 @@
 import {  useEffect, useState } from "react";
-import { EventsByDate, EventsByVenue, Event, Venue } from "@/types";
+import { EventsByDate, EventsByVenue, Event, Venue, OpenMic } from "@/types";
 import customAxios from "./customAxios";
 import { Venue } from "@/types";
 
@@ -97,4 +97,10 @@ const getEventById = async (id: any): Promise<Event> => {
   return result.data;
 }
 
-export { getEventById, getVenueById, useEvents, useEventTypes, useVenues, useVenueTypes, useVenueMap };
+const getOpenMicById = async (id: any): Promise<OpenMic> => {
+  const result = await customAxios.get(`/api/open_mics/${id}`);
+
+  return result.data;
+}
+
+export { getEventById, getOpenMicById, getVenueById, useEvents, useEventTypes, useVenues, useVenueTypes, useVenueMap };

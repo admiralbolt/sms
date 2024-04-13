@@ -1,7 +1,7 @@
-import { Venue } from "@/types";
+import { Event } from "@/types";
 
 interface Props {
-  venue: Event;
+  event: Event;
 }
 
 const EventForm = ({ event }: Props) => {

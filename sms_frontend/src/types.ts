@@ -23,6 +23,22 @@ export interface Venue {
   city: string;
   postal_code: string;
 }
+
+export interface OpenMic {
+  id: string;
+  venue: string;
+  title: string;
+  event_mic_type: EventType;
+  open_mic_type: string;
+  description: string;
+  all_ages?: boolean;
+  house_piano?: boolean;
+  house_pa?: boolean;
+  drums?: boolean;
+  cadence_crontab: string;
+  cadence_readable: string;
+}
+
 export interface EventsByVenue {
   [venue: string]: {
     [event_day: string]: Event;

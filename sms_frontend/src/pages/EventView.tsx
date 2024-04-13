@@ -5,8 +5,8 @@ import { Event } from "@/types";
 import EventForm from "@/components/EventForm";
 
 const VenueView = () => {
-  let { id } = useParams();
-  let [event, setEvent] = useState<Event>({});
+  const { id } = useParams();
+  const [event, setEvent] = useState<Event>({});
 
   useEffect(() => {
     (async () => {
