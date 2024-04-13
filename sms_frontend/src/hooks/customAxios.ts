@@ -13,13 +13,17 @@ const customAxios = axios.create({
   }
 });
 
+// Set authorization headers on load if we have an accessToken.
+if (localStorage.getItem("accessToken") !== null) {
+  customAxios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem("accessToken")}`;
+}
+
 let refresh = false;
 
 customAxios.interceptors.response.use(resp => resp, async error => {
   if (error.response.status === 401 && !refresh) {
     refresh = true;
-    console.log(localStorage.getItem("refreshToken"));
-    const response = await customAxios.post("/token/refresh/", 
+    const response = await customAxios.post("/api/token/refresh/", 
       {
         refresh: localStorage.getItem("refreshToken")
       }, {

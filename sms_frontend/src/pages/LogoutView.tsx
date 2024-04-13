@@ -1,8 +1,10 @@
 import { logout, useIsAuthenticated } from "@/hooks/auth";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const LogoutView = () => {
   const [_, setIsAuthenticated] = useIsAuthenticated();
+  const navigate = useNavigate();
 
   useEffect(() => {
     (async() => {
@@ -10,7 +12,7 @@ const LogoutView = () => {
 
       if (result === null) {
         setIsAuthenticated(false);
-        window.location.href = "/login";
+        navigate("/login");
       } else {
         console.log("LOGOUT BUSTED", result);
       }

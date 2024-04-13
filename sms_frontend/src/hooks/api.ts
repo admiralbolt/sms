@@ -1,6 +1,7 @@
 import {  useEffect, useState } from "react";
 import { EventsByDate, EventsByVenue, Event, Venue } from "@/types";
 import customAxios from "./customAxios";
+import { Venue } from "@/types";
 
 const useEventTypes = () => {
   const [eventTypes, setEventTypes] = useState([]);
@@ -84,4 +85,16 @@ const useVenueMap = () => {
   return venueMap;
 };
 
-export { useEvents, useEventTypes, useVenues, useVenueTypes, useVenueMap };
+const getVenueById = async (id: any): Promise<Venue> => {
+  const result = await customAxios.get(`/api/venues/${id}`);
+
+  return result.data;
+}
+
+const getEventById = async (id: any): Promise<Event> => {
+  const result = await customAxios.get(`/api/events/${id}`);
+
+  return result.data;
+}
+
+export { getEventById, getVenueById, useEvents, useEventTypes, useVenues, useVenueTypes, useVenueMap };
