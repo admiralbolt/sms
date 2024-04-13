@@ -1,7 +1,7 @@
-import FilterPanel from "../../components/FilterPanel/FilterPanel";
-import Map from "../../components/Map/Map";
+import FilterPanel from "../components/FilterPanel/FilterPanel";
+import Map from "../components/Map/Map";
 import "leaflet/dist/leaflet.css";
-import { usePageTitle, usePageDescription } from "../../hooks/metaTags";
+import { usePageTitle, usePageDescription } from "../hooks/metaTags";
 
 const MapView = () => {
   usePageTitle("Seattle Show & Open Mic Map");

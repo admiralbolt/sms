@@ -1,19 +1,12 @@
-import { useEffect, useState } from "react";
-import Axios from "axios";
-import { setupCache } from "axios-cache-interceptor";
+import {  useEffect, useState } from "react";
 import { EventsByDate, EventsByVenue, Event, Venue } from "@/types";
-
-const axios = setupCache(Axios);
-const baseUrl =
-  process.env.NODE_ENV === "production"
-    ? "https://seattlemusicscene.info:8000"
-    : "http://localhost:8000";
+import customAxios from "./customAxios";
 
 const useEventTypes = () => {
   const [eventTypes, setEventTypes] = useState([]);
 
   useEffect(() => {
-    axios.get(`${baseUrl}/api/get_all_event_types`).then((res) => {
+    customAxios.get("/api/get_all_event_types").then((res) => {
       setEventTypes(res.data);
     });
   }, []);
@@ -30,7 +23,7 @@ const useEvents = (): [EventsByVenue, EventsByDate, Event[]] => {
     const tmpEventsByVenue: EventsByVenue = {};
     const tmpEventsByDate: EventsByDate = {};
 
-    axios.get(`${baseUrl}/uploads/latest_events.json`).then((res) => {
+    customAxios.get("/uploads/latest_events.json").then((res) => {
       setAllEventsList(res.data);
 
       res.data.forEach((event: Event) => {
@@ -54,7 +47,7 @@ const useVenueTypes = () => {
   const [venueTypes, setVenueTypes] = useState([]);
 
   useEffect(() => {
-    axios.get(`${baseUrl}/api/get_all_venue_types`).then((res) => {
+    customAxios.get("api/get_all_venue_types").then((res) => {
       setVenueTypes(res.data);
     });
   }, []);
@@ -66,7 +59,7 @@ const useVenues = (): Venue[] => {
   const [venues, setVenues] = useState<Venue[]>([]);
 
   useEffect(() => {
-    axios.get(`${baseUrl}/uploads/latest_venues.json`).then((res) => {
+    customAxios.get("uploads/latest_venues.json").then((res) => {
       setVenues(res.data);
     });
   }, []);

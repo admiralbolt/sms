@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import { usePageTitle, usePageDescription } from '../../hooks/metaTags';
+import { usePageTitle, usePageDescription } from '../hooks/metaTags';
 
 const NotFoundView = () => {
   usePageTitle("Seattle Music Scene 404");

@@ -93,7 +93,20 @@ ALLOWED_HOSTS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = ['*']
+CORS_ALLOW_HEADERS = [
+  'accept',
+  'accept-encoding',
+  'authorization',
+  'cache-control',
+  'content-type',
+  'dnt',
+  'expires',
+  'origin',
+  'pragma',
+  'user-agent',
+  'x-csrftoken',
+  'x-requested-with',
+]
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
@@ -183,6 +196,7 @@ REST_FRAMEWORK = {
     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
   ],
   'DEFAULT_PARSER_CLASSES': (
+    'rest_framework.parsers.JSONParser',
     'rest_framework.parsers.FormParser',
     'rest_framework.parsers.MultiPartParser'
   ),
