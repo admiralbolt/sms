@@ -27,3 +27,17 @@ class OpenMicSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.OpenMic
     fields = "__all__"
+
+class IngestionRunSerializer(serializers.ModelSerializer):
+  """Serialize IngestionRun data."""
+
+  class Meta:
+    model = models.IngestionRun
+    fields = "__all__"
+
+class IngestionRecordSerializer(serializers.ModelSerializer):
+  """Serialize Ingestion Records."""
+
+  class Meta:
+    model = models.IngestionRecord
+    fields = "__all__"

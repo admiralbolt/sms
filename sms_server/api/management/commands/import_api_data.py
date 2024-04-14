@@ -41,5 +41,4 @@ class Command(BaseCommand):
 
     ingestion_run = IngestionRun.objects.create(name=f"Manual Run {api_name}")
     import_api_data(api_name, debug=kwargs["debug"], ingestion_run=ingestion_run)
-    ingestion_run.aggregate_results()
     

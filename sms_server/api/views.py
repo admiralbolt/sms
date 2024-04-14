@@ -63,6 +63,16 @@ class VenueEventsView(ListAPIView):
     venue = models.Venue.objects.filter(id=self.kwargs["venue_id"]).first()
     return models.Event.objects.filter(venue=venue)
   
+class IngestionRunViewSet(viewsets.ReadOnlyModelViewSet):
+  """List all ingestion runs."""
+  resource_name = "ingestion_runs"
+  queryset = models.IngestionRun.objects.all()
+  serializer_class = serializers.IngestionRunSerializer
+
+  def get_queryset(self):
+    runs = models.IngestionRun.objects.order_by("created_at")
+    return runs
+  
 
 class LogoutView(APIView):
   """Logout!"""

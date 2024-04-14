@@ -28,7 +28,6 @@ class Command(BaseCommand):
       venue_apis = VenueApi.objects.filter(api_name=IngestionApis.CRAWLER)
       for venue_api in venue_apis:
         crawl_data(crawler_name=venue_api.crawler_name, ingestion_run=ingestion_run, debug=kwargs["debug"])
-      ingestion_run.aggregate_results()
       return
     
     venue, _ = venue_utils.get_crawler(kwargs["crawler"])
@@ -38,4 +37,3 @@ class Command(BaseCommand):
 
     ingestion_run = IngestionRun.objects.create(name=f"Manual Crawl Data ({venue.name})")
     crawl_data(crawler_name=venue_api.crawler_name, ingestion_run=ingestion_run, debug=kwargs["debug"])
-    ingestion_run.aggregate_results()

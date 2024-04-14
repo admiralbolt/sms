@@ -236,56 +236,19 @@ class IngestionRun(models.Model):
 
   def __str__(self):
     return f"{self.name} ({self.created_at})"
-  
-  def aggregate_results(self):
-    for record_type in ["event", "venue"]:
-      record_class = IngestionRecordEvent if record_type == "event" else IngestionRecordVenue
-      change_set = record_class.objects.filter(ingestion_run=self).values("api_name", "change_type").annotate(total=models.Count("id"))
-      for aggregate in change_set:
-        IngestionRecordAggregate.objects.update_or_create(
-          ingestion_run=self,
-          api_name=aggregate["api_name"],
-          change_type=aggregate["change_type"],
-          record_type=record_type,
-          count=aggregate["total"],
-        )
 
-class IngestionRecordAggregate(models.Model):
-  """Aggregate information about ingester run."""
-  created_at = models.DateTimeField(auto_now_add=True)
-  ingestion_run = models.ForeignKey(IngestionRun, on_delete=models.CASCADE)
-  api_name = models.CharField(max_length=32, default="Manual")
-  change_type = models.CharField(max_length=16, choices=get_choices(ChangeTypes))
-  record_type = models.CharField(max_length=16, choices=[("Event", "Event"), ("Venue", "Venue")])
-  count = models.IntegerField()
-
-  class Meta:
-    unique_together = [["ingestion_run", "api_name", "change_type", "record_type"]]
-
-  def __str__(self):
-    return f"{self.ingestion_run} - {self.api_name} - {self.record_type} - {self.change_type}: {self.count}"
-
-class IngestionRecordBase(models.Model):
+class IngestionRecord(models.Model):
   """Parent class for tracking individual changes from ingester run."""
   created_at = models.DateTimeField(auto_now_add=True)
   ingestion_run = models.ForeignKey(IngestionRun, on_delete=models.CASCADE)
   api_name = models.CharField(max_length=32, default="Manual")
   change_type = models.CharField(max_length=16, choices=get_choices(ChangeTypes))
   change_log = models.TextField(blank=True, null=True)
-
-class IngestionRecordEvent(IngestionRecordBase):
-  """Tracking changes to events."""
-  # In cases where we skip creating an event, we won't have an event to link to
-  # in the DB. For this reason, this field has to be nullable.
+  # Helper field for which one of event / venue has been changed.
+  field_changed = models.CharField(max_length=32)
+  # In some cases we are avoiding adding an event or venue, so these fields may
+  # be blank.
   event = models.ForeignKey(Event, on_delete=models.DO_NOTHING, blank=True, null=True)
-
-  def __str__(self):
-    return f"{self.ingestion_run} - {self.api_name}: ({self.event}, {self.change_type})"
-
-class IngestionRecordVenue(IngestionRecordBase):
-  """Tracking changes to venues."""
-  # In cases where we skip creating a venue, we won't have a venue to link to
-  # in the DB. For this reason, this field has to be nullable.
   venue = models.ForeignKey(Venue, on_delete=models.DO_NOTHING, blank=True, null=True)
 
   def __str__(self):
@@ -295,9 +258,7 @@ ADMIN_MODELS = [
   APISample,
   Event,
   IngestionRun,
-  IngestionRecordAggregate,
-  IngestionRecordEvent,
-  IngestionRecordVenue,
+  IngestionRecord,
   OpenMic,
   Venue,
   VenueApi,

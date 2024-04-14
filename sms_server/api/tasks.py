@@ -78,7 +78,6 @@ def import_all(debug: bool=False):
   venue_apis = VenueApi.objects.filter(api_name=IngestionApis.CRAWLER)
   for venue_api in venue_apis:
     crawl_data(crawler_name=venue_api.crawler_name, ingestion_run=ingestion_run, debug=debug)
-  ingestion_run.aggregate_results()
 
 @shared_task
 def write_latest_data():

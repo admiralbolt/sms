@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 import logging
 
 from api.constants import IngestionApis
-from api.models import IngestionRecordEvent, IngestionRun, Venue
+from api.models import IngestionRecord, IngestionRun, Venue
 from api.utils import event_utils
 
 logger = logging.getLogger(__name__)
@@ -29,11 +29,12 @@ class Crawler(ABC):
     try:
       event_kwargs = self.get_event_kwargs(event_data=event_data)
       event_change_type, event_change_log, event = event_utils.create_or_update_event(venue=venue, **event_kwargs, event_api=IngestionApis.CRAWLER, debug=debug)
-      IngestionRecordEvent.objects.create(
+      IngestionRecord.objects.create(
         ingestion_run=ingestion_run,
         api_name=self.api_name,
         change_type=event_change_type,
         change_log=event_change_log,
+        field_changed="event",
         event=event
       )
     except Exception as e:
