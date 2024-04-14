@@ -73,6 +73,13 @@ class IngestionRunViewSet(viewsets.ReadOnlyModelViewSet):
     runs = models.IngestionRun.objects.order_by("created_at")
     return runs
   
+class IngestionRunRecordsView(ListAPIView):
+  """List all ingestion records for a particular run."""
+  serializer_class = serializers.IngestionRecordSerializer
+
+  def get_queryset(self):
+    ingestion_run = models.IngestionRun.objects.filter(id=self.kwargs["ingestion_run_id"]).first()
+    return models.IngestionRecord.objects.filter(ingestion_run=ingestion_run)
 
 class LogoutView(APIView):
   """Logout!"""
