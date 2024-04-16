@@ -60,7 +60,7 @@ class VenueEventsView(ListAPIView):
   serializer_class = serializers.EventSerializer
 
   def get_queryset(self):
-    venue = models.Venue.objects.filter(id=self.kwargs["venue_id"]).first()
+    venue = models.Venue.objects.filter(id=self.kwargs.get("venue_id", None)).first()
     return models.Event.objects.filter(venue=venue)
   
 class IngestionRunViewSet(viewsets.ReadOnlyModelViewSet):
@@ -78,7 +78,7 @@ class IngestionRunRecordsView(ListAPIView):
   serializer_class = serializers.IngestionRecordSerializer
 
   def get_queryset(self):
-    ingestion_run = models.IngestionRun.objects.filter(id=self.kwargs["ingestion_run_id"]).first()
+    ingestion_run = models.IngestionRun.objects.filter(id=self.kwargs.get("ingestion_run_id", None)).first()
     return models.IngestionRecord.objects.filter(ingestion_run=ingestion_run)
 
 class LogoutView(APIView):
