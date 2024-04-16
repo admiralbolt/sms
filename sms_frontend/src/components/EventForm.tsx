@@ -1,16 +1,29 @@
 import { Event } from "@/types";
 
+import { useSchema } from "@/hooks/schema";
+
+import Form from '@rjsf/core';
+import validator from '@rjsf/validator-ajv8';
+
 interface Props {
   event: Event;
 }
 
 const EventForm = ({ event }: Props) => {
+
+  const { eventSchema } = useSchema();
+
+  const log = (type: any) => console.log.bind(console, type);
+
   return (
-    <div>
-      {Object.keys(event).map((key) => (
-        <p key={key}>{key} - {event[key]}</p>
-      ))}
-    </div>
+    <Form
+      schema={eventSchema}
+      formData={event}
+      validator={validator}
+      onChange={log('changed')}
+      onSubmit={log('submitted')}
+      onError={log('errors')}
+    />
   );
 };
 

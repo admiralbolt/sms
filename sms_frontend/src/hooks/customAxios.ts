@@ -1,5 +1,5 @@
 import axios from "axios";
-import { setTokens } from "./auth";
+import { logout, setTokens } from "./auth";
 
 const baseUrl =
   process.env.NODE_ENV === "production"
@@ -33,6 +33,9 @@ customAxios.interceptors.response.use(resp => resp, async error => {
     if (response.status === 200) {
       setTokens(response.data.access, response.data.refresh);
       return customAxios(error.config);
+    } else {
+      // If our refresh fails we want to unset credentials.
+      logout();
     }
   }
 
