@@ -2,8 +2,8 @@ import { Event } from "@/types";
 
 import { useSchema } from "@/hooks/schema";
 
-import Form from '@rjsf/core';
 import validator from '@rjsf/validator-ajv8';
+import { Form } from '@rjsf/mui';
 
 interface Props {
   event: Event;
