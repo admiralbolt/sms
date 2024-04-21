@@ -13,6 +13,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from api import models
 from api import serializers
 from api.constants import get_all, EventTypes, VenueTypes
+from sms_server.settings import IS_PROD
 
 class EventViewSet(viewsets.ReadOnlyModelViewSet):
   """List all events."""
@@ -21,10 +22,11 @@ class EventViewSet(viewsets.ReadOnlyModelViewSet):
   serializer_class = serializers.EventSerializer
   
   def get_permissions(self):
-    permission_classes = [IsAuthenticated] if self.action == "list" else [IsAdminUser]
+    permission_classes = [IsAdminUser] if IS_PROD else []
     return [permission() for permission in permission_classes]
 
   def get_queryset(self):
+    models.Event.objects.prefetch_related("venue")
     return models.Event.objects.order_by("event_day", "venue__name", "start_time").filter(event_day__gte=datetime.date.today(), venue__show_venue=True, show_event=True)
 
 class VenueViewSet(viewsets.ReadOnlyModelViewSet):
@@ -32,9 +34,10 @@ class VenueViewSet(viewsets.ReadOnlyModelViewSet):
   resource_name = "venues"
   queryset = models.Venue.objects.all()
   serializer_class = serializers.VenueSerializer
+  lookup_field = "venue"
 
   def get_permissions(self):
-    permission_classes = [IsAuthenticated] if self.action == "list" else [IsAdminUser]
+    permission_classes = [IsAdminUser] if IS_PROD else []
     return [permission() for permission in permission_classes]
 
   def get_queryset(self):
@@ -48,7 +51,7 @@ class OpenMicViewSet(viewsets.ReadOnlyModelViewSet):
   serializer_class = serializers.OpenMicSerializer
   
   def get_permissions(self):
-    permission_classes = [IsAuthenticated] if self.action == "list" else [IsAdminUser]
+    permission_classes = [IsAdminUser] if IS_PROD else []
     return [permission() for permission in permission_classes]
 
   def get_queryset(self):
@@ -69,6 +72,10 @@ class IngestionRunViewSet(viewsets.ReadOnlyModelViewSet):
   queryset = models.IngestionRun.objects.all()
   serializer_class = serializers.IngestionRunSerializer
 
+  def get_permissions(self):
+    permission_classes = [IsAdminUser] if IS_PROD else []
+    return [permission() for permission in permission_classes]
+
   def get_queryset(self):
     runs = models.IngestionRun.objects.order_by("created_at")
     return runs
@@ -76,6 +83,10 @@ class IngestionRunViewSet(viewsets.ReadOnlyModelViewSet):
 class IngestionRunRecordsView(ListAPIView):
   """List all ingestion records for a particular run."""
   serializer_class = serializers.IngestionRecordSerializer
+
+  def get_permissions(self):
+    permission_classes = [IsAdminUser] if IS_PROD else []
+    return [permission() for permission in permission_classes]
 
   def get_queryset(self):
     ingestion_run = models.IngestionRun.objects.filter(id=self.kwargs.get("ingestion_run_id", None)).first()

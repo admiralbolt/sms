@@ -3,11 +3,16 @@ from rest_framework import serializers
 
 from api import models
 
+class VenueTagSerializer(serializers.ModelSerializer):
+
+  class Meta:
+    model = models.VenueTag
+    fields = ("id", "venue_type")
+
 class VenueSerializer(serializers.ModelSerializer):
   """Serialize Venue data."""
   venue_image = serializers.ImageField(max_length=None, use_url=True)
-  venue_tags = serializers.SlugRelatedField(many=True, read_only=True, slug_field="venue_type")
-  # venue_types = VenueTagSerializer(many=True, read_only=True)
+  venue_tags = VenueTagSerializer(many=True, read_only=True)
 
   class Meta:
     model = models.Venue
@@ -16,6 +21,7 @@ class VenueSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
   """Serialize Event data."""
   event_image = serializers.ImageField(max_length=None, use_url=True)
+  venue = VenueSerializer(read_only=True)
 
   class Meta:
     model = models.Event
