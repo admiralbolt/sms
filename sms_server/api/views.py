@@ -41,6 +41,7 @@ class VenueViewSet(viewsets.ReadOnlyModelViewSet):
     return [permission() for permission in permission_classes]
 
   def get_queryset(self):
+    models.Venue.objects.prefetch_related("venue_tags")
     venues = models.Venue.objects.order_by("name")
     return venues.filter(show_venue=True)
 
