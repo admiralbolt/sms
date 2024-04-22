@@ -20,12 +20,12 @@ class VenueSerializer(serializers.ModelSerializer):
 
 class EventSerializer(serializers.ModelSerializer):
   """Serialize Event data."""
-  event_image = serializers.ImageField(max_length=None, use_url=True)
+  event_image = serializers.ImageField(max_length=None, use_url=True, required=False)
   venue = serializers.PrimaryKeyRelatedField(queryset=models.Venue.objects.order_by("name"))
 
   class Meta:
     model = models.Event
-    fields = ("id", "event_image", "event_type", "title", "event_day", "signup_start_time", "cash_only", "start_time", "end_time", "doors_open", "is_ticketed", "ticket_price_min", "ticket_price_max", "event_api", "event_url", "description", "venue")
+    fields = ("id", "event_image", "event_image_url", "event_type", "title", "event_day", "signup_start_time", "cash_only", "start_time", "end_time", "doors_open", "is_ticketed", "ticket_price_min", "ticket_price_max", "event_api", "event_url", "description", "venue")
 
 class OpenMicSerializer(serializers.ModelSerializer):
   """Serialize OpenMic data."""

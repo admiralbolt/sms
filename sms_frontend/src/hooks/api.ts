@@ -50,6 +50,14 @@ const useVenueTypes = () => {
   return venueTypes;
 };
 
+const updateEvent = (event: Event) => {
+  // Until we get file uploading from the UI figured out, we want to avoid
+  // making updates directly to the "event_image" field.
+  delete event.event_image;
+
+  return customAxios.put(`api/events/${event.id}`, event);
+}
+
 const useVenues = () => {
   const [venues, setVenues] = useState<[Venue]>([]);
 
@@ -62,4 +70,4 @@ const useVenues = () => {
   return venues;
 }
 
-export { getEventById, getOpenMicById, getVenueById, useEventTypes, useVenueTypes, useVenues };
+export { getEventById, getOpenMicById, getVenueById, updateEvent, useEventTypes, useVenueTypes, useVenues };

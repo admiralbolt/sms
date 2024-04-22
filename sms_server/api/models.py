@@ -162,7 +162,7 @@ class Event(models.Model):
   event_url = models.CharField(max_length=512, blank=True, null=True)
   description = models.TextField(blank=True, null=True)
   event_image_url = models.CharField(max_length=1024, blank=True, null=True)
-  event_image = models.ImageField(upload_to="event_images", blank=True)
+  event_image = models.ImageField(upload_to="event_images", blank=True, null=True)
 
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)

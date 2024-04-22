@@ -1,25 +1,42 @@
 import { Event } from "@/types";
 
 import { useSchema } from "@/hooks/schema";
+import VenueSelect from "@/components/VenueSelect";
 
 import validator from '@rjsf/validator-ajv8';
 import { Form } from '@rjsf/mui';
 import { WidgetProps } from "@rjsf/utils";
-import VenueSelect from "./VenueSelect";
+import { updateEvent } from "@/hooks/api";
+
+import { SnackbarContext } from "@/contexts/SnackbarContext";
+import { useContext } from "react";
 
 interface Props {
   event: Event;
+  setEdit: any;
+  setEvent: any;
 }
 
-const EventForm = ({ event }: Props) => {
-
+const EventForm = ({ event, setEdit, setEvent }: Props) => {
+  const { snackbar, setSnackbar } = useContext(SnackbarContext) || {};
   const { eventSchema } = useSchema();
 
-  const log = (type: any) => console.log.bind(console, type);
+  const submit = (submitEvent: any) => {
+    updateEvent(submitEvent.formData).then((response) => {
+      setSnackbar({open: true, severity: "success", message: `Event ${response.data.title} updated successfully!`});
+      setEdit(false);
+      setEvent(response.data);
+    }, (error) => {
+      setSnackbar({open: true, severity: "error", message: error});
+    });
+  }
 
   const uiSchema: object = {
     "description": {
       "ui:widget": "textarea"
+    },
+    "event_image": {
+      "ui:widget": "hidden"
     },
     "start_time": {
       "ui:widget": "time"
@@ -36,7 +53,7 @@ const EventForm = ({ event }: Props) => {
     "venue": {
       "ui:widget": (props: WidgetProps) => {
         return (
-          <VenueSelect venueId={props.value} onChange={(event) => props.onChange(event.target.value)} />
+          <VenueSelect venueId={props.value} onChange={(event: any) => props.onChange(event.target.value)} />
         );
       }
     }
@@ -48,9 +65,7 @@ const EventForm = ({ event }: Props) => {
       uiSchema={uiSchema}
       formData={event}
       validator={validator}
-      onChange={log('changed')}
-      onSubmit={log('submitted')}
-      onError={log('errors')}
+      onSubmit={submit}
     />
   );
 };

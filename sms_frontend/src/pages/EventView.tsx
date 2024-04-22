@@ -24,7 +24,6 @@ const EventView = () => {
 
   useEffect(() => {
     if (event.venue != undefined) {
-      console.log(event.venue);
       (async () => {
         setVenue(await getVenueById(event.venue));
       })();
@@ -33,7 +32,7 @@ const EventView = () => {
   
   const renderMainContent = () => {
     if (edit) {
-      return (<EventForm event={event} />);
+      return (<EventForm setEdit={setEdit} event={event} setEvent={setEvent} />);
     } else {
       return (<EventDetail event={event} venue={venue} />);
     }
