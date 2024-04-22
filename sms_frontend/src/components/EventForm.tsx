@@ -10,6 +10,7 @@ import { updateEvent } from "@/hooks/api";
 
 import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { useContext } from "react";
+import { Button } from "@mui/material";
 
 interface Props {
   event: Event;
@@ -66,7 +67,10 @@ const EventForm = ({ event, setEdit, setEvent }: Props) => {
       formData={event}
       validator={validator}
       onSubmit={submit}
-    />
+    >
+      <Button type="submit" variant="contained">Submit</Button>
+      <Button sx={{marginLeft: "2em"}} onClick={() => {setEdit(false)}} variant="outlined">Cancel</Button>
+    </Form>
   );
 };
 
