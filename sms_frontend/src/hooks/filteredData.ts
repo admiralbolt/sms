@@ -1,6 +1,6 @@
 import { Event, EventsByVenueMap, Venue } from "@/types.js";
 import { LocalStorageContext } from "../contexts/LocalStorageContext.js";
-import { useEvents, useVenues } from "./api.js";
+import { useEvents, useVenues } from "./flatFileApi.js";
 import { useContext, useEffect, useState } from "react";
 
 const useFilteredVenues = () => {

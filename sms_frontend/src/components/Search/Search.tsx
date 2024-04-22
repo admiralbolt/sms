@@ -2,7 +2,7 @@ import { Box, List, ListItem } from "@mui/material";
 import EventDetail from "../EventList/EventDetail";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
-import { useEvents, useVenueMap } from "../../hooks/api";
+import { useEvents, useVenueMap } from "../../hooks/flatFileApi";
 import Fuse, { FuseResult } from "fuse.js";
 import { Typography } from "@mui/material";
 import { Event } from "@/types";

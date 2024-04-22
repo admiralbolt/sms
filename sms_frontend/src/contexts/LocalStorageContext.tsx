@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { useEventTypes, useVenueTypes } from "../hooks/api";
+import { useEventTypes, useVenueTypes } from "@/hooks/api";
 
 interface LocalStorageContextType {
   selectedEventTypes: string[];
