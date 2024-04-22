@@ -29,12 +29,11 @@ class EventViewSet(viewsets.ModelViewSet):
     models.Event.objects.prefetch_related("venue")
     return models.Event.objects.order_by("event_day", "venue__name", "start_time").filter(event_day__gte=datetime.date.today(), venue__show_venue=True, show_event=True)
 
-class VenueViewSet(viewsets.ReadOnlyModelViewSet):
+class VenueViewSet(viewsets.ModelViewSet):
   """List all venues."""
   resource_name = "venues"
   queryset = models.Venue.objects.all()
   serializer_class = serializers.VenueSerializer
-  lookup_field = "venue"
 
   def get_permissions(self):
     permission_classes = [IsAdminUser] if IS_PROD else []

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { logout, setTokens } from "./auth";
+import { memoizedRefreshTokens } from "./auth";
 
 const baseUrl =
   process.env.NODE_ENV === "production"
@@ -9,7 +9,8 @@ const baseUrl =
 const customAxios = axios.create({
   baseURL: baseUrl,
   headers: {
-    Accept: "application/json"
+    "Accept": "application/json",
+    "Content-Type": "application/json",
   }
 });
 
@@ -18,30 +19,35 @@ if (localStorage.getItem("accessToken") !== null) {
   customAxios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem("accessToken")}`;
 }
 
-let refresh = false;
+customAxios.interceptors.request.use(
+  async (config) => {
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`
+    }
+
+    return config;
+  }, (error) => Promise.reject(error)
+);
 
 customAxios.interceptors.response.use(resp => resp, async error => {
-  if (error.response.status === 401 && !refresh) {
-    refresh = true;
-    const response = await customAxios.post("/api/token/refresh/", 
-      {
-        refresh: localStorage.getItem("refreshToken")
-      }, {
-        withCredentials: true
-      });
+  const config = error?.config;
 
-    if (response.status === 200) {
-      setTokens(response.data.access, response.data.refresh);
-      return customAxios(error.config);
-    } else {
-      // If our refresh fails we want to unset credentials.
-      logout();
+  if (error?.response?.status === 401 && !config?.sent) {
+    config.sent = true;
+
+    await memoizedRefreshTokens();
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
+
+    return customAxios(config);
   }
 
-  refresh = false;
-  return error;
+  return Promise.reject(error);
 });
-
 
 export default customAxios;
