@@ -4,12 +4,17 @@ import { useParams } from "react-router-dom";
 import { Event, Venue } from "@/types";
 import EventForm from "@/components/EventForm";
 import EventDetail from "@/components/EventList/EventDetail";
+import { Button } from "@mui/material";
 
 const EventView = () => {
   const { id } = useParams();
   const [event, setEvent] = useState<Event>({});
   const [venue, setVenue] = useState<Venue>({});
   const [edit, setEdit] = useState<boolean>(false);
+
+  const toggleEdit = () => {
+    setEdit(!edit);
+  }
 
   useEffect(() => {
     (async () => {
@@ -25,12 +30,24 @@ const EventView = () => {
       })();
     }
   }, [event]);
-
-  if (edit) {
-    return (<EventForm event={event} />);
-  } else {
-    return (<EventDetail event={event} venue={venue} />);
+  
+  const renderMainContent = () => {
+    if (edit) {
+      return (<EventForm event={event} />);
+    } else {
+      return (<EventDetail event={event} venue={venue} />);
+    }
   }
+
+  return (
+    <div>
+      <Button onClick={toggleEdit}>Toggle Edit</Button>
+      <br />
+      {renderMainContent()}
+    </div>
+  );
+
+
 
 };
 

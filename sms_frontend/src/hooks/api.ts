@@ -50,4 +50,16 @@ const useVenueTypes = () => {
   return venueTypes;
 };
 
-export { getEventById, getOpenMicById, getVenueById, useEventTypes, useVenueTypes };
+const useVenues = () => {
+  const [venues, setVenues] = useState<[Venue]>([]);
+
+  useEffect(() => {
+    customAxios.get("api/venues").then((res) => {
+      setVenues(res.data);
+    });
+  }, []);
+
+  return venues;
+}
+
+export { getEventById, getOpenMicById, getVenueById, useEventTypes, useVenueTypes, useVenues };

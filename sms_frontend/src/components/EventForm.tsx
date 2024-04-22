@@ -4,6 +4,8 @@ import { useSchema } from "@/hooks/schema";
 
 import validator from '@rjsf/validator-ajv8';
 import { Form } from '@rjsf/mui';
+import { WidgetProps } from "@rjsf/utils";
+import VenueSelect from "./VenueSelect";
 
 interface Props {
   event: Event;
@@ -30,6 +32,13 @@ const EventForm = ({ event }: Props) => {
     },
     "signup_start_time": {
       "ui:widget": "time"
+    },
+    "venue": {
+      "ui:widget": (props: WidgetProps) => {
+        return (
+          <VenueSelect venueId={props.value} onChange={(event) => props.onChange(event.target.value)} />
+        );
+      }
     }
   }
 
