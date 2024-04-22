@@ -21,7 +21,7 @@ class VenueSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
   """Serialize Event data."""
   event_image = serializers.ImageField(max_length=None, use_url=True)
-  venue = VenueSerializer(read_only=True)
+  venue = serializers.PrimaryKeyRelatedField(queryset=models.Venue.objects.order_by("name"))
 
   class Meta:
     model = models.Event

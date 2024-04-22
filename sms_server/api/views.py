@@ -15,7 +15,7 @@ from api import serializers
 from api.constants import get_all, EventTypes, VenueTypes
 from sms_server.settings import IS_PROD
 
-class EventViewSet(viewsets.ReadOnlyModelViewSet):
+class EventViewSet(viewsets.ModelViewSet):
   """List all events."""
   resource_name = "events"
   queryset = models.Event.objects.all()
