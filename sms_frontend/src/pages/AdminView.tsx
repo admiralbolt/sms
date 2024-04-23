@@ -2,7 +2,8 @@ import { useIsAuthenticated } from "@/hooks/auth";
 
 import * as React from 'react';
 
-import { Box, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Tab, Tabs } from "@mui/material";
+import IngestionRunPanel from "@/components/IngestionRunPanel";
 import PeriodicTaskStatus from "@/components/PeriodicTaskStatus";
 
 interface TabPanelProps {
@@ -24,7 +25,7 @@ function CustomTabPanel(props: TabPanelProps) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          {children}
         </Box>
       )}
     </div>
@@ -63,7 +64,7 @@ const AdminView = () => {
         <PeriodicTaskStatus />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        Ingestion Runs!
+        <IngestionRunPanel />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
         Commands!

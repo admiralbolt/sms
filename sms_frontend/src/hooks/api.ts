@@ -6,7 +6,7 @@
 import { useEffect, useState } from "react";
 
 import customAxios from "@/hooks/customAxios";
-import { Event, OpenMic, PeriodicTask, Venue } from "@/types";
+import { Event, IngestionRun, OpenMic, PeriodicTask, Venue } from "@/types";
 
 const getVenueById = async (id: any): Promise<Venue> => {
   const result = await customAxios.get(`/api/venues/${id}`);
@@ -74,7 +74,6 @@ const usePeriodicTasks = () : PeriodicTask[] => {
   const [tasks, setTasks] = useState<PeriodicTask[]>([]);
 
   useEffect(() => {
-    console.log("huh");
     customAxios.get("api/celery").then((res) => {
       setTasks(res.data);
     });
@@ -83,4 +82,16 @@ const usePeriodicTasks = () : PeriodicTask[] => {
   return tasks;
 }
 
-export { getEventById, getOpenMicById, getVenueById, updateEvent, useEventTypes, useVenueTypes, usePeriodicTasks, useVenues };
+const useIngestionRuns = () : IngestionRun[] => {
+  const [runs, setRuns] = useState<IngestionRun[]>([]);
+
+  useEffect(() => {
+    customAxios.get("api/ingestion_runs").then((res) => {
+      setRuns(res.data);
+    });
+  }, []);
+
+  return runs;
+}
+
+export { getEventById, getOpenMicById, getVenueById, updateEvent, useEventTypes, useIngestionRuns, useVenueTypes, usePeriodicTasks, useVenues };

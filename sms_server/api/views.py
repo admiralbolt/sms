@@ -78,7 +78,7 @@ class IngestionRunViewSet(viewsets.ReadOnlyModelViewSet):
     return [permission() for permission in permission_classes]
 
   def get_queryset(self):
-    runs = models.IngestionRun.objects.order_by("created_at")
+    runs = models.IngestionRun.objects.order_by("-created_at")
     return runs
   
 class PeriodicTaskViewSet(viewsets.ReadOnlyModelViewSet):

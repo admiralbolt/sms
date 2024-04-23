@@ -3,6 +3,7 @@ import datetime
 
 import croniter
 import pytz
+from django.db.models import Count
 from django_celery_beat.models import CrontabSchedule, PeriodicTask
 from rest_framework import serializers
 
@@ -42,6 +43,17 @@ class OpenMicSerializer(serializers.ModelSerializer):
 
 class IngestionRunSerializer(serializers.ModelSerializer):
   """Serialize IngestionRun data."""
+  summary = serializers.SerializerMethodField()
+
+  def get_summary(self, ingestion_run: models.IngestionRun) -> list[dict]:
+    """Render a summary of the run for easy use.
+
+    We also include the index to use as an ID in the react data table view.
+    """
+    data = list(models.IngestionRecord.objects.filter(ingestion_run=ingestion_run).values("api_name", "change_type", "field_changed").annotate(total=Count("id")))
+    for i, agg in enumerate(data):
+      agg["index"] = i
+    return data
 
   class Meta:
     model = models.IngestionRun

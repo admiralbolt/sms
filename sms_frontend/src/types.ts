@@ -12,6 +12,23 @@ export interface Event {
   // Add other properties of event here as needed
 }
 
+export type ChangeType = "Create" | "Delete" | "Update" | "Error" | "NO OP" | "Skip" | "Update"
+
+export interface IngestionRunSummary {
+  api_name: string;
+  change_type: string;
+  field_changed: string;
+  total: number;
+  index: number;
+}
+
+export interface IngestionRun {
+  id: string;
+  name: string;
+  created_at: Date;
+  summary: IngestionRunSummary[];
+}
+
 export interface Venue {
   id: string;
   latitude: number;
