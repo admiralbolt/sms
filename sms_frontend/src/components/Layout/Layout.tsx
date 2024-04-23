@@ -13,9 +13,12 @@ import { useEffect, useState, useContext } from "react";
 // import { LocalStorageContext } from "../../contexts/LocalStorageContext";
 import { DrawerContext } from "../../contexts/DrawerContext";
 import { useAppBarHeight } from "../../hooks/materialHacks";
+import { useIsAuthenticated } from "@/hooks/auth";
+import { AdminPanelSettings } from "@mui/icons-material";
 
 const NavBar = () => {
   const [showFilters, setShowFilters] = useState(false);
+  const [isAuthenticated, _] = useIsAuthenticated();
   // const { selectedDate } = useContext(LocalStorageContext) || {};
   const { drawerOpen, setDrawerOpen } = useContext(DrawerContext) || {};
   const { pathname } = useLocation();
@@ -85,6 +88,21 @@ const NavBar = () => {
               </IconButton>
             )}
           </NavLink>
+          {isAuthenticated && (
+            <NavLink to="/admin">
+              {({ isActive }) => (
+              <IconButton
+                size="large"
+                edge="start"
+                aria-label="menu"
+                color={isActive ? "primary" : undefined}
+                sx={{ mr: 4 }}
+              >
+                <AdminPanelSettings />
+              </IconButton>
+            )}
+          </NavLink>
+          )}
           {showFilters && (
             <Box
               sx={{
