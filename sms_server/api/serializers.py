@@ -1,8 +1,13 @@
 """Convert DB models => JSON."""
-from django_celery_beat.models import PeriodicTask
+import datetime
+
+import croniter
+import pytz
+from django_celery_beat.models import CrontabSchedule, PeriodicTask
 from rest_framework import serializers
 
 from api import models
+from sms_server.settings import TIME_ZONE
 
 class VenueTagSerializer(serializers.ModelSerializer):
 
@@ -49,8 +54,35 @@ class IngestionRecordSerializer(serializers.ModelSerializer):
     model = models.IngestionRecord
     fields = "__all__"
 
+class CrontabScheduleSerializer(serializers.ModelSerializer):
+  schedule = serializers.SerializerMethodField()
+  healthy_last_run = serializers.SerializerMethodField()
+
+  def get_schedule(self, crontab: CrontabSchedule) -> str:
+    return f"{crontab.minute} {crontab.hour} {crontab.day_of_month} {crontab.month_of_year} {crontab.day_of_week}"
+  
+  def get_healthy_last_run(self, crontab: CrontabSchedule) -> datetime:
+    schedule = self.get_schedule(crontab)
+    now = datetime.datetime.now()
+    itr = croniter.croniter(schedule, now)
+    return itr.get_prev(datetime.datetime).replace(tzinfo=pytz.timezone(TIME_ZONE))
+
+  class Meta:
+    model = CrontabSchedule
+    fields = ("schedule", "healthy_last_run")
+
 class PeriodicTaskSerializer(serializers.ModelSerializer):
   """Serialize celery periodic tasks."""
+  crontab = CrontabScheduleSerializer()
+  healthy = serializers.SerializerMethodField()
+
+  def get_healthy(self, task: PeriodicTask):
+    # Ugly copy paste job here.
+    schedule = f"{task.crontab.minute} {task.crontab.hour} {task.crontab.day_of_month} {task.crontab.month_of_year} {task.crontab.day_of_week}"
+    now = datetime.datetime.now()
+    itr = croniter.croniter(schedule, now)
+    healthy_last_run = itr.get_prev(datetime.datetime).replace(tzinfo=pytz.timezone(TIME_ZONE))
+    return task.last_run_at > healthy_last_run
 
   class Meta:
     model = PeriodicTask

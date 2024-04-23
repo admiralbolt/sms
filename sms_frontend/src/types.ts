@@ -39,6 +39,21 @@ export interface OpenMic {
   cadence_readable: string;
 }
 
+export interface Crontab {
+  schedule: string;
+  healthy_last_run: Date;
+}
+
+export interface PeriodicTask {
+  id: string;
+  name: string;
+  enabled: boolean;
+  last_run_at: Date;
+  healthy: boolean;
+  total_run_count: number;
+  crontab: Crontab;
+}
+
 export interface EventsByVenue {
   [venue: string]: {
     [event_day: string]: Event;

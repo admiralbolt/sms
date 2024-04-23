@@ -3,6 +3,7 @@ import { useIsAuthenticated } from "@/hooks/auth";
 import * as React from 'react';
 
 import { Box, Tab, Tabs, Typography } from "@mui/material";
+import PeriodicTaskStatus from "@/components/PeriodicTaskStatus";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -51,25 +52,29 @@ const AdminView = () => {
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
           <Tab label="Status" {...a11yProps(0)} />
-          <Tab label="Commands" {...a11yProps(1)} />
-          <Tab label="Venues" {...a11yProps(2)} />
-          <Tab label="Open Mics" {...a11yProps(3)} />
-          <Tab label="Events" {...a11yProps(4)} />
+          <Tab label="Ingestion Runs" {...a11yProps(1)} />
+          <Tab label="Commands" {...a11yProps(2)} />
+          <Tab label="Venues" {...a11yProps(3)} />
+          <Tab label="Open Mics" {...a11yProps(4)} />
+          <Tab label="Events" {...a11yProps(5)} />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        Status!
+        <PeriodicTaskStatus />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        Commands!
+        Ingestion Runs!
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        Venues!
+        Commands!
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
-        Open Mics!
+        Venues!
       </CustomTabPanel>
       <CustomTabPanel value={value} index={4}>
+        Open Mics!
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={5}>
         Events!
       </CustomTabPanel>
     </Box>
