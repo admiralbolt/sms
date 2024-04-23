@@ -1,4 +1,5 @@
 """Convert DB models => JSON."""
+from django_celery_beat.models import PeriodicTask
 from rest_framework import serializers
 
 from api import models
@@ -46,4 +47,11 @@ class IngestionRecordSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.IngestionRecord
+    fields = "__all__"
+
+class PeriodicTaskSerializer(serializers.ModelSerializer):
+  """Serialize celery periodic tasks."""
+
+  class Meta:
+    model = PeriodicTask
     fields = "__all__"

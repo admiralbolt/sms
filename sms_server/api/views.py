@@ -1,6 +1,7 @@
 """Display stuff!"""
 import datetime
 
+from django_celery_beat.models import PeriodicTask
 from django.http import JsonResponse
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
@@ -79,6 +80,16 @@ class IngestionRunViewSet(viewsets.ReadOnlyModelViewSet):
   def get_queryset(self):
     runs = models.IngestionRun.objects.order_by("created_at")
     return runs
+  
+class PeriodicTaskViewSet(viewsets.ReadOnlyModelViewSet):
+  """List periodic tasks!"""
+  resource_name = "periodic_tasks"
+  queryset = PeriodicTask.objects.all()
+  serializer_class = serializers.PeriodicTaskSerializer
+
+  def get_permissions(self):
+    permission_classes = [IsAdminUser] if IS_PROD else []
+    return [permission() for permission in permission_classes]
   
 class IngestionRunRecordsView(ListAPIView):
   """List all ingestion records for a particular run."""

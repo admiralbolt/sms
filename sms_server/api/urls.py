@@ -11,6 +11,7 @@ from rest_framework.schemas import get_schema_view
 from api import views
 
 router = routers.DefaultRouter(trailing_slash=False)
+router.register(r"celery", views.PeriodicTaskViewSet)
 router.register(r"events", views.EventViewSet)
 router.register(r"open_mics", views.OpenMicViewSet)
 router.register(r"venues", views.VenueViewSet)
