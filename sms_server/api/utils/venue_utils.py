@@ -8,7 +8,6 @@ import deepdiff
 from api.constants import get_all, ChangeTypes, VenueTypes
 from api.ingestion.crawlers.crawler import Crawler
 from api.models import Venue, VenueMask, VenueTag, VenueApi
-from api.serializers import VenueSerializer
 from api.utils import diff_utils
 
 logger = logging.getLogger(__name__)
@@ -118,18 +117,16 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
 
   # If the venue does exist we need to determine what the diffs are, and how
   # to handle them.
-  db_venue_serialized = VenueSerializer(db_venue)
-  new_venue_serialized = VenueSerializer(new_venue)
-
+  original_db_data = db_venue.__dict__
   diff = deepdiff.DeepDiff(
-    db_venue_serialized.data,
-    new_venue_serialized.data,
+    original_db_data,
+    new_venue.__dict__,
     ignore_order=True,
     exclude_paths=["id"]
   )
 
   # If brand new fields are added, add them!
-  fields_added, _ = diff_utils.handle_new_fields(db_venue, new_venue_serialized, diff)
+  fields_added, _ = diff_utils.handle_new_fields(db_venue, new_venue.__dict__, diff)
   # Handle "new" fields. Cases where old fields are blank / empty strings.
   fields_updated, _ = diff_utils.handle_new_fields_diff(db_venue, diff.get("values_changed", None))
 
@@ -138,10 +135,9 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
   if fields_added or fields_updated:
     change_type = ChangeTypes.UPDATE
     # Takes some extra effort, but we serialize the final diffs to json.
-    final_db_serialized = VenueSerializer(db_venue)
     final_diff = deepdiff.DeepDiff(
-      db_venue_serialized.data,
-      final_db_serialized.data,
+      original_db_data,
+      db_venue.__dict__,
       ignore_order=True,
       exclude_paths=["id"]
     )

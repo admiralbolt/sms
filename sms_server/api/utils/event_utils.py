@@ -5,7 +5,6 @@ import deepdiff
 
 from api.constants import IngestionApis
 from api.models import ChangeTypes, Event, Venue
-from api.serializers import EventSerializer
 from api.utils import diff_utils
 
 logger = logging.getLogger(__name__)
@@ -60,18 +59,17 @@ def create_or_update_event(venue: Venue, debug: bool=False, **kwargs) -> tuple[s
   new_event = Event(venue=venue, **kwargs)
 
   # Compute diffs on the serialized data.
-  old_event_serialized = EventSerializer(event)
-  new_event_serialized = EventSerializer(new_event)
+  original_event_data = event.__dict__
 
   diff = deepdiff.DeepDiff(
-    old_event_serialized.data,
-    new_event_serialized.data,
+    original_event_data,
+    new_event.__dict__,
     ignore_order=True,
     exclude_paths=["id"]
   )
 
   # If brand new fields are added, add them!
-  fields_added, _ = diff_utils.handle_new_fields(event, new_event_serialized, diff)
+  fields_added, _ = diff_utils.handle_new_fields(event, new_event.__dict__, diff)
   values_changed = diff.get("values_changed", None)
   # Handle "new" fields. Cases where old fields are blank / empty strings.
   fields_changed, _ = diff_utils.handle_new_fields_diff(event, values_changed)
@@ -83,10 +81,9 @@ def create_or_update_event(venue: Venue, debug: bool=False, **kwargs) -> tuple[s
   change_log = ""
   if any([fields_added, fields_changed, open_mic_diff]):
     # Takes some extra effort, but we serialize the final diffs to json.
-    final_db_serialized = EventSerializer(event)
     final_diff = deepdiff.DeepDiff(
-      old_event_serialized.data,
-      final_db_serialized.data,
+      original_event_data,
+      event.__dict__,
       ignore_order=True,
       exclude_paths=["id"]
     )
