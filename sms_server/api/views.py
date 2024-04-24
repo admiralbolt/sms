@@ -45,7 +45,7 @@ class VenueViewSet(viewsets.ModelViewSet):
     venues = models.Venue.objects.order_by("name")
     return venues.filter(show_venue=True)
 
-class OpenMicViewSet(viewsets.ReadOnlyModelViewSet):
+class OpenMicViewSet(viewsets.ModelViewSet):
   """List all open mics."""
   resource_name = "open_mics"
   queryset = models.OpenMic.objects.all()

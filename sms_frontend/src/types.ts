@@ -43,8 +43,8 @@ export interface Venue {
 
 export interface OpenMic {
   id: string;
-  venue: string;
-  title: string;
+  venue: number;
+  name: string;
   event_mic_type: EventType;
   open_mic_type: string;
   description: string;

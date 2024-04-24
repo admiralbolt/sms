@@ -5,6 +5,7 @@ import * as React from 'react';
 import { Box, Tab, Tabs } from "@mui/material";
 import IngestionRunPanel from "@/components/IngestionRunPanel";
 import PeriodicTaskStatus from "@/components/PeriodicTaskStatus";
+import OpenMicPanel from "@/components/OpenMics/OpenMicPanel";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -73,7 +74,7 @@ const AdminView = () => {
         Venues!
       </CustomTabPanel>
       <CustomTabPanel value={value} index={4}>
-        Open Mics!
+        <OpenMicPanel />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={5}>
         Events!

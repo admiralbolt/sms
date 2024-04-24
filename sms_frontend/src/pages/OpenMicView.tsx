@@ -1,4 +1,4 @@
-import OpenMicForm from "@/components/OpenMicForm";
+import OpenMicForm from "@/components/OpenMics/OpenMicForm";
 import { getOpenMicById } from "@/hooks/api";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -6,7 +6,7 @@ import { OpenMic } from "@/types";
 
 const OpenMicView = () => {
   const { id } = useParams();
-  const [openMic, setOpenMic] = useState<OpenMic>({});
+  const [openMic, setOpenMic] = useState<OpenMic>({} as OpenMic);
   
   useEffect(() => {
     (async () => {

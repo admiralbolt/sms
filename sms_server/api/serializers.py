@@ -36,10 +36,14 @@ class EventSerializer(serializers.ModelSerializer):
 
 class OpenMicSerializer(serializers.ModelSerializer):
   """Serialize OpenMic data."""
+  name = serializers.SerializerMethodField
+
+  def get_name(self, open_mic: models.OpenMic):
+    return open_mic.name()
 
   class Meta:
     model = models.OpenMic
-    fields = "__all__"
+    fields = ("id", "name", "open_mic_type", "description", "signup_start_time", "event_start_time", "event_end_time", "all_ages", "house_piano", "house_pa", "drums", "cadence_crontab", "cadence_readable", "generate_events", "venue")
 
 class IngestionRunSerializer(serializers.ModelSerializer):
   """Serialize IngestionRun data."""

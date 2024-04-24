@@ -58,6 +58,22 @@ const updateEvent = (event: Event) => {
   return customAxios.put(`api/events/${event.id}`, event);
 }
 
+const updateOpenMic = (openMic: OpenMic) => {
+  return customAxios.put(`api/open_mics/${openMic.id}`, openMic);
+}
+
+const useOpenMics = () : OpenMic[] => {
+  const [openMics, setOpenMics] = useState<OpenMic[]>([]);
+
+  useEffect(() => {
+    customAxios.get("api/open_mics").then((res) => {
+      setOpenMics(res.data);
+    });
+  }, []);
+
+  return openMics;
+}
+
 const useVenues = () : Venue[] => {
   const [venues, setVenues] = useState<Venue[]>([]);
 
@@ -94,4 +110,4 @@ const useIngestionRuns = () : IngestionRun[] => {
   return runs;
 }
 
-export { getEventById, getOpenMicById, getVenueById, updateEvent, useEventTypes, useIngestionRuns, useVenueTypes, usePeriodicTasks, useVenues };
+export { getEventById, getOpenMicById, getVenueById, updateEvent, useEventTypes, useIngestionRuns, updateOpenMic, useVenueTypes, usePeriodicTasks, useOpenMics, useVenues };
