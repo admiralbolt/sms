@@ -54,6 +54,8 @@ export interface OpenMic {
   drums?: boolean;
   cadence_crontab: string;
   cadence_readable: string;
+  signup_start_time: string;
+  event_start_time: string;
 }
 
 export interface Crontab {
