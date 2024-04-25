@@ -58,6 +58,18 @@ const updateEvent = (event: Event) => {
   return customAxios.put(`api/events/${event.id}`, event);
 }
 
+const createVenue = (venue: Venue) => {
+  return customAxios.post(`api/venues`, venue);
+}
+
+const updateVenue = (venue: Venue) => {
+  // Until we get file uploading from the UI figured out, we want to avoid
+  // making updates directly to the "venue_image" field.
+  delete venue.venue_image;
+
+  return customAxios.put(`api/venues/${venue.id}`, venue);
+}
+
 const createOpenMic = (openMic: OpenMic) => {
   return customAxios.post(`api/open_mics`, openMic);
 }
@@ -89,7 +101,7 @@ const useOpenMics = () : [OpenMic[], React.Dispatch<React.SetStateAction<OpenMic
   return [openMics, setOpenMics];
 }
 
-const useVenues = () : Venue[] => {
+const useVenues = () : [Venue[], React.Dispatch<React.SetStateAction<Venue[]>>] => {
   const [venues, setVenues] = useState<Venue[]>([]);
 
   useEffect(() => {
@@ -98,7 +110,7 @@ const useVenues = () : Venue[] => {
     });
   }, []);
 
-  return venues;
+  return [venues, setVenues];
 }
 
 const usePeriodicTasks = () : PeriodicTask[] => {
@@ -125,4 +137,4 @@ const useIngestionRuns = () : IngestionRun[] => {
   return runs;
 }
 
-export { getEventById, getOpenMicById, getVenueById, updateEvent, useEventTypes, useIngestionRuns, createOpenMic, deleteOpenMic, updateOpenMic, useVenueTypes, usePeriodicTasks, useOpenMics, useVenues };
+export { getEventById, getOpenMicById, getVenueById, updateEvent, useEventTypes, useIngestionRuns, createVenue, updateVenue, createOpenMic, deleteOpenMic, updateOpenMic, useVenueTypes, usePeriodicTasks, useOpenMics, useVenues };

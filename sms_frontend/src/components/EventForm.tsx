@@ -1,7 +1,7 @@
 import { Event } from "@/types";
 
 import { useSchema } from "@/hooks/schema";
-import VenueSelect from "@/components/VenueSelect";
+import VenueSelect from "@/components/Venues/VenueSelect";
 
 import validator from '@rjsf/validator-ajv8';
 import { Form } from '@rjsf/mui';

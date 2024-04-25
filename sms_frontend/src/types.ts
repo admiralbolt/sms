@@ -30,11 +30,12 @@ export interface IngestionRun {
 }
 
 export interface Venue {
-  id: string;
+  id: number;
   latitude: number;
   longitude: number;
   name: string;
-  venue_image: string;
+  description: string;
+  venue_image?: string;
   venue_url?: string | null;
   address: string;
   city: string;

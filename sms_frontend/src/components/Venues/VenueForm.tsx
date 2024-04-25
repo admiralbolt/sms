@@ -1,12 +1,10 @@
-import { OpenMic } from "@/types";
+import { Venue } from "@/types";
 
 import { useSchema } from "@/hooks/schema";
-import VenueSelect from "@/components/Venues/VenueSelect";
 
 import validator from '@rjsf/validator-ajv8';
 import { Form } from '@rjsf/mui';
-import { WidgetProps } from "@rjsf/utils";
-import { createOpenMic, updateOpenMic } from "@/hooks/api";
+import { createVenue, updateVenue } from "@/hooks/api";
 
 import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { useContext } from "react";
@@ -14,21 +12,22 @@ import { Button } from "@mui/material";
 import { AxiosError } from "axios";
 
 interface Props {
-  openMic: OpenMic;
+  venue: Venue;
   setEdit: any;
   isNew?: boolean;
   setIsNew?: any;
   createCallback?: any;
+  updateCallback?: any;
 }
 
-const OpenMicForm = ({ openMic, setEdit, isNew, createCallback }: Props) => {
+const VenueForm = ({ venue, setEdit, isNew, createCallback, updateCallback }: Props) => {
   const { snackbar, setSnackbar } = useContext(SnackbarContext) || {};
-  const { openMicSchema } = useSchema();
+  const { venueSchema } = useSchema();
 
-  const submit = (submitOpenMic: any) => {
+  const submit = (submitVenue: any) => {
     if (isNew) {
-      createOpenMic(submitOpenMic.formData).then((response) => {
-        setSnackbar({open: true, severity: "success", message: `openMic ${response.data.name} updated successfully!`});
+      createVenue(submitVenue.formData).then((response) => {
+        setSnackbar({open: true, severity: "success", message: `Venue ${response.data.name} updated successfully!`});
         setEdit(false);
         createCallback(response.data["id"]);
       }, (error: AxiosError) => {
@@ -38,9 +37,10 @@ const OpenMicForm = ({ openMic, setEdit, isNew, createCallback }: Props) => {
       return;
     }
 
-    updateOpenMic(submitOpenMic.formData).then((response) => {
-      setSnackbar({open: true, severity: "success", message: `openMic ${response.data.name} updated successfully!`});
+    updateVenue(submitVenue.formData).then((response) => {
+      setSnackbar({open: true, severity: "success", message: `Venue ${response.data.name} updated successfully!`});
       setEdit(false);
+      updateCallback(response.data["id"]);
     }, (error: AxiosError) => {
       setSnackbar({open: true, severity: "error", message: error.message});
     });
@@ -54,31 +54,22 @@ const OpenMicForm = ({ openMic, setEdit, isNew, createCallback }: Props) => {
     "description": {
       "ui:widget": "textarea"
     },
-    "signup_start_time": {
-      "ui:widget": "time"
+    "venue_tags": {
+      "ui:widget": "hidden"
     },
-    "event_start_time": {
-      "ui:widget": "time"
+    "venue_image": {
+      "ui:widget": "hidden",
     },
-    "event_end_time": {
-      "ui:widget": "time"
-    },
-    "venue": {
-      "ui:widget": (props: WidgetProps) => {
-        return (
-          <VenueSelect venueId={props.value} onChange={(openMic: any) => props.onChange(openMic.target.value)} />
-        );
-      }
-    }
   }
 
   return (
     <Form
-      schema={openMicSchema}
+      schema={venueSchema}
       uiSchema={uiSchema}
-      formData={openMic}
+      formData={venue}
       validator={validator}
       onSubmit={submit}
+      noValidate
     >
       <Button type="submit" variant="contained">Submit</Button>
       <Button sx={{marginLeft: "2em"}} onClick={cancel} variant="outlined">Cancel</Button>
@@ -86,8 +77,8 @@ const OpenMicForm = ({ openMic, setEdit, isNew, createCallback }: Props) => {
   );
 };
 
-OpenMicForm.defaultProps = {
+VenueForm.defaultProps = {
   "isNew": false
 }
 
-export default OpenMicForm;
+export default VenueForm;
