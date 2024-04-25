@@ -5,10 +5,9 @@ import { Delete, Edit } from "@mui/icons-material";
 
 import { format24HourTime } from "@/utils/dateUtils";
 
-import WatchLaterIcon from "@mui/icons-material/WatchLater";
-import PunchClockIcon from "@mui/icons-material/PunchClock";
-import EditNoteIcon from "@mui/icons-material/EditNote";
-import CategoryIcon from "@mui/icons-material/Category";
+import HomeIcon from "@mui/icons-material/Home";
+import LocationCityIcon from "@mui/icons-material/LocationCity";
+import GpsFixedIcon from "@mui/icons-material/GpsFixed";
 
 import { SnackbarContext } from "@/contexts/SnackbarContext";
 
@@ -106,8 +105,32 @@ const VenueCard = ({ venue, isNew, deleteCallback, createCallback, updateCallbac
                   marginBottom: "0.5em"
                 }}
               >
-                <PunchClockIcon sx={{ verticalAlign: "middle" }} />
+                <HomeIcon sx={{ verticalAlign: "middle" }} />
                 <Typography sx={{ marginLeft: "0.5em" }}>{venue.address}</Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justContent: "start",
+                  flexDirection: "row",
+                  marginBottom: "0.5em"
+                }}
+              >
+                <LocationCityIcon sx={{ verticalAlign: "middle" }} />
+                <Typography sx={{ marginLeft: "0.5em" }}>{venue.city}</Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justContent: "start",
+                  flexDirection: "row",
+                  marginBottom: "0.5em"
+                }}
+              >
+                <GpsFixedIcon sx={{ verticalAlign: "middle" }} />
+                <Typography sx={{ marginLeft: "0.5em" }}>Lat: {venue.latitude}, Long: {venue.longitude}</Typography>
               </Box>
             </Box>
 
