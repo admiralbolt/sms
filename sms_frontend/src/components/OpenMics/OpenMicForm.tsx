@@ -6,7 +6,7 @@ import VenueSelect from "@/components/VenueSelect";
 import validator from '@rjsf/validator-ajv8';
 import { Form } from '@rjsf/mui';
 import { WidgetProps } from "@rjsf/utils";
-import { updateOpenMic } from "@/hooks/api";
+import { createOpenMic, updateOpenMic } from "@/hooks/api";
 
 import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { useContext } from "react";
@@ -16,20 +16,38 @@ import { AxiosError } from "axios";
 interface Props {
   openMic: OpenMic;
   setEdit: any;
+  isNew?: boolean;
+  setIsNew?: any;
+  createCallback?: any;
 }
 
-const OpenMicForm = ({ openMic, setEdit }: Props) => {
+const OpenMicForm = ({ openMic, setEdit, isNew, createCallback }: Props) => {
   const { snackbar, setSnackbar } = useContext(SnackbarContext) || {};
   const { openMicSchema } = useSchema();
 
   const submit = (submitOpenMic: any) => {
+    if (isNew) {
+      createOpenMic(submitOpenMic.formData).then((response) => {
+        setSnackbar({open: true, severity: "success", message: `openMic ${response.data.name} updated successfully!`});
+        setEdit(false);
+        createCallback(response.data["id"]);
+      }, (error: AxiosError) => {
+        setSnackbar({open: true, severity: "error", message: error.message});
+      });
+
+      return;
+    }
+
     updateOpenMic(submitOpenMic.formData).then((response) => {
-      setSnackbar({open: true, severity: "success", message: `openMic ${response.data.title} updated successfully!`});
+      setSnackbar({open: true, severity: "success", message: `openMic ${response.data.name} updated successfully!`});
       setEdit(false);
-      // setOpenMic(response.data);
     }, (error: AxiosError) => {
       setSnackbar({open: true, severity: "error", message: error.message});
     });
+  }
+
+  const cancel = () => {
+    setEdit(false);
   }
 
   const uiSchema: object = {
@@ -37,6 +55,12 @@ const OpenMicForm = ({ openMic, setEdit }: Props) => {
       "ui:widget": "textarea"
     },
     "signup_start_time": {
+      "ui:widget": "time"
+    },
+    "event_start_time": {
+      "ui:widget": "time"
+    },
+    "event_end_time": {
       "ui:widget": "time"
     },
     "venue": {
@@ -57,9 +81,13 @@ const OpenMicForm = ({ openMic, setEdit }: Props) => {
       onSubmit={submit}
     >
       <Button type="submit" variant="contained">Submit</Button>
-      <Button sx={{marginLeft: "2em"}} onClick={() => {setEdit(false)}} variant="outlined">Cancel</Button>
+      <Button sx={{marginLeft: "2em"}} onClick={cancel} variant="outlined">Cancel</Button>
     </Form>
   );
 };
+
+OpenMicForm.defaultProps = {
+  "isNew": false
+}
 
 export default OpenMicForm;

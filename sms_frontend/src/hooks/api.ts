@@ -58,11 +58,26 @@ const updateEvent = (event: Event) => {
   return customAxios.put(`api/events/${event.id}`, event);
 }
 
+const createOpenMic = (openMic: OpenMic) => {
+  return customAxios.post(`api/open_mics`, openMic);
+}
+
 const updateOpenMic = (openMic: OpenMic) => {
   return customAxios.put(`api/open_mics/${openMic.id}`, openMic);
 }
 
-const useOpenMics = () : OpenMic[] => {
+const deleteOpenMic = (openMic: OpenMic) => {
+  return customAxios.delete(`api/open_mics/${openMic.id}`).then((res) => {
+    console.log("deleteing open mic from local data.");
+    const [openMics, setOpenMics] = useOpenMics();
+    delete openMics[openMics.indexOf(openMic)];
+    setOpenMics(openMics);
+  }, (error) => {
+   
+  });
+}
+
+const useOpenMics = () : [OpenMic[], React.Dispatch<React.SetStateAction<OpenMic[]>>] => {
   const [openMics, setOpenMics] = useState<OpenMic[]>([]);
 
   useEffect(() => {
@@ -71,7 +86,7 @@ const useOpenMics = () : OpenMic[] => {
     });
   }, []);
 
-  return openMics;
+  return [openMics, setOpenMics];
 }
 
 const useVenues = () : Venue[] => {
@@ -110,4 +125,4 @@ const useIngestionRuns = () : IngestionRun[] => {
   return runs;
 }
 
-export { getEventById, getOpenMicById, getVenueById, updateEvent, useEventTypes, useIngestionRuns, updateOpenMic, useVenueTypes, usePeriodicTasks, useOpenMics, useVenues };
+export { getEventById, getOpenMicById, getVenueById, updateEvent, useEventTypes, useIngestionRuns, createOpenMic, deleteOpenMic, updateOpenMic, useVenueTypes, usePeriodicTasks, useOpenMics, useVenues };
