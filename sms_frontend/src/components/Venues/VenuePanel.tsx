@@ -65,7 +65,7 @@ const VenuePanel = () => {
           options={venues}
           sx={{ width: 300 }}
           renderInput={(params) => <TextField {...params} label="Venue" />}
-          getOptionLabel={(mic: Venue) => {return mic.name}}
+          getOptionLabel={(venue: Venue) => {return venue.name}}
           onChange={handleChange}
           value={selectedVenue}
           inputValue={inputValue}

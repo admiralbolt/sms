@@ -7,6 +7,7 @@ import IngestionRunPanel from "@/components/IngestionRunPanel";
 import PeriodicTaskStatus from "@/components/PeriodicTaskStatus";
 import OpenMicPanel from "@/components/OpenMics/OpenMicPanel";
 import VenuePanel from "@/components/Venues/VenuePanel";
+import EventPanel from "@/components/Events/EventPanel";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -78,7 +79,7 @@ const AdminView = () => {
         <OpenMicPanel />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={5}>
-        Events!
+        <EventPanel />
       </CustomTabPanel>
     </Box>
   );

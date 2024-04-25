@@ -1,6 +1,6 @@
 import { useFilteredEvents, useFilteredVenues } from "../../hooks/filteredData";
 import { List, ListItem } from "@mui/material";
-import EventDetail from "./EventDetail";
+import EventDetail from "./EventCard";
 import { useContext, useEffect, useRef } from "react";
 import { LocalStorageContext } from "../../contexts/LocalStorageContext";
 import { Event } from "@/types";

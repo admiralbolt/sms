@@ -2,7 +2,7 @@
 import datetime
 
 from django_celery_beat.models import PeriodicTask
-from django.http import JsonResponse
+from django.http import HttpRequest, JsonResponse
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import ListAPIView
@@ -14,6 +14,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from api import models
 from api import serializers
 from api.constants import get_all, EventTypes, VenueTypes
+from api.utils import search_utils
 from sms_server.settings import IS_PROD
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -127,3 +128,18 @@ def get_all_event_types(request):
 def get_all_venue_types(request):
   """List all venue types."""
   return JsonResponse(sorted(get_all(VenueTypes)), safe=False)
+
+@api_view(["GET"])
+@permission_classes([IsAdminUser] if IS_PROD else [])
+def search_events(request: HttpRequest):
+  keyword = request.GET.get("keyword")
+  if not keyword:
+    return JsonResponse({
+      "status": "error",
+      "message": "No keyword supplied"
+    })
+  
+  return JsonResponse(serializers.EventSerializer(
+    search_utils.search_all_events(keyword),
+    many=True
+  ).data, safe=False)

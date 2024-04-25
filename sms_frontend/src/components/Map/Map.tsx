@@ -10,7 +10,7 @@ import {
 import { MapContainer } from "react-leaflet";
 
 import { Box, Fade } from "@mui/material";
-import EventDetail from "../EventList/EventDetail";
+import EventDetail from "../Events/EventCard";
 import { LatLngExpression } from "leaflet";
 import { Event, Venue } from "@/types";
 

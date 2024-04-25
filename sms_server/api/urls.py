@@ -19,6 +19,7 @@ router.register(r"ingestion_runs", views.IngestionRunViewSet)
 
 urlpatterns = [
   path("api/", include(router.urls)),
+  path("api/event_search", views.search_events),
   path("api/venues/<int:venue_id>/venue_events", views.VenueEventsView.as_view(), name="venue_events"),
   path("api/ingestion_runs/<int:ingestion_run_id>/records", views.IngestionRunRecordsView.as_view(), name="ingestion_run_records"),
   path("api/get_all_event_types", views.get_all_event_types),

@@ -1,5 +1,5 @@
 import { Box, List, ListItem } from "@mui/material";
-import EventDetail from "../EventList/EventDetail";
+import EventDetail from "../Events/EventCard";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import { useEvents, useVenueMap } from "../../hooks/flatFileApi";
