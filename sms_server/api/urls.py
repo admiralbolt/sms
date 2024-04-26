@@ -24,7 +24,7 @@ urlpatterns = [
   path("api/ingestion_runs/<int:ingestion_run_id>/records", views.IngestionRunRecordsView.as_view(), name="ingestion_run_records"),
   path("api/get_all_event_types", views.get_all_event_types),
   path("api/get_all_venue_types", views.get_all_venue_types),
-  path("api/logout/", views.LogoutView.as_view()),
+  path("api/logout", views.LogoutView.as_view()),
   path("api/token/", jwt_views.TokenObtainPairView.as_view()),
   path("api/token/refresh/", jwt_views.TokenRefreshView.as_view()),
   path("api/schema",
