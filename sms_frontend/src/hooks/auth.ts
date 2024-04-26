@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import customAxios from "@/hooks/customAxios";
 import mem from "mem";
 

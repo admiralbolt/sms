@@ -47,7 +47,6 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
 
     (async() => {
       setVenue(await getVenueById(event.venue));
-      console.log(venue);
     })();
   }, [event.venue]);
 
