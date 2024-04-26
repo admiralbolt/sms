@@ -6,7 +6,7 @@ from django.http import HttpRequest, JsonResponse
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly, SAFE_METHODS
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -24,7 +24,7 @@ class EventViewSet(viewsets.ModelViewSet):
   serializer_class = serializers.EventSerializer
   
   def get_permissions(self):
-    permission_classes = [IsAdminUser] if IS_PROD else []
+    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
     return [permission() for permission in permission_classes]
 
   def get_queryset(self):
@@ -38,7 +38,7 @@ class VenueViewSet(viewsets.ModelViewSet):
   serializer_class = serializers.VenueSerializer
 
   def get_permissions(self):
-    permission_classes = [IsAdminUser] if IS_PROD else []
+    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
     return [permission() for permission in permission_classes]
 
   def get_queryset(self):
@@ -53,7 +53,7 @@ class OpenMicViewSet(viewsets.ModelViewSet):
   serializer_class = serializers.OpenMicSerializer
   
   def get_permissions(self):
-    permission_classes = [IsAdminUser] if IS_PROD else []
+    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
     return [permission() for permission in permission_classes]
 
   def get_queryset(self):
@@ -63,6 +63,10 @@ class OpenMicViewSet(viewsets.ModelViewSet):
 class VenueEventsView(ListAPIView):
   """List all events for a particular venue."""
   serializer_class = serializers.EventSerializer
+
+  def get_permissions(self):
+    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
+    return [permission() for permission in permission_classes]
 
   def get_queryset(self):
     venue = models.Venue.objects.filter(id=self.kwargs.get("venue_id", None)).first()
@@ -75,7 +79,7 @@ class IngestionRunViewSet(viewsets.ReadOnlyModelViewSet):
   serializer_class = serializers.IngestionRunSerializer
 
   def get_permissions(self):
-    permission_classes = [IsAdminUser] if IS_PROD else []
+    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
     return [permission() for permission in permission_classes]
 
   def get_queryset(self):
@@ -89,7 +93,7 @@ class PeriodicTaskViewSet(viewsets.ReadOnlyModelViewSet):
   serializer_class = serializers.PeriodicTaskSerializer
 
   def get_permissions(self):
-    permission_classes = [IsAdminUser] if IS_PROD else []
+    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
     return [permission() for permission in permission_classes]
   
 class IngestionRunRecordsView(ListAPIView):
@@ -97,7 +101,7 @@ class IngestionRunRecordsView(ListAPIView):
   serializer_class = serializers.IngestionRecordSerializer
 
   def get_permissions(self):
-    permission_classes = [IsAdminUser] if IS_PROD else []
+    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
     return [permission() for permission in permission_classes]
 
   def get_queryset(self):
