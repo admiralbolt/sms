@@ -2,9 +2,7 @@ import {  useEffect, useState } from "react";
 import { EventsByDate, EventsByVenue, Event, Venue } from "@/types";
 import customAxios from "./customAxios";
 
-
-
-const useEvents = (): [EventsByVenue, EventsByDate, Event[]] => {
+const useFlatEvents = (): [EventsByVenue, EventsByDate, Event[]] => {
   const [eventsByVenue, setEventsByVenue] = useState<EventsByVenue>({});
   const [eventsByDate, setEventsByDate] = useState<EventsByDate>({});
   const [allEventsList, setAllEventsList] = useState<Event[]>([]);
@@ -33,9 +31,7 @@ const useEvents = (): [EventsByVenue, EventsByDate, Event[]] => {
   return [eventsByVenue, eventsByDate, allEventsList];
 };
 
-
-
-const useVenues = (): Venue[] => {
+const useFlatVenues = (): Venue[] => {
   const [venues, setVenues] = useState<Venue[]>([]);
 
   useEffect(() => {
@@ -49,7 +45,7 @@ const useVenues = (): Venue[] => {
 
 const useVenueMap = () => {
   const [venueMap, setVenueMap] = useState<{ [id: string]: Venue }>();
-  const venues = useVenues();
+  const venues = useFlatVenues();
 
   useEffect(() => {
     const tmpVenues: { [id: string]: Venue } = {};
@@ -64,4 +60,4 @@ const useVenueMap = () => {
   return venueMap;
 };
 
-export { useEvents, useVenues, useVenueMap };
+export { useFlatEvents, useFlatVenues, useVenueMap };
