@@ -4,7 +4,7 @@ deepdiff==6.6.1
 Django==4.2.4
 djangorestframework==3.14.0
 djangorestframework_simplejwt==5.3.1
-fuzzwuzzy==0.18.0
+fuzzywuzzy==0.18.0
 Requests==2.31.0
 rest_framework_simplejwt==0.0.2
 selenium==4.19.0
