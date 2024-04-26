@@ -2,18 +2,20 @@ import "./App.css";
 
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-import Layout from "./components/Layout/Layout";
-import AboutView from "./pages/AboutView";
-import AdminView from "./pages/AdminView";
-import EventView from "./pages/EventView";
-import ListView from "./pages/ListView";
-import LogoutView from "./pages/LogoutView";
-import LoginView from "./pages/LoginView";
-import MapView from "./pages/MapView";
-import NotFoundView from "./pages/NotFoundView";
-import OpenMicView from "./pages/OpenMicView";
-import SearchView from "./pages/SearchView";
-import VenueView from "./pages/VenueView";
+import { Layout } from "./components/Layout/";
+import {
+  AboutView,
+  AdminView,
+  EventView,
+  ListView,
+  LoginView,
+  LogoutView,
+  MapView,
+  NotFoundView,
+  OpenMicView,
+  SearchView,
+  VenueView,
+} from "./pages";
 
 import ReactGA from "react-ga4";
 
@@ -45,10 +47,38 @@ const App = () => {
                   <Route path="about" element={<AboutView />} />
                   <Route path="login" element={<LoginView />} />
                   <Route path="logout" element={<LogoutView />} />
-                  <Route path="admin" element={<RequireAuth><AdminView /></RequireAuth>} />
-                  <Route path="api/venues/:id" element={<RequireAuth><VenueView /></RequireAuth>} />
-                  <Route path="api/events/:id" element={<RequireAuth><EventView /></RequireAuth>} />
-                  <Route path="api/open_mics/:id" element={<RequireAuth><OpenMicView /></RequireAuth>} />
+                  <Route
+                    path="admin"
+                    element={
+                      <RequireAuth>
+                        <AdminView />
+                      </RequireAuth>
+                    }
+                  />
+                  <Route
+                    path="api/venues/:id"
+                    element={
+                      <RequireAuth>
+                        <VenueView />
+                      </RequireAuth>
+                    }
+                  />
+                  <Route
+                    path="api/events/:id"
+                    element={
+                      <RequireAuth>
+                        <EventView />
+                      </RequireAuth>
+                    }
+                  />
+                  <Route
+                    path="api/open_mics/:id"
+                    element={
+                      <RequireAuth>
+                        <OpenMicView />
+                      </RequireAuth>
+                    }
+                  />
                   <Route path="*" element={<NotFoundView />} />
                 </Route>
               </Routes>

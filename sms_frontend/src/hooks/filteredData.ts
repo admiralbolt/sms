@@ -1,5 +1,5 @@
-import { Event, EventsByVenueMap, Venue } from "@/types.js";
-import { LocalStorageContext } from "../contexts/LocalStorageContext.js";
+import { Event, EventsByVenueMap, Venue } from "@/types";
+import { LocalStorageContext } from "@/contexts/LocalStorageContext";
 import { useEvents, useVenues } from "./api.js";
 import { useContext, useEffect, useState } from "react";
 
@@ -38,7 +38,7 @@ const useFilteredEvents = () => {
       const events = eventsByDate[targetDate];
       setFilteredEvents(
         events.filter((event) => {
-          return selectedEventTypes?.includes(event.event_type)
+          return selectedEventTypes?.includes(event.event_type);
         })
       );
     }

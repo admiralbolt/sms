@@ -8,13 +8,13 @@ import ListIcon from "@mui/icons-material/List";
 import InfoIcon from "@mui/icons-material/Info";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import DateSelectorTabs from "../DateSelectorTabs/DateSelectorTabs";
+import { DateSelectorTabs } from "./DateSelectorTabs";
 import { useEffect, useState, useContext } from "react";
 // import { LocalStorageContext } from "../../contexts/LocalStorageContext";
-import { DrawerContext } from "../../contexts/DrawerContext";
-import { useAppBarHeight } from "../../hooks/materialHacks";
+import { DrawerContext } from "@/contexts/DrawerContext";
+import { useAppBarHeight } from "@/hooks/materialHacks";
 
-const NavBar = () => {
+export const Layout = () => {
   const [showFilters, setShowFilters] = useState(false);
   // const { selectedDate } = useContext(LocalStorageContext) || {};
   const { drawerOpen, setDrawerOpen } = useContext(DrawerContext) || {};
@@ -112,5 +112,3 @@ const NavBar = () => {
     </Box>
   );
 };
-
-export default NavBar;

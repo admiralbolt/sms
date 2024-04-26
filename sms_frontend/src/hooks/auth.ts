@@ -1,25 +1,32 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import customAxios from "./customAxios";
 
 const useIsAuthenticated = (): [boolean, (auth: boolean) => void] => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(localStorage.getItem("accessToken") !== null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
+    localStorage.getItem("accessToken") !== null
+  );
 
   return [isAuthenticated, setIsAuthenticated];
-}
+};
 
 const setTokens = (accessToken: string, refreshToken: string): void => {
   localStorage.setItem("accessToken", accessToken);
   localStorage.setItem("refreshToken", refreshToken);
   customAxios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
-}
+};
 
-const login = async (username: string, password: string): Promise<any | null> => {
+const login = async (
+  username: string,
+  password: string
+): Promise<any | null> => {
   try {
-    const response = await customAxios.post("/api/token/", 
+    const response = await customAxios.post(
+      "/api/token/",
       {
         username: username,
         password: password,
-      }, {
+      },
+      {
         headers: {
           "Content-Type": "application/json",
         },
@@ -36,14 +43,16 @@ const login = async (username: string, password: string): Promise<any | null> =>
   } catch (error: any) {
     return error;
   }
-}
+};
 
 const logout = async (): Promise<Error | null> => {
   try {
-    await customAxios.post("/api/logout", {
-      refresh_token: localStorage.getItem("refreshToken"),
-    },
-      {withCredentials: true}
+    await customAxios.post(
+      "/api/logout",
+      {
+        refresh_token: localStorage.getItem("refreshToken"),
+      },
+      { withCredentials: true }
     );
 
     localStorage.removeItem("accessToken");
@@ -53,8 +62,6 @@ const logout = async (): Promise<Error | null> => {
   } catch (error: any) {
     return error;
   }
-}
+};
 
-
-
-export { login, logout, setTokens, useIsAuthenticated }
+export { login, logout, setTokens, useIsAuthenticated };
