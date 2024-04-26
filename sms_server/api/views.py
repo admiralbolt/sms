@@ -101,6 +101,7 @@ class IngestionRunRecordsView(ListAPIView):
     return [permission() for permission in permission_classes]
 
   def get_queryset(self):
+    models.IngestionRecord.objects.prefetch_related("event", "venue")
     ingestion_run = models.IngestionRun.objects.filter(id=self.kwargs.get("ingestion_run_id", None)).first()
     return models.IngestionRecord.objects.filter(ingestion_run=ingestion_run)
 

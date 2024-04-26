@@ -14,6 +14,23 @@ export interface Event {
 
 export type ChangeType = "Create" | "Delete" | "Update" | "Error" | "NO OP" | "Skip" | "Update"
 
+export const changeTypes: string[] = [
+  "Create", "Delete", "Update", "Error", "NO OP", "Skip"
+];
+
+export interface IngestionRunRecord {
+  id: number;
+  created_at: Date;
+  api_name: string;
+  change_type: ChangeType;
+  change_log: string;
+  field_changed: string;
+  event: number;
+  event_name: string;
+  venue: number;
+  venue_name: string;
+}
+
 export interface IngestionRunSummary {
   api_name: string;
   change_type: string;

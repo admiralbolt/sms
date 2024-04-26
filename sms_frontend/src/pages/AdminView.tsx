@@ -3,7 +3,7 @@ import { useIsAuthenticated } from "@/hooks/auth";
 import * as React from 'react';
 
 import { Box, Tab, Tabs } from "@mui/material";
-import IngestionRunPanel from "@/components/IngestionRunPanel";
+import IngestionRunPanel from "@/components/IngestionRuns/IngestionRunPanel";
 import PeriodicTaskStatus from "@/components/PeriodicTaskStatus";
 import OpenMicPanel from "@/components/OpenMics/OpenMicPanel";
 import VenuePanel from "@/components/Venues/VenuePanel";

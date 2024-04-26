@@ -66,9 +66,20 @@ class IngestionRunSerializer(serializers.ModelSerializer):
 class IngestionRecordSerializer(serializers.ModelSerializer):
   """Serialize Ingestion Records."""
 
+  # For ease of use, we want to get the name of the object that was changed.
+  # Staring at a bunch of event / venue ids makes it much harder to look at.
+  event_name = serializers.SerializerMethodField()
+  venue_name = serializers.SerializerMethodField()
+
+  def get_event_name(self, record: models.IngestionRecord):
+    return "" if record.event == None else record.event.title
+  
+  def get_venue_name(self, record: models.IngestionRecord):
+    return "" if record.venue == None else record.venue.name
+
   class Meta:
     model = models.IngestionRecord
-    fields = "__all__"
+    fields = ("id", "api_name", "change_type", "change_log", "field_changed", "ingestion_run", "event", "event_name", "venue", "venue_name")
 
 class CrontabScheduleSerializer(serializers.ModelSerializer):
   schedule = serializers.SerializerMethodField()
