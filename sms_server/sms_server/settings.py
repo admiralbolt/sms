@@ -243,7 +243,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = 'sms_server/uploads'
+MEDIA_URL = '/uploads/'
 MEDIA_ROOT = MEDIA_ROOT
 
 # Should be specified in local settings!
