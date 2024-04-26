@@ -13,7 +13,7 @@ import { Event, Venue } from "@/types";
 
 const zoom = 13;
 
-const Map = () => {
+export const Map = () => {
   const { height, width } = useWindowDimensions();
   const isMobile = useIsMobile();
   const appBarHeight = useAppBarHeight();
@@ -98,5 +98,3 @@ const Map = () => {
     </div>
   );
 };
-
-export default Map;

@@ -1,5 +1,5 @@
 import { FilterPanel } from "@/components";
-import Map from "./Map/Map";
+import { Map } from "./Map";
 import "leaflet/dist/leaflet.css";
 import { usePageTitle, usePageDescription } from "@/hooks/metaTags";
 
