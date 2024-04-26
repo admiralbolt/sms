@@ -24,6 +24,8 @@ mkdir $deployment_base/$today/sms_backend/logs
 # Activate virtualenv.
 echo $deployment_base/venv/bin/activate
 source $deployment_base/venv/bin/activate
+# Make sure requirements are up to date!
+pip install -r $git_base/sms_server/requirements.txt
 cd $deployment_base/$today/sms_backend/
 # Collect static files.
 python manage.py collectstatic --noinput
