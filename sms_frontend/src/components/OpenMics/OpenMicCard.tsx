@@ -29,7 +29,7 @@ const OpenMicCard = ({ openMic, isNew, deleteCallback, createCallback }: Props) 
   const [edit, setEdit] = useState<boolean>(false);
   const [venue, setVenue] = useState<Venue>({} as Venue);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
-  const { snackbar, setSnackbar } = useContext(SnackbarContext) || {};
+  const { setSnackbar } = useContext(SnackbarContext) || {};
 
   useEffect(() => {
     if (openMic.venue < 0) return;
@@ -44,7 +44,7 @@ const OpenMicCard = ({ openMic, isNew, deleteCallback, createCallback }: Props) 
   }
 
   const deleteMic = () => {
-    customAxios.delete(`api/open_mics/${openMic.id}`).then((res) => {
+    customAxios.delete(`api/open_mics/${openMic.id}`).then((_res) => {
       deleteCallback();
     }, (error) => {
       setSnackbar({open: true, severity: "error", message: error.message});

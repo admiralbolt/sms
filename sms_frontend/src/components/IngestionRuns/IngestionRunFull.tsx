@@ -4,9 +4,7 @@ import { IngestionRunRecord } from "@/types";
 import { useEffect, useState } from "react";
 
 import customAxios from "@/hooks/customAxios";
-import { Box, Chip } from "@mui/material";
-
-import { Theme, styled } from "@mui/material/styles";
+import { Chip } from "@mui/material";
 
 
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -22,7 +20,7 @@ interface Props {
   run: IngestionRun;
 }
 
-const opFormat = {
+const opFormat: any = {
   "Create": {
     "icon": AddCircleOutlineIcon,
     "color": "#00ffaa"
@@ -52,7 +50,7 @@ const opFormat = {
 const columns: GridColDef[] = [
   { field: "api_name", headerName: "API", width: 180 },
   { field: "field_changed", headerName: "Obj", width: 60},
-  { field: "obj_name", headerName: "Obj Name", width: 300, valueGetter: (value, row) => {
+  { field: "obj_name", headerName: "Obj Name", width: 300, valueGetter: (_value, row) => {
     return row.event_name || row.venue_name;
   }},
   { field: "change_type", headerName: "Code", width: 130, renderCell: (params) => {
@@ -74,10 +72,6 @@ const IngestionRunFull = ({ run }: Props) => {
       setRecords(response.data);
     });
   }, []);
-
-  const handleGetRowId = (e: any) : number => {
-    return e.index;
-  }
 
   return (
     <DataGrid

@@ -21,7 +21,7 @@ interface Props {
 }
 
 const VenueForm = ({ venue, setEdit, isNew, createCallback, updateCallback }: Props) => {
-  const { snackbar, setSnackbar } = useContext(SnackbarContext) || {};
+  const { setSnackbar } = useContext(SnackbarContext) || {};
   const { venueSchema } = useSchema();
 
   const submit = (submitVenue: any) => {

@@ -1,5 +1,3 @@
-import { useIsAuthenticated } from "@/hooks/auth";
-
 import * as React from 'react';
 
 import { Box, Tab, Tabs } from "@mui/material";
@@ -43,11 +41,9 @@ function a11yProps(index: number) {
 }
 
 const AdminView = () => {
-  const [isAuthenticated] = useIsAuthenticated();
-
   const [value, setValue] = React.useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 

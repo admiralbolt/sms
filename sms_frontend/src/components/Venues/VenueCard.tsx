@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { Box, Button, Card, CardMedia, Dialog, DialogActions, DialogTitle, Typography } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 
@@ -24,14 +24,14 @@ interface Props {
 const VenueCard = ({ venue, isNew, deleteCallback, createCallback, updateCallback }: Props) => {
   const [edit, setEdit] = useState<boolean>(false);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
-  const { snackbar, setSnackbar } = useContext(SnackbarContext) || {};
+  const { setSnackbar } = useContext(SnackbarContext) || {};
 
   const toggleEdit = () => {
     setEdit(!edit);
   }
 
   const deleteVenue = () => {
-    customAxios.delete(`api/venues/${venue.id}`).then((res) => {
+    customAxios.delete(`api/venues/${venue.id}`).then((_res) => {
       deleteCallback();
     }, (error) => {
       setSnackbar({open: true, severity: "error", message: error.message});

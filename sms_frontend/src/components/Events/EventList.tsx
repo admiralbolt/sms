@@ -1,6 +1,6 @@
 import { useFilteredEvents, useFilteredVenues } from "../../hooks/filteredData";
 import { List, ListItem } from "@mui/material";
-import EventDetail from "./EventCard";
+import EventCard from "./EventCard";
 import { useContext, useEffect, useRef } from "react";
 import { LocalStorageContext } from "../../contexts/LocalStorageContext";
 import { Event } from "@/types";
@@ -32,7 +32,7 @@ const EventList = () => {
         (event) =>
           hasVenue(event) && (
             <ListItem sx={{ padding: 0 }} key={event.id}>
-              <EventDetail venue={filteredVenues[event.venue]} event={event} />
+              <EventCard event={event} />
             </ListItem>
           )
       )}

@@ -10,7 +10,7 @@ interface Props {
 }
 
 const VenueSelect = ({ onChange, venueId }: Props) => {
-  const [venues, setVenues] = useVenues();
+  const [venues, _setVenues] = useVenues();
 
   const [selectedVenue, setSelectedVenue] = useState<string>(venueId);
 

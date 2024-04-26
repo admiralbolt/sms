@@ -10,7 +10,6 @@ import LogoutView from "./pages/LogoutView";
 import LoginView from "./pages/LoginView";
 import MapView from "./pages/MapView";
 import NotFoundView from "./pages/NotFoundView";
-import OpenMicView from "./pages/OpenMicView";
 import SearchView from "./pages/SearchView";
 
 import ReactGA from "react-ga4";

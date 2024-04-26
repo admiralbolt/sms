@@ -1,7 +1,6 @@
 import { Box, Grid, Typography} from "@mui/material";
 
 import { IngestionRun, changeTypes } from "@/types";
-import { useState } from "react";
 
 interface Props {
   ingestionRun: IngestionRun;

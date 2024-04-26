@@ -44,7 +44,7 @@ const Map = () => {
           }}
         >
           {selectedVenue && selectedEvent && (
-            <EventDetail venue={selectedVenue} event={selectedEvent} />
+            <EventDetail event={selectedEvent} />
           )}
         </Box>
       );
@@ -66,7 +66,7 @@ const Map = () => {
         }}
       >
         {selectedVenue && selectedEvent && (
-          <EventDetail venue={selectedVenue} event={selectedEvent} />
+          <EventDetail event={selectedEvent} />
         )}
       </Box>
     );

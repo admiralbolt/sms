@@ -14,7 +14,7 @@ const VenuePanel = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [isNew, setIsNew] = useState<boolean>(false);
 
-  const handleChange = (event: any, value: Venue | null, reason: AutocompleteChangeReason, details: any | undefined) => {
+  const handleChange = (_event: any, value: Venue | null, _reason: AutocompleteChangeReason, _details: any | undefined) => {
     setIsNew(false);
     setSelectedVenue((value == null) ? null : value);
   }

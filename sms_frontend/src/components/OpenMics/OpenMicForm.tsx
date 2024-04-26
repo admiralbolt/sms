@@ -22,7 +22,7 @@ interface Props {
 }
 
 const OpenMicForm = ({ openMic, setEdit, isNew, createCallback }: Props) => {
-  const { snackbar, setSnackbar } = useContext(SnackbarContext) || {};
+  const { setSnackbar } = useContext(SnackbarContext) || {};
   const { openMicSchema } = useSchema();
 
   const submit = (submitOpenMic: any) => {

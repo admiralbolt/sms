@@ -25,7 +25,7 @@ interface Props {
 }
 
 const EventForm = ({ event, setEdit, isNew, createCallback, updateCallback }: Props) => {
-  const { snackbar, setSnackbar } = useContext(SnackbarContext) || {};
+  const { setSnackbar } = useContext(SnackbarContext) || {};
   const { eventSchema } = useSchema();
 
   const submit = (submitEvent: any) => {

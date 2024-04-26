@@ -16,8 +16,7 @@ const EventPanel = () => {
 
   const loading = open && options.length === 0;
 
-  const handleChange = (event: any, value: Event | null, reason: AutocompleteChangeReason, details: any | undefined) => {
-    console.log(value);
+  const handleChange = (_event: any, value: Event | null, _reason: AutocompleteChangeReason, _details: any | undefined) => {
     setIsNew(false);
     setSelectedEvent((value == null) ? null : value);
   }
@@ -57,7 +56,7 @@ const EventPanel = () => {
     })();
   }
 
-  const onDelete = (id: number) => {
+  const onDelete = (_id: number) => {
     if (selectedEvent == null) return;
     
     setSelectedEvent(null);

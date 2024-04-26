@@ -1,4 +1,4 @@
-import { deleteOpenMic, useOpenMics } from "@/hooks/api";
+import { useOpenMics } from "@/hooks/api";
 import OpenMicCard from "./OpenMicCard";
 
 import { useState } from "react";
@@ -14,7 +14,7 @@ const OpenMicPanel = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [isNew, setIsNew] = useState<boolean>(false);
 
-  const handleChange = (event: any, value: OpenMic | null, reason: AutocompleteChangeReason, details: any | undefined) => {
+  const handleChange = (_event: any, value: OpenMic | null, _reason: AutocompleteChangeReason, _details: any | undefined) => {
     setIsNew(false);
     setSelectedMic((value == null) ? null : value);
   }

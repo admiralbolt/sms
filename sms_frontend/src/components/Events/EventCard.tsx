@@ -32,7 +32,7 @@ interface Props {
   updateCallback?: (id: number) => void;
 }
 
-const emptyCallback = (id: number) => {
+const emptyCallback = (_id: number) => {
   return;
 };
 
@@ -40,7 +40,7 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
   const [venue, setVenue] = useState<Venue>({} as Venue);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
-  const { snackbar, setSnackbar } = useContext(SnackbarContext);
+  const { setSnackbar } = useContext(SnackbarContext);
 
   useEffect(() => {
     if (event.venue < 0) return;
@@ -55,7 +55,7 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
   }
 
   const deleteEvent = () => {
-    customAxios.delete(`api/events/${event.id}`).then((res) => {
+    customAxios.delete(`api/events/${event.id}`).then((_res) => {
       deleteCallback(event.id);
     }, (error) => {
       setSnackbar({open: true, severity: "error", message: error.message});

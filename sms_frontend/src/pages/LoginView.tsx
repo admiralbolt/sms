@@ -22,13 +22,13 @@ const LoginView = () => {
     }
   }, [isAuthenticated]);
 
-  const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
+  const handleClose = (_event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === "clickaway") return;
 
     setOpenBar(false);
   };
 
-  const handleSubmit = async (e: Event) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     const result = await login(username, password);

@@ -1,5 +1,5 @@
 import { Box, List, ListItem } from "@mui/material";
-import EventDetail from "../Events/EventCard";
+import EventCard from "@/components/Events/EventCard";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import { useEvents, useVenueMap } from "../../hooks/flatFileApi";
@@ -66,8 +66,7 @@ const Search = () => {
         {matches.map((match) => (
           <ListItem key={`event-${match.item.id}`}>
             {venueMap?.[match?.item?.venue] ? (
-              <EventDetail
-                venue={venueMap?.[match.item.venue]}
+              <EventCard
                 event={match.item}
                 showDate={true}
               />
