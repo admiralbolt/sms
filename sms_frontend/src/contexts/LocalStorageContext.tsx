@@ -11,7 +11,7 @@ interface LocalStorageContextType {
   setSelectedDate: (date: dayjs.Dayjs) => void;
 }
 
-const loadFromStorage = (key: string, defaultValue: unknown): any => {
+const loadFromStorage = (key: string, defaultValue: unknown) => {
   const item = localStorage.getItem(key);
   return item && item !== "undefined" ? JSON.parse(item) : defaultValue;
 };

@@ -26,7 +26,7 @@ export const DateSelectorTabs = () => {
   }, [isMobile]);
 
   const handleChange = (
-    event: React.SyntheticEvent<Element, Event>,
+    _event: React.SyntheticEvent<Element, Event>,
     newValue: string
   ) => {
     setValue(newValue);

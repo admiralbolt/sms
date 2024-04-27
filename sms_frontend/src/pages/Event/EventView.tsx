@@ -2,7 +2,7 @@ import { getEventById } from "@/hooks/api";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Event } from "@/types";
-import { EventForm } from "./EventForm";
+import { EventForm } from "../../components/EventForm";
 
 export const EventView = () => {
   const { id } = useParams();

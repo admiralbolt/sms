@@ -1,4 +1,4 @@
-import { EventList } from "./EventList";
+import { EventList } from "./EventCard";
 import { FilterPanel } from "@/components";
 import { usePageTitle, usePageDescription } from "@/hooks/metaTags";
 
