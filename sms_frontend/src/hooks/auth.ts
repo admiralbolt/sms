@@ -1,6 +1,7 @@
 import { useState } from "react";
 import customAxios from "@/hooks/customAxios";
 import mem from "mem";
+import { AxiosResponse } from "axios";
 
 const useIsAuthenticated = (): [boolean, (auth: boolean) => void] => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(localStorage.getItem("accessToken") !== null);
@@ -9,14 +10,12 @@ const useIsAuthenticated = (): [boolean, (auth: boolean) => void] => {
 }
 
 const refreshTokens = async () => {
-  try { 
-    const response = await customAxios.post("/api/token/refresh/", 
-      {
-        refresh: localStorage.getItem("refreshToken")
-      }, {
-        withCredentials: true
-      });
-
+  try {
+    await customAxios.put("/api/token/refresh/", {
+      refresh: localStorage.getItem("refreshToken")
+    }, {
+      withCredentials: true
+    }).then((response: AxiosResponse<any>) => {
       if (response.data.access) {
         localStorage.setItem("accessToken", response.data.access);
         localStorage.setItem("refreshToken", response.data.refresh);
@@ -24,6 +23,10 @@ const refreshTokens = async () => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
       }
+    }, () => {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+    });
   } catch (error) {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
