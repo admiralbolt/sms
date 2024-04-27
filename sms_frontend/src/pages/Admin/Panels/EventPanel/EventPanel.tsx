@@ -24,7 +24,7 @@ export const EventPanel = () => {
 
   const loading = open && options.length === 0;
 
-  const handleChange = (_event: any, value: Event | null) => {
+  const handleChange = (_event: React.SyntheticEvent, value: Event | null) => {
     setIsNew(false);
     setSelectedEvent(value == null ? null : value);
   };
@@ -61,26 +61,27 @@ export const EventPanel = () => {
     setSelectedEvent({} as Event);
   };
 
-  const reloadData = (id?: number) => {
+  const reloadData = (id?: string) => {
     (async () => {
-      setSelectedEvent(await getEventById(id));
+      setSelectedEvent(await getEventById(id || ""));
     })();
   };
 
-  const onDelete = (_id: number) => {
+  const onDelete = (_id?: string) => {
     if (selectedEvent == null) return;
+    console.log({ _id });
 
     setSelectedEvent(null);
     setInputValue("");
   };
 
-  const onCreate = (id: number) => {
+  const onCreate = (id?: string) => {
     if (selectedEvent == null) return;
 
     reloadData(id);
   };
 
-  const onUpdate = (id: number) => {
+  const onUpdate = (id?: string) => {
     reloadData(id);
   };
 

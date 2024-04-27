@@ -5,28 +5,27 @@ import { useVenues } from "@/hooks/api";
 import { Venue } from "@/types";
 
 interface Props {
-  venueId: string
-  onChange: any
+  venueId: string;
+  onChange: (event: SelectChangeEvent) => void;
 }
 
-const VenueSelect = ({ onChange, venueId }: Props) => {
-  const [venues, _setVenues] = useVenues();
+export const VenueSelect = ({ onChange, venueId }: Props) => {
+  const [venues] = useVenues();
 
   const [selectedVenue, setSelectedVenue] = useState<string>(venueId);
 
   const handleChange = (event: SelectChangeEvent) => {
     setSelectedVenue(event.target.value);
     onChange(event);
-  }
+  };
 
   return (
     <Select onChange={handleChange} value={selectedVenue}>
       {venues.map((venue: Venue) => (
-        <MenuItem key={venue.id} value={venue.id}>{venue.name}</MenuItem>
+        <MenuItem key={venue.id} value={venue.id}>
+          {venue.name}
+        </MenuItem>
       ))}
     </Select>
   );
 };
-
-
-export default VenueSelect;

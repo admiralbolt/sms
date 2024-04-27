@@ -1,7 +1,16 @@
 import { getVenueById } from "@/hooks/api";
 import { useContext, useEffect, useState } from "react";
 import { Venue } from "@/types";
-import { Box, Button, Card, CardMedia, Dialog, DialogActions, DialogTitle, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardMedia,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  Typography,
+} from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
 
 import { format24HourTime } from "@/utils/dateUtils";
@@ -15,17 +24,22 @@ import { SnackbarContext } from "@/contexts/SnackbarContext";
 
 import { OpenMic } from "@/types";
 
-import OpenMicForm from "./OpenMicForm";
+import { OpenMicForm } from "./OpenMicForm";
 import customAxios from "@/hooks/customAxios";
 
 interface Props {
   openMic: OpenMic;
   isNew?: boolean;
-  deleteCallback?: any;
-  createCallback?: any;
+  deleteCallback?: (id: number) => void;
+  createCallback?: (id: number) => void;
 }
 
-const OpenMicCard = ({ openMic, isNew, deleteCallback, createCallback }: Props) => {
+const OpenMicCard = ({
+  openMic,
+  isNew,
+  deleteCallback,
+  createCallback,
+}: Props) => {
   const [edit, setEdit] = useState<boolean>(false);
   const [venue, setVenue] = useState<Venue>({} as Venue);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
@@ -34,24 +48,28 @@ const OpenMicCard = ({ openMic, isNew, deleteCallback, createCallback }: Props) 
   useEffect(() => {
     if (openMic.venue < 0) return;
 
-    (async() => {
-      setVenue(await getVenueById(openMic.venue));
+    (async () => {
+      setVenue(await getVenueById(openMic.venue.toString()));
     })();
   }, [openMic.venue]);
 
   const toggleEdit = () => {
     setEdit(!edit);
-  }
+  };
 
   const deleteMic = () => {
-    customAxios.delete(`api/open_mics/${openMic.id}`).then((_res) => {
-      deleteCallback();
-    }, (error) => {
-      setSnackbar({open: true, severity: "error", message: error.message});
-    });
+    customAxios.delete(`api/open_mics/${openMic.id}`).then(
+      (_res: unknown) => {
+        console.log({ _res });
+        deleteCallback?.(openMic.id);
+      },
+      (error) => {
+        setSnackbar({ open: true, severity: "error", message: error.message });
+      }
+    );
 
     setOpenConfirmation(false);
-  }
+  };
 
   const displayImage = () => {
     if (venue.venue_image) return venue.venue_image;
@@ -61,12 +79,18 @@ const OpenMicCard = ({ openMic, isNew, deleteCallback, createCallback }: Props) 
 
   if (edit) {
     return (
-      <OpenMicForm openMic={openMic} setEdit={setEdit} isNew={isNew} createCallback={createCallback} />
+      <OpenMicForm
+        openMic={openMic}
+        setEdit={setEdit}
+        isNew={isNew}
+        createCallback={createCallback}
+      />
     );
   } else {
     return (
       <Box key={openMic.id}>
-        <Card key={openMic.id}
+        <Card
+          key={openMic.id}
           sx={{
             margin: "1em",
             padding: "1.5em",
@@ -103,7 +127,7 @@ const OpenMicCard = ({ openMic, isNew, deleteCallback, createCallback }: Props) 
                 display: "flex",
                 alignItems: "start",
                 justifyContent: "center",
-                flexDirection: "column"
+                flexDirection: "column",
               }}
             >
               <Box
@@ -112,11 +136,13 @@ const OpenMicCard = ({ openMic, isNew, deleteCallback, createCallback }: Props) 
                   alignItems: "center",
                   justContent: "start",
                   flexDirection: "row",
-                  marginBottom: "0.5em"
+                  marginBottom: "0.5em",
                 }}
               >
                 <PunchClockIcon sx={{ verticalAlign: "middle" }} />
-                <Typography sx={{ marginLeft: "0.5em" }}>{openMic.cadence_readable}</Typography>
+                <Typography sx={{ marginLeft: "0.5em" }}>
+                  {openMic.cadence_readable}
+                </Typography>
               </Box>
               <Box
                 sx={{
@@ -124,11 +150,13 @@ const OpenMicCard = ({ openMic, isNew, deleteCallback, createCallback }: Props) 
                   alignItems: "center",
                   justContent: "start",
                   flexDirection: "row",
-                  marginBottom: "0.5em"
+                  marginBottom: "0.5em",
                 }}
               >
                 <EditNoteIcon sx={{ verticalAlign: "middle" }} />
-                <Typography sx={{ marginLeft: "0.5em" }}>{format24HourTime(openMic.signup_start_time)}</Typography>
+                <Typography sx={{ marginLeft: "0.5em" }}>
+                  {format24HourTime(openMic.signup_start_time)}
+                </Typography>
               </Box>
               <Box
                 sx={{
@@ -136,11 +164,13 @@ const OpenMicCard = ({ openMic, isNew, deleteCallback, createCallback }: Props) 
                   alignItems: "center",
                   justContent: "start",
                   flexDirection: "row",
-                  marginBottom: "0.5em"
+                  marginBottom: "0.5em",
                 }}
               >
                 <WatchLaterIcon sx={{ verticalAlign: "middle" }} />
-                <Typography sx={{ marginLeft: "0.5em" }}>{format24HourTime(openMic.event_start_time)}</Typography>
+                <Typography sx={{ marginLeft: "0.5em" }}>
+                  {format24HourTime(openMic.event_start_time)}
+                </Typography>
               </Box>
               <Box
                 sx={{
@@ -148,11 +178,13 @@ const OpenMicCard = ({ openMic, isNew, deleteCallback, createCallback }: Props) 
                   alignItems: "center",
                   justContent: "start",
                   flexDirection: "row",
-                  marginBottom: "0.5em"
+                  marginBottom: "0.5em",
                 }}
               >
                 <CategoryIcon sx={{ verticalAlign: "middle" }} />
-                <Typography sx={{ marginLeft: "0.5em" }}>{openMic.open_mic_type}</Typography>
+                <Typography sx={{ marginLeft: "0.5em" }}>
+                  {openMic.open_mic_type}
+                </Typography>
               </Box>
             </Box>
 
@@ -166,29 +198,47 @@ const OpenMicCard = ({ openMic, isNew, deleteCallback, createCallback }: Props) 
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                zIndex: 20
+                zIndex: 20,
               }}
             >
-              <Button variant="contained" onClick={toggleEdit}><Edit /></Button>
-              <Button sx={{ marginLeft: "1em" }} variant="contained" color="error" onClick={() => {setOpenConfirmation(true)}}><Delete /></Button>
+              <Button variant="contained" onClick={toggleEdit}>
+                <Edit />
+              </Button>
+              <Button
+                sx={{ marginLeft: "1em" }}
+                variant="contained"
+                color="error"
+                onClick={() => {
+                  setOpenConfirmation(true);
+                }}
+              >
+                <Delete />
+              </Button>
             </Box>
           </Box>
         </Card>
 
         <Dialog
           open={openConfirmation}
-          onClose={() => {setOpenConfirmation(false);}}
+          onClose={() => {
+            setOpenConfirmation(false);
+          }}
         >
-          <DialogTitle>
-            Delete Open Mic: {openMic.name}
-          </DialogTitle>
+          <DialogTitle>Delete Open Mic: {openMic.name}</DialogTitle>
           <DialogActions>
-            <Button color="secondary" variant="outlined" onClick={() => {setOpenConfirmation(false)}}>Don't do it</Button>
+            <Button
+              color="secondary"
+              variant="outlined"
+              onClick={() => {
+                setOpenConfirmation(false);
+              }}
+            >
+              Don't do it
+            </Button>
             <Button variant="contained" onClick={deleteMic} autoFocus>
               DELETE IT
             </Button>
           </DialogActions>
-          
         </Dialog>
       </Box>
     );
@@ -196,7 +246,7 @@ const OpenMicCard = ({ openMic, isNew, deleteCallback, createCallback }: Props) 
 };
 
 OpenMicCard.defaultProps = {
-  "isNew": false
-}
+  isNew: false,
+};
 
 export default OpenMicCard;

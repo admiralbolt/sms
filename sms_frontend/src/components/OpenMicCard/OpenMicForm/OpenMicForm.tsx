@@ -1,7 +1,7 @@
 import { OpenMic } from "@/types";
 
 import { useSchema } from "@/hooks/schema";
-import VenueSelect from "@/pages/Admin/VenuePanel/VenueSelect";
+import { VenueSelect } from "@/components";
 
 import validator from "@rjsf/validator-ajv8";
 import { Form } from "@rjsf/mui";
@@ -10,7 +10,7 @@ import { createOpenMic, updateOpenMic } from "@/hooks/api";
 
 import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { useContext } from "react";
-import { Button } from "@mui/material";
+import { Button, SelectChangeEvent } from "@mui/material";
 import { AxiosError } from "axios";
 
 interface Props {
@@ -21,7 +21,12 @@ interface Props {
   createCallback?: any;
 }
 
-const OpenMicForm = ({ openMic, setEdit, isNew, createCallback }: Props) => {
+export const OpenMicForm = ({
+  openMic,
+  setEdit,
+  isNew,
+  createCallback,
+}: Props) => {
   const { setSnackbar } = useContext(SnackbarContext) || {};
   const { openMicSchema } = useSchema();
 
@@ -86,7 +91,9 @@ const OpenMicForm = ({ openMic, setEdit, isNew, createCallback }: Props) => {
         return (
           <VenueSelect
             venueId={props.value}
-            onChange={(openMic: any) => props.onChange(openMic.target.value)}
+            onChange={(openMic: SelectChangeEvent) =>
+              props.onChange(openMic.target.value)
+            }
           />
         );
       },
@@ -114,5 +121,3 @@ const OpenMicForm = ({ openMic, setEdit, isNew, createCallback }: Props) => {
 OpenMicForm.defaultProps = {
   isNew: false,
 };
-
-export default OpenMicForm;

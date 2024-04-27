@@ -36,12 +36,12 @@ interface Props {
   showDate?: boolean;
   isNew?: boolean;
   showActions?: boolean;
-  deleteCallback?: (id: number) => void;
-  createCallback?: (id: number) => void;
-  updateCallback?: (id: number) => void;
+  deleteCallback?: (id?: string) => void;
+  createCallback?: (id?: string) => void;
+  updateCallback?: (id?: string) => void;
 }
 
-const emptyCallback = (_id: number | string) => {
+const emptyCallback = (_id?: string) => {
   console.log({ _id });
   return;
 };
@@ -64,7 +64,7 @@ export const EventCard = ({
     if (!event.venue) return;
 
     (async () => {
-      setVenue(await getVenueById(event.venue));
+      setVenue(await getVenueById(event.venue.toString()));
     })();
   }, [event.venue]);
 
@@ -75,7 +75,7 @@ export const EventCard = ({
   const deleteEvent = () => {
     customAxios.delete(`api/events/${event.id}`).then(
       () => {
-        deleteCallback(JSON.parse(event.id));
+        deleteCallback(event.id.toString());
       },
       (error) => {
         setSnackbar({ open: true, severity: "error", message: error.message });

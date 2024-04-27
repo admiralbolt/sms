@@ -3,9 +3,7 @@ import * as React from "react";
 import { Box, Tab, Tabs } from "@mui/material";
 import IngestionRunPanel from "@/components/IngestionRuns/IngestionRunPanel";
 import PeriodicTaskStatus from "@/components/PeriodicTaskStatus";
-import OpenMicPanel from "@/components/OpenMics/OpenMicPanel";
-import { VenuePanel } from "./VenuePanel";
-import { EventPanel } from "./EventPanel";
+import { OpenMicPanel, VenuePanel, EventPanel } from "./Panels";
 
 interface TabPanelProps {
   children?: React.ReactNode;
