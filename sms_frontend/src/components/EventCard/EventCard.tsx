@@ -46,7 +46,7 @@ const emptyCallback = (_id: number | string) => {
   return;
 };
 
-const EventCard = ({
+export const EventCard = ({
   event,
   showActions = false,
   showDate = false,
@@ -329,5 +329,3 @@ const EventCard = ({
     );
   }
 };
-
-export default EventCard;

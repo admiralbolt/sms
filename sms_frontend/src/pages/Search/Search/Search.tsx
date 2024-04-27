@@ -1,5 +1,5 @@
 import { Box, List, ListItem } from "@mui/material";
-import { EventDetail } from "@/components";
+import { EventCard } from "@/components";
 import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import { useFlatEvents, useVenueMap } from "@/hooks/flatFileApi";
@@ -66,11 +66,7 @@ export const Search = () => {
         {matches.map((match) => (
           <ListItem key={`event-${match.item.id}`}>
             {venueMap?.[match?.item?.venue] ? (
-              <EventDetail
-                venue={venueMap?.[match.item.venue]}
-                event={match.item}
-                showDate={true}
-              />
+              <EventCard event={match.item} showDate={true} />
             ) : (
               <>Unable to find event</>
             )}
