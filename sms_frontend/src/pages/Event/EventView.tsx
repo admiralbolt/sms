@@ -2,7 +2,7 @@ import { getEventById } from "@/hooks/api";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Event } from "@/types";
-import { EventForm } from "../../components/EventForm";
+import { EventForm } from "@/components";
 
 export const EventView = () => {
   const { id } = useParams();
@@ -10,7 +10,7 @@ export const EventView = () => {
 
   useEffect(() => {
     (async () => {
-      setEvent(await getEventById(id || 0));
+      setEvent(await getEventById(id || "0"));
     })();
   }, [id]);
 

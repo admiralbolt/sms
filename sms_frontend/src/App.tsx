@@ -20,8 +20,8 @@ import { LocalStorageContextProvider } from "./contexts/LocalStorageContext";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import theme from "./hooks/theme";
 import { DrawerContextProvider } from "./contexts/DrawerContext";
+import { SnackbarContextProvider } from "@/contexts/SnackbarContext";
 import RequireAuth from "./components/RequireAuth/RequireAuth";
-import { SnackbarContextProvider } from "./contexts/SnackbarContext";
 
 // We only want to run Google Analytics in production.
 if (process.env.NODE_ENV === "production") {

@@ -6,6 +6,4 @@ export * from "./Login";
 export * from "./Logout";
 export * from "./Map";
 export * from "./NotFound";
-export * from "./OpenMic";
 export * from "./Search";
-export * from "./Venue";

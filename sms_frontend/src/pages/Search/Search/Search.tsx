@@ -1,10 +1,8 @@
-import { Box, List, ListItem } from "@mui/material";
+import { Box, List, ListItem, TextField, Typography } from "@mui/material";
 import { EventCard } from "@/components";
 import { useEffect, useState } from "react";
-import TextField from "@mui/material/TextField";
 import { useFlatEvents, useVenueMap } from "@/hooks/flatFileApi";
 import Fuse, { FuseResult } from "fuse.js";
-import { Typography } from "@mui/material";
 import { Event } from "@/types";
 
 const MAX_RESULTS = 50;

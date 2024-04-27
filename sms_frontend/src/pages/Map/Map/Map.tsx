@@ -7,7 +7,7 @@ import { useAppBarHeight, useFilterPanelWidth } from "@/hooks/materialHacks";
 import { MapContainer } from "react-leaflet";
 
 import { Box, Fade } from "@mui/material";
-import { EventDetail } from "@/components";
+import { EventCard } from "@/components";
 import { LatLngExpression } from "leaflet";
 import { Event, Venue } from "@/types";
 
@@ -41,7 +41,7 @@ export const Map = () => {
           }}
         >
           {selectedVenue && selectedEvent && (
-            <EventDetail venue={selectedVenue} event={selectedEvent} />
+            <EventCard event={selectedEvent} />
           )}
         </Box>
       );
@@ -62,9 +62,7 @@ export const Map = () => {
           margin: "auto",
         }}
       >
-        {selectedVenue && selectedEvent && (
-          <EventDetail venue={selectedVenue} event={selectedEvent} />
-        )}
+        {selectedVenue && selectedEvent && <EventCard event={selectedEvent} />}
       </Box>
     );
   };

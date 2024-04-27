@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useIsAuthenticated } from "@/hooks/auth";
 
 import Box from "@mui/material/Box";
@@ -23,7 +23,7 @@ export const LoginView = () => {
   }, [isAuthenticated]);
 
   const handleClose = (
-    event: React.SyntheticEvent | Event,
+    _event: React.SyntheticEvent | Event,
     reason?: string
   ) => {
     if (reason === "clickaway") return;
@@ -31,7 +31,7 @@ export const LoginView = () => {
     setOpenBar(false);
   };
 
-  const handleSubmit = async (e: Event) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     const result = await login(username, password);

@@ -1,10 +1,10 @@
 export type EventType = "Open Mic" | "Open Jam" | "Show";
 
 export interface Event {
-  venue: string;
+  venue: number;
   event_day: string;
   event_type: EventType;
-  id: string;
+  id: number;
   start_time: string;
   event_image?: string;
   title: string;
@@ -12,12 +12,47 @@ export interface Event {
   // Add other properties of event here as needed
 }
 
-export interface Venue {
+export type ChangeType = "Create" | "Delete" | "Update" | "Error" | "NO OP" | "Skip" | "Update"
+
+export const changeTypes: string[] = [
+  "Create", "Delete", "Update", "Error", "NO OP", "Skip"
+];
+
+export interface IngestionRunRecord {
+  id: number;
+  created_at: Date;
+  api_name: string;
+  change_type: ChangeType;
+  change_log: string;
+  field_changed: string;
+  event: number;
+  event_name: string;
+  venue: number;
+  venue_name: string;
+}
+
+export interface IngestionRunSummary {
+  api_name: string;
+  change_type: string;
+  field_changed: string;
+  total: number;
+  index: number;
+}
+
+export interface IngestionRun {
   id: string;
+  name: string;
+  created_at: Date;
+  summary: IngestionRunSummary[];
+}
+
+export interface Venue {
+  id: number;
   latitude: number;
   longitude: number;
   name: string;
-  venue_image: string;
+  description: string;
+  venue_image?: string;
   venue_url?: string | null;
   address: string;
   city: string;
@@ -25,9 +60,9 @@ export interface Venue {
 }
 
 export interface OpenMic {
-  id: string;
-  venue: string;
-  title: string;
+  id: number;
+  venue: number;
+  name: string;
   event_mic_type: EventType;
   open_mic_type: string;
   description: string;
@@ -37,6 +72,23 @@ export interface OpenMic {
   drums?: boolean;
   cadence_crontab: string;
   cadence_readable: string;
+  signup_start_time: string;
+  event_start_time: string;
+}
+
+export interface Crontab {
+  schedule: string;
+  healthy_last_run: Date;
+}
+
+export interface PeriodicTask {
+  id: string;
+  name: string;
+  enabled: boolean;
+  last_run_at: Date;
+  healthy: boolean;
+  total_run_count: number;
+  crontab: Crontab;
 }
 
 export interface EventsByVenue {

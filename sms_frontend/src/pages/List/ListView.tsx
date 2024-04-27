@@ -1,6 +1,6 @@
-import { EventList } from "./EventCard";
 import { FilterPanel } from "@/components";
 import { usePageTitle, usePageDescription } from "@/hooks/metaTags";
+import { EventList } from "./EventList";
 
 export const ListView = () => {
   usePageTitle("Seattle Show & Open Mic List");
