@@ -1,5 +1,5 @@
 import { useOpenMics } from "@/hooks/api";
-import OpenMicCard from "../../../../components/OpenMicCard/OpenMicCard";
+import OpenMicCard from "../../../components/OpenMicCard/OpenMicCard";
 
 import { useState } from "react";
 import { OpenMic } from "@/types";
