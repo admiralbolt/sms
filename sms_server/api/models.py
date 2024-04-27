@@ -29,7 +29,7 @@ class Venue(models.Model):
   city = models.CharField(max_length=64)
   venue_url = models.CharField(max_length=256, blank=True, null=True)
   venue_image_url = models.CharField(max_length=1024, blank=True, null=True)
-  venue_image = models.ImageField(upload_to="venue_images", blank=True)
+  venue_image = models.ImageField(upload_to="venue_images", blank=True, null=True)
   neighborhood = models.CharField(max_length=64, blank=True, null=True, choices=get_choices(Neighborhoods))
 
   # Optional.
@@ -162,7 +162,7 @@ class Event(models.Model):
   event_url = models.CharField(max_length=512, blank=True, null=True)
   description = models.TextField(blank=True, null=True)
   event_image_url = models.CharField(max_length=1024, blank=True, null=True)
-  event_image = models.ImageField(upload_to="event_images", blank=True)
+  event_image = models.ImageField(upload_to="event_images", blank=True, null=True)
 
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
@@ -248,8 +248,8 @@ class IngestionRecord(models.Model):
   field_changed = models.CharField(max_length=32)
   # In some cases we are avoiding adding an event or venue, so these fields may
   # be blank.
-  event = models.ForeignKey(Event, on_delete=models.DO_NOTHING, blank=True, null=True)
-  venue = models.ForeignKey(Venue, on_delete=models.DO_NOTHING, blank=True, null=True)
+  event = models.ForeignKey(Event, on_delete=models.SET_NULL, blank=True, null=True)
+  venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, blank=True, null=True)
 
   def __str__(self):
     return f"{self.ingestion_run} - {self.api_name}: ({self.venue}, {self.change_type})"
