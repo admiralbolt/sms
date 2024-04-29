@@ -1,26 +1,35 @@
-import { Box, Button, Card, CardMedia, Dialog, DialogActions, DialogTitle, Link, Typography } from "@mui/material";
-import PlaceIcon from "@mui/icons-material/Place";
-import LinkIcon from "@mui/icons-material/Link";
-import IconButton from "@mui/material/IconButton";
-import dayjs from "dayjs";
-import { Event, EventType, Venue } from "@/types";
-import { PiMicrophoneStageFill } from "react-icons/pi";
-import { FaGuitar } from "react-icons/fa6";
+import dayjs from 'dayjs';
+import { useContext, useEffect, useState } from 'react';
 
-import { useContext, useEffect, useState } from "react";
-import { getVenueById } from "@/hooks/api";
-import { SnackbarContext } from "@/contexts/SnackbarContext";
+import { Delete, Edit } from '@mui/icons-material';
+import LinkIcon from '@mui/icons-material/Link';
+import PlaceIcon from '@mui/icons-material/Place';
+import {
+  Box,
+  Button,
+  Card,
+  CardMedia,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  Link,
+  Typography,
+} from '@mui/material';
+import IconButton from '@mui/material/IconButton';
 
-import { Delete, Edit } from "@mui/icons-material";
+import { FaGuitar } from 'react-icons/fa6';
+import { PiMicrophoneStageFill } from 'react-icons/pi';
 
+import { SnackbarContext } from '@/contexts/SnackbarContext';
+import { getVenueById } from '@/hooks/api';
+import customAxios from '@/hooks/customAxios';
+import { Event, EventType, Venue } from '@/types';
 
-import customAxios from "@/hooks/customAxios";
+import EventForm from './EventForm';
 
-import EventForm from "./EventForm";
-
-const SHOW_COLOR = "#0070ff";
-const OPEN_JAM_COLOR = "#ff5500";
-const OPEN_MIC_COLOR = "#ee6600";
+const SHOW_COLOR = '#0070ff';
+const OPEN_JAM_COLOR = '#ff5500';
+const OPEN_MIC_COLOR = '#ee6600';
 
 interface Props {
   event: Event;
@@ -36,7 +45,15 @@ const emptyCallback = (_id: number) => {
   return;
 };
 
-const EventCard = ({ event, showActions = false, showDate = false, isNew = false, createCallback = emptyCallback, updateCallback = emptyCallback, deleteCallback = emptyCallback }: Props) => {
+const EventCard = ({
+  event,
+  showActions = false,
+  showDate = false,
+  isNew = false,
+  createCallback = emptyCallback,
+  updateCallback = emptyCallback,
+  deleteCallback = emptyCallback,
+}: Props) => {
   const [venue, setVenue] = useState<Venue>({} as Venue);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
@@ -45,40 +62,47 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
   useEffect(() => {
     if (event.venue < 0) return;
 
-    (async() => {
+    (async () => {
       setVenue(await getVenueById(event.venue));
     })();
   }, [event.venue]);
 
   const toggleEdit = () => {
     setEdit(!edit);
-  }
+  };
 
   const deleteEvent = () => {
-    customAxios.delete(`api/events/${event.id}`).then((_res) => {
-      deleteCallback(event.id);
-    }, (error) => {
-      setSnackbar({open: true, severity: "error", message: error.message});
-    });
+    customAxios.delete(`api/events/${event.id}`).then(
+      (_res) => {
+        deleteCallback(event.id);
+      },
+      (error) => {
+        setSnackbar({
+          open: true,
+          severity: 'error',
+          message: error.message,
+        });
+      },
+    );
 
     setOpenConfirmation(false);
-  }
+  };
 
   const mapsLink = (venue: Venue) => {
     return `https://www.google.com/maps/search/?api=1&query=${venue.name}  ${venue.address} ${venue.city} ${venue.postal_code}`;
   };
 
   const formatTime = (t: string) => {
-    return new Date("1970-01-01T" + t + "Z").toLocaleTimeString("en-US", {
-      timeZone: "UTC",
+    return new Date('1970-01-01T' + t + 'Z').toLocaleTimeString('en-US', {
+      timeZone: 'UTC',
       hour12: true,
-      hour: "numeric",
-      minute: "numeric",
+      hour: 'numeric',
+      minute: 'numeric',
     });
   };
 
   const formatDay = (day: string) => {
-    return dayjs(day).format("ddd, MMM. D");
+    return dayjs(day).format('ddd, MMM. D');
   };
 
   const timeAndDate = (event: Event) => {
@@ -91,13 +115,13 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
 
   const getEventIcon = (event_type: EventType) => {
     const lowercaseEventType =
-      event_type != undefined ? event_type.toLowerCase() : "";
-    if (lowercaseEventType == "open mic" || lowercaseEventType == "open jam") {
+      event_type != undefined ? event_type.toLowerCase() : '';
+    if (lowercaseEventType == 'open mic' || lowercaseEventType == 'open jam') {
       return (
         <PiMicrophoneStageFill
           size={24}
           color={
-            lowercaseEventType == "open jam" ? OPEN_JAM_COLOR : OPEN_MIC_COLOR
+            lowercaseEventType == 'open jam' ? OPEN_JAM_COLOR : OPEN_MIC_COLOR
           }
         />
       );
@@ -110,7 +134,7 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
     if (event.event_image) return event.event_image;
     if (venue.venue_image) return venue.venue_image;
 
-    return "/placeholder.png";
+    return '/placeholder.png';
   };
 
   const venueLink = () => {
@@ -130,7 +154,13 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
 
   if (edit) {
     return (
-      <EventForm event={event} setEdit={setEdit} isNew={isNew} createCallback={createCallback} updateCallback={updateCallback} />
+      <EventForm
+        event={event}
+        setEdit={setEdit}
+        isNew={isNew}
+        createCallback={createCallback}
+        updateCallback={updateCallback}
+      />
     );
   } else {
     return (
@@ -138,12 +168,12 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
         <Card
           key={event.id}
           sx={{
-            display: "flex",
-            flexDirection: "column",
+            display: 'flex',
+            flexDirection: 'column',
             margin: 1,
             padding: 1.5,
-            width: "600px",
-            maxWidth: "96vw",
+            width: '600px',
+            maxWidth: '96vw',
           }}
         >
           <Box position="relative">
@@ -151,45 +181,49 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
               component="img"
               alt={`Poster for ${event.title}`}
               image={displayImage()}
-              sx={{ filter: "brightness(65%)", width: "sm", aspectRatio: 2 }}
+              sx={{
+                filter: 'brightness(65%)',
+                width: 'sm',
+                aspectRatio: 2,
+              }}
             />
             <Typography
               sx={{
-                width: "100%",
+                width: '100%',
                 top: 0,
-                position: "absolute",
-                fontWeight: "bold",
-                fontSize: "1rem",
+                position: 'absolute',
+                fontWeight: 'bold',
+                fontSize: '1rem',
                 zIndex: 10,
-                textAlign: "center",
+                textAlign: 'center',
               }}
             >
               {event.title}
             </Typography>
             <Box
               sx={{
-                position: "absolute",
+                position: 'absolute',
                 left: 0,
                 bottom: 0,
-                padding: "0.2em",
+                padding: '0.2em',
                 opacity: 0.4,
-                backgroundColor: "black",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                backgroundColor: 'black',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
               {getEventIcon(event.event_type)}
             </Box>
             <Box
               sx={{
-                position: "absolute",
+                position: 'absolute',
                 left: 0,
                 bottom: 0,
-                padding: "0.2em",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                padding: '0.2em',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
               {getEventIcon(event.event_type)}
@@ -199,28 +233,39 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
             {showActions && (
               <Box
                 sx={{
-                  position: "absolute",
+                  position: 'absolute',
                   top: 0,
                   right: 0,
-                  padding: "0.2em",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  zIndex: 100000
+                  padding: '0.2em',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 100000,
                 }}
               >
-                <Button variant="contained" onClick={toggleEdit}><Edit /></Button>
-                <Button sx={{ marginLeft: "1em" }} variant="contained" color="error" onClick={() => {setOpenConfirmation(true)}}><Delete /></Button>
+                <Button variant="contained" onClick={toggleEdit}>
+                  <Edit />
+                </Button>
+                <Button
+                  sx={{ marginLeft: '1em' }}
+                  variant="contained"
+                  color="error"
+                  onClick={() => {
+                    setOpenConfirmation(true);
+                  }}
+                >
+                  <Delete />
+                </Button>
               </Box>
             )}
           </Box>
-          <Box sx={{ display: "flex", flexDirection: "row", mt: 1 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'row', mt: 1 }}>
             <Box
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "start",
-                justifyContent: "center",
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'start',
+                justifyContent: 'center',
               }}
             >
               <Typography>{timeAndDate(event)}</Typography>
@@ -228,10 +273,10 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
             </Box>
             <Box
               sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "end",
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'end',
                 flex: 1,
                 marginTop: 1,
               }}
@@ -247,7 +292,7 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
                   <PlaceIcon />
                 </IconButton>
               </Link>
-              <Link target="_blank" href={event.event_url || ""}>
+              <Link target="_blank" href={event.event_url || ''}>
                 <IconButton
                   disabled={!event.event_url}
                   size="large"
@@ -263,22 +308,29 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
           </Box>
         </Card>
 
-         
-
         <Dialog
           open={openConfirmation}
-          onClose={() => {setOpenConfirmation(false);}}
+          onClose={() => {
+            setOpenConfirmation(false);
+          }}
         >
           <DialogTitle>
             Delete Event: {event.title} ({event.event_day})
           </DialogTitle>
           <DialogActions>
-            <Button color="secondary" variant="outlined" onClick={() => {setOpenConfirmation(false)}}>Don't do it</Button>
+            <Button
+              color="secondary"
+              variant="outlined"
+              onClick={() => {
+                setOpenConfirmation(false);
+              }}
+            >
+              Don't do it
+            </Button>
             <Button variant="contained" onClick={deleteEvent} autoFocus>
               DELETE IT
             </Button>
           </DialogActions>
-          
         </Dialog>
       </Box>
     );

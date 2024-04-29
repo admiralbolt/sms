@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material";
+import { createTheme } from '@mui/material';
 
 const theme = createTheme({
   palette: {
@@ -6,8 +6,8 @@ const theme = createTheme({
     background: {
       paper: '#252530',
       default: '#30303a',
-    }
-  }
+    },
+  },
 });
 
 export default theme;

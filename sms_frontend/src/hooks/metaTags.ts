@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
 const usePageTitle = (title: string) => {
-  const defaultTitle = "Seattle Music Scene";
+  const defaultTitle = 'Seattle Music Scene';
 
   useEffect(() => {
     document.title = title || defaultTitle;
@@ -9,12 +9,12 @@ const usePageTitle = (title: string) => {
 };
 
 const usePageDescription = (description: string) => {
-  const defaultDescription = "Seattle Open Mics & Shows";
+  const defaultDescription = 'Seattle Open Mics & Shows';
 
   useEffect(() => {
     document
       ?.querySelector("meta[name='description']")
-      ?.setAttribute("content", description || defaultDescription);
+      ?.setAttribute('content', description || defaultDescription);
   }, [defaultDescription, description]);
 };
 

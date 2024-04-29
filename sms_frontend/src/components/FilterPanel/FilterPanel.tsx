@@ -1,11 +1,11 @@
-import { useIsMobile } from "../../hooks/window";
+import { useContext } from 'react';
 
-import Drawer from "@mui/material/Drawer";
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
-import FilterPanelContent from "./FilterPanelContent";
+import Drawer from '@mui/material/Drawer';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 
-import { DrawerContext } from "../../contexts/DrawerContext";
-import { useContext } from "react";
+import { DrawerContext } from '../../contexts/DrawerContext';
+import { useIsMobile } from '../../hooks/window';
+import FilterPanelContent from './FilterPanelContent';
 
 const drawerWidth = 280;
 // const drawerBleeding = 30;
@@ -28,7 +28,7 @@ const FilterPanel = () => {
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: {
             width: drawerWidth,
-            boxSizing: "border-box",
+            boxSizing: 'border-box',
           },
         }}
       >

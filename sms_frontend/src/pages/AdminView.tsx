@@ -1,11 +1,12 @@
 import * as React from 'react';
 
-import { Box, Tab, Tabs } from "@mui/material";
-import IngestionRunPanel from "@/components/IngestionRuns/IngestionRunPanel";
-import PeriodicTaskStatus from "@/components/PeriodicTaskStatus";
-import OpenMicPanel from "@/components/OpenMics/OpenMicPanel";
-import VenuePanel from "@/components/Venues/VenuePanel";
-import EventPanel from "@/components/Events/EventPanel";
+import { Box, Tab, Tabs } from '@mui/material';
+
+import EventPanel from '@/components/Events/EventPanel';
+import IngestionRunPanel from '@/components/IngestionRuns/IngestionRunPanel';
+import OpenMicPanel from '@/components/OpenMics/OpenMicPanel';
+import PeriodicTaskStatus from '@/components/PeriodicTaskStatus';
+import VenuePanel from '@/components/Venues/VenuePanel';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -24,11 +25,7 @@ function CustomTabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }
@@ -50,7 +47,11 @@ const AdminView = () => {
   return (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="basic tabs example"
+        >
           <Tab label="Status" {...a11yProps(0)} />
           <Tab label="Ingestion Runs" {...a11yProps(1)} />
           <Tab label="Commands" {...a11yProps(2)} />
@@ -79,6 +80,6 @@ const AdminView = () => {
       </CustomTabPanel>
     </Box>
   );
-}
+};
 
 export default AdminView;

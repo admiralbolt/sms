@@ -1,85 +1,102 @@
-import { useState } from "react";
-import customAxios from "@/hooks/customAxios";
-import mem from "mem";
-import { AxiosResponse } from "axios";
+import { AxiosResponse } from 'axios';
+import mem from 'mem';
+import { useState } from 'react';
+
+import customAxios from '@/hooks/customAxios';
 
 const useIsAuthenticated = (): [boolean, (auth: boolean) => void] => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(localStorage.getItem("accessToken") !== null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
+    localStorage.getItem('accessToken') !== null,
+  );
 
   return [isAuthenticated, setIsAuthenticated];
-}
+};
 
 const refreshTokens = async () => {
   try {
-    await customAxios.put("/api/token/refresh/", {
-      refresh: localStorage.getItem("refreshToken")
-    }, {
-      withCredentials: true
-    }).then((response: AxiosResponse<any>) => {
-      if (response.data.access) {
-        localStorage.setItem("accessToken", response.data.access);
-        localStorage.setItem("refreshToken", response.data.refresh);
-      } else {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-      }
-    }, () => {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-    });
+    await customAxios
+      .put(
+        '/api/token/refresh/',
+        {
+          refresh: localStorage.getItem('refreshToken'),
+        },
+        {
+          withCredentials: true,
+        },
+      )
+      .then(
+        (response: AxiosResponse<any>) => {
+          if (response.data.access) {
+            localStorage.setItem('accessToken', response.data.access);
+            localStorage.setItem('refreshToken', response.data.refresh);
+          } else {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+          }
+        },
+        () => {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+        },
+      );
   } catch (error) {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
   }
-}
+};
 
 // We only want to refresh tokens once every 10 seconds.
 // Don't want a case where multiple refreshes are called in quick succession.
-const memoizedRefreshTokens = mem(refreshTokens, {maxAge: 10000});
+const memoizedRefreshTokens = mem(refreshTokens, { maxAge: 10000 });
 
-const login = async (username: string, password: string): Promise<any | null> => {
+const login = async (
+  username: string,
+  password: string,
+): Promise<any | null> => {
   try {
-    const response = await customAxios.post("/api/token/", 
+    const response = await customAxios.post(
+      '/api/token/',
       {
         username: username,
         password: password,
-      }, {
+      },
+      {
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         withCredentials: true,
-      }
+      },
     );
 
     if (response.status != 200) {
       return response;
     }
 
-    localStorage.setItem("accessToken", response.data.access);
-    localStorage.setItem("refreshToken", response.data.refresh);
+    localStorage.setItem('accessToken', response.data.access);
+    localStorage.setItem('refreshToken', response.data.refresh);
     return null;
   } catch (error: any) {
     return error;
   }
-}
+};
 
 const logout = async (): Promise<Error | null> => {
   try {
-    await customAxios.post("/api/logout", {
-      refresh_token: localStorage.getItem("refreshToken"),
-    },
-      {withCredentials: true}
+    await customAxios.post(
+      '/api/logout',
+      {
+        refresh_token: localStorage.getItem('refreshToken'),
+      },
+      { withCredentials: true },
     );
 
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     customAxios.defaults.headers.common.Authorization = null;
     return null;
   } catch (error: any) {
     return error;
   }
-}
+};
 
-
-
-export { login, logout, memoizedRefreshTokens, useIsAuthenticated }
+export { login, logout, memoizedRefreshTokens, useIsAuthenticated };

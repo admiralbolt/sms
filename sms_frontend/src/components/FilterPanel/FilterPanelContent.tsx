@@ -1,19 +1,20 @@
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { Checkbox, FormControlLabel } from "@mui/material";
-import {
-  useEventTypes,
-  // useVenueTypes
-} from "@/hooks/api";
-import FormGroup from "@mui/material/FormGroup";
-import { LocalStorageContext } from "@/contexts/LocalStorageContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from 'react';
 
-import { useAppBarHeight } from "../../hooks/materialHacks";
+import { Checkbox, FormControlLabel } from '@mui/material';
+import Box from '@mui/material/Box';
+import Divider from '@mui/material/Divider';
+import FormGroup from '@mui/material/FormGroup';
+import Typography from '@mui/material/Typography';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+
+import { LocalStorageContext } from '@/contexts/LocalStorageContext';
+import {
+  useEventTypes, // useVenueTypes
+} from '@/hooks/api';
+
+import { useAppBarHeight } from '../../hooks/materialHacks';
 
 const FilterPanelContent = () => {
   const eventTypes = useEventTypes();
@@ -47,7 +48,7 @@ const FilterPanelContent = () => {
       selectedEventTypes?.includes(event.target.value)
     ) {
       setSelectedEventTypes?.(
-        selectedEventTypes?.filter((t) => t != event.target.value)
+        selectedEventTypes?.filter((t) => t != event.target.value),
       );
     }
   };
@@ -71,7 +72,11 @@ const FilterPanelContent = () => {
   return (
     <>
       <Box
-        sx={{ overflow: "auto", padding: 1, marginTop: `${appBarHeight}px` }}
+        sx={{
+          overflow: 'auto',
+          padding: 1,
+          marginTop: `${appBarHeight}px`,
+        }}
       >
         <Typography>Date</Typography>
         <LocalizationProvider dateAdapter={AdapterDayjs}>

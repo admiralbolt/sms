@@ -1,18 +1,18 @@
-import React, { useState } from "react";
+import { LatLngExpression } from 'leaflet';
+import React, { useState } from 'react';
+import { MapContainer } from 'react-leaflet';
 
-import MapData from "./MapData";
-import { useIsMobile, useWindowDimensions } from "../../hooks/window";
+import { Box, Fade } from '@mui/material';
+
+import { Event, Venue } from '@/types';
+
 import {
   useAppBarHeight,
   useFilterPanelWidth,
-} from "../../hooks/materialHacks";
-
-import { MapContainer } from "react-leaflet";
-
-import { Box, Fade } from "@mui/material";
-import EventDetail from "../Events/EventCard";
-import { LatLngExpression } from "leaflet";
-import { Event, Venue } from "@/types";
+} from '../../hooks/materialHacks';
+import { useIsMobile, useWindowDimensions } from '../../hooks/window';
+import EventDetail from '../Events/EventCard';
+import MapData from './MapData';
 
 const zoom = 13;
 
@@ -34,13 +34,13 @@ const Map = () => {
       return (
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "center",
+            display: 'flex',
+            justifyContent: 'center',
             flex: 1,
             zIndex: 900,
-            position: "fixed",
+            position: 'fixed',
             bottom: 0,
-            margin: "auto",
+            margin: 'auto',
           }}
         >
           {selectedVenue && selectedEvent && (
@@ -56,13 +56,13 @@ const Map = () => {
         sx={{
           left: `${pct}%`,
           transform: `translate(-${pct}%, 0)`,
-          display: "flex",
-          justifyContent: "center",
+          display: 'flex',
+          justifyContent: 'center',
           flex: 1,
           zIndex: 900,
-          position: "fixed",
+          position: 'fixed',
           bottom: 0,
-          margin: "auto",
+          margin: 'auto',
         }}
       >
         {selectedVenue && selectedEvent && (

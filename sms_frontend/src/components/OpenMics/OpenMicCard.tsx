@@ -1,22 +1,29 @@
-import { getVenueById } from "@/hooks/api";
-import { useContext, useEffect, useState } from "react";
-import { Venue } from "@/types";
-import { Box, Button, Card, CardMedia, Dialog, DialogActions, DialogTitle, Typography } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+import { useContext, useEffect, useState } from 'react';
 
-import { format24HourTime } from "@/utils/dateUtils";
+import { Delete, Edit } from '@mui/icons-material';
+import CategoryIcon from '@mui/icons-material/Category';
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import PunchClockIcon from '@mui/icons-material/PunchClock';
+import WatchLaterIcon from '@mui/icons-material/WatchLater';
+import {
+  Box,
+  Button,
+  Card,
+  CardMedia,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  Typography,
+} from '@mui/material';
 
-import WatchLaterIcon from "@mui/icons-material/WatchLater";
-import PunchClockIcon from "@mui/icons-material/PunchClock";
-import EditNoteIcon from "@mui/icons-material/EditNote";
-import CategoryIcon from "@mui/icons-material/Category";
+import { SnackbarContext } from '@/contexts/SnackbarContext';
+import { getVenueById } from '@/hooks/api';
+import customAxios from '@/hooks/customAxios';
+import { Venue } from '@/types';
+import { OpenMic } from '@/types';
+import { format24HourTime } from '@/utils/dateUtils';
 
-import { SnackbarContext } from "@/contexts/SnackbarContext";
-
-import { OpenMic } from "@/types";
-
-import OpenMicForm from "./OpenMicForm";
-import customAxios from "@/hooks/customAxios";
+import OpenMicForm from './OpenMicForm';
 
 interface Props {
   openMic: OpenMic;
@@ -25,7 +32,12 @@ interface Props {
   createCallback?: any;
 }
 
-const OpenMicCard = ({ openMic, isNew, deleteCallback, createCallback }: Props) => {
+const OpenMicCard = ({
+  openMic,
+  isNew,
+  deleteCallback,
+  createCallback,
+}: Props) => {
   const [edit, setEdit] = useState<boolean>(false);
   const [venue, setVenue] = useState<Venue>({} as Venue);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
@@ -34,61 +46,78 @@ const OpenMicCard = ({ openMic, isNew, deleteCallback, createCallback }: Props) 
   useEffect(() => {
     if (openMic.venue < 0) return;
 
-    (async() => {
+    (async () => {
       setVenue(await getVenueById(openMic.venue));
     })();
   }, [openMic.venue]);
 
   const toggleEdit = () => {
     setEdit(!edit);
-  }
+  };
 
   const deleteMic = () => {
-    customAxios.delete(`api/open_mics/${openMic.id}`).then((_res) => {
-      deleteCallback();
-    }, (error) => {
-      setSnackbar({open: true, severity: "error", message: error.message});
-    });
+    customAxios.delete(`api/open_mics/${openMic.id}`).then(
+      (_res) => {
+        deleteCallback();
+      },
+      (error) => {
+        setSnackbar({
+          open: true,
+          severity: 'error',
+          message: error.message,
+        });
+      },
+    );
 
     setOpenConfirmation(false);
-  }
+  };
 
   const displayImage = () => {
     if (venue.venue_image) return venue.venue_image;
 
-    return "/placeholder.png";
+    return '/placeholder.png';
   };
 
   if (edit) {
     return (
-      <OpenMicForm openMic={openMic} setEdit={setEdit} isNew={isNew} createCallback={createCallback} />
+      <OpenMicForm
+        openMic={openMic}
+        setEdit={setEdit}
+        isNew={isNew}
+        createCallback={createCallback}
+      />
     );
   } else {
     return (
       <Box key={openMic.id}>
-        <Card key={openMic.id}
+        <Card
+          key={openMic.id}
           sx={{
-            margin: "1em",
-            padding: "1.5em",
-            width: "800px",
-            maxWidth: "96vw",
+            margin: '1em',
+            padding: '1.5em',
+            width: '800px',
+            maxWidth: '96vw',
           }}
         >
           <Box position="relative">
             <CardMedia
               component="img"
               image={displayImage()}
-              sx={{ filter: "brightness(35%)", width: "sm", aspectRatio: 2 }}
+              sx={{
+                filter: 'brightness(35%)',
+                width: 'sm',
+                aspectRatio: 2,
+              }}
             />
             <Typography
               sx={{
-                width: "100%",
+                width: '100%',
                 top: 0,
-                position: "absolute",
-                fontWeight: "bold",
-                fontSize: "1rem",
+                position: 'absolute',
+                fontWeight: 'bold',
+                fontSize: '1rem',
                 zIndex: 10,
-                textAlign: "center",
+                textAlign: 'center',
               }}
             >
               {openMic.name}
@@ -96,99 +125,125 @@ const OpenMicCard = ({ openMic, isNew, deleteCallback, createCallback }: Props) 
             {/* INFO ON LEFT SIDE */}
             <Box
               sx={{
-                position: "absolute",
+                position: 'absolute',
                 top: 0,
                 left: 0,
-                padding: "0.2em",
-                display: "flex",
-                alignItems: "start",
-                justifyContent: "center",
-                flexDirection: "column"
+                padding: '0.2em',
+                display: 'flex',
+                alignItems: 'start',
+                justifyContent: 'center',
+                flexDirection: 'column',
               }}
             >
               <Box
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justContent: "start",
-                  flexDirection: "row",
-                  marginBottom: "0.5em"
+                  display: 'flex',
+                  alignItems: 'center',
+                  justContent: 'start',
+                  flexDirection: 'row',
+                  marginBottom: '0.5em',
                 }}
               >
-                <PunchClockIcon sx={{ verticalAlign: "middle" }} />
-                <Typography sx={{ marginLeft: "0.5em" }}>{openMic.cadence_readable}</Typography>
+                <PunchClockIcon sx={{ verticalAlign: 'middle' }} />
+                <Typography sx={{ marginLeft: '0.5em' }}>
+                  {openMic.cadence_readable}
+                </Typography>
               </Box>
               <Box
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justContent: "start",
-                  flexDirection: "row",
-                  marginBottom: "0.5em"
+                  display: 'flex',
+                  alignItems: 'center',
+                  justContent: 'start',
+                  flexDirection: 'row',
+                  marginBottom: '0.5em',
                 }}
               >
-                <EditNoteIcon sx={{ verticalAlign: "middle" }} />
-                <Typography sx={{ marginLeft: "0.5em" }}>{format24HourTime(openMic.signup_start_time)}</Typography>
+                <EditNoteIcon sx={{ verticalAlign: 'middle' }} />
+                <Typography sx={{ marginLeft: '0.5em' }}>
+                  {format24HourTime(openMic.signup_start_time)}
+                </Typography>
               </Box>
               <Box
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justContent: "start",
-                  flexDirection: "row",
-                  marginBottom: "0.5em"
+                  display: 'flex',
+                  alignItems: 'center',
+                  justContent: 'start',
+                  flexDirection: 'row',
+                  marginBottom: '0.5em',
                 }}
               >
-                <WatchLaterIcon sx={{ verticalAlign: "middle" }} />
-                <Typography sx={{ marginLeft: "0.5em" }}>{format24HourTime(openMic.event_start_time)}</Typography>
+                <WatchLaterIcon sx={{ verticalAlign: 'middle' }} />
+                <Typography sx={{ marginLeft: '0.5em' }}>
+                  {format24HourTime(openMic.event_start_time)}
+                </Typography>
               </Box>
               <Box
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justContent: "start",
-                  flexDirection: "row",
-                  marginBottom: "0.5em"
+                  display: 'flex',
+                  alignItems: 'center',
+                  justContent: 'start',
+                  flexDirection: 'row',
+                  marginBottom: '0.5em',
                 }}
               >
-                <CategoryIcon sx={{ verticalAlign: "middle" }} />
-                <Typography sx={{ marginLeft: "0.5em" }}>{openMic.open_mic_type}</Typography>
+                <CategoryIcon sx={{ verticalAlign: 'middle' }} />
+                <Typography sx={{ marginLeft: '0.5em' }}>
+                  {openMic.open_mic_type}
+                </Typography>
               </Box>
             </Box>
 
             {/* ACTION BUTTONS */}
             <Box
               sx={{
-                position: "absolute",
+                position: 'absolute',
                 top: 0,
                 right: 0,
-                padding: "0.2em",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                zIndex: 20
+                padding: '0.2em',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 20,
               }}
             >
-              <Button variant="contained" onClick={toggleEdit}><Edit /></Button>
-              <Button sx={{ marginLeft: "1em" }} variant="contained" color="error" onClick={() => {setOpenConfirmation(true)}}><Delete /></Button>
+              <Button variant="contained" onClick={toggleEdit}>
+                <Edit />
+              </Button>
+              <Button
+                sx={{ marginLeft: '1em' }}
+                variant="contained"
+                color="error"
+                onClick={() => {
+                  setOpenConfirmation(true);
+                }}
+              >
+                <Delete />
+              </Button>
             </Box>
           </Box>
         </Card>
 
         <Dialog
           open={openConfirmation}
-          onClose={() => {setOpenConfirmation(false);}}
+          onClose={() => {
+            setOpenConfirmation(false);
+          }}
         >
-          <DialogTitle>
-            Delete Open Mic: {openMic.name}
-          </DialogTitle>
+          <DialogTitle>Delete Open Mic: {openMic.name}</DialogTitle>
           <DialogActions>
-            <Button color="secondary" variant="outlined" onClick={() => {setOpenConfirmation(false)}}>Don't do it</Button>
+            <Button
+              color="secondary"
+              variant="outlined"
+              onClick={() => {
+                setOpenConfirmation(false);
+              }}
+            >
+              Don't do it
+            </Button>
             <Button variant="contained" onClick={deleteMic} autoFocus>
               DELETE IT
             </Button>
           </DialogActions>
-          
         </Dialog>
       </Box>
     );
@@ -196,7 +251,7 @@ const OpenMicCard = ({ openMic, isNew, deleteCallback, createCallback }: Props) 
 };
 
 OpenMicCard.defaultProps = {
-  "isNew": false
-}
+  isNew: false,
+};
 
 export default OpenMicCard;
