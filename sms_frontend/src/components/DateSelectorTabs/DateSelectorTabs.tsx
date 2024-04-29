@@ -50,7 +50,7 @@ const DateSelectorTabs = () => {
     if (JSON.stringify(dateList) != JSON.stringify(dateRange)) {
       setDateRange(dateList);
     }
-  }, [selectedDate, total]);
+  }, [dateRange, minOffset, selectedDate, total]);
 
   // const centerSelected = () => {
   //   const allTabs = document.getElementsByClassName("MuiTab-textColorPrimary");

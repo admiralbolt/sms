@@ -2,7 +2,7 @@ import { Form } from '@rjsf/mui';
 import { WidgetProps } from '@rjsf/utils';
 import validator from '@rjsf/validator-ajv8';
 import { AxiosError } from 'axios';
-import { useContext } from 'react';
+import React, { useContext } from 'react';
 
 import { Button } from '@mui/material';
 
@@ -13,26 +13,32 @@ import { createEvent } from '@/hooks/api';
 import { useSchema } from '@/hooks/schema';
 import { Event } from '@/types';
 
+import { IChangeEvent } from '@rjsf/core';
+import { RJSFSchema } from '@rjsf/utils';
+
 interface Props {
   event: Event;
-  setEdit: any;
+  setEdit: React.Dispatch<React.SetStateAction<boolean>>;
   isNew?: boolean;
-  setIsNew?: any;
-  createCallback?: any;
-  updateCallback?: any;
+  createCallback?: (id: number) => void;
+  updateCallback?: (id: number) => void;
 }
+
+const emptyCallback = (_id: number) => {
+  return;
+};
 
 const EventForm = ({
   event,
   setEdit,
   isNew,
-  createCallback,
-  updateCallback,
+  createCallback = emptyCallback,
+  updateCallback = emptyCallback,
 }: Props) => {
   const { setSnackbar } = useContext(SnackbarContext) || {};
   const { eventSchema } = useSchema();
 
-  const submit = (submitEvent: any) => {
+  const submit = (submitEvent: IChangeEvent<any, RJSFSchema, any>) => {
     if (isNew) {
       createEvent(submitEvent.formData).then(
         (response) => {

@@ -27,10 +27,9 @@ const EventPanel = () => {
   const loading = open && options.length === 0;
 
   const handleChange = (
-    _event: any,
+    _event: React.SyntheticEvent<Element, globalThis.Event>,
     value: Event | null,
     _reason: AutocompleteChangeReason,
-    _details: any | undefined,
   ) => {
     setIsNew(false);
     setSelectedEvent(value == null ? null : value);
@@ -61,7 +60,7 @@ const EventPanel = () => {
 
   useEffect(() => {
     search(inputValue);
-  }, [inputValue]);
+  }, [inputValue, search]);
 
   const createEvent = () => {
     setIsNew(true);

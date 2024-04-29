@@ -1,4 +1,4 @@
-import { Navigate, Route } from 'react-router-dom';
+import { Navigate, Route, RouteProps } from 'react-router-dom';
 
 import { useIsAuthenticated } from '@/hooks/auth';
 
@@ -8,7 +8,7 @@ const AuthenticatedRoute = ({ element: Component, ...rest }: any) => {
   return (
     <Route
       {...rest}
-      render={(props: any) => {
+      render={(props: RouteProps) => {
         return isAuthenticated ? (
           <Component {...props} />
         ) : (

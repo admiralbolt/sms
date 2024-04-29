@@ -1,4 +1,4 @@
-export type EventType = 'Open Mic' | 'Open Jam' | 'Show';
+export type EventType = "Open Mic" | "Open Jam" | "Show";
 
 export interface Event {
   venue: number;
@@ -13,21 +13,21 @@ export interface Event {
 }
 
 export type ChangeType =
-  | 'Create'
-  | 'Delete'
-  | 'Update'
-  | 'Error'
-  | 'NO OP'
-  | 'Skip'
-  | 'Update';
+  | "Create"
+  | "Delete"
+  | "Update"
+  | "Error"
+  | "NO OP"
+  | "Skip"
+  | "Update";
 
 export const changeTypes: string[] = [
-  'Create',
-  'Delete',
-  'Update',
-  'Error',
-  'NO OP',
-  'Skip',
+  "Create",
+  "Delete",
+  "Update",
+  "Error",
+  "NO OP",
+  "Skip",
 ];
 
 export interface IngestionRunRecord {
