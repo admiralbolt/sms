@@ -1,25 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { Alert } from '@mui/material';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
-import Snackbar from '@mui/material/Snackbar';
-import TextField from '@mui/material/TextField';
+import { Alert } from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Snackbar from "@mui/material/Snackbar";
+import TextField from "@mui/material/TextField";
 
-import { useIsAuthenticated } from '@/hooks/auth';
-import { login } from '@/hooks/auth';
+import { useIsAuthenticated } from "@/hooks/auth";
+import { login } from "@/hooks/auth";
 
 const LoginView = () => {
   const [isAuthenticated, setIsAuthenticated] = useIsAuthenticated();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [openBar, setOpenBar] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (isAuthenticated) {
-      window.location.href = '/admin';
+      window.location.href = "/admin";
     }
   }, [isAuthenticated]);
 
@@ -27,7 +27,7 @@ const LoginView = () => {
     _event: React.SyntheticEvent | Event,
     reason?: string,
   ) => {
-    if (reason === 'clickaway') return;
+    if (reason === "clickaway") return;
 
     setOpenBar(false);
   };
@@ -39,7 +39,7 @@ const LoginView = () => {
 
     if (result === null) {
       setIsAuthenticated(true);
-      window.location.href = '/admin';
+      window.location.href = "/admin";
     } else {
       setErrorMessage(result.response.data.detail);
       setOpenBar(true);
@@ -84,13 +84,13 @@ const LoginView = () => {
         open={openBar}
         autoHideDuration={4000}
         onClose={handleClose}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
         <Alert
           onClose={handleClose}
           severity="error"
           variant="filled"
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {errorMessage}
         </Alert>

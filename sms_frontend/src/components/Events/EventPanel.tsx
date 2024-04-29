@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 import {
   Autocomplete,
@@ -9,19 +9,19 @@ import {
   Divider,
   TextField,
   debounce,
-} from '@mui/material';
+} from "@mui/material";
 
-import { getEventById } from '@/hooks/api';
-import customAxios from '@/hooks/customAxios';
-import { Event } from '@/types';
+import { getEventById } from "@/hooks/api";
+import customAxios from "@/hooks/customAxios";
+import { Event } from "@/types";
 
-import EventCard from './EventCard';
+import EventCard from "./EventCard";
 
 const EventPanel = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [options, setOptions] = useState<Event[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [inputValue, setInputValue] = useState<string>('');
+  const [inputValue, setInputValue] = useState<string>("");
   const [isNew, setIsNew] = useState<boolean>(false);
 
   const loading = open && options.length === 0;
@@ -41,22 +41,21 @@ const EventPanel = () => {
     }
   }, [open]);
 
-  const search = useCallback(
-    debounce((keyword) => {
-      if (keyword.length == 0) return;
+  const doSearch = debounce((keyword) => {
+    if (keyword.length == 0) return;
 
-      customAxios
-        .get('api/event_search', {
-          params: {
-            keyword: keyword,
-          },
-        })
-        .then((response) => {
-          setOptions(response.data);
-        });
-    }, 300),
-    [],
-  );
+    customAxios
+      .get("api/event_search", {
+        params: {
+          keyword: keyword,
+        },
+      })
+      .then((response) => {
+        setOptions(response.data);
+      });
+  }, 300);
+
+  const search = useCallback(doSearch, [doSearch]);
 
   useEffect(() => {
     search(inputValue);
@@ -77,7 +76,7 @@ const EventPanel = () => {
     if (selectedEvent == null) return;
 
     setSelectedEvent(null);
-    setInputValue('');
+    setInputValue("");
   };
 
   const onCreate = (id: number) => {
@@ -94,9 +93,9 @@ const EventPanel = () => {
     <Box>
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
         }}
       >
         <Autocomplete
@@ -141,7 +140,7 @@ const EventPanel = () => {
           )}
         />
         <Button
-          sx={{ marginLeft: '1em', height: '3em' }}
+          sx={{ marginLeft: "1em", height: "3em" }}
           variant="contained"
           onClick={createEvent}
         >

@@ -1,12 +1,12 @@
-import * as React from 'react';
+import * as React from "react";
 
-import { Box, Tab, Tabs } from '@mui/material';
+import { Box, Tab, Tabs } from "@mui/material";
 
-import EventPanel from '@/components/Events/EventPanel';
-import IngestionRunPanel from '@/components/IngestionRuns/IngestionRunPanel';
-import OpenMicPanel from '@/components/OpenMics/OpenMicPanel';
-import PeriodicTaskStatus from '@/components/PeriodicTaskStatus';
-import VenuePanel from '@/components/Venues/VenuePanel';
+import EventPanel from "@/components/Events/EventPanel";
+import IngestionRunPanel from "@/components/IngestionRuns/IngestionRunPanel";
+import OpenMicPanel from "@/components/OpenMics/OpenMicPanel";
+import PeriodicTaskStatus from "@/components/PeriodicTaskStatus";
+import VenuePanel from "@/components/Venues/VenuePanel";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -33,7 +33,7 @@ function CustomTabPanel(props: TabPanelProps) {
 function a11yProps(index: number) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 
@@ -45,8 +45,8 @@ const AdminView = () => {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+    <Box sx={{ width: "100%" }}>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
           value={value}
           onChange={handleChange}

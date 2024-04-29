@@ -1,14 +1,14 @@
-import { Form } from '@rjsf/mui';
-import validator from '@rjsf/validator-ajv8';
-import { AxiosError } from 'axios';
-import { useContext } from 'react';
+import { Form } from "@rjsf/mui";
+import validator from "@rjsf/validator-ajv8";
+import { AxiosError } from "axios";
+import { useContext } from "react";
 
-import { Button } from '@mui/material';
+import { Button } from "@mui/material";
 
-import { SnackbarContext } from '@/contexts/SnackbarContext';
-import { createVenue, updateVenue } from '@/hooks/api';
-import { useSchema } from '@/hooks/schema';
-import { Venue } from '@/types';
+import { SnackbarContext } from "@/contexts/SnackbarContext";
+import { createVenue, updateVenue } from "@/hooks/api";
+import { useSchema } from "@/hooks/schema";
+import { Venue } from "@/types";
 
 interface Props {
   venue: Venue;
@@ -35,16 +35,16 @@ const VenueForm = ({
         (response) => {
           setSnackbar({
             open: true,
-            severity: 'success',
+            severity: "success",
             message: `Venue ${response.data.name} updated successfully!`,
           });
           setEdit(false);
-          createCallback(response.data['id']);
+          createCallback(response.data["id"]);
         },
         (error: AxiosError) => {
           setSnackbar({
             open: true,
-            severity: 'error',
+            severity: "error",
             message: error.message,
           });
         },
@@ -57,16 +57,16 @@ const VenueForm = ({
       (response) => {
         setSnackbar({
           open: true,
-          severity: 'success',
+          severity: "success",
           message: `Venue ${response.data.name} updated successfully!`,
         });
         setEdit(false);
-        updateCallback(response.data['id']);
+        updateCallback(response.data["id"]);
       },
       (error: AxiosError) => {
         setSnackbar({
           open: true,
-          severity: 'error',
+          severity: "error",
           message: error.message,
         });
       },
@@ -79,13 +79,13 @@ const VenueForm = ({
 
   const uiSchema: object = {
     description: {
-      'ui:widget': 'textarea',
+      "ui:widget": "textarea",
     },
     venue_tags: {
-      'ui:widget': 'hidden',
+      "ui:widget": "hidden",
     },
     venue_image: {
-      'ui:widget': 'hidden',
+      "ui:widget": "hidden",
     },
   };
 
@@ -101,7 +101,7 @@ const VenueForm = ({
       <Button type="submit" variant="contained">
         Submit
       </Button>
-      <Button sx={{ marginLeft: '2em' }} onClick={cancel} variant="outlined">
+      <Button sx={{ marginLeft: "2em" }} onClick={cancel} variant="outlined">
         Cancel
       </Button>
     </Form>

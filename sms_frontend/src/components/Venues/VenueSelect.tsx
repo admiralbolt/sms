@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
 
-import { useVenues } from '@/hooks/api';
-import { Venue } from '@/types';
+import { useVenues } from "@/hooks/api";
+import { Venue } from "@/types";
 
 interface Props {
   venueId: string;

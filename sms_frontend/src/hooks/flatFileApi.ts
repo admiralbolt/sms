@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { Event, EventsByDate, EventsByVenue, Venue } from '@/types';
+import { Event, EventsByDate, EventsByVenue, Venue } from "@/types";
 
-import customAxios from './customAxios';
+import customAxios from "./customAxios";
 
 const useFlatEvents = (): [EventsByVenue, EventsByDate, Event[]] => {
   const [eventsByVenue, setEventsByVenue] = useState<EventsByVenue>({});
@@ -13,7 +13,7 @@ const useFlatEvents = (): [EventsByVenue, EventsByDate, Event[]] => {
     const tmpEventsByVenue: EventsByVenue = {};
     const tmpEventsByDate: EventsByDate = {};
 
-    customAxios.get('/uploads/latest_events.json').then((res) => {
+    customAxios.get("/uploads/latest_events.json").then((res) => {
       setAllEventsList(res.data);
 
       res.data.forEach((event: Event) => {
@@ -37,7 +37,7 @@ const useFlatVenues = (): Venue[] => {
   const [venues, setVenues] = useState<Venue[]>([]);
 
   useEffect(() => {
-    customAxios.get('uploads/latest_venues.json').then((res) => {
+    customAxios.get("uploads/latest_venues.json").then((res) => {
       setVenues(res.data);
     });
   }, []);

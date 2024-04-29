@@ -1,11 +1,11 @@
-import { createTheme } from '@mui/material';
+import { createTheme } from "@mui/material";
 
 const theme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: "dark",
     background: {
-      paper: '#252530',
-      default: '#30303a',
+      paper: "#252530",
+      default: "#30303a",
     },
   },
 });

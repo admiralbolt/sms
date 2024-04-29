@@ -1,9 +1,9 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from "react";
 
-import { Event, EventsByVenueMap, Venue } from '@/types.js';
+import { Event, EventsByVenueMap, Venue } from "@/types.js";
 
-import { LocalStorageContext } from '../contexts/LocalStorageContext.js';
-import { useFlatEvents, useFlatVenues } from './flatFileApi.js';
+import { LocalStorageContext } from "../contexts/LocalStorageContext.js";
+import { useFlatEvents, useFlatVenues } from "./flatFileApi.js";
 
 const useFilteredVenues = () => {
   const venues = useFlatVenues();
@@ -35,7 +35,7 @@ const useFilteredEvents = () => {
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
 
   useEffect(() => {
-    const targetDate = selectedDate?.format('YYYY-MM-DD');
+    const targetDate = selectedDate?.format("YYYY-MM-DD");
     if (targetDate && targetDate in eventsByDate) {
       const events = eventsByDate[targetDate];
       setFilteredEvents(

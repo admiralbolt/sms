@@ -7,9 +7,8 @@ import ReportIcon from "@mui/icons-material/Report";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
 import UpgradeIcon from "@mui/icons-material/Upgrade";
 import { Chip, SvgIconTypeMap } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-
 import { OverridableComponent } from "@mui/material/OverridableComponent";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 import customAxios from "@/hooks/customAxios";
 import { ChangeType, IngestionRun } from "@/types";
@@ -22,33 +21,51 @@ interface Props {
 type OpIcon = {
   icon: OverridableComponent<SvgIconTypeMap<"svg">>;
   color: string;
-}
+};
 
 const opFormat: Map<ChangeType, OpIcon> = new Map([
-  ["Create", {
-    icon: AddCircleOutlineIcon,
-    color: "#00ffaa",
-  }],
-  ["Update", {
-    icon: UpgradeIcon,
-    color: "#00aaff",
-  }],
-  ["Delete", {
-    icon: DeleteIcon,
-    color: "#ff8080",
-  }],
-  ["Error", {
-    icon: ReportIcon,
-    color: "#ff4040",
-  }],
-  ["NO OP", {
-    icon: NotInterestedIcon,
-    color: "#aaaaaa",
-  }],
-  ["Skip", {
-    icon: SkipNextIcon,
-    color: "#ffaa40",
-  }],
+  [
+    "Create",
+    {
+      icon: AddCircleOutlineIcon,
+      color: "#00ffaa",
+    },
+  ],
+  [
+    "Update",
+    {
+      icon: UpgradeIcon,
+      color: "#00aaff",
+    },
+  ],
+  [
+    "Delete",
+    {
+      icon: DeleteIcon,
+      color: "#ff8080",
+    },
+  ],
+  [
+    "Error",
+    {
+      icon: ReportIcon,
+      color: "#ff4040",
+    },
+  ],
+  [
+    "NO OP",
+    {
+      icon: NotInterestedIcon,
+      color: "#aaaaaa",
+    },
+  ],
+  [
+    "Skip",
+    {
+      icon: SkipNextIcon,
+      color: "#ffaa40",
+    },
+  ],
 ]);
 
 console.log(opFormat);

@@ -1,9 +1,9 @@
-import { useContext, useState } from 'react';
+import { useContext, useState } from "react";
 
-import { Delete, Edit } from '@mui/icons-material';
-import GpsFixedIcon from '@mui/icons-material/GpsFixed';
-import HomeIcon from '@mui/icons-material/Home';
-import LocationCityIcon from '@mui/icons-material/LocationCity';
+import { Delete, Edit } from "@mui/icons-material";
+import GpsFixedIcon from "@mui/icons-material/GpsFixed";
+import HomeIcon from "@mui/icons-material/Home";
+import LocationCityIcon from "@mui/icons-material/LocationCity";
 import {
   Box,
   Button,
@@ -13,13 +13,13 @@ import {
   DialogActions,
   DialogTitle,
   Typography,
-} from '@mui/material';
+} from "@mui/material";
 
-import { SnackbarContext } from '@/contexts/SnackbarContext';
-import customAxios from '@/hooks/customAxios';
-import { Venue } from '@/types';
+import { SnackbarContext } from "@/contexts/SnackbarContext";
+import customAxios from "@/hooks/customAxios";
+import { Venue } from "@/types";
 
-import VenueForm from './VenueForm';
+import VenueForm from "./VenueForm";
 
 interface Props {
   venue: Venue;
@@ -52,7 +52,7 @@ const VenueCard = ({
       (error) => {
         setSnackbar({
           open: true,
-          severity: 'error',
+          severity: "error",
           message: error.message,
         });
       },
@@ -64,7 +64,7 @@ const VenueCard = ({
   const displayImage = () => {
     if (venue.venue_image) return venue.venue_image;
 
-    return '/placeholder.png';
+    return "/placeholder.png";
   };
 
   if (edit) {
@@ -83,10 +83,10 @@ const VenueCard = ({
         <Card
           key={venue.id}
           sx={{
-            margin: '1em',
-            padding: '1.5em',
-            width: '800px',
-            maxWidth: '96vw',
+            margin: "1em",
+            padding: "1.5em",
+            width: "800px",
+            maxWidth: "96vw",
           }}
         >
           <Box position="relative">
@@ -94,20 +94,20 @@ const VenueCard = ({
               component="img"
               image={displayImage()}
               sx={{
-                filter: 'brightness(35%)',
-                width: 'sm',
+                filter: "brightness(35%)",
+                width: "sm",
                 aspectRatio: 2,
               }}
             />
             <Typography
               sx={{
-                width: '100%',
+                width: "100%",
                 top: 0,
-                position: 'absolute',
-                fontWeight: 'bold',
-                fontSize: '1rem',
+                position: "absolute",
+                fontWeight: "bold",
+                fontSize: "1rem",
                 zIndex: 10,
-                textAlign: 'center',
+                textAlign: "center",
               }}
             >
               {venue.name}
@@ -115,55 +115,55 @@ const VenueCard = ({
             {/* INFO ON LEFT SIDE */}
             <Box
               sx={{
-                position: 'absolute',
+                position: "absolute",
                 top: 0,
                 left: 0,
-                padding: '0.2em',
-                display: 'flex',
-                alignItems: 'start',
-                justifyContent: 'center',
-                flexDirection: 'column',
+                padding: "0.2em",
+                display: "flex",
+                alignItems: "start",
+                justifyContent: "center",
+                flexDirection: "column",
               }}
             >
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justContent: 'start',
-                  flexDirection: 'row',
-                  marginBottom: '0.5em',
+                  display: "flex",
+                  alignItems: "center",
+                  justContent: "start",
+                  flexDirection: "row",
+                  marginBottom: "0.5em",
                 }}
               >
-                <HomeIcon sx={{ verticalAlign: 'middle' }} />
-                <Typography sx={{ marginLeft: '0.5em' }}>
+                <HomeIcon sx={{ verticalAlign: "middle" }} />
+                <Typography sx={{ marginLeft: "0.5em" }}>
                   {venue.address}
                 </Typography>
               </Box>
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justContent: 'start',
-                  flexDirection: 'row',
-                  marginBottom: '0.5em',
+                  display: "flex",
+                  alignItems: "center",
+                  justContent: "start",
+                  flexDirection: "row",
+                  marginBottom: "0.5em",
                 }}
               >
-                <LocationCityIcon sx={{ verticalAlign: 'middle' }} />
-                <Typography sx={{ marginLeft: '0.5em' }}>
+                <LocationCityIcon sx={{ verticalAlign: "middle" }} />
+                <Typography sx={{ marginLeft: "0.5em" }}>
                   {venue.city}
                 </Typography>
               </Box>
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justContent: 'start',
-                  flexDirection: 'row',
-                  marginBottom: '0.5em',
+                  display: "flex",
+                  alignItems: "center",
+                  justContent: "start",
+                  flexDirection: "row",
+                  marginBottom: "0.5em",
                 }}
               >
-                <GpsFixedIcon sx={{ verticalAlign: 'middle' }} />
-                <Typography sx={{ marginLeft: '0.5em' }}>
+                <GpsFixedIcon sx={{ verticalAlign: "middle" }} />
+                <Typography sx={{ marginLeft: "0.5em" }}>
                   Lat: {venue.latitude}, Long: {venue.longitude}
                 </Typography>
               </Box>
@@ -172,13 +172,13 @@ const VenueCard = ({
             {/* ACTION BUTTONS */}
             <Box
               sx={{
-                position: 'absolute',
+                position: "absolute",
                 top: 0,
                 right: 0,
-                padding: '0.2em',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                padding: "0.2em",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
                 zIndex: 20,
               }}
             >
@@ -186,7 +186,7 @@ const VenueCard = ({
                 <Edit />
               </Button>
               <Button
-                sx={{ marginLeft: '1em' }}
+                sx={{ marginLeft: "1em" }}
                 variant="contained"
                 color="error"
                 onClick={() => {

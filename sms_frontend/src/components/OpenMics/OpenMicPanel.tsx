@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 import {
   Autocomplete,
@@ -7,19 +7,19 @@ import {
   Button,
   Divider,
   TextField,
-} from '@mui/material';
+} from "@mui/material";
 
-import { useOpenMics } from '@/hooks/api';
-import customAxios from '@/hooks/customAxios';
-import { OpenMic } from '@/types';
+import { useOpenMics } from "@/hooks/api";
+import customAxios from "@/hooks/customAxios";
+import { OpenMic } from "@/types";
 
-import OpenMicCard from './OpenMicCard';
+import OpenMicCard from "./OpenMicCard";
 
 const OpenMicPanel = () => {
   const [openMics, setOpenMics] = useOpenMics();
 
   const [selectedMic, setSelectedMic] = useState<OpenMic | null>(null);
-  const [inputValue, setInputValue] = useState<string>('');
+  const [inputValue, setInputValue] = useState<string>("");
   const [isNew, setIsNew] = useState<boolean>(false);
 
   const handleChange = (
@@ -38,7 +38,7 @@ const OpenMicPanel = () => {
   };
 
   const reloadData = () => {
-    customAxios.get('api/open_mics').then((res) => {
+    customAxios.get("api/open_mics").then((res) => {
       setOpenMics(res.data);
     });
   };
@@ -48,7 +48,7 @@ const OpenMicPanel = () => {
 
     reloadData();
     setSelectedMic(null);
-    setInputValue('');
+    setInputValue("");
   };
 
   const onCreate = (id: number) => {
@@ -65,9 +65,9 @@ const OpenMicPanel = () => {
     <Box>
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
         }}
       >
         <Autocomplete
@@ -85,7 +85,7 @@ const OpenMicPanel = () => {
           }}
         />
         <Button
-          sx={{ marginLeft: '1em', height: '3em' }}
+          sx={{ marginLeft: "1em", height: "3em" }}
           variant="contained"
           onClick={createOpenMic}
         >

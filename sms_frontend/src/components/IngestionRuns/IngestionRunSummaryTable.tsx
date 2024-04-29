@@ -1,6 +1,6 @@
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from "@mui/material";
 
-import { IngestionRun, changeTypes } from '@/types';
+import { IngestionRun, changeTypes } from "@/types";
 
 interface Props {
   ingestionRun: IngestionRun;
@@ -9,8 +9,8 @@ interface Props {
 const IngestionRunSummaryTable = ({ ingestionRun }: Props) => {
   const s: any = { event: {}, venue: {} };
   changeTypes.forEach((t: string) => {
-    s['event'][t] = 0;
-    s['venue'][t] = 0;
+    s["event"][t] = 0;
+    s["venue"][t] = 0;
   });
 
   ingestionRun.summary.forEach((record) => {
@@ -60,7 +60,7 @@ const IngestionRunSummaryTable = ({ ingestionRun }: Props) => {
             item
             xs={1}
           >
-            <Typography>{s['event'][t]}</Typography>
+            <Typography>{s["event"][t]}</Typography>
           </Grid>
         ))}
         {changeTypes.map((t) => (
@@ -72,7 +72,7 @@ const IngestionRunSummaryTable = ({ ingestionRun }: Props) => {
             item
             xs={1}
           >
-            <Typography>{s['venue'][t]}</Typography>
+            <Typography>{s["venue"][t]}</Typography>
           </Grid>
         ))}
       </Grid>

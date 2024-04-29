@@ -1,7 +1,7 @@
-import dayjs from 'dayjs';
-import { createContext, useEffect, useState } from 'react';
+import dayjs from "dayjs";
+import { createContext, useEffect, useState } from "react";
 
-import { useEventTypes, useVenueTypes } from '@/hooks/api';
+import { useEventTypes, useVenueTypes } from "@/hooks/api";
 
 interface LocalStorageContextType {
   selectedEventTypes: string[];
@@ -14,7 +14,7 @@ interface LocalStorageContextType {
 
 const loadFromStorage = (key: string, defaultValue: unknown): any => {
   const item = localStorage.getItem(key);
-  return item && item !== 'undefined' ? JSON.parse(item) : defaultValue;
+  return item && item !== "undefined" ? JSON.parse(item) : defaultValue;
 };
 
 const loadDateFromStorage = (
@@ -22,9 +22,9 @@ const loadDateFromStorage = (
   defaultValue: dayjs.Dayjs,
 ): dayjs.Dayjs => {
   const item = localStorage.getItem(key);
-  const today = dayjs(dayjs().format('YYYY-MM-DD'));
+  const today = dayjs(dayjs().format("YYYY-MM-DD"));
 
-  if (!item || item === 'undefined') return defaultValue;
+  if (!item || item === "undefined") return defaultValue;
 
   const day = dayjs(item);
   return day.isBefore(today) ? today : day;
@@ -42,44 +42,44 @@ const LocalStorageContextProvider = ({
   const eventTypes = useEventTypes();
   const venueTypes = useVenueTypes();
   const [selectedEventTypes, setSelectedEventTypes] = useState<string[]>(
-    loadFromStorage('selectedEventTypes', []),
+    loadFromStorage("selectedEventTypes", []),
   );
   const [selectedVenueTypes, setSelectedVenueTypes] = useState<string[]>(
-    loadFromStorage('selectedVenueTypes', []),
+    loadFromStorage("selectedVenueTypes", []),
   );
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs>(
-    loadDateFromStorage('selectedDate', dayjs()),
+    loadDateFromStorage("selectedDate", dayjs()),
   );
 
   useEffect(() => {
     localStorage.setItem(
-      'selectedEventTypes',
+      "selectedEventTypes",
       JSON.stringify(selectedEventTypes),
     );
   }, [selectedEventTypes]);
 
   useEffect(() => {
     localStorage.setItem(
-      'selectedVenueTypes',
+      "selectedVenueTypes",
       JSON.stringify(selectedVenueTypes),
     );
   }, [selectedVenueTypes]);
 
   useEffect(() => {
-    localStorage.setItem('selectedDate', selectedDate.format('YYYY-MM-DD'));
+    localStorage.setItem("selectedDate", selectedDate.format("YYYY-MM-DD"));
   }, [selectedDate]);
 
   useEffect(() => {
     if (selectedEventTypes.length == 0) {
       setSelectedEventTypes(eventTypes);
     }
-  }, [eventTypes]);
+  }, [selectedEventTypes.length, eventTypes]);
 
   useEffect(() => {
     if (selectedVenueTypes.length == 0) {
       setSelectedVenueTypes(venueTypes);
     }
-  }, [venueTypes]);
+  }, [selectedVenueTypes.length, venueTypes]);
 
   return (
     <LocalStorageContext.Provider

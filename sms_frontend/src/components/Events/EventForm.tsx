@@ -1,20 +1,19 @@
-import { Form } from '@rjsf/mui';
-import { WidgetProps } from '@rjsf/utils';
-import validator from '@rjsf/validator-ajv8';
-import { AxiosError } from 'axios';
-import React, { useContext } from 'react';
+import { IChangeEvent } from "@rjsf/core";
+import { Form } from "@rjsf/mui";
+import { WidgetProps } from "@rjsf/utils";
+import { RJSFSchema } from "@rjsf/utils";
+import validator from "@rjsf/validator-ajv8";
+import { AxiosError } from "axios";
+import React, { useContext } from "react";
 
-import { Button } from '@mui/material';
+import { Button } from "@mui/material";
 
-import VenueSelect from '@/components/Venues/VenueSelect';
-import { SnackbarContext } from '@/contexts/SnackbarContext';
-import { updateEvent } from '@/hooks/api';
-import { createEvent } from '@/hooks/api';
-import { useSchema } from '@/hooks/schema';
-import { Event } from '@/types';
-
-import { IChangeEvent } from '@rjsf/core';
-import { RJSFSchema } from '@rjsf/utils';
+import VenueSelect from "@/components/Venues/VenueSelect";
+import { SnackbarContext } from "@/contexts/SnackbarContext";
+import { updateEvent } from "@/hooks/api";
+import { createEvent } from "@/hooks/api";
+import { useSchema } from "@/hooks/schema";
+import { Event } from "@/types";
 
 interface Props {
   event: Event;
@@ -44,16 +43,16 @@ const EventForm = ({
         (response) => {
           setSnackbar({
             open: true,
-            severity: 'success',
+            severity: "success",
             message: `Event ${response.data.title} updated successfully!`,
           });
           setEdit(false);
-          createCallback(response.data['id']);
+          createCallback(response.data["id"]);
         },
         (error: AxiosError) => {
           setSnackbar({
             open: true,
-            severity: 'error',
+            severity: "error",
             message: error.message,
           });
         },
@@ -66,16 +65,16 @@ const EventForm = ({
       (response) => {
         setSnackbar({
           open: true,
-          severity: 'success',
+          severity: "success",
           message: `Event ${response.data.title} updated successfully!`,
         });
         setEdit(false);
-        updateCallback(response.data['id']);
+        updateCallback(response.data["id"]);
       },
       (error: AxiosError) => {
         setSnackbar({
           open: true,
-          severity: 'error',
+          severity: "error",
           message: error.message,
         });
       },
@@ -88,25 +87,25 @@ const EventForm = ({
 
   const uiSchema: object = {
     description: {
-      'ui:widget': 'textarea',
+      "ui:widget": "textarea",
     },
     event_image: {
-      'ui:widget': 'hidden',
+      "ui:widget": "hidden",
     },
     start_time: {
-      'ui:widget': 'time',
+      "ui:widget": "time",
     },
     end_time: {
-      'ui:widget': 'time',
+      "ui:widget": "time",
     },
     doors_open: {
-      'ui:widget': 'time',
+      "ui:widget": "time",
     },
     signup_start_time: {
-      'ui:widget': 'time',
+      "ui:widget": "time",
     },
     venue: {
-      'ui:widget': (props: WidgetProps) => {
+      "ui:widget": (props: WidgetProps) => {
         return (
           <VenueSelect
             venueId={props.value}
@@ -129,7 +128,7 @@ const EventForm = ({
       <Button type="submit" variant="contained">
         Submit
       </Button>
-      <Button sx={{ marginLeft: '2em' }} onClick={cancel} variant="outlined">
+      <Button sx={{ marginLeft: "2em" }} onClick={cancel} variant="outlined">
         Cancel
       </Button>
     </Form>

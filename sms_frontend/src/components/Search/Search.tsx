@@ -1,19 +1,19 @@
-import Fuse, { FuseResult } from 'fuse.js';
-import { useEffect, useState } from 'react';
+import Fuse, { FuseResult } from "fuse.js";
+import { useEffect, useState } from "react";
 
-import { Box, List, ListItem } from '@mui/material';
-import { Typography } from '@mui/material';
-import TextField from '@mui/material/TextField';
+import { Box, List, ListItem } from "@mui/material";
+import { Typography } from "@mui/material";
+import TextField from "@mui/material/TextField";
 
-import EventCard from '@/components/Events/EventCard';
-import { Event } from '@/types';
+import EventCard from "@/components/Events/EventCard";
+import { Event } from "@/types";
 
-import { useFlatEvents, useVenueMap } from '../../hooks/flatFileApi';
+import { useFlatEvents, useVenueMap } from "../../hooks/flatFileApi";
 
 const MAX_RESULTS = 50;
 
 const Search = () => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [, , allEventsList] = useFlatEvents();
   const venueMap = useVenueMap();
 
@@ -31,7 +31,7 @@ const Search = () => {
     threshold: 0.2,
     ignoreLocation: true,
     ignoreFieldNorm: true,
-    keys: ['title'],
+    keys: ["title"],
   };
 
   useEffect(() => {
@@ -59,15 +59,15 @@ const Search = () => {
       />
       {matches.length > 0 && (
         <Typography>
-          {matches.length == MAX_RESULTS ? `${MAX_RESULTS}+` : matches.length}{' '}
+          {matches.length == MAX_RESULTS ? `${MAX_RESULTS}+` : matches.length}{" "}
           results
         </Typography>
       )}
       <List
         sx={{
-          maxHeight: '100vh',
-          paddingBottom: '20rem',
-          overflow: 'auto',
+          maxHeight: "100vh",
+          paddingBottom: "20rem",
+          overflow: "auto",
         }}
       >
         {matches.map((match) => (

@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 const useAppBarHeight = () => {
   const [appBarHeight, setAppBarHeight] = useState(0);
@@ -7,7 +7,7 @@ const useAppBarHeight = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      const appBars = document.getElementsByClassName('MuiAppBar-root');
+      const appBars = document.getElementsByClassName("MuiAppBar-root");
       setAppBarHeight(appBars.length > 0 ? appBars[0].clientHeight : 0);
     }, 1);
   }, [pathname]);
@@ -20,7 +20,7 @@ const useFilterPanelWidth = () => {
 
   useEffect(() => {
     const filterPanels = document.getElementsByClassName(
-      'MuiDrawer-paperAnchorDockedRight',
+      "MuiDrawer-paperAnchorDockedRight",
     );
     setFilterPanelWidth(
       filterPanels.length > 0 ? filterPanels[0].clientWidth : 0,
@@ -34,7 +34,7 @@ const useScroller = () => {
   const [scroller, setScroller] = useState({});
 
   useEffect(() => {
-    const scroller = document.getElementsByClassName('MuiTabs-scroller')[0];
+    const scroller = document.getElementsByClassName("MuiTabs-scroller")[0];
     setScroller(scroller);
   }, []);
 

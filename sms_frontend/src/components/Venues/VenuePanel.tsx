@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 import {
   Autocomplete,
@@ -7,19 +7,19 @@ import {
   Button,
   Divider,
   TextField,
-} from '@mui/material';
+} from "@mui/material";
 
-import { useVenues } from '@/hooks/api';
-import customAxios from '@/hooks/customAxios';
-import { Venue } from '@/types';
+import { useVenues } from "@/hooks/api";
+import customAxios from "@/hooks/customAxios";
+import { Venue } from "@/types";
 
-import VenueCard from './VenueCard';
+import VenueCard from "./VenueCard";
 
 const VenuePanel = () => {
   const [venues, setVenues] = useVenues();
 
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
-  const [inputValue, setInputValue] = useState<string>('');
+  const [inputValue, setInputValue] = useState<string>("");
   const [isNew, setIsNew] = useState<boolean>(false);
 
   const handleChange = (
@@ -38,7 +38,7 @@ const VenuePanel = () => {
   };
 
   const reloadData = (id?: number) => {
-    customAxios.get('api/venues').then((res) => {
+    customAxios.get("api/venues").then((res) => {
       setVenues(res.data);
       const v = res.data.find((o: any) => o.id == id);
       if (v != undefined) {
@@ -52,7 +52,7 @@ const VenuePanel = () => {
 
     reloadData();
     setSelectedVenue(null);
-    setInputValue('');
+    setInputValue("");
   };
 
   const onCreate = (id: number) => {
@@ -69,9 +69,9 @@ const VenuePanel = () => {
     <Box>
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
         }}
       >
         <Autocomplete
@@ -89,7 +89,7 @@ const VenuePanel = () => {
           }}
         />
         <Button
-          sx={{ marginLeft: '1em', height: '3em' }}
+          sx={{ marginLeft: "1em", height: "3em" }}
           variant="contained"
           onClick={createVenue}
         >

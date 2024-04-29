@@ -1,28 +1,28 @@
-import L, { LeafletMouseEvent } from 'leaflet';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import L, { LeafletMouseEvent } from "leaflet";
+import { useCallback, useContext, useEffect, useState } from "react";
 import {
   Circle,
   TileLayer,
   Tooltip,
   useMap,
   useMapEvents,
-} from 'react-leaflet';
+} from "react-leaflet";
 
-import { Box, Typography } from '@mui/material';
+import { Box, Typography } from "@mui/material";
 
-import { LocalStorageContext } from '../../contexts/LocalStorageContext';
+import { LocalStorageContext } from "../../contexts/LocalStorageContext";
 import {
   useFilteredEventsByVenue,
   useFilteredVenues,
-} from '../../hooks/filteredData';
-import { useIsMobile } from '../../hooks/window';
-import { Event, EventType, Venue } from '../../types';
-import './MapData.css';
+} from "../../hooks/filteredData";
+import { useIsMobile } from "../../hooks/window";
+import { Event, EventType, Venue } from "../../types";
+import "./MapData.css";
 
-const SHOW_COLOR = '#0070ff';
-const OPEN_JAM_COLOR = '#ff5500';
-const OPEN_MIC_COLOR = '#ee6600';
-const NO_EVENT_COLOR = '#989898';
+const SHOW_COLOR = "#0070ff";
+const OPEN_JAM_COLOR = "#ff5500";
+const OPEN_MIC_COLOR = "#ee6600";
+const NO_EVENT_COLOR = "#989898";
 
 const defaultZoom = 13;
 
@@ -58,9 +58,9 @@ const Map = ({
   const { selectedDate } = useContext(LocalStorageContext) || {};
 
   const getColor = (event_type: EventType) => {
-    if (event_type == 'Open Mic') return OPEN_MIC_COLOR;
-    if (event_type == 'Open Jam') return OPEN_JAM_COLOR;
-    if (event_type == 'Show') return SHOW_COLOR;
+    if (event_type == "Open Mic") return OPEN_MIC_COLOR;
+    if (event_type == "Open Jam") return OPEN_JAM_COLOR;
+    if (event_type == "Show") return SHOW_COLOR;
 
     return NO_EVENT_COLOR;
   };
@@ -71,10 +71,10 @@ const Map = ({
         options: { pane?: string };
         _path?: { classList: { remove: (val: string) => void } };
       }) => {
-        if (!layer.options || layer.options.pane != 'overlayPane') return;
+        if (!layer.options || layer.options.pane != "overlayPane") return;
         if (!layer._path) return;
 
-        layer._path.classList.remove('active');
+        layer._path.classList.remove("active");
       },
     );
   }, [map]);
@@ -118,7 +118,7 @@ const Map = ({
     }
 
     clearAllHighlights();
-    e.target._path.classList.add('active');
+    e.target._path.classList.add("active");
 
     setMapPosition(latlng);
     map.flyTo(latlng);
@@ -130,7 +130,7 @@ const Map = ({
 
   const renderVenue = (venue: Venue) => {
     if (!filteredEventsByVenue || !(venue.id in filteredEventsByVenue))
-      return '';
+      return "";
 
     const event = filteredEventsByVenue[venue.id];
 

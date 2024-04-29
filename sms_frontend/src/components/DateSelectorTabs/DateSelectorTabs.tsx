@@ -1,23 +1,23 @@
-import dayjs from 'dayjs';
-import React, { useContext, useEffect, useState } from 'react';
+import dayjs from "dayjs";
+import React, { useContext, useEffect, useState } from "react";
 
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
 
-import { LocalStorageContext } from '../../contexts/LocalStorageContext';
-import { useIsMobile } from '../../hooks/window';
-import './DateSelectorTabs.css';
+import { LocalStorageContext } from "../../contexts/LocalStorageContext";
+import { useIsMobile } from "../../hooks/window";
+import "./DateSelectorTabs.css";
 
 // import { useScroller } from "../../hooks/materialHacks";
 
-const today = dayjs(dayjs().format('YYYY-MM-DD'));
+const today = dayjs(dayjs().format("YYYY-MM-DD"));
 
 const DateSelectorTabs = () => {
   const [dateRange, setDateRange] = useState<dayjs.Dayjs[]>([]);
   const [total, setTotal] = useState(21);
   const { selectedDate, setSelectedDate } =
     useContext(LocalStorageContext) || {};
-  const [value, setValue] = useState(today.format('YYYY-MM-DD'));
+  const [value, setValue] = useState(today.format("YYYY-MM-DD"));
   const isMobile = useIsMobile();
   const minOffset = -Math.trunc(total / 2);
 
@@ -36,15 +36,15 @@ const DateSelectorTabs = () => {
   };
 
   useEffect(() => {
-    selectedDate && setValue(selectedDate.format('YYYY-MM-DD'));
+    selectedDate && setValue(selectedDate.format("YYYY-MM-DD"));
     const dateList: dayjs.Dayjs[] = [];
     const djs = dayjs(selectedDate);
 
-    const start = Math.max(minOffset, today.diff(selectedDate, 'days'));
+    const start = Math.max(minOffset, today.diff(selectedDate, "days"));
     const end = start + total;
 
     for (let i = start; i < end; ++i) {
-      dateList.push(djs.add(i, 'day'));
+      dateList.push(djs.add(i, "day"));
     }
 
     if (JSON.stringify(dateList) != JSON.stringify(dateRange)) {
@@ -73,8 +73,8 @@ const DateSelectorTabs = () => {
       {dateRange.map((day) => (
         <Tab
           key={day.toString()}
-          label={day.format('ddd, MMM. D')}
-          value={day.format('YYYY-MM-DD')}
+          label={day.format("ddd, MMM. D")}
+          value={day.format("YYYY-MM-DD")}
         />
       ))}
     </Tabs>

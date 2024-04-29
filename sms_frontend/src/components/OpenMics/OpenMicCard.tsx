@@ -1,10 +1,10 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from "react";
 
-import { Delete, Edit } from '@mui/icons-material';
-import CategoryIcon from '@mui/icons-material/Category';
-import EditNoteIcon from '@mui/icons-material/EditNote';
-import PunchClockIcon from '@mui/icons-material/PunchClock';
-import WatchLaterIcon from '@mui/icons-material/WatchLater';
+import { Delete, Edit } from "@mui/icons-material";
+import CategoryIcon from "@mui/icons-material/Category";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import PunchClockIcon from "@mui/icons-material/PunchClock";
+import WatchLaterIcon from "@mui/icons-material/WatchLater";
 import {
   Box,
   Button,
@@ -14,29 +14,33 @@ import {
   DialogActions,
   DialogTitle,
   Typography,
-} from '@mui/material';
+} from "@mui/material";
 
-import { SnackbarContext } from '@/contexts/SnackbarContext';
-import { getVenueById } from '@/hooks/api';
-import customAxios from '@/hooks/customAxios';
-import { Venue } from '@/types';
-import { OpenMic } from '@/types';
-import { format24HourTime } from '@/utils/dateUtils';
+import { SnackbarContext } from "@/contexts/SnackbarContext";
+import { getVenueById } from "@/hooks/api";
+import customAxios from "@/hooks/customAxios";
+import { Venue } from "@/types";
+import { OpenMic } from "@/types";
+import { format24HourTime } from "@/utils/dateUtils";
 
-import OpenMicForm from './OpenMicForm';
+import OpenMicForm from "./OpenMicForm";
 
 interface Props {
   openMic: OpenMic;
   isNew?: boolean;
-  deleteCallback?: any;
-  createCallback?: any;
+  deleteCallback?: (id: number) => void;
+  createCallback?: (id: number) => void;
 }
+
+const emptyCallback = (_id: number) => {
+  return;
+};
 
 const OpenMicCard = ({
   openMic,
   isNew,
-  deleteCallback,
-  createCallback,
+  deleteCallback = emptyCallback,
+  createCallback = emptyCallback,
 }: Props) => {
   const [edit, setEdit] = useState<boolean>(false);
   const [venue, setVenue] = useState<Venue>({} as Venue);
@@ -58,12 +62,12 @@ const OpenMicCard = ({
   const deleteMic = () => {
     customAxios.delete(`api/open_mics/${openMic.id}`).then(
       (_res) => {
-        deleteCallback();
+        deleteCallback(openMic.id);
       },
       (error) => {
         setSnackbar({
           open: true,
-          severity: 'error',
+          severity: "error",
           message: error.message,
         });
       },
@@ -75,7 +79,7 @@ const OpenMicCard = ({
   const displayImage = () => {
     if (venue.venue_image) return venue.venue_image;
 
-    return '/placeholder.png';
+    return "/placeholder.png";
   };
 
   if (edit) {
@@ -93,10 +97,10 @@ const OpenMicCard = ({
         <Card
           key={openMic.id}
           sx={{
-            margin: '1em',
-            padding: '1.5em',
-            width: '800px',
-            maxWidth: '96vw',
+            margin: "1em",
+            padding: "1.5em",
+            width: "800px",
+            maxWidth: "96vw",
           }}
         >
           <Box position="relative">
@@ -104,20 +108,20 @@ const OpenMicCard = ({
               component="img"
               image={displayImage()}
               sx={{
-                filter: 'brightness(35%)',
-                width: 'sm',
+                filter: "brightness(35%)",
+                width: "sm",
                 aspectRatio: 2,
               }}
             />
             <Typography
               sx={{
-                width: '100%',
+                width: "100%",
                 top: 0,
-                position: 'absolute',
-                fontWeight: 'bold',
-                fontSize: '1rem',
+                position: "absolute",
+                fontWeight: "bold",
+                fontSize: "1rem",
                 zIndex: 10,
-                textAlign: 'center',
+                textAlign: "center",
               }}
             >
               {openMic.name}
@@ -125,69 +129,69 @@ const OpenMicCard = ({
             {/* INFO ON LEFT SIDE */}
             <Box
               sx={{
-                position: 'absolute',
+                position: "absolute",
                 top: 0,
                 left: 0,
-                padding: '0.2em',
-                display: 'flex',
-                alignItems: 'start',
-                justifyContent: 'center',
-                flexDirection: 'column',
+                padding: "0.2em",
+                display: "flex",
+                alignItems: "start",
+                justifyContent: "center",
+                flexDirection: "column",
               }}
             >
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justContent: 'start',
-                  flexDirection: 'row',
-                  marginBottom: '0.5em',
+                  display: "flex",
+                  alignItems: "center",
+                  justContent: "start",
+                  flexDirection: "row",
+                  marginBottom: "0.5em",
                 }}
               >
-                <PunchClockIcon sx={{ verticalAlign: 'middle' }} />
-                <Typography sx={{ marginLeft: '0.5em' }}>
+                <PunchClockIcon sx={{ verticalAlign: "middle" }} />
+                <Typography sx={{ marginLeft: "0.5em" }}>
                   {openMic.cadence_readable}
                 </Typography>
               </Box>
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justContent: 'start',
-                  flexDirection: 'row',
-                  marginBottom: '0.5em',
+                  display: "flex",
+                  alignItems: "center",
+                  justContent: "start",
+                  flexDirection: "row",
+                  marginBottom: "0.5em",
                 }}
               >
-                <EditNoteIcon sx={{ verticalAlign: 'middle' }} />
-                <Typography sx={{ marginLeft: '0.5em' }}>
+                <EditNoteIcon sx={{ verticalAlign: "middle" }} />
+                <Typography sx={{ marginLeft: "0.5em" }}>
                   {format24HourTime(openMic.signup_start_time)}
                 </Typography>
               </Box>
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justContent: 'start',
-                  flexDirection: 'row',
-                  marginBottom: '0.5em',
+                  display: "flex",
+                  alignItems: "center",
+                  justContent: "start",
+                  flexDirection: "row",
+                  marginBottom: "0.5em",
                 }}
               >
-                <WatchLaterIcon sx={{ verticalAlign: 'middle' }} />
-                <Typography sx={{ marginLeft: '0.5em' }}>
+                <WatchLaterIcon sx={{ verticalAlign: "middle" }} />
+                <Typography sx={{ marginLeft: "0.5em" }}>
                   {format24HourTime(openMic.event_start_time)}
                 </Typography>
               </Box>
               <Box
                 sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justContent: 'start',
-                  flexDirection: 'row',
-                  marginBottom: '0.5em',
+                  display: "flex",
+                  alignItems: "center",
+                  justContent: "start",
+                  flexDirection: "row",
+                  marginBottom: "0.5em",
                 }}
               >
-                <CategoryIcon sx={{ verticalAlign: 'middle' }} />
-                <Typography sx={{ marginLeft: '0.5em' }}>
+                <CategoryIcon sx={{ verticalAlign: "middle" }} />
+                <Typography sx={{ marginLeft: "0.5em" }}>
                   {openMic.open_mic_type}
                 </Typography>
               </Box>
@@ -196,13 +200,13 @@ const OpenMicCard = ({
             {/* ACTION BUTTONS */}
             <Box
               sx={{
-                position: 'absolute',
+                position: "absolute",
                 top: 0,
                 right: 0,
-                padding: '0.2em',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                padding: "0.2em",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
                 zIndex: 20,
               }}
             >
@@ -210,7 +214,7 @@ const OpenMicCard = ({
                 <Edit />
               </Button>
               <Button
-                sx={{ marginLeft: '1em' }}
+                sx={{ marginLeft: "1em" }}
                 variant="contained"
                 color="error"
                 onClick={() => {

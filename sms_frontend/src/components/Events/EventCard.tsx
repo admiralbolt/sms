@@ -1,9 +1,9 @@
-import dayjs from 'dayjs';
-import { useContext, useEffect, useState } from 'react';
+import dayjs from "dayjs";
+import { useContext, useEffect, useState } from "react";
 
-import { Delete, Edit } from '@mui/icons-material';
-import LinkIcon from '@mui/icons-material/Link';
-import PlaceIcon from '@mui/icons-material/Place';
+import { Delete, Edit } from "@mui/icons-material";
+import LinkIcon from "@mui/icons-material/Link";
+import PlaceIcon from "@mui/icons-material/Place";
 import {
   Box,
   Button,
@@ -14,22 +14,22 @@ import {
   DialogTitle,
   Link,
   Typography,
-} from '@mui/material';
-import IconButton from '@mui/material/IconButton';
+} from "@mui/material";
+import IconButton from "@mui/material/IconButton";
 
-import { FaGuitar } from 'react-icons/fa6';
-import { PiMicrophoneStageFill } from 'react-icons/pi';
+import { FaGuitar } from "react-icons/fa6";
+import { PiMicrophoneStageFill } from "react-icons/pi";
 
-import { SnackbarContext } from '@/contexts/SnackbarContext';
-import { getVenueById } from '@/hooks/api';
-import customAxios from '@/hooks/customAxios';
-import { Event, EventType, Venue } from '@/types';
+import { SnackbarContext } from "@/contexts/SnackbarContext";
+import { getVenueById } from "@/hooks/api";
+import customAxios from "@/hooks/customAxios";
+import { Event, EventType, Venue } from "@/types";
 
-import EventForm from './EventForm';
+import EventForm from "./EventForm";
 
-const SHOW_COLOR = '#0070ff';
-const OPEN_JAM_COLOR = '#ff5500';
-const OPEN_MIC_COLOR = '#ee6600';
+const SHOW_COLOR = "#0070ff";
+const OPEN_JAM_COLOR = "#ff5500";
+const OPEN_MIC_COLOR = "#ee6600";
 
 interface Props {
   event: Event;
@@ -79,7 +79,7 @@ const EventCard = ({
       (error) => {
         setSnackbar({
           open: true,
-          severity: 'error',
+          severity: "error",
           message: error.message,
         });
       },
@@ -93,16 +93,16 @@ const EventCard = ({
   };
 
   const formatTime = (t: string) => {
-    return new Date('1970-01-01T' + t + 'Z').toLocaleTimeString('en-US', {
-      timeZone: 'UTC',
+    return new Date("1970-01-01T" + t + "Z").toLocaleTimeString("en-US", {
+      timeZone: "UTC",
       hour12: true,
-      hour: 'numeric',
-      minute: 'numeric',
+      hour: "numeric",
+      minute: "numeric",
     });
   };
 
   const formatDay = (day: string) => {
-    return dayjs(day).format('ddd, MMM. D');
+    return dayjs(day).format("ddd, MMM. D");
   };
 
   const timeAndDate = (event: Event) => {
@@ -115,13 +115,13 @@ const EventCard = ({
 
   const getEventIcon = (event_type: EventType) => {
     const lowercaseEventType =
-      event_type != undefined ? event_type.toLowerCase() : '';
-    if (lowercaseEventType == 'open mic' || lowercaseEventType == 'open jam') {
+      event_type != undefined ? event_type.toLowerCase() : "";
+    if (lowercaseEventType == "open mic" || lowercaseEventType == "open jam") {
       return (
         <PiMicrophoneStageFill
           size={24}
           color={
-            lowercaseEventType == 'open jam' ? OPEN_JAM_COLOR : OPEN_MIC_COLOR
+            lowercaseEventType == "open jam" ? OPEN_JAM_COLOR : OPEN_MIC_COLOR
           }
         />
       );
@@ -134,7 +134,7 @@ const EventCard = ({
     if (event.event_image) return event.event_image;
     if (venue.venue_image) return venue.venue_image;
 
-    return '/placeholder.png';
+    return "/placeholder.png";
   };
 
   const venueLink = () => {
@@ -168,12 +168,12 @@ const EventCard = ({
         <Card
           key={event.id}
           sx={{
-            display: 'flex',
-            flexDirection: 'column',
+            display: "flex",
+            flexDirection: "column",
             margin: 1,
             padding: 1.5,
-            width: '600px',
-            maxWidth: '96vw',
+            width: "600px",
+            maxWidth: "96vw",
           }}
         >
           <Box position="relative">
@@ -182,48 +182,48 @@ const EventCard = ({
               alt={`Poster for ${event.title}`}
               image={displayImage()}
               sx={{
-                filter: 'brightness(65%)',
-                width: 'sm',
+                filter: "brightness(65%)",
+                width: "sm",
                 aspectRatio: 2,
               }}
             />
             <Typography
               sx={{
-                width: '100%',
+                width: "100%",
                 top: 0,
-                position: 'absolute',
-                fontWeight: 'bold',
-                fontSize: '1rem',
+                position: "absolute",
+                fontWeight: "bold",
+                fontSize: "1rem",
                 zIndex: 10,
-                textAlign: 'center',
+                textAlign: "center",
               }}
             >
               {event.title}
             </Typography>
             <Box
               sx={{
-                position: 'absolute',
+                position: "absolute",
                 left: 0,
                 bottom: 0,
-                padding: '0.2em',
+                padding: "0.2em",
                 opacity: 0.4,
-                backgroundColor: 'black',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                backgroundColor: "black",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
               {getEventIcon(event.event_type)}
             </Box>
             <Box
               sx={{
-                position: 'absolute',
+                position: "absolute",
                 left: 0,
                 bottom: 0,
-                padding: '0.2em',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                padding: "0.2em",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
               {getEventIcon(event.event_type)}
@@ -233,13 +233,13 @@ const EventCard = ({
             {showActions && (
               <Box
                 sx={{
-                  position: 'absolute',
+                  position: "absolute",
                   top: 0,
                   right: 0,
-                  padding: '0.2em',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  padding: "0.2em",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                   zIndex: 100000,
                 }}
               >
@@ -247,7 +247,7 @@ const EventCard = ({
                   <Edit />
                 </Button>
                 <Button
-                  sx={{ marginLeft: '1em' }}
+                  sx={{ marginLeft: "1em" }}
                   variant="contained"
                   color="error"
                   onClick={() => {
@@ -259,13 +259,13 @@ const EventCard = ({
               </Box>
             )}
           </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'row', mt: 1 }}>
+          <Box sx={{ display: "flex", flexDirection: "row", mt: 1 }}>
             <Box
               sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'start',
-                justifyContent: 'center',
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "start",
+                justifyContent: "center",
               }}
             >
               <Typography>{timeAndDate(event)}</Typography>
@@ -273,10 +273,10 @@ const EventCard = ({
             </Box>
             <Box
               sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'end',
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "end",
                 flex: 1,
                 marginTop: 1,
               }}
@@ -292,7 +292,7 @@ const EventCard = ({
                   <PlaceIcon />
                 </IconButton>
               </Link>
-              <Link target="_blank" href={event.event_url || ''}>
+              <Link target="_blank" href={event.event_url || ""}>
                 <IconButton
                   disabled={!event.event_url}
                   size="large"

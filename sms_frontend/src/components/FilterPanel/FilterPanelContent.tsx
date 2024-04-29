@@ -1,20 +1,20 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from "react";
 
-import { Checkbox, FormControlLabel } from '@mui/material';
-import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
-import FormGroup from '@mui/material/FormGroup';
-import Typography from '@mui/material/Typography';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { Checkbox, FormControlLabel } from "@mui/material";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import FormGroup from "@mui/material/FormGroup";
+import Typography from "@mui/material/Typography";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
-import { LocalStorageContext } from '@/contexts/LocalStorageContext';
+import { LocalStorageContext } from "@/contexts/LocalStorageContext";
 import {
   useEventTypes, // useVenueTypes
-} from '@/hooks/api';
+} from "@/hooks/api";
 
-import { useAppBarHeight } from '../../hooks/materialHacks';
+import { useAppBarHeight } from "../../hooks/materialHacks";
 
 const FilterPanelContent = () => {
   const eventTypes = useEventTypes();
@@ -73,7 +73,7 @@ const FilterPanelContent = () => {
     <>
       <Box
         sx={{
-          overflow: 'auto',
+          overflow: "auto",
           padding: 1,
           marginTop: `${appBarHeight}px`,
         }}

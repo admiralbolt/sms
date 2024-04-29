@@ -1,8 +1,8 @@
-import { Box } from '@mui/material';
+import { Box } from "@mui/material";
 
-import { useIngestionRuns } from '@/hooks/api';
+import { useIngestionRuns } from "@/hooks/api";
 
-import IngestionRunView from './IngestionRunView';
+import IngestionRunView from "./IngestionRunView";
 
 const IngestionRunPanel = () => {
   const runs = useIngestionRuns();

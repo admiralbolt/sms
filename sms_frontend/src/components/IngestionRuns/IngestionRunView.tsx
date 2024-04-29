@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Box, Button } from '@mui/material';
+import { Box, Button } from "@mui/material";
 
-import { IngestionRun } from '@/types';
-import { formatDateTime } from '@/utils/dateUtils';
+import { IngestionRun } from "@/types";
+import { formatDateTime } from "@/utils/dateUtils";
 
-import IngestionRunFull from './IngestionRunFull';
-import IngestionRunSummaryTable from './IngestionRunSummaryTable';
+import IngestionRunFull from "./IngestionRunFull";
+import IngestionRunSummaryTable from "./IngestionRunSummaryTable";
 
 interface Props {
   run: IngestionRun;

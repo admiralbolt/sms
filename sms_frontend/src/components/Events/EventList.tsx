@@ -1,12 +1,12 @@
-import { useContext, useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef } from "react";
 
-import { List, ListItem } from '@mui/material';
+import { List, ListItem } from "@mui/material";
 
-import { Event } from '@/types';
+import { Event } from "@/types";
 
-import { LocalStorageContext } from '../../contexts/LocalStorageContext';
-import { useFilteredEvents, useFilteredVenues } from '../../hooks/filteredData';
-import EventCard from './EventCard';
+import { LocalStorageContext } from "../../contexts/LocalStorageContext";
+import { useFilteredEvents, useFilteredVenues } from "../../hooks/filteredData";
+import EventCard from "./EventCard";
 
 const EventList = () => {
   const listContainer = useRef<HTMLUListElement>(null);
@@ -30,9 +30,9 @@ const EventList = () => {
     <List
       ref={listContainer}
       sx={{
-        maxHeight: '100vh',
-        paddingBottom: '10rem',
-        overflow: 'auto',
+        maxHeight: "100vh",
+        paddingBottom: "10rem",
+        overflow: "auto",
       }}
     >
       {filteredEvents.map(

@@ -21,7 +21,7 @@ export type ChangeType =
   | "Skip"
   | "Update";
 
-export const changeTypes: string[] = [
+export const changeTypes: ChangeType[] = [
   "Create",
   "Delete",
   "Update",
