@@ -2,7 +2,7 @@ import { Box } from '@mui/material';
 
 import { useIngestionRuns } from '@/hooks/api';
 
-import IngestionRun from './IngestionRun';
+import IngestionRunView from './IngestionRunView';
 
 const IngestionRunPanel = () => {
   const runs = useIngestionRuns();
@@ -10,7 +10,7 @@ const IngestionRunPanel = () => {
   return (
     <Box>
       {runs.map((run) => (
-        <IngestionRun key={run.id} run={run} />
+        <IngestionRunView key={run.id} run={run} />
       ))}
     </Box>
   );
