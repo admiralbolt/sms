@@ -17,6 +17,7 @@ import {
 } from "@/hooks/filteredData";
 import { useIsMobile } from "@/hooks/window";
 import { Event, EventType, Venue } from "@/types";
+
 import "./MapData.css";
 
 const SHOW_COLOR = "#0070ff";
@@ -44,7 +45,7 @@ interface Props {
   setMapPosition: (latLing: [number, number]) => void;
 }
 
-const Map = ({
+export const MapData = ({
   setBannerOpen,
   setSelectedEvent,
   setSelectedVenue,
@@ -168,5 +169,3 @@ const Map = ({
     </div>
   );
 };
-
-export default Map;

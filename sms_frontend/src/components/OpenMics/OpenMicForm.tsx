@@ -8,7 +8,7 @@ import { useContext } from "react";
 
 import { Button } from "@mui/material";
 
-import VenueSelect from "@/components/Venues/VenueSelect";
+import { VenueSelect } from "@/components/Venues";
 import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { createOpenMic, updateOpenMic } from "@/hooks/api";
 import { useSchema } from "@/hooks/schema";
@@ -25,7 +25,7 @@ const emptyCallback = (_id: number) => {
   return;
 };
 
-const OpenMicForm = ({
+export const OpenMicForm = ({
   openMic,
   setEdit,
   isNew,
@@ -127,5 +127,3 @@ const OpenMicForm = ({
 OpenMicForm.defaultProps = {
   isNew: false,
 };
-
-export default OpenMicForm;

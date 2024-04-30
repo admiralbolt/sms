@@ -2,8 +2,10 @@
 import { useContext, useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
-import { AdminPanelSettings } from "@mui/icons-material";
-import FilterListIcon from "@mui/icons-material/FilterList";
+import {
+  AdminPanelSettings,
+  FilterList as FilterListIcon,
+} from "@mui/icons-material";
 import InfoIcon from "@mui/icons-material/Info";
 import ListIcon from "@mui/icons-material/List";
 import MapIcon from "@mui/icons-material/Map";
@@ -13,13 +15,12 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 
-import { useIsAuthenticated } from "@/hooks/auth";
-
+import { DateSelectorTabs } from "@/components/DateSelectorTabs/DateSelectorTabs";
 import { DrawerContext } from "@/contexts/DrawerContext";
+import { useIsAuthenticated } from "@/hooks/auth";
 import { useAppBarHeight } from "@/hooks/materialHacks";
-import DateSelectorTabs from "@/components/DateSelectorTabs/DateSelectorTabs";
 
-const NavBar = () => {
+export const NavBar = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [isAuthenticated, _] = useIsAuthenticated();
   // const { selectedDate } = useContext(LocalStorageContext) || {};
@@ -133,5 +134,3 @@ const NavBar = () => {
     </Box>
   );
 };
-
-export default NavBar;

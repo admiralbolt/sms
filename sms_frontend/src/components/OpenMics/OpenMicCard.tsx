@@ -1,6 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 
-import { Category, Delete, Edit, EditNote, PunchClock, WatchLater } from "@mui/icons-material";
+import {
+  Category,
+  Delete,
+  Edit,
+  EditNote,
+  PunchClock,
+  WatchLater,
+} from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -19,7 +26,7 @@ import { Venue } from "@/types";
 import { OpenMic } from "@/types";
 import { format24HourTime } from "@/utils/dateUtils";
 
-import OpenMicForm from "./OpenMicForm";
+import { OpenMicForm } from "./OpenMicForm";
 
 interface Props {
   openMic: OpenMic;
@@ -32,7 +39,7 @@ const emptyCallback = (_id: number) => {
   return;
 };
 
-const OpenMicCard = ({
+export const OpenMicCard = ({
   openMic,
   isNew,
   deleteCallback = emptyCallback,
@@ -253,5 +260,3 @@ const OpenMicCard = ({
 OpenMicCard.defaultProps = {
   isNew: false,
 };
-
-export default OpenMicCard;

@@ -4,7 +4,7 @@ import { Box, Card, Divider, Typography } from "@mui/material";
 
 import { usePeriodicTasks } from "@/hooks/api";
 
-const PeriodicTaskStatus = () => {
+export const PeriodicTaskStatus = () => {
   const tasks = usePeriodicTasks();
 
   const formatDate = (day: Date): string => {
@@ -43,5 +43,3 @@ const PeriodicTaskStatus = () => {
     </Box>
   );
 };
-
-export default PeriodicTaskStatus;

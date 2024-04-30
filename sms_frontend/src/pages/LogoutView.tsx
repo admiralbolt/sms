@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { logout, useIsAuthenticated } from "@/hooks/auth";
 
-const LogoutView = () => {
+export const LogoutView = () => {
   const [_, setIsAuthenticated] = useIsAuthenticated();
   const navigate = useNavigate();
 
@@ -22,5 +22,3 @@ const LogoutView = () => {
 
   return <div></div>;
 };
-
-export default LogoutView;

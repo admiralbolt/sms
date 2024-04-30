@@ -15,9 +15,9 @@ import { getEventById } from "@/hooks/api";
 import customAxios from "@/hooks/customAxios";
 import { Event } from "@/types";
 
-import EventCard from "./EventCard";
+import { EventCard } from "./EventCard";
 
-const EventPanel = () => {
+export const EventPanel = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [options, setOptions] = useState<Event[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -162,5 +162,3 @@ const EventPanel = () => {
     </Box>
   );
 };
-
-export default EventPanel;

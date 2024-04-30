@@ -1,7 +1,7 @@
-import Search from "@/components/Search/Search";
+import { Search } from "@/components/Search";
 import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
 
-const SearchView = () => {
+export const SearchView = () => {
   usePageTitle("Seattle Show & Open Mic Search");
   usePageDescription("Search all shows & open mics happening in Seattle.");
 
@@ -11,5 +11,3 @@ const SearchView = () => {
     </div>
   );
 };
-
-export default SearchView;

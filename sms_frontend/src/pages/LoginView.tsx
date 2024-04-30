@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react";
 
 import { Alert } from "@mui/material";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import Snackbar from "@mui/material/Snackbar";
-import TextField from "@mui/material/TextField";
+import { Box, Button, Container, Snackbar, TextField } from "@mui/material";
 
 import { useIsAuthenticated } from "@/hooks/auth";
 import { login } from "@/hooks/auth";
 
-const LoginView = () => {
+export const LoginView = () => {
   const [isAuthenticated, setIsAuthenticated] = useIsAuthenticated();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -98,5 +94,3 @@ const LoginView = () => {
     </Container>
   );
 };
-
-export default LoginView;
