@@ -37,9 +37,13 @@ export const OpenMicPanel = () => {
     setSelectedMic({} as OpenMic);
   };
 
-  const reloadData = () => {
+  const reloadData = (id?: number) => {
     customAxios.get("api/open_mics").then((res) => {
       setOpenMics(res.data);
+      const o = res.data.find((o: OpenMic) => o.id == id);
+      if (o != undefined) {
+        setSelectedMic(o);
+      }
     });
   };
 
@@ -54,11 +58,7 @@ export const OpenMicPanel = () => {
   const onCreate = (id: number) => {
     if (selectedMic == null) return;
 
-    reloadData();
-    const m = openMics.find((o) => o.id == id);
-    if (m != undefined) {
-      setSelectedMic(m);
-    }
+    reloadData(id);
   };
 
   return (

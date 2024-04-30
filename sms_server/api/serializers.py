@@ -23,7 +23,7 @@ class VenueSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.Venue
-    fields = ("id", "venue_image_url", "venue_image", "name", "latitude", "longitude", "address", "postal_code", "city", "venue_url", "description", "venue_tags")
+    fields = ("id", "venue_image_url", "venue_image", "name", "latitude", "longitude", "address", "postal_code", "city", "venue_url", "description", "venue_tags", "show_venue", "gather_data")
 
 class EventSerializer(serializers.ModelSerializer):
   """Serialize Event data."""

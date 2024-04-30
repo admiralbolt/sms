@@ -8,8 +8,7 @@ import {
   SkipNext,
   Upgrade,
 } from "@mui/icons-material";
-import { Chip, SvgIconTypeMap } from "@mui/material";
-import { OverridableComponent } from "@mui/material/OverridableComponent";
+import { Chip } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 import customAxios from "@/hooks/customAxios";
@@ -21,7 +20,7 @@ interface Props {
 }
 
 type OpIcon = {
-  icon: OverridableComponent<SvgIconTypeMap<"svg">>;
+  icon: any;
   color: string;
 };
 

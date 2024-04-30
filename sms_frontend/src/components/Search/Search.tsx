@@ -62,9 +62,7 @@ export const Search = () => {
       )}
       <List
         sx={{
-          maxHeight: "100vh",
-          paddingBottom: "20rem",
-          overflow: "auto",
+          paddingBottom: "2rem",
         }}
       >
         {matches.map((match) => (
