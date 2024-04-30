@@ -42,6 +42,49 @@ const AboutView = () => {
       <Typography variant={"h5"}>Changelog</Typography>
       <br />
       <Typography sx={{ fontSize: "1.3rem" }}>
+        <b>V1.3.0</b> -- May 1st, 2024 <br />
+      </Typography>
+      <List sx={{ listStyleType: "disc", pl: 4 }}>
+        <ListItem
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
+        >
+          Wrote a beautiful admin panel (that only admins get to see).
+        </ListItem>
+        <ListItem
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
+        >
+          Wrote some documentation on how to setup and develop sms.info (that only developers get to see).
+        </ListItem>
+        <ListItem
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
+        >
+          Linted & prettified the frontend code (which only affects developers).
+        </ListItem>
+      </List>
+      Open Mic/Jam Adjustments <br />
+      <Grid container borderTop={"1px solid white"} padding={0.5}>
+        <Grid item xs={6} md={3} paddingTop={0}>
+          + A Space Inside <br />
+          + Bulldog News <br />
+          + Heard Coffee <br />
+          + The Chieftain <br />
+        </Grid>
+        <Grid item xs={6} md={3} paddingTop={0}></Grid>
+      </Grid>
+      <br />
+      <Typography sx={{ fontSize: "1.3rem" }}>
         <b>V1.2.0</b> -- Apr 1st, 2024 <br />
       </Typography>
       <List sx={{ listStyleType: "disc", pl: 4 }}>
