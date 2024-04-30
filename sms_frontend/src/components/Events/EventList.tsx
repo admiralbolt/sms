@@ -30,9 +30,7 @@ const EventList = () => {
     <List
       ref={listContainer}
       sx={{
-        maxHeight: "100vh",
-        paddingBottom: "10rem",
-        overflow: "auto",
+        paddingBottom: "2rem",
       }}
     >
       {filteredEvents.map(

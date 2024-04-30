@@ -13,9 +13,7 @@ const AboutView = () => {
       sx={{
         padding: 1.5,
         maxWidth: "md",
-        overflowY: "scroll",
-        height: "100vh",
-        paddingBottom: "10vh",
+        paddingBottom: "2rem",
       }}
     >
       <Typography variant={"h4"}>
