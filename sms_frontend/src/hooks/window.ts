@@ -1,6 +1,5 @@
 // Thank you https://stackoverflow.com/questions/36862334/get-viewport-window-height-in-reactjs!
-
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const MOBILE_THRESHOLD = 800;
 
@@ -14,7 +13,7 @@ function getWindowDimensions() {
 
 const useWindowDimensions = () => {
   const [windowDimensions, setWindowDimensions] = useState(
-    getWindowDimensions()
+    getWindowDimensions(),
   );
 
   useEffect(() => {

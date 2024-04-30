@@ -1,7 +1,9 @@
-import { Event, EventsByVenueMap, Venue } from "@/types.js";
-import { LocalStorageContext } from "../contexts/LocalStorageContext.js";
-import { useFlatEvents, useFlatVenues } from "./flatFileApi.js";
 import { useContext, useEffect, useState } from "react";
+
+import { Event, EventsByVenueMap, Venue } from "@/types.js";
+
+import { LocalStorageContext } from "@/contexts/LocalStorageContext.js";
+import { useFlatEvents, useFlatVenues } from "./flatFileApi.js";
 
 const useFilteredVenues = () => {
   const venues = useFlatVenues();
@@ -38,8 +40,8 @@ const useFilteredEvents = () => {
       const events = eventsByDate[targetDate];
       setFilteredEvents(
         events.filter((event) => {
-          return selectedEventTypes?.includes(event.event_type)
-        })
+          return selectedEventTypes?.includes(event.event_type);
+        }),
       );
     }
   }, [eventsByDate, selectedEventTypes, selectedDate]);

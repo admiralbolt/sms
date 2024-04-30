@@ -1,20 +1,29 @@
-import { Box, Button, Card, CardMedia, Dialog, DialogActions, DialogTitle, Link, Typography } from "@mui/material";
-import PlaceIcon from "@mui/icons-material/Place";
-import LinkIcon from "@mui/icons-material/Link";
-import IconButton from "@mui/material/IconButton";
 import dayjs from "dayjs";
-import { Event, EventType, Venue } from "@/types";
-import { PiMicrophoneStageFill } from "react-icons/pi";
-import { FaGuitar } from "react-icons/fa6";
-
 import { useContext, useEffect, useState } from "react";
-import { getVenueById } from "@/hooks/api";
-import { SnackbarContext } from "@/contexts/SnackbarContext";
 
 import { Delete, Edit } from "@mui/icons-material";
+import LinkIcon from "@mui/icons-material/Link";
+import PlaceIcon from "@mui/icons-material/Place";
+import {
+  Box,
+  Button,
+  Card,
+  CardMedia,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  IconButton,
+  Link,
+  Typography,
+} from "@mui/material";
 
+import { FaGuitar } from "react-icons/fa6";
+import { PiMicrophoneStageFill } from "react-icons/pi";
 
+import { SnackbarContext } from "@/contexts/SnackbarContext";
+import { getVenueById } from "@/hooks/api";
 import customAxios from "@/hooks/customAxios";
+import { Event, EventType, Venue } from "@/types";
 
 import EventForm from "./EventForm";
 
@@ -36,7 +45,15 @@ const emptyCallback = (_id: number) => {
   return;
 };
 
-const EventCard = ({ event, showActions = false, showDate = false, isNew = false, createCallback = emptyCallback, updateCallback = emptyCallback, deleteCallback = emptyCallback }: Props) => {
+const EventCard = ({
+  event,
+  showActions = false,
+  showDate = false,
+  isNew = false,
+  createCallback = emptyCallback,
+  updateCallback = emptyCallback,
+  deleteCallback = emptyCallback,
+}: Props) => {
   const [venue, setVenue] = useState<Venue>({} as Venue);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
@@ -45,24 +62,31 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
   useEffect(() => {
     if (event.venue < 0) return;
 
-    (async() => {
+    (async () => {
       setVenue(await getVenueById(event.venue));
     })();
   }, [event.venue]);
 
   const toggleEdit = () => {
     setEdit(!edit);
-  }
+  };
 
   const deleteEvent = () => {
-    customAxios.delete(`api/events/${event.id}`).then((_res) => {
-      deleteCallback(event.id);
-    }, (error) => {
-      setSnackbar({open: true, severity: "error", message: error.message});
-    });
+    customAxios.delete(`api/events/${event.id}`).then(
+      (_res) => {
+        deleteCallback(event.id);
+      },
+      (error) => {
+        setSnackbar({
+          open: true,
+          severity: "error",
+          message: error.message,
+        });
+      },
+    );
 
     setOpenConfirmation(false);
-  }
+  };
 
   const mapsLink = (venue: Venue) => {
     return `https://www.google.com/maps/search/?api=1&query=${venue.name}  ${venue.address} ${venue.city} ${venue.postal_code}`;
@@ -130,7 +154,13 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
 
   if (edit) {
     return (
-      <EventForm event={event} setEdit={setEdit} isNew={isNew} createCallback={createCallback} updateCallback={updateCallback} />
+      <EventForm
+        event={event}
+        setEdit={setEdit}
+        isNew={isNew}
+        createCallback={createCallback}
+        updateCallback={updateCallback}
+      />
     );
   } else {
     return (
@@ -151,7 +181,11 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
               component="img"
               alt={`Poster for ${event.title}`}
               image={displayImage()}
-              sx={{ filter: "brightness(65%)", width: "sm", aspectRatio: 2 }}
+              sx={{
+                filter: "brightness(65%)",
+                width: "sm",
+                aspectRatio: 2,
+              }}
             />
             <Typography
               sx={{
@@ -206,11 +240,22 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  zIndex: 100000
+                  zIndex: 100000,
                 }}
               >
-                <Button variant="contained" onClick={toggleEdit}><Edit /></Button>
-                <Button sx={{ marginLeft: "1em" }} variant="contained" color="error" onClick={() => {setOpenConfirmation(true)}}><Delete /></Button>
+                <Button variant="contained" onClick={toggleEdit}>
+                  <Edit />
+                </Button>
+                <Button
+                  sx={{ marginLeft: "1em" }}
+                  variant="contained"
+                  color="error"
+                  onClick={() => {
+                    setOpenConfirmation(true);
+                  }}
+                >
+                  <Delete />
+                </Button>
               </Box>
             )}
           </Box>
@@ -263,22 +308,29 @@ const EventCard = ({ event, showActions = false, showDate = false, isNew = false
           </Box>
         </Card>
 
-         
-
         <Dialog
           open={openConfirmation}
-          onClose={() => {setOpenConfirmation(false);}}
+          onClose={() => {
+            setOpenConfirmation(false);
+          }}
         >
           <DialogTitle>
             Delete Event: {event.title} ({event.event_day})
           </DialogTitle>
           <DialogActions>
-            <Button color="secondary" variant="outlined" onClick={() => {setOpenConfirmation(false)}}>Don't do it</Button>
+            <Button
+              color="secondary"
+              variant="outlined"
+              onClick={() => {
+                setOpenConfirmation(false);
+              }}
+            >
+              Don't do it
+            </Button>
             <Button variant="contained" onClick={deleteEvent} autoFocus>
               DELETE IT
             </Button>
           </DialogActions>
-          
         </Dialog>
       </Box>
     );

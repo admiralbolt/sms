@@ -1,20 +1,23 @@
-import { Outlet, NavLink, useLocation } from "react-router-dom";
+// import { LocalStorageContext } from "@/contexts/LocalStorageContext";
+import { useContext, useEffect, useState } from "react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
+
+import { AdminPanelSettings } from "@mui/icons-material";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import InfoIcon from "@mui/icons-material/Info";
+import ListIcon from "@mui/icons-material/List";
+import MapIcon from "@mui/icons-material/Map";
+import SearchIcon from "@mui/icons-material/Search";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
-import MapIcon from "@mui/icons-material/Map";
-import ListIcon from "@mui/icons-material/List";
-import InfoIcon from "@mui/icons-material/Info";
-import SearchIcon from "@mui/icons-material/Search";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import DateSelectorTabs from "../DateSelectorTabs/DateSelectorTabs";
-import { useEffect, useState, useContext } from "react";
-// import { LocalStorageContext } from "../../contexts/LocalStorageContext";
-import { DrawerContext } from "../../contexts/DrawerContext";
-import { useAppBarHeight } from "../../hooks/materialHacks";
+import Toolbar from "@mui/material/Toolbar";
+
 import { useIsAuthenticated } from "@/hooks/auth";
-import { AdminPanelSettings } from "@mui/icons-material";
+
+import { DrawerContext } from "@/contexts/DrawerContext";
+import { useAppBarHeight } from "@/hooks/materialHacks";
+import DateSelectorTabs from "@/components/DateSelectorTabs/DateSelectorTabs";
 
 const NavBar = () => {
   const [showFilters, setShowFilters] = useState(false);
@@ -91,17 +94,17 @@ const NavBar = () => {
           {isAuthenticated && (
             <NavLink to="/admin">
               {({ isActive }) => (
-              <IconButton
-                size="large"
-                edge="start"
-                aria-label="menu"
-                color={isActive ? "primary" : undefined}
-                sx={{ mr: 4 }}
-              >
-                <AdminPanelSettings />
-              </IconButton>
-            )}
-          </NavLink>
+                <IconButton
+                  size="large"
+                  edge="start"
+                  aria-label="menu"
+                  color={isActive ? "primary" : undefined}
+                  sx={{ mr: 4 }}
+                >
+                  <AdminPanelSettings />
+                </IconButton>
+              )}
+            </NavLink>
           )}
           {showFilters && (
             <Box

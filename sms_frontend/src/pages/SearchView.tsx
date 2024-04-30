@@ -1,6 +1,5 @@
-import Search from '../components/Search/Search';
-import { usePageTitle, usePageDescription } from '../hooks/metaTags';
-
+import Search from "@/components/Search/Search";
+import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
 
 const SearchView = () => {
   usePageTitle("Seattle Show & Open Mic Search");
@@ -11,6 +10,6 @@ const SearchView = () => {
       <Search />
     </div>
   );
-}
+};
 
 export default SearchView;

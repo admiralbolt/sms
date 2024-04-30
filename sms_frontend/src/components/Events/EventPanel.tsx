@@ -1,25 +1,39 @@
-import EventCard from "./EventCard";
-
 import { useCallback, useEffect, useState } from "react";
-import { Event } from "@/types";
-import { Autocomplete, AutocompleteChangeReason, Box, Button, CircularProgress, Divider, TextField, debounce } from "@mui/material";
 
-import customAxios from "@/hooks/customAxios";
+import {
+  Autocomplete,
+  AutocompleteChangeReason,
+  Box,
+  Button,
+  CircularProgress,
+  Divider,
+  TextField,
+  debounce,
+} from "@mui/material";
+
 import { getEventById } from "@/hooks/api";
+import customAxios from "@/hooks/customAxios";
+import { Event } from "@/types";
+
+import EventCard from "./EventCard";
 
 const EventPanel = () => {
   const [open, setOpen] = useState<boolean>(false);
-  const [options, setOptions] = useState<Event[]>([]);  
+  const [options, setOptions] = useState<Event[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
   const [isNew, setIsNew] = useState<boolean>(false);
 
   const loading = open && options.length === 0;
 
-  const handleChange = (_event: any, value: Event | null, _reason: AutocompleteChangeReason, _details: any | undefined) => {
+  const handleChange = (
+    _event: React.SyntheticEvent<Element, globalThis.Event>,
+    value: Event | null,
+    _reason: AutocompleteChangeReason,
+  ) => {
     setIsNew(false);
-    setSelectedEvent((value == null) ? null : value);
-  }
+    setSelectedEvent(value == null ? null : value);
+  };
 
   useEffect(() => {
     if (!open) {
@@ -27,52 +41,53 @@ const EventPanel = () => {
     }
   }, [open]);
 
-  const search = useCallback(
-    debounce(keyword => {
-      if (keyword.length == 0) return;
+  const doSearch = debounce((keyword) => {
+    if (keyword.length == 0) return;
 
-      customAxios.get("api/event_search", {
+    customAxios
+      .get("api/event_search", {
         params: {
-          keyword: keyword
-        }
-      }).then((response) => {
+          keyword: keyword,
+        },
+      })
+      .then((response) => {
         setOptions(response.data);
       });
-    }, 300),
-  []);
+  }, 300);
+
+  const search = useCallback(doSearch, [doSearch]);
 
   useEffect(() => {
     search(inputValue);
-  }, [inputValue]);
+  }, [inputValue, search]);
 
   const createEvent = () => {
     setIsNew(true);
     setSelectedEvent({} as Event);
-  }
+  };
 
   const reloadData = (id?: number) => {
-    (async() => {
+    (async () => {
       setSelectedEvent(await getEventById(id));
     })();
-  }
+  };
 
   const onDelete = (_id: number) => {
     if (selectedEvent == null) return;
-    
+
     setSelectedEvent(null);
     setInputValue("");
-  }
+  };
 
   const onCreate = (id: number) => {
     if (selectedEvent == null) return;
 
     reloadData(id);
-  }
+  };
 
   const onUpdate = (id: number) => {
     reloadData(id);
-    
-  }
+  };
 
   return (
     <Box>
@@ -80,9 +95,9 @@ const EventPanel = () => {
         sx={{
           display: "flex",
           flexDirection: "row",
-          alignItems: "center"
+          alignItems: "center",
         }}
-       >
+      >
         <Autocomplete
           sx={{ width: 300 }}
           open={open}
@@ -92,8 +107,12 @@ const EventPanel = () => {
           onClose={() => {
             setOpen(false);
           }}
-          isOptionEqualToValue={(option: Event, value: Event) => option.id === value.id}
-          getOptionLabel={(option: Event) => `${option.title} (${option.event_day})`}
+          isOptionEqualToValue={(option: Event, value: Event) =>
+            option.id === value.id
+          }
+          getOptionLabel={(option: Event) =>
+            `${option.title} (${option.event_day})`
+          }
           options={options}
           loading={loading}
           onChange={handleChange}
@@ -110,7 +129,9 @@ const EventPanel = () => {
                 ...params.InputProps,
                 endAdornment: (
                   <>
-                    {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                    {loading ? (
+                      <CircularProgress color="inherit" size={20} />
+                    ) : null}
                     {params.InputProps.endAdornment}
                   </>
                 ),
@@ -118,13 +139,26 @@ const EventPanel = () => {
             />
           )}
         />
-        <Button sx={{marginLeft: "1em", height: "3em"}} variant="contained" onClick={createEvent}>Create New</Button>
+        <Button
+          sx={{ marginLeft: "1em", height: "3em" }}
+          variant="contained"
+          onClick={createEvent}
+        >
+          Create New
+        </Button>
       </Box>
       <Box width="100%" height="2em" />
       <Divider />
-      {(selectedEvent != null) &&
-        <EventCard event={selectedEvent} showActions={true} isNew={isNew} deleteCallback={onDelete} createCallback={onCreate} updateCallback={onUpdate} />
-      }
+      {selectedEvent != null && (
+        <EventCard
+          event={selectedEvent}
+          showActions={true}
+          isNew={isNew}
+          deleteCallback={onDelete}
+          createCallback={onCreate}
+          updateCallback={onUpdate}
+        />
+      )}
     </Box>
   );
 };

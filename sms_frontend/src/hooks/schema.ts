@@ -16,6 +16,6 @@ const useSchema = () => {
   }, []);
 
   return { eventSchema, openMicSchema, venueSchema };
-}
+};
 
 export { useSchema };

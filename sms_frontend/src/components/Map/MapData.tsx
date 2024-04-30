@@ -1,24 +1,23 @@
+import L, { LeafletMouseEvent } from "leaflet";
 import { useCallback, useContext, useEffect, useState } from "react";
-import "./MapData.css";
-import { Event, EventType, Venue } from "../../types";
-
-import { LocalStorageContext } from "../../contexts/LocalStorageContext";
-
 import {
-  useMap,
-  useMapEvents,
+  Circle,
   TileLayer,
   Tooltip,
-  Circle,
+  useMap,
+  useMapEvents,
 } from "react-leaflet";
-import L, { LeafletMouseEvent } from "leaflet";
+
+import { Box, Typography } from "@mui/material";
+
+import { LocalStorageContext } from "@/contexts/LocalStorageContext";
 import {
   useFilteredEventsByVenue,
   useFilteredVenues,
-} from "../../hooks/filteredData";
-import { useIsMobile } from "../../hooks/window";
-
-import { Box, Typography } from "@mui/material";
+} from "@/hooks/filteredData";
+import { useIsMobile } from "@/hooks/window";
+import { Event, EventType, Venue } from "@/types";
+import "./MapData.css";
 
 const SHOW_COLOR = "#0070ff";
 const OPEN_JAM_COLOR = "#ff5500";
@@ -76,7 +75,7 @@ const Map = ({
         if (!layer._path) return;
 
         layer._path.classList.remove("active");
-      }
+      },
     );
   }, [map]);
 
@@ -104,7 +103,7 @@ const Map = ({
   const handleEventClick = (
     e: LeafletMouseEvent,
     venue: Venue,
-    event: Event
+    event: Event,
   ) => {
     // We want to center the clicked circle on screen. The math for this gets
     // a little fuzzy. Depends on if we are on mobile or desktop, and we need

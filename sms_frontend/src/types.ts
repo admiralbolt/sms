@@ -12,10 +12,22 @@ export interface Event {
   // Add other properties of event here as needed
 }
 
-export type ChangeType = "Create" | "Delete" | "Update" | "Error" | "NO OP" | "Skip" | "Update"
+export type ChangeType =
+  | "Create"
+  | "Delete"
+  | "Update"
+  | "Error"
+  | "NO OP"
+  | "Skip"
+  | "Update";
 
-export const changeTypes: string[] = [
-  "Create", "Delete", "Update", "Error", "NO OP", "Skip"
+export const changeTypes: ChangeType[] = [
+  "Create",
+  "Delete",
+  "Update",
+  "Error",
+  "NO OP",
+  "Skip",
 ];
 
 export interface IngestionRunRecord {

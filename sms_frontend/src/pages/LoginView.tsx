@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { useIsAuthenticated } from "@/hooks/auth";
 
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Container from '@mui/material/Container';
-import Snackbar from '@mui/material/Snackbar';
 import { Alert } from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Container from "@mui/material/Container";
+import Snackbar from "@mui/material/Snackbar";
+import TextField from "@mui/material/TextField";
+
+import { useIsAuthenticated } from "@/hooks/auth";
 import { login } from "@/hooks/auth";
 
 const LoginView = () => {
@@ -15,14 +16,17 @@ const LoginView = () => {
   const [password, setPassword] = useState("");
   const [openBar, setOpenBar] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  
+
   useEffect(() => {
     if (isAuthenticated) {
       window.location.href = "/admin";
     }
   }, [isAuthenticated]);
 
-  const handleClose = (_event: React.SyntheticEvent | Event, reason?: string) => {
+  const handleClose = (
+    _event: React.SyntheticEvent | Event,
+    reason?: string,
+  ) => {
     if (reason === "clickaway") return;
 
     setOpenBar(false);
@@ -40,7 +44,7 @@ const LoginView = () => {
       setErrorMessage(result.response.data.detail);
       setOpenBar(true);
     }
-  }
+  };
 
   return (
     <Container component="main" maxWidth="xs">
@@ -53,7 +57,7 @@ const LoginView = () => {
           label="Username"
           name="username"
           autoComplete="username"
-          onChange={e => setUsername(e.target.value)}
+          onChange={(e) => setUsername(e.target.value)}
           autoFocus
         />
         <TextField
@@ -64,7 +68,7 @@ const LoginView = () => {
           label="Password"
           type="password"
           id="password"
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           autoComplete="current-password"
         />
         <Button
@@ -87,12 +91,12 @@ const LoginView = () => {
           severity="error"
           variant="filled"
           sx={{ width: "100%" }}
-          >
-            {errorMessage}
-          </Alert>
+        >
+          {errorMessage}
+        </Alert>
       </Snackbar>
     </Container>
   );
-}
+};
 
 export default LoginView;

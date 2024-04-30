@@ -1,4 +1,5 @@
 import axios from "axios";
+
 import { memoizedRefreshTokens } from "./auth";
 
 const baseUrl =
@@ -9,9 +10,9 @@ const baseUrl =
 const customAxios = axios.create({
   baseURL: baseUrl,
   headers: {
-    "Accept": "application/json",
+    Accept: "application/json",
     "Content-Type": "application/json",
-  }
+  },
 });
 
 // Set authorization headers on load if we have an accessToken.
@@ -24,30 +25,34 @@ customAxios.interceptors.request.use(
     const accessToken = localStorage.getItem("accessToken");
 
     if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`
-    }
-
-    return config;
-  }, (error) => Promise.reject(error)
-);
-
-customAxios.interceptors.response.use(resp => resp, async error => {
-  const config = error?.config;
-
-  if (error?.response?.status === 401 && !config?.sent) {
-    config.sent = true;
-
-    await memoizedRefreshTokens();
-    const accessToken = localStorage.getItem("accessToken");
-
-    if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
-    return customAxios(config);
-  }
+    return config;
+  },
+  (error) => Promise.reject(error),
+);
 
-  return Promise.reject(error);
-});
+customAxios.interceptors.response.use(
+  (resp) => resp,
+  async (error) => {
+    const config = error?.config;
+
+    if (error?.response?.status === 401 && !config?.sent) {
+      config.sent = true;
+
+      await memoizedRefreshTokens();
+      const accessToken = localStorage.getItem("accessToken");
+
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
+
+      return customAxios(config);
+    }
+
+    return Promise.reject(error);
+  },
+);
 
 export default customAxios;

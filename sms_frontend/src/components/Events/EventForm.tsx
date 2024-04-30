@@ -1,86 +1,118 @@
-import { Event } from "@/types";
-
-import { useSchema } from "@/hooks/schema";
-import VenueSelect from "@/components/Venues/VenueSelect";
-
-import validator from "@rjsf/validator-ajv8";
+import { IChangeEvent } from "@rjsf/core";
 import { Form } from "@rjsf/mui";
-import { WidgetProps } from "@rjsf/utils";
-import { updateEvent } from "@/hooks/api";
+import { RJSFSchema, WidgetProps } from "@rjsf/utils";
+import validator from "@rjsf/validator-ajv8";
+import { AxiosError } from "axios";
+import React, { useContext } from "react";
 
-import { SnackbarContext } from "@/contexts/SnackbarContext";
-import { useContext } from "react";
 import { Button } from "@mui/material";
 
-import { createEvent } from "@/hooks/api";
-import { AxiosError } from "axios";
+import VenueSelect from "@/components/Venues/VenueSelect";
+import { SnackbarContext } from "@/contexts/SnackbarContext";
+import { createEvent, updateEvent } from "@/hooks/api";
+import { useSchema } from "@/hooks/schema";
+import { Event } from "@/types";
 
 interface Props {
   event: Event;
-  setEdit: any;
+  setEdit: React.Dispatch<React.SetStateAction<boolean>>;
   isNew?: boolean;
-  setIsNew?: any;
-  createCallback?: any;
-  updateCallback?: any;
+  createCallback?: (id: number) => void;
+  updateCallback?: (id: number) => void;
 }
 
-const EventForm = ({ event, setEdit, isNew, createCallback, updateCallback }: Props) => {
+const emptyCallback = (_id: number) => {
+  return;
+};
+
+const EventForm = ({
+  event,
+  setEdit,
+  isNew,
+  createCallback = emptyCallback,
+  updateCallback = emptyCallback,
+}: Props) => {
   const { setSnackbar } = useContext(SnackbarContext) || {};
   const { eventSchema } = useSchema();
 
-  const submit = (submitEvent: any) => {
+  const submit = (submitEvent: IChangeEvent<any, RJSFSchema, any>) => {
     if (isNew) {
-      createEvent(submitEvent.formData).then((response) => {
-        setSnackbar({open: true, severity: "success", message: `Event ${response.data.title} updated successfully!`});
-        setEdit(false);
-        createCallback(response.data["id"]);
-      }, (error: AxiosError) => {
-        setSnackbar({open: true, severity: "error", message: error.message});
-      });
+      createEvent(submitEvent.formData).then(
+        (response) => {
+          setSnackbar({
+            open: true,
+            severity: "success",
+            message: `Event ${response.data.title} updated successfully!`,
+          });
+          setEdit(false);
+          createCallback(response.data["id"]);
+        },
+        (error: AxiosError) => {
+          setSnackbar({
+            open: true,
+            severity: "error",
+            message: error.message,
+          });
+        },
+      );
 
       return;
     }
 
-    updateEvent(submitEvent.formData).then((response) => {
-      setSnackbar({open: true, severity: "success", message: `Event ${response.data.title} updated successfully!`});
-      setEdit(false);
-      updateCallback(response.data["id"]);
-    }, (error: AxiosError) => {
-      setSnackbar({open: true, severity: "error", message: error.message});
-    });
-  }
+    updateEvent(submitEvent.formData).then(
+      (response) => {
+        setSnackbar({
+          open: true,
+          severity: "success",
+          message: `Event ${response.data.title} updated successfully!`,
+        });
+        setEdit(false);
+        updateCallback(response.data["id"]);
+      },
+      (error: AxiosError) => {
+        setSnackbar({
+          open: true,
+          severity: "error",
+          message: error.message,
+        });
+      },
+    );
+  };
 
   const cancel = () => {
     setEdit(false);
-  }
+  };
 
   const uiSchema: object = {
-    "description": {
-      "ui:widget": "textarea"
+    description: {
+      "ui:widget": "textarea",
     },
-    "event_image": {
-      "ui:widget": "hidden"
+    event_image: {
+      "ui:widget": "hidden",
     },
-    "start_time": {
-      "ui:widget": "time"
+    start_time: {
+      "ui:widget": "time",
     },
-    "end_time": {
-      "ui:widget": "time"
+    end_time: {
+      "ui:widget": "time",
     },
-    "doors_open": {
-      "ui:widget": "time"
+    doors_open: {
+      "ui:widget": "time",
     },
-    "signup_start_time": {
-      "ui:widget": "time"
+    signup_start_time: {
+      "ui:widget": "time",
     },
-    "venue": {
+    venue: {
       "ui:widget": (props: WidgetProps) => {
         return (
-          <VenueSelect venueId={props.value} onChange={(event: any) => props.onChange(event.target.value)} />
+          <VenueSelect
+            venueId={props.value}
+            onChange={(event: any) => props.onChange(event.target.value)}
+          />
         );
-      }
-    }
-  }
+      },
+    },
+  };
 
   return (
     <Form
@@ -91,14 +123,18 @@ const EventForm = ({ event, setEdit, isNew, createCallback, updateCallback }: Pr
       onSubmit={submit}
       noValidate
     >
-      <Button type="submit" variant="contained">Submit</Button>
-      <Button sx={{marginLeft: "2em"}} onClick={cancel} variant="outlined">Cancel</Button>
+      <Button type="submit" variant="contained">
+        Submit
+      </Button>
+      <Button sx={{ marginLeft: "2em" }} onClick={cancel} variant="outlined">
+        Cancel
+      </Button>
     </Form>
   );
 };
 
 EventForm.defaultProps = {
-  "isNew": false
-}
+  isNew: false,
+};
 
 export default EventForm;

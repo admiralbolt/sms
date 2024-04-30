@@ -1,5 +1,6 @@
-import { createContext, useEffect, useState } from "react";
 import dayjs from "dayjs";
+import { createContext, useEffect, useState } from "react";
+
 import { useEventTypes, useVenueTypes } from "@/hooks/api";
 
 interface LocalStorageContextType {
@@ -18,7 +19,7 @@ const loadFromStorage = (key: string, defaultValue: unknown): any => {
 
 const loadDateFromStorage = (
   key: string,
-  defaultValue: dayjs.Dayjs
+  defaultValue: dayjs.Dayjs,
 ): dayjs.Dayjs => {
   const item = localStorage.getItem(key);
   const today = dayjs(dayjs().format("YYYY-MM-DD"));
@@ -30,7 +31,7 @@ const loadDateFromStorage = (
 };
 
 const LocalStorageContext = createContext<LocalStorageContextType | undefined>(
-  undefined
+  undefined,
 );
 
 const LocalStorageContextProvider = ({
@@ -41,26 +42,26 @@ const LocalStorageContextProvider = ({
   const eventTypes = useEventTypes();
   const venueTypes = useVenueTypes();
   const [selectedEventTypes, setSelectedEventTypes] = useState<string[]>(
-    loadFromStorage("selectedEventTypes", [])
+    loadFromStorage("selectedEventTypes", []),
   );
   const [selectedVenueTypes, setSelectedVenueTypes] = useState<string[]>(
-    loadFromStorage("selectedVenueTypes", [])
+    loadFromStorage("selectedVenueTypes", []),
   );
   const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs>(
-    loadDateFromStorage("selectedDate", dayjs())
+    loadDateFromStorage("selectedDate", dayjs()),
   );
 
   useEffect(() => {
     localStorage.setItem(
       "selectedEventTypes",
-      JSON.stringify(selectedEventTypes)
+      JSON.stringify(selectedEventTypes),
     );
   }, [selectedEventTypes]);
 
   useEffect(() => {
     localStorage.setItem(
       "selectedVenueTypes",
-      JSON.stringify(selectedVenueTypes)
+      JSON.stringify(selectedVenueTypes),
     );
   }, [selectedVenueTypes]);
 
@@ -72,13 +73,13 @@ const LocalStorageContextProvider = ({
     if (selectedEventTypes.length == 0) {
       setSelectedEventTypes(eventTypes);
     }
-  }, [eventTypes]);
+  }, [selectedEventTypes.length, eventTypes]);
 
   useEffect(() => {
     if (selectedVenueTypes.length == 0) {
       setSelectedVenueTypes(venueTypes);
     }
-  }, [venueTypes]);
+  }, [selectedVenueTypes.length, venueTypes]);
 
   return (
     <LocalStorageContext.Provider

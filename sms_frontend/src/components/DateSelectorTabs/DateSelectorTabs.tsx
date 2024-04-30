@@ -1,12 +1,14 @@
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import { LocalStorageContext } from "../../contexts/LocalStorageContext";
-import React, { useContext, useEffect, useState } from "react";
 import dayjs from "dayjs";
+import React, { useContext, useEffect, useState } from "react";
 
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+
+import { LocalStorageContext } from "@/contexts/LocalStorageContext";
+import { useIsMobile } from "@/hooks/window";
 import "./DateSelectorTabs.css";
-import { useIsMobile } from "../../hooks/window";
-// import { useScroller } from "../../hooks/materialHacks";
+
+// import { useScroller } from "@/hooks/materialHacks";
 
 const today = dayjs(dayjs().format("YYYY-MM-DD"));
 
@@ -27,7 +29,7 @@ const DateSelectorTabs = () => {
 
   const handleChange = (
     _event: React.SyntheticEvent<Element, Event>,
-    newValue: string
+    newValue: string,
   ) => {
     setValue(newValue);
     setSelectedDate?.(dayjs(newValue));
@@ -48,7 +50,7 @@ const DateSelectorTabs = () => {
     if (JSON.stringify(dateList) != JSON.stringify(dateRange)) {
       setDateRange(dateList);
     }
-  }, [selectedDate, total]);
+  }, [dateRange, minOffset, selectedDate, total]);
 
   // const centerSelected = () => {
   //   const allTabs = document.getElementsByClassName("MuiTab-textColorPrimary");

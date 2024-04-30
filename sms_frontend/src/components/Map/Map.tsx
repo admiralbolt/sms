@@ -1,18 +1,18 @@
+import { LatLngExpression } from "leaflet";
 import React, { useState } from "react";
-
-import MapData from "./MapData";
-import { useIsMobile, useWindowDimensions } from "../../hooks/window";
-import {
-  useAppBarHeight,
-  useFilterPanelWidth,
-} from "../../hooks/materialHacks";
-
 import { MapContainer } from "react-leaflet";
 
 import { Box, Fade } from "@mui/material";
-import EventDetail from "../Events/EventCard";
-import { LatLngExpression } from "leaflet";
+
 import { Event, Venue } from "@/types";
+
+import {
+  useAppBarHeight,
+  useFilterPanelWidth,
+} from "@/hooks/materialHacks";
+import { useIsMobile, useWindowDimensions } from "@/hooks/window";
+import EventDetail from "@/components/Events/EventCard";
+import MapData from "./MapData";
 
 const zoom = 13;
 

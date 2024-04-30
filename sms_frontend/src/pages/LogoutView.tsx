@@ -1,13 +1,14 @@
-import { logout, useIsAuthenticated } from "@/hooks/auth";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { logout, useIsAuthenticated } from "@/hooks/auth";
 
 const LogoutView = () => {
   const [_, setIsAuthenticated] = useIsAuthenticated();
   const navigate = useNavigate();
 
   useEffect(() => {
-    (async() => {
+    (async () => {
       const result = await logout();
 
       if (result === null) {
@@ -17,9 +18,9 @@ const LogoutView = () => {
         console.log("LOGOUT BUSTED", result);
       }
     })();
-  }, []);
+  }, [navigate, setIsAuthenticated]);
 
-  return (<div></div>);
+  return <div></div>;
 };
 
 export default LogoutView;

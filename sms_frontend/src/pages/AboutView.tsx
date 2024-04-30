@@ -1,7 +1,8 @@
 import { Divider, Link, List, ListItem, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { usePageTitle, usePageDescription } from "../hooks/metaTags";
+
+import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
 
 const AboutView = () => {
   usePageTitle("Seattle Music Scene - About");
@@ -39,34 +40,59 @@ const AboutView = () => {
         </Link>
         .
       </Typography>
-
       <Divider sx={{ marginTop: "1.5rem", marginBottom: "1.5rem" }} />
       <Typography variant={"h5"}>Changelog</Typography>
       <br />
-
       <Typography sx={{ fontSize: "1.3rem" }}>
         <b>V1.2.0</b> -- Apr 1st, 2024 <br />
       </Typography>
       <List sx={{ listStyleType: "disc", pl: 4 }}>
         <ListItem
-          sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
         >
           Frontend rewrite! Now sporting vite.js and tailwind!
         </ListItem>
         <ListItem
-          sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
         >
-          Fixed a couple bugs with the data ingester, and added stats
-          tracking for runs of the ingester. The couple bugs are things like:
-
-          <ListItem sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}>
+          Fixed a couple bugs with the data ingester, and added stats tracking
+          for runs of the ingester. The couple bugs are things like:
+          <ListItem
+            sx={{
+              display: "list-item",
+              paddingBottom: 0,
+              paddingTop: 0,
+            }}
+          >
             One failed import would break the entire ingester.
           </ListItem>
-          <ListItem sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}>
-          Venues that have very similar latitude / longitude breaking the ingester.
+          <ListItem
+            sx={{
+              display: "list-item",
+              paddingBottom: 0,
+              paddingTop: 0,
+            }}
+          >
+            Venues that have very similar latitude / longitude breaking the
+            ingester.
           </ListItem>
-          <ListItem sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}>
-          Venues that have the same name but different latitude / longitude breaking the ingester.
+          <ListItem
+            sx={{
+              display: "list-item",
+              paddingBottom: 0,
+              paddingTop: 0,
+            }}
+          >
+            Venues that have the same name but different latitude / longitude
+            breaking the ingester.
           </ListItem>
         </ListItem>
       </List>
@@ -84,58 +110,82 @@ const AboutView = () => {
           - Conor Byrne <br />
         </Grid>
       </Grid>
-
       <br />
       <br />
-
       <Typography sx={{ fontSize: "1.3rem" }}>
         <b>V1.1.0</b> -- Mar 1st, 2024 <br />
       </Typography>
       <List sx={{ listStyleType: "disc", pl: 4 }}>
         <ListItem
-          sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
         >
           Integration with dice.fm added! This adds shows for these venues:
           Sunset Tavern, Rabbit Box, Kremwerk, Belltown Yacht Club, Vera
           Project, Black Lodge
         </ListItem>
         <ListItem
-          sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
         >
           Added open mics for Outlander, Peace of Mind, C&P Coffee, and
           Boneyard!
         </ListItem>
         <ListItem
-          sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
         >
           Fixed a bug where some non music events (like trivia) were incorrectly
           showing up.
         </ListItem>
         <ListItem
-          sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
         >
           Updating listing page to sort by venue.
         </ListItem>
         <ListItem
-          sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
         >
           Added icons to distinguish between shows & open mics.
         </ListItem>
         <ListItem
-          sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
         >
           Fixed the event detail cards to have consistent sizes.
         </ListItem>
       </List>
-
       <br />
-
       <Typography sx={{ fontSize: "1.3rem" }}>
         <b>V1.0.0</b> -- January 26th, 2024 <br />
       </Typography>
       <List sx={{ listStyleType: "disc", pl: 4 }}>
         <ListItem
-          sx={{ display: "list-item", paddingBottom: 0, paddingTop: 0 }}
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
         >
           Launched initial site!
         </ListItem>

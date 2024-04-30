@@ -1,5 +1,7 @@
-import {  useEffect, useState } from "react";
-import { EventsByDate, EventsByVenue, Event, Venue } from "@/types";
+import { useEffect, useState } from "react";
+
+import { Event, EventsByDate, EventsByVenue, Venue } from "@/types";
+
 import customAxios from "./customAxios";
 
 const useFlatEvents = (): [EventsByVenue, EventsByDate, Event[]] => {
