@@ -2,9 +2,9 @@ import { Box } from "@mui/material";
 
 import { useIngestionRuns } from "@/hooks/api";
 
-import IngestionRunView from "./IngestionRunView";
+import { IngestionRunView } from "./IngestionRunView";
 
-const IngestionRunPanel = () => {
+export const IngestionRunPanel = () => {
   const runs = useIngestionRuns();
 
   return (
@@ -15,5 +15,3 @@ const IngestionRunPanel = () => {
     </Box>
   );
 };
-
-export default IngestionRunPanel;

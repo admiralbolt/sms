@@ -10,7 +10,7 @@ interface Props {
   onChange: any;
 }
 
-const VenueSelect = ({ onChange, venueId }: Props) => {
+export const VenueSelect = ({ onChange, venueId }: Props) => {
   const [venues, _setVenues] = useVenues();
 
   const [selectedVenue, setSelectedVenue] = useState<string>(venueId);
@@ -30,5 +30,3 @@ const VenueSelect = ({ onChange, venueId }: Props) => {
     </Select>
   );
 };
-
-export default VenueSelect;

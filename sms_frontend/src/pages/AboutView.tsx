@@ -1,10 +1,9 @@
 import { Divider, Link, List, ListItem, Typography } from "@mui/material";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
+import { Box, Grid } from "@mui/material";
 
 import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
 
-const AboutView = () => {
+export const AboutView = () => {
   usePageTitle("Seattle Music Scene - About");
   usePageDescription("Information about the seattle music scene website");
 
@@ -193,5 +192,3 @@ const AboutView = () => {
     </Box>
   );
 };
-
-export default AboutView;

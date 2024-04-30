@@ -13,9 +13,9 @@ import { useVenues } from "@/hooks/api";
 import customAxios from "@/hooks/customAxios";
 import { Venue } from "@/types";
 
-import VenueCard from "./VenueCard";
+import { VenueCard } from "./VenueCard";
 
-const VenuePanel = () => {
+export const VenuePanel = () => {
   const [venues, setVenues] = useVenues();
 
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
@@ -110,5 +110,3 @@ const VenuePanel = () => {
     </Box>
   );
 };
-
-export default VenuePanel;

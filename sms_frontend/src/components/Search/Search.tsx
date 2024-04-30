@@ -1,18 +1,15 @@
 import Fuse, { FuseResult } from "fuse.js";
 import { useEffect, useState } from "react";
 
-import { Box, List, ListItem } from "@mui/material";
-import { Typography } from "@mui/material";
-import TextField from "@mui/material/TextField";
+import { Box, List, ListItem, TextField, Typography } from "@mui/material";
 
-import EventCard from "@/components/Events/EventCard";
-import { Event } from "@/types";
-
+import { EventCard } from "@/components/Events/EventCard";
 import { useFlatEvents, useVenueMap } from "@/hooks/flatFileApi";
+import { Event } from "@/types";
 
 const MAX_RESULTS = 50;
 
-const Search = () => {
+export const Search = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [, , allEventsList] = useFlatEvents();
   const venueMap = useVenueMap();
@@ -83,5 +80,3 @@ const Search = () => {
     </Box>
   );
 };
-
-export default Search;

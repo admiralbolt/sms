@@ -2,13 +2,13 @@ import { useContext, useEffect, useRef } from "react";
 
 import { List, ListItem } from "@mui/material";
 
-import { Event } from "@/types";
-
 import { LocalStorageContext } from "@/contexts/LocalStorageContext";
 import { useFilteredEvents, useFilteredVenues } from "@/hooks/filteredData";
-import EventCard from "./EventCard";
+import { Event } from "@/types";
 
-const EventList = () => {
+import { EventCard } from "./EventCard";
+
+export const EventList = () => {
   const listContainer = useRef<HTMLUListElement>(null);
   const filteredVenues = useFilteredVenues();
   const filteredEvents = useFilteredEvents();
@@ -46,5 +46,3 @@ const EventList = () => {
     </List>
   );
 };
-
-export default EventList;

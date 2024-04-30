@@ -13,9 +13,9 @@ import { useOpenMics } from "@/hooks/api";
 import customAxios from "@/hooks/customAxios";
 import { OpenMic } from "@/types";
 
-import OpenMicCard from "./OpenMicCard";
+import { OpenMicCard } from "./OpenMicCard";
 
-const OpenMicPanel = () => {
+export const OpenMicPanel = () => {
   const [openMics, setOpenMics] = useOpenMics();
 
   const [selectedMic, setSelectedMic] = useState<OpenMic | null>(null);
@@ -105,5 +105,3 @@ const OpenMicPanel = () => {
     </Box>
   );
 };
-
-export default OpenMicPanel;

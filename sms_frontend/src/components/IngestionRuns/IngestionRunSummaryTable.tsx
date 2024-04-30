@@ -6,7 +6,7 @@ interface Props {
   ingestionRun: IngestionRun;
 }
 
-const IngestionRunSummaryTable = ({ ingestionRun }: Props) => {
+export const IngestionRunSummaryTable = ({ ingestionRun }: Props) => {
   const s: any = { event: {}, venue: {} };
   changeTypes.forEach((t: string) => {
     s["event"][t] = 0;
@@ -79,5 +79,3 @@ const IngestionRunSummaryTable = ({ ingestionRun }: Props) => {
     </Box>
   );
 };
-
-export default IngestionRunSummaryTable;

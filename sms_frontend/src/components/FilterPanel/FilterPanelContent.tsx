@@ -13,10 +13,9 @@ import { LocalStorageContext } from "@/contexts/LocalStorageContext";
 import {
   useEventTypes, // useVenueTypes
 } from "@/hooks/api";
-
 import { useAppBarHeight } from "@/hooks/materialHacks";
 
-const FilterPanelContent = () => {
+export const FilterPanelContent = () => {
   const eventTypes = useEventTypes();
   // const venueTypes = useVenueTypes();
   const appBarHeight = useAppBarHeight();
@@ -116,5 +115,3 @@ const FilterPanelContent = () => {
     </>
   );
 };
-
-export default FilterPanelContent;
