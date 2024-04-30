@@ -1,4 +1,4 @@
-// import { LocalStorageContext } from "../../contexts/LocalStorageContext";
+// import { LocalStorageContext } from "@/contexts/LocalStorageContext";
 import { useContext, useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
@@ -15,9 +15,9 @@ import Toolbar from "@mui/material/Toolbar";
 
 import { useIsAuthenticated } from "@/hooks/auth";
 
-import { DrawerContext } from "../../contexts/DrawerContext";
-import { useAppBarHeight } from "../../hooks/materialHacks";
-import DateSelectorTabs from "../DateSelectorTabs/DateSelectorTabs";
+import { DrawerContext } from "@/contexts/DrawerContext";
+import { useAppBarHeight } from "@/hooks/materialHacks";
+import DateSelectorTabs from "@/components/DateSelectorTabs/DateSelectorTabs";
 
 const NavBar = () => {
   const [showFilters, setShowFilters] = useState(false);

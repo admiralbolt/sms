@@ -4,8 +4,8 @@ import { List, ListItem } from "@mui/material";
 
 import { Event } from "@/types";
 
-import { LocalStorageContext } from "../../contexts/LocalStorageContext";
-import { useFilteredEvents, useFilteredVenues } from "../../hooks/filteredData";
+import { LocalStorageContext } from "@/contexts/LocalStorageContext";
+import { useFilteredEvents, useFilteredVenues } from "@/hooks/filteredData";
 import EventCard from "./EventCard";
 
 const EventList = () => {

@@ -10,13 +10,13 @@ import {
 
 import { Box, Typography } from "@mui/material";
 
-import { LocalStorageContext } from "../../contexts/LocalStorageContext";
+import { LocalStorageContext } from "@/contexts/LocalStorageContext";
 import {
   useFilteredEventsByVenue,
   useFilteredVenues,
-} from "../../hooks/filteredData";
-import { useIsMobile } from "../../hooks/window";
-import { Event, EventType, Venue } from "../../types";
+} from "@/hooks/filteredData";
+import { useIsMobile } from "@/hooks/window";
+import { Event, EventType, Venue } from "@/types";
 import "./MapData.css";
 
 const SHOW_COLOR = "#0070ff";

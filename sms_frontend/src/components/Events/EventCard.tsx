@@ -12,10 +12,10 @@ import {
   Dialog,
   DialogActions,
   DialogTitle,
+  IconButton,
   Link,
   Typography,
 } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
 
 import { FaGuitar } from "react-icons/fa6";
 import { PiMicrophoneStageFill } from "react-icons/pi";

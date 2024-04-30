@@ -9,9 +9,9 @@ import { Event, Venue } from "@/types";
 import {
   useAppBarHeight,
   useFilterPanelWidth,
-} from "../../hooks/materialHacks";
-import { useIsMobile, useWindowDimensions } from "../../hooks/window";
-import EventDetail from "../Events/EventCard";
+} from "@/hooks/materialHacks";
+import { useIsMobile, useWindowDimensions } from "@/hooks/window";
+import EventDetail from "@/components/Events/EventCard";
 import MapData from "./MapData";
 
 const zoom = 13;

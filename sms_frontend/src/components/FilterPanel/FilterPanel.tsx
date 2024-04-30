@@ -3,8 +3,8 @@ import { useContext } from "react";
 import Drawer from "@mui/material/Drawer";
 import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 
-import { DrawerContext } from "../../contexts/DrawerContext";
-import { useIsMobile } from "../../hooks/window";
+import { DrawerContext } from "@/contexts/DrawerContext";
+import { useIsMobile } from "@/hooks/window";
 import FilterPanelContent from "./FilterPanelContent";
 
 const drawerWidth = 280;

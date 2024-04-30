@@ -14,7 +14,7 @@ import {
   useEventTypes, // useVenueTypes
 } from "@/hooks/api";
 
-import { useAppBarHeight } from "../../hooks/materialHacks";
+import { useAppBarHeight } from "@/hooks/materialHacks";
 
 const FilterPanelContent = () => {
   const eventTypes = useEventTypes();

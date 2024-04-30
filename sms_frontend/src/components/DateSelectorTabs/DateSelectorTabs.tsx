@@ -4,11 +4,11 @@ import React, { useContext, useEffect, useState } from "react";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 
-import { LocalStorageContext } from "../../contexts/LocalStorageContext";
-import { useIsMobile } from "../../hooks/window";
+import { LocalStorageContext } from "@/contexts/LocalStorageContext";
+import { useIsMobile } from "@/hooks/window";
 import "./DateSelectorTabs.css";
 
-// import { useScroller } from "../../hooks/materialHacks";
+// import { useScroller } from "@/hooks/materialHacks";
 
 const today = dayjs(dayjs().format("YYYY-MM-DD"));
 

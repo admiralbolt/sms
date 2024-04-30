@@ -1,7 +1,6 @@
 import { IChangeEvent } from "@rjsf/core";
 import { Form } from "@rjsf/mui";
-import { WidgetProps } from "@rjsf/utils";
-import { RJSFSchema } from "@rjsf/utils";
+import { RJSFSchema, WidgetProps } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
 import { AxiosError } from "axios";
 import React, { useContext } from "react";
@@ -10,8 +9,7 @@ import { Button } from "@mui/material";
 
 import VenueSelect from "@/components/Venues/VenueSelect";
 import { SnackbarContext } from "@/contexts/SnackbarContext";
-import { updateEvent } from "@/hooks/api";
-import { createEvent } from "@/hooks/api";
+import { createEvent, updateEvent } from "@/hooks/api";
 import { useSchema } from "@/hooks/schema";
 import { Event } from "@/types";
 

@@ -8,7 +8,7 @@ import TextField from "@mui/material/TextField";
 import EventCard from "@/components/Events/EventCard";
 import { Event } from "@/types";
 
-import { useFlatEvents, useVenueMap } from "../../hooks/flatFileApi";
+import { useFlatEvents, useVenueMap } from "@/hooks/flatFileApi";
 
 const MAX_RESULTS = 50;
 

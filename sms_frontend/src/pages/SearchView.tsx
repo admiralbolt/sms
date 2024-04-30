@@ -1,5 +1,5 @@
-import Search from "../components/Search/Search";
-import { usePageDescription, usePageTitle } from "../hooks/metaTags";
+import Search from "@/components/Search/Search";
+import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
 
 const SearchView = () => {
   usePageTitle("Seattle Show & Open Mic Search");
