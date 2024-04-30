@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import DeleteIcon from "@mui/icons-material/Delete";
-import NotInterestedIcon from "@mui/icons-material/NotInterested";
-import ReportIcon from "@mui/icons-material/Report";
-import SkipNextIcon from "@mui/icons-material/SkipNext";
-import UpgradeIcon from "@mui/icons-material/Upgrade";
+import { AddCircleOutline, Delete, NotInterested, Report, SkipNext, Upgrade } from "@mui/icons-material";
 import { Chip, SvgIconTypeMap } from "@mui/material";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -27,42 +22,42 @@ const opFormat: Map<ChangeType, OpIcon> = new Map([
   [
     "Create",
     {
-      icon: AddCircleOutlineIcon,
+      icon: AddCircleOutline,
       color: "#00ffaa",
     },
   ],
   [
     "Update",
     {
-      icon: UpgradeIcon,
+      icon: Upgrade,
       color: "#00aaff",
     },
   ],
   [
     "Delete",
     {
-      icon: DeleteIcon,
+      icon: Delete,
       color: "#ff8080",
     },
   ],
   [
     "Error",
     {
-      icon: ReportIcon,
+      icon: Report,
       color: "#ff4040",
     },
   ],
   [
     "NO OP",
     {
-      icon: NotInterestedIcon,
+      icon: NotInterested,
       color: "#aaaaaa",
     },
   ],
   [
     "Skip",
     {
-      icon: SkipNextIcon,
+      icon: SkipNext,
       color: "#ffaa40",
     },
   ],

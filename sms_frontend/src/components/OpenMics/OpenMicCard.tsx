@@ -1,10 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 
-import { Delete, Edit } from "@mui/icons-material";
-import CategoryIcon from "@mui/icons-material/Category";
-import EditNoteIcon from "@mui/icons-material/EditNote";
-import PunchClockIcon from "@mui/icons-material/PunchClock";
-import WatchLaterIcon from "@mui/icons-material/WatchLater";
+import { Category, Delete, Edit, EditNote, PunchClock, WatchLater } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -148,7 +144,7 @@ const OpenMicCard = ({
                   marginBottom: "0.5em",
                 }}
               >
-                <PunchClockIcon sx={{ verticalAlign: "middle" }} />
+                <PunchClock sx={{ verticalAlign: "middle" }} />
                 <Typography sx={{ marginLeft: "0.5em" }}>
                   {openMic.cadence_readable}
                 </Typography>
@@ -162,7 +158,7 @@ const OpenMicCard = ({
                   marginBottom: "0.5em",
                 }}
               >
-                <EditNoteIcon sx={{ verticalAlign: "middle" }} />
+                <EditNote sx={{ verticalAlign: "middle" }} />
                 <Typography sx={{ marginLeft: "0.5em" }}>
                   {format24HourTime(openMic.signup_start_time)}
                 </Typography>
@@ -176,7 +172,7 @@ const OpenMicCard = ({
                   marginBottom: "0.5em",
                 }}
               >
-                <WatchLaterIcon sx={{ verticalAlign: "middle" }} />
+                <WatchLater sx={{ verticalAlign: "middle" }} />
                 <Typography sx={{ marginLeft: "0.5em" }}>
                   {format24HourTime(openMic.event_start_time)}
                 </Typography>
@@ -190,7 +186,7 @@ const OpenMicCard = ({
                   marginBottom: "0.5em",
                 }}
               >
-                <CategoryIcon sx={{ verticalAlign: "middle" }} />
+                <Category sx={{ verticalAlign: "middle" }} />
                 <Typography sx={{ marginLeft: "0.5em" }}>
                   {openMic.open_mic_type}
                 </Typography>
