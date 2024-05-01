@@ -4,19 +4,16 @@ import { MapContainer } from "react-leaflet";
 
 import { Box, Fade } from "@mui/material";
 
+import { EventCard } from "@/components/Events/EventCard";
+import { useAppBarHeight, useFilterPanelWidth } from "@/hooks/materialHacks";
+import { useIsMobile, useWindowDimensions } from "@/hooks/window";
 import { Event, Venue } from "@/types";
 
-import {
-  useAppBarHeight,
-  useFilterPanelWidth,
-} from "@/hooks/materialHacks";
-import { useIsMobile, useWindowDimensions } from "@/hooks/window";
-import EventDetail from "@/components/Events/EventCard";
-import MapData from "./MapData";
+import { MapData } from "./MapData";
 
 const zoom = 13;
 
-const Map = () => {
+export const Map = () => {
   const { height, width } = useWindowDimensions();
   const isMobile = useIsMobile();
   const appBarHeight = useAppBarHeight();
@@ -44,7 +41,7 @@ const Map = () => {
           }}
         >
           {selectedVenue && selectedEvent && (
-            <EventDetail event={selectedEvent} />
+            <EventCard event={selectedEvent} />
           )}
         </Box>
       );
@@ -65,9 +62,7 @@ const Map = () => {
           margin: "auto",
         }}
       >
-        {selectedVenue && selectedEvent && (
-          <EventDetail event={selectedEvent} />
-        )}
+        {selectedVenue && selectedEvent && <EventCard event={selectedEvent} />}
       </Box>
     );
   };
@@ -101,5 +96,3 @@ const Map = () => {
     </div>
   );
 };
-
-export default Map;

@@ -1,9 +1,12 @@
 import { useContext, useState } from "react";
 
-import { Delete, Edit } from "@mui/icons-material";
-import GpsFixedIcon from "@mui/icons-material/GpsFixed";
-import HomeIcon from "@mui/icons-material/Home";
-import LocationCityIcon from "@mui/icons-material/LocationCity";
+import {
+  Delete,
+  Edit,
+  GpsFixed as GpsFixedIcon,
+  Home as HomeIcon,
+  LocationCity as LocationCityIcon,
+} from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -19,7 +22,7 @@ import { SnackbarContext } from "@/contexts/SnackbarContext";
 import customAxios from "@/hooks/customAxios";
 import { Venue } from "@/types";
 
-import VenueForm from "./VenueForm";
+import { VenueForm } from "./VenueForm";
 
 interface Props {
   venue: Venue;
@@ -29,7 +32,7 @@ interface Props {
   updateCallback?: any;
 }
 
-const VenueCard = ({
+export const VenueCard = ({
   venue,
   isNew,
   deleteCallback,
@@ -229,5 +232,3 @@ const VenueCard = ({
 VenueCard.defaultProps = {
   isNew: false,
 };
-
-export default VenueCard;

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useIsAuthenticated } from "@/hooks/auth";
 
-const RequireAuth = ({ children }: { children: JSX.Element }) => {
+export const RequireAuth = ({ children }: { children: JSX.Element }) => {
   const [isAuthenticated] = useIsAuthenticated();
   const navigate = useNavigate();
 
@@ -13,5 +13,3 @@ const RequireAuth = ({ children }: { children: JSX.Element }) => {
 
   return children;
 };
-
-export default RequireAuth;

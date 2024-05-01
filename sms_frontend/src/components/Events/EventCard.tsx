@@ -1,9 +1,12 @@
 import dayjs from "dayjs";
 import { useContext, useEffect, useState } from "react";
 
-import { Delete, Edit } from "@mui/icons-material";
-import LinkIcon from "@mui/icons-material/Link";
-import PlaceIcon from "@mui/icons-material/Place";
+import {
+  Delete,
+  Edit,
+  Link as LinkIcon,
+  Place as PlaceIcon,
+} from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -25,7 +28,7 @@ import { getVenueById } from "@/hooks/api";
 import customAxios from "@/hooks/customAxios";
 import { Event, EventType, Venue } from "@/types";
 
-import EventForm from "./EventForm";
+import { EventForm } from "./EventForm";
 
 const SHOW_COLOR = "#0070ff";
 const OPEN_JAM_COLOR = "#ff5500";
@@ -45,7 +48,7 @@ const emptyCallback = (_id: number) => {
   return;
 };
 
-const EventCard = ({
+export const EventCard = ({
   event,
   showActions = false,
   showDate = false,
@@ -336,5 +339,3 @@ const EventCard = ({
     );
   }
 };
-
-export default EventCard;

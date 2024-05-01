@@ -6,19 +6,19 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { SnackbarContextProvider } from "@/contexts/SnackbarContext";
 
 import "./App.css";
-import Layout from "./components/Layout/Layout";
-import RequireAuth from "./components/RequireAuth/RequireAuth";
+import { NavBar } from "./components/Layout/Layout";
+import { RequireAuth } from "./components/RequireAuth/RequireAuth";
 import { DrawerContextProvider } from "./contexts/DrawerContext";
 import { LocalStorageContextProvider } from "./contexts/LocalStorageContext";
 import theme from "./hooks/theme";
-import AboutView from "./pages/AboutView";
-import AdminView from "./pages/AdminView";
-import ListView from "./pages/ListView";
-import LoginView from "./pages/LoginView";
-import LogoutView from "./pages/LogoutView";
-import MapView from "./pages/MapView";
-import NotFoundView from "./pages/NotFoundView";
-import SearchView from "./pages/SearchView";
+import { AboutView } from "./pages/AboutView";
+import { AdminView } from "./pages/AdminView";
+import { ListView } from "./pages/ListView";
+import { LoginView } from "./pages/LoginView";
+import { LogoutView } from "./pages/LogoutView";
+import { MapView } from "./pages/MapView";
+import { NotFoundView } from "./pages/NotFoundView";
+import { SearchView } from "./pages/SearchView";
 
 // We only want to run Google Analytics in production.
 if (process.env.NODE_ENV === "production") {
@@ -35,7 +35,7 @@ const App = () => {
               <CssBaseline />
               <BrowserRouter>
                 <Routes>
-                  <Route path="/" element={<Layout />}>
+                  <Route path="/" element={<NavBar />}>
                     <Route index element={<Navigate to="/list" />} />
                     <Route path="list" element={<ListView />} />
                     <Route path="map" element={<MapView />} />

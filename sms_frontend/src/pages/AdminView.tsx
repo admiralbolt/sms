@@ -2,11 +2,11 @@ import * as React from "react";
 
 import { Box, Tab, Tabs } from "@mui/material";
 
-import EventPanel from "@/components/Events/EventPanel";
-import IngestionRunPanel from "@/components/IngestionRuns/IngestionRunPanel";
-import OpenMicPanel from "@/components/OpenMics/OpenMicPanel";
-import PeriodicTaskStatus from "@/components/PeriodicTaskStatus";
-import VenuePanel from "@/components/Venues/VenuePanel";
+import { EventPanel } from "@/components/Events";
+import { IngestionRunPanel } from "@/components/IngestionRuns";
+import { OpenMicPanel } from "@/components/OpenMics";
+import { PeriodicTaskStatus } from "@/components/PeriodicTaskStatus";
+import { VenuePanel } from "@/components/Venues";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -37,7 +37,7 @@ function a11yProps(index: number) {
   };
 }
 
-const AdminView = () => {
+export const AdminView = () => {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -81,5 +81,3 @@ const AdminView = () => {
     </Box>
   );
 };
-
-export default AdminView;

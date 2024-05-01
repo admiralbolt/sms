@@ -2,7 +2,7 @@ import { Box, Typography } from "@mui/material";
 
 import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
 
-const NotFoundView = () => {
+export const NotFoundView = () => {
   usePageTitle("Seattle Music Scene 404");
   usePageDescription("Seattle Music Scene 404");
 
@@ -18,5 +18,3 @@ const NotFoundView = () => {
     </>
   );
 };
-
-export default NotFoundView;

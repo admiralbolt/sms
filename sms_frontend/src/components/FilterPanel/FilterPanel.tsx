@@ -1,16 +1,16 @@
 import { useContext } from "react";
 
-import Drawer from "@mui/material/Drawer";
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
+import { Drawer, SwipeableDrawer } from "@mui/material";
 
 import { DrawerContext } from "@/contexts/DrawerContext";
 import { useIsMobile } from "@/hooks/window";
-import FilterPanelContent from "./FilterPanelContent";
+
+import { FilterPanelContent } from "./FilterPanelContent";
 
 const drawerWidth = 280;
 // const drawerBleeding = 30;
 
-const FilterPanel = () => {
+export const FilterPanel = () => {
   const isMobile = useIsMobile();
   const { drawerOpen, setDrawerOpen } = useContext(DrawerContext) || {};
 
@@ -52,5 +52,3 @@ const FilterPanel = () => {
     </SwipeableDrawer>
   );
 };
-
-export default FilterPanel;

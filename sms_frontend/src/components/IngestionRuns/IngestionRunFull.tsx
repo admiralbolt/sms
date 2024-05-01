@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 
-import { AddCircleOutline, Delete, NotInterested, Report, SkipNext, Upgrade } from "@mui/icons-material";
+import {
+  AddCircleOutline,
+  Delete,
+  NotInterested,
+  Report,
+  SkipNext,
+  Upgrade,
+} from "@mui/icons-material";
 import { Chip } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
@@ -85,6 +92,7 @@ const columns: GridColDef[] = [
 
       return (
         <Chip
+          //@ts-ignore
           icon={<Icon color={color} />}
           label={params.value}
           variant="outlined"
@@ -96,7 +104,7 @@ const columns: GridColDef[] = [
   { field: "change_log", headerName: "LOG", width: 500 },
 ];
 
-const IngestionRunFull = ({ run }: Props) => {
+export const IngestionRunFull = ({ run }: Props) => {
   const [records, setRecords] = useState<IngestionRunRecord[]>([]);
 
   useEffect(() => {
@@ -120,5 +128,3 @@ const IngestionRunFull = ({ run }: Props) => {
     />
   );
 };
-
-export default IngestionRunFull;

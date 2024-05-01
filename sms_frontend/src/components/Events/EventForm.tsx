@@ -7,7 +7,7 @@ import React, { useContext } from "react";
 
 import { Button } from "@mui/material";
 
-import VenueSelect from "@/components/Venues/VenueSelect";
+import { VenueSelect } from "@/components/Venues";
 import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { createEvent, updateEvent } from "@/hooks/api";
 import { useSchema } from "@/hooks/schema";
@@ -25,7 +25,7 @@ const emptyCallback = (_id: number) => {
   return;
 };
 
-const EventForm = ({
+export const EventForm = ({
   event,
   setEdit,
   isNew,
@@ -136,5 +136,3 @@ const EventForm = ({
 EventForm.defaultProps = {
   isNew: false,
 };
-
-export default EventForm;

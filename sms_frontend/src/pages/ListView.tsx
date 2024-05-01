@@ -1,8 +1,8 @@
-import EventList from "@/components/Events/EventList";
-import FilterPanel from "@/components/FilterPanel/FilterPanel";
+import { EventList } from "@/components/Events";
+import { FilterPanel } from "@/components/FilterPanel";
 import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
 
-const ListView = () => {
+export const ListView = () => {
   usePageTitle("Seattle Show & Open Mic List");
   usePageDescription("See a list of all shows & open mics in Seattle.");
 
@@ -13,5 +13,3 @@ const ListView = () => {
     </div>
   );
 };
-
-export default ListView;

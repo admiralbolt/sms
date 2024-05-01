@@ -19,7 +19,7 @@ interface Props {
   updateCallback?: any;
 }
 
-const VenueForm = ({
+export const VenueForm = ({
   venue,
   setEdit,
   isNew,
@@ -111,5 +111,3 @@ const VenueForm = ({
 VenueForm.defaultProps = {
   isNew: false,
 };
-
-export default VenueForm;

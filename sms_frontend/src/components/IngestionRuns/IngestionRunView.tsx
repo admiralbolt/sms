@@ -5,14 +5,14 @@ import { Box, Button } from "@mui/material";
 import { IngestionRun } from "@/types";
 import { formatDateTime } from "@/utils/dateUtils";
 
-import IngestionRunFull from "./IngestionRunFull";
-import IngestionRunSummaryTable from "./IngestionRunSummaryTable";
+import { IngestionRunFull } from "./IngestionRunFull";
+import { IngestionRunSummaryTable } from "./IngestionRunSummaryTable";
 
 interface Props {
   run: IngestionRun;
 }
 
-const IngestionRunView = ({ run }: Props) => {
+export const IngestionRunView = ({ run }: Props) => {
   const [showFullDetails, setShowFullDetails] = useState<boolean>(false);
 
   return (
@@ -31,5 +31,3 @@ const IngestionRunView = ({ run }: Props) => {
     </Box>
   );
 };
-
-export default IngestionRunView;

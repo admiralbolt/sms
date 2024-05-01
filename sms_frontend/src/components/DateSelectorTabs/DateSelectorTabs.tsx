@@ -1,18 +1,18 @@
 import dayjs from "dayjs";
 import React, { useContext, useEffect, useState } from "react";
 
-import Tab from "@mui/material/Tab";
-import Tabs from "@mui/material/Tabs";
+import { Tab, Tabs } from "@mui/material";
 
 import { LocalStorageContext } from "@/contexts/LocalStorageContext";
 import { useIsMobile } from "@/hooks/window";
+
 import "./DateSelectorTabs.css";
 
 // import { useScroller } from "@/hooks/materialHacks";
 
 const today = dayjs(dayjs().format("YYYY-MM-DD"));
 
-const DateSelectorTabs = () => {
+export const DateSelectorTabs = () => {
   const [dateRange, setDateRange] = useState<dayjs.Dayjs[]>([]);
   const [total, setTotal] = useState(21);
   const { selectedDate, setSelectedDate } =
@@ -80,5 +80,3 @@ const DateSelectorTabs = () => {
     </Tabs>
   );
 };
-
-export default DateSelectorTabs;
