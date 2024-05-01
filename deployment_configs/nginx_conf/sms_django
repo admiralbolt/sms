@@ -1,0 +1,52 @@
+# NGINX config for react frontend.
+
+upstream django {
+	server unix:///home/admiralbolt/deployments/latest/sms_backend/sms_server.sock;
+}
+
+server {
+	listen 8000 ssl;
+	server_name seattlemusicscene.info www.seattlemusicscene.info;
+
+	ssl_certificate /etc/letsencrypt/live/seattlemusicscene.info/fullchain.pem; # managed by Certbot
+        ssl_certificate_key /etc/letsencrypt/live/seattlemusicscene.info/privkey.pem; # managed by Certbot
+        include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+        ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+	location = /favicon.ico { access_log off; log_not_found off; }
+	location /static {
+		alias /home/admiralbolt/deployments/latest/sms_backend/static;
+	}
+	location /uploads {
+		if ($request_method = 'OPTIONS') {
+			add_header 'Access-Control-Allow-Origin' '*';
+			add_header 'Access-Control-Allow-Methods' 'GET';
+			add_header 'Access-Control-Allow-Headers' 'Authorization,DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,pragma,expires';
+			add_header 'Access-Control-Max-Age' 1728000;
+			add_header 'Content-Type' 'text/plain chraset=UTF-8';
+			add_header 'Content-Length' 0;
+			return 204;
+		}
+
+		if ($request_method = 'GET') {
+			add_header 'Access-Control-Allow-Origin' '*';
+			add_header 'Access-Control-Allow-Methods' 'GET';
+			add_header 'Access-Control-Allow-Headers' 'Authorization,DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,pragma,expires';
+		}
+
+		alias /home/admiralbolt/deployments/uploads/;
+	}
+	location / {
+		uwsgi_pass django;
+		include /etc/nginx/uwsgi_params;
+	}
+}
+
+server {
+	listen 8000;
+	
+        server_name www.seattlemusicscene.info;
+        ssl_certificate /etc/letsencrypt/live/seattlemusicscene.info/fullchain.pem; # managed by Certbot
+        ssl_certificate_key /etc/letsencrypt/live/seattlemusicscene.info/privkey.pem; # managed by Certbot
+        return 301 https://seattlemusicscene.info:8000$request_uri;
+}

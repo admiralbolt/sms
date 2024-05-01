@@ -1,0 +1,14 @@
+[Unit]
+Description=Celery Beat Service
+After=network.target
+
+[Service]
+Type=simple
+User=admiralbolt
+Group=admiralbolt
+EnvironmentFile=/etc/default/celeryd
+WorkingDirectory=/home/admiralbolt/deployments/latest/sms_backend
+ExecStart=/bin/sh -c '${CELERY_BIN} -A ${CELERY_APP} beat --pidfile=${CELERYBEAT_PID_FILE} --logfile=${CELERYBEAT_LOG_FILE} --loglevel=${CELERYD_LOG_LEVEL}'
+
+[Install]
+WantedBy=multi-user.target

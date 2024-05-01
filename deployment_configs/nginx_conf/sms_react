@@ -1,0 +1,31 @@
+# NGINX config for react frontend.
+
+server {
+	root /home/admiralbolt/deployments/latest/sms_frontend;
+	index index.html;
+
+	server_name seattlemusicscene.info www.seattlemusicscene.info;
+
+	location / {
+		try_files $uri /index.html =404;
+	}
+
+	listen [::]:443 ssl ipv6only=on; # managed by Certbot
+	listen 443 ssl; # managed by Certbot
+	ssl_certificate /etc/letsencrypt/live/seattlemusicscene.info/fullchain.pem; # managed by Certbot
+	ssl_certificate_key /etc/letsencrypt/live/seattlemusicscene.info/privkey.pem; # managed by Certbot
+	include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+
+
+server {
+	listen 80 ;
+	listen 443 ssl;
+
+	server_name www.seattlemusicscene.info;
+	ssl_certificate /etc/letsencrypt/live/seattlemusicscene.info/fullchain.pem; # managed by Certbot
+	ssl_certificate_key /etc/letsencrypt/live/seattlemusicscene.info/privkey.pem; # managed by Certbot
+	return 301 https://seattlemusicscene.info$request_uri;
+}

@@ -36,7 +36,7 @@ python manage.py migrate
 cd $git_base/sms_frontend
 npm install
 npm run build
-cp -r $git_base/sms_frontend/build $deployment_base/$today/sms_frontend
+cp -r $git_base/sms_frontend/dist $deployment_base/$today/sms_frontend
 
 # 5. Update latest symlink to point to todays date.
 ln -sfn $deployment_base/$today $deployment_base/latest
