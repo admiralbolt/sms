@@ -95,7 +95,39 @@ python manage.py write_latest_data
 Now we should be able to see some data in both the admin panel and the rest api!
 Huzzah!
 
+### Crawlers
+
+There are venues that don't use any ticketing apis, and for these there are manual
+crawlers written to extract their data (in `sms_server/api/ingestion/crawlers`).
+Crawlers require some special setup to work properly, since they are dynamic code
+that requires awareness of a particular venue in the DB.
+
+For each crawler a `VenueApi` needs to be created with:
+
+1. The appropriate venue attached.
+2. The Api Name set to "Crawler"
+3. The Crawler Name set to the exact name of the crawler file.
+
+Here's an example record for the crawler for Blue Moon Tavern:
+
+![image](https://github.com/admiralbolt/sms/assets/1838577/31fb1dcd-b195-4758-b92c-85912754867e)
+
+### Venue Masks
+
+Venue Masks are weird and I hate them. Basically, there are lots of mistyping of venue
+names, and venue masks are a way of associating the correct data for a venue.
+I hope to be able to delete these because they are gross. Here's an example:
+
+![image](https://github.com/admiralbolt/sms/assets/1838577/ee4943f6-38c6-4e0c-ab78-ee10d94fce3a)
+
 ## Frontend Setup
+
+A **MUCH** easier process:
+
+```bash
+cd sms_frontend
+npm run dev
+```
 
 ## Celery Setup
 
