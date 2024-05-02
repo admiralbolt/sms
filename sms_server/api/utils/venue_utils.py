@@ -140,17 +140,17 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
 def get_or_create_venue(name: str, latitude: float=0, longitude: float=0, address: str="", postal_code: int=0, city: str="", api_name: str="", api_id: int=0, debug: bool=False) -> Venue:
   """Get or create a venue.
 
-  We make the dangerous assumption here, that if you don't supply the proper
-  values for a particular field, they will be inherited via a mask properly.
+  We make the dangerous assumption here, that if you don't supply the correct
+  values for a particular field, they will be inherited via an alias properly.
   """
-  venue = _get_or_create_venue(apply_mask(Venue(
+  venue = _get_or_create_venue(Venue(
       name=name,
       latitude=latitude,
       longitude=longitude,
       address=address,
       postal_code=postal_code,
       city=city,
-    )), debug=debug)
+    ), debug=debug)
 
   # Get or create an associated venue API record before returning.
   add_venue_api(venue=venue, api_name=api_name, api_id=api_id)
