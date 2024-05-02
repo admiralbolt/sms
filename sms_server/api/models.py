@@ -35,6 +35,12 @@ class Venue(models.Model):
   # Optional.
   description = models.TextField(default="", blank=True, null=True)
   max_capacity = models.IntegerField(default=-1)
+  # Alias is a complicated regex-ish field that helps conditional match venues
+  # based on slightly different naming. The regexes are keyed by the field
+  # that they are applied to, for example:
+  #
+  # {"name": "^(The Tractor|Tractor Tavern)$"}
+  alias = models.JSONField(max_length=1024, blank=True, null=True)
 
   # In general we don't want to delete data, we just want to hide it.
   # We add two controls for this:
