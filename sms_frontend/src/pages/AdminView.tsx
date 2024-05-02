@@ -51,6 +51,7 @@ export const AdminView = () => {
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example"
+          variant="scrollable"
         >
           <Tab label="Status" {...a11yProps(0)} />
           <Tab label="Ingestion Runs" {...a11yProps(1)} />
