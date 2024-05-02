@@ -53,6 +53,13 @@ class Venue(models.Model):
     super().__init__(*args, **kwargs)
     self._original_venue_image_url = self.venue_image_url
 
+  def alias_matches(self, other_venue: object) -> bool:
+    """Check to see if another venue matches based on our aliasing."""
+    for key, regex in self.alias.items():
+      if not re.match(regex, getattr(other_venue, key)):
+        return False
+    return True
+
   def make_pretty(self):
     # Helper method for cleaning venue information.
     # Ideally I'd just trigger whatever black magic is happening in pre_save(),

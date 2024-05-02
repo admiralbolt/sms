@@ -7,7 +7,7 @@ import deepdiff
 
 from api.constants import get_all, ChangeTypes, VenueTypes
 from api.ingestion.crawlers.crawler import Crawler
-from api.models import Venue, VenueMask, VenueTag, VenueApi
+from api.models import Venue, VenueTag, VenueApi
 from api.utils import diff_utils
 
 logger = logging.getLogger(__name__)
@@ -26,25 +26,8 @@ def clear_api_data(api_name: str) -> None:
 
     venue.delete()
 
-def apply_mask(venue: Venue) -> Venue:
-  """Applies venue masks to the input venue."""
-  for mask in VenueMask.objects.all():
-    if not mask.should_apply(venue):
-      continue
-
-    venue.name = mask.proper_name
-    if mask.latitude:
-      venue.latitude = mask.latitude
-    if mask.longitude:
-      venue.longitude = mask.longitude
-    if mask.address:
-      venue.address = mask.address
-
-  venue.make_pretty()
-  return venue
-
 def _get_venue(venue: Venue) -> Venue:
-  """Get a venue by name OR lat/long fields."""
+  """Get a venue by name, lat/long fields, or aliasing."""
   db_venue = Venue.objects.filter(name_lower=venue.name.lower())
   if db_venue.exists():
     return db_venue.first()
@@ -53,6 +36,12 @@ def _get_venue(venue: Venue) -> Venue:
     db_venue = Venue.objects.filter(latitude=venue.latitude, longitude=venue.longitude)
     if db_venue.exists():
       return db_venue.first()
+
+  # Check against all venues with defined aliases.
+  venues_with_aliases = Venue.objects.exclude(alias__isnull=True).exclude(alias__exact="")
+  for db_venue in venues_with_aliases:
+    if db_venue.alias_matches(venue):
+      return db_venue
 
   return None
 
@@ -99,7 +88,8 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
   about the changes applied / fields created. The Venue returned will be the 
   finalized version of the created or updated venue.
   """
-  new_venue = apply_mask(Venue(**kwargs))
+  new_venue = Venue(**kwargs)
+  new_venue.make_pretty()
 
   # THIS IS AMERICA.
   if isinstance(new_venue.postal_code, str) and new_venue.postal_code.startswith("V8"):
