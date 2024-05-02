@@ -7,7 +7,7 @@ import deepdiff
 
 from api.constants import get_all, ChangeTypes, VenueTypes
 from api.ingestion.crawlers.crawler import Crawler
-from api.models import Venue, VenueTag, VenueApi
+from api.models import Event, IngestionRecord, Venue, VenueTag, VenueApi
 from api.utils import diff_utils
 
 logger = logging.getLogger(__name__)
@@ -183,3 +183,51 @@ def get_crawler_info(crawler_name: str) -> tuple[Optional[Venue], Crawler]:
     return None, None
 
   return venue_api.venue, crawler
+
+def merge_venues(from_venue: Venue, to_venue: Venue) -> bool:
+  """Merge from_venue => to_venue.
+
+  This performs the following ops:
+
+  1. Moves all events associated with "from_venue" to "to_venue".
+  2. Moves all venue apis that are associated with "from_venue" to "to_venue"
+     IF, they don't already exist. May want to consider adjusted venue api
+     structure in the future if we need to track multiple different api
+     ids for a single venue.
+  3. Updates all ingestion records associated with "from_venue" to "to_venue".
+  4. Updates the "to_venue" tags to be the union of all venue tags.
+  5. Deletes the "from_venue".
+  """
+  # 1. Move all events to the new venue, delete them if they aren't needed.
+  for event in Event.objects.filter(venue=from_venue):
+    if Event.objects.filter(venue=to_venue, event_day=event.event_day, start_time=event.start_time).exists():
+      event.delete()
+    else:
+      event.venue = to_venue
+      event.save()
+
+  # 2. Move all venue apis to the new venue. Delete them if they aren't needed.
+  for venue_api in VenueApi.objects.filter(venue=from_venue):
+    if VenueApi.objects.filter(venue=to_venue, api_name=venue_api.api_name).exists():
+      venue_api.delete()
+    else:
+      venue_api.venue = to_venue
+      venue_api.save()
+
+  # 3. Update all ingestion records to point to the new venue.
+  for record in IngestionRecord.objects.filter(venue=from_venue):
+    record.venue = to_venue
+    record.save()
+  
+  # 4. Merge all venue tags, delete them if they aren't needed.
+  for tag in VenueTag.objects.filter(venue=from_venue):
+    if VenueTag.objects.filter(venue=to_venue, venue_type=tag.venue_type).exists():
+      tag.delete()
+    else:
+      tag.venue = to_venue
+      tag.save()
+
+  # 5. Should be no more references to our old venue, clean 'er up!
+  from_venue.delete()
+
+  return True
