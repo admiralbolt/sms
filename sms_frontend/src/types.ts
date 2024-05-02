@@ -69,6 +69,7 @@ export interface Venue {
   address: string;
   city: string;
   postal_code: string;
+  alias: string;
   show_venue: boolean;
   gather_data: boolean;
 }

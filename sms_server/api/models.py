@@ -1,4 +1,5 @@
 """Database models."""
+import json
 import re
 import requests
 
@@ -40,7 +41,7 @@ class Venue(models.Model):
   # that they are applied to, for example:
   #
   # {"name": "^(The Tractor|Tractor Tavern)$"}
-  alias = models.JSONField(max_length=1024, blank=True, null=True)
+  alias = models.TextField(max_length=1024, blank=True, null=True)
 
   # In general we don't want to delete data, we just want to hide it.
   # We add two controls for this:
@@ -55,7 +56,8 @@ class Venue(models.Model):
 
   def alias_matches(self, other_venue: object) -> bool:
     """Check to see if another venue matches based on our aliasing."""
-    for key, regex in self.alias.items():
+    alias_obj = json.loads(self.alias)
+    for key, regex in alias_obj.items():
       if not re.match(regex, getattr(other_venue, key)):
         return False
     return True
