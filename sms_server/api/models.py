@@ -1,5 +1,6 @@
 """Database models."""
 import json
+import logging
 import re
 import requests
 
@@ -7,6 +8,8 @@ from django.core.files.base import ContentFile
 from django.db import models
 
 from api.constants import get_choices, ChangeTypes, EventTypes, IngestionApis, Neighborhoods, OpenMicTypes, VenueTypes
+
+logger = logging.getLogger(__name__)
 
 class APISample(models.Model):
   """Raw data dumps from the api."""
@@ -56,7 +59,12 @@ class Venue(models.Model):
 
   def alias_matches(self, other_venue: object) -> bool:
     """Check to see if another venue matches based on our aliasing."""
-    alias_obj = json.loads(self.alias)
+    try:
+      alias_obj = json.loads(self.alias)
+    except:
+      logger.error(f"Alias field on venue {self.id} is not a json object.")
+      return False
+
     for key, regex in alias_obj.items():
       if not re.match(regex, getattr(other_venue, key)):
         return False
