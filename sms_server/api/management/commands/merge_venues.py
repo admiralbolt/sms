@@ -12,8 +12,17 @@ class Command(BaseCommand):
   def add_arguments(self, parser):
     parser.add_argument("--from_venue", type=int, help="ID of the venue to merge info from.")
     parser.add_argument("--to_venue", type=int, help="ID of the venue to merge info to.")
+    parser.add_argument("--all", default=False, action="store_true", help="Perform alias matching and merging for all venues.")
 
   def handle(self, *args, **kwargs):
+    if not kwargs["all"] and (not kwargs["from_venue"] and not kwargs["to_venue"]):
+      print("Please provide one of --all or (--from_venue, and --to_venue)")
+      return
+
+    if kwargs["all"]:
+      venue_utils.check_aliasing_and_merge_all()
+      return
+    
     try:
       from_venue = Venue.objects.get(id=kwargs["from_venue"])
     except:

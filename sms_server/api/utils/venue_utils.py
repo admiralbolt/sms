@@ -231,3 +231,23 @@ def merge_venues(from_venue: Venue, to_venue: Venue) -> bool:
   from_venue.delete()
 
   return True
+
+def check_aliasing_and_merge_all():
+  """Checks aliasing of ALL venues, and merge venues accordingly.
+
+  This can be a very expensive operation, as it has to check the list of all
+  venues and perform alias matching on each one.
+  """
+  venues_with_aliasing = Venue.objects.exclude(alias__isnull=True).exclude(alias__exact="")
+  if not venues_with_aliasing.exists():
+    return
+  
+  for venue in Venue.objects.all():
+    for proper_venue in venues_with_aliasing:
+      if venue == proper_venue:
+        continue
+
+      if not proper_venue.alias_matches(venue):
+        continue
+
+      merge_venues(venue, proper_venue)
