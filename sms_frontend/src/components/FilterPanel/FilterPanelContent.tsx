@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 
-import { Checkbox, FormControlLabel } from "@mui/material";
+import { Button, Checkbox, FormControlLabel } from "@mui/material";
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import FormGroup from "@mui/material/FormGroup";
@@ -120,7 +120,9 @@ useEffect(() => {
         <Divider />
         <FormGroup id="event-type-filters">
           {eventTypes.map((type) => (
+            <div className="flex flex-row">
             <FormControlLabel
+            className="w-52"
               key={type}
               control={
                 <Checkbox
@@ -131,6 +133,8 @@ useEffect(() => {
               }
               label={type}
             />
+            <Button onClick={() => setSelectedEventTypes?.([type])}>Only</Button>
+            </div>
           ))}
         </FormGroup>
 
