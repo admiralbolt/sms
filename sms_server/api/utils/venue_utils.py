@@ -1,7 +1,8 @@
 """Utils related to Venues."""
 import importlib
 import logging
-from typing import Any, Optional
+import os
+from typing import Any, Generator
 
 import deepdiff
 
@@ -174,3 +175,11 @@ def get_crawler(crawler_module_name: str) -> Crawler:
       return getattr(crawler_module, attr)()
 
   return None
+
+def all_crawler_names() -> Generator[str, None, None]:
+  """Loads all crawler names based on file names on disk."""
+  root_path = importlib.resources.files("api.ingestion.crawlers")
+  for f in root_path.glob("*.py"):
+    name = os.path.basename(f)[:-3]
+    if name != "__init__" and name != "crawler":
+      yield name

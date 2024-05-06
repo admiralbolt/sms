@@ -52,4 +52,4 @@ class BlueMoonCrawler(Crawler):
     for day, events in all_data["eventsByDates"].items():
       event_data = events[0]
       event_data["day"] = day
-      self.process_event(ingestion_run=ingestion_run, venue=venue, event_data=event_data, debug=debug)
+      self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)

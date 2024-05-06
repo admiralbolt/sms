@@ -11,7 +11,7 @@ class Crawler(ABC):
   """Abstract crawler class."""
   crawler_name: str = ""
   venue_name_regex: str = ""
-  venue: Venue
+  venue: Venue = None
 
   def __init__(self, crawler_name: str, venue_name_regex: str) -> object:
     self.crawler_name = crawler_name
@@ -46,6 +46,7 @@ class Crawler(ABC):
     # venue matches.
     venues = Venue.objects.filter(name__iregex=self.venue_name_regex)
     if len(venues) != 1:
+      logger.warn(f"Unable to create venue api object for crawler: {self.crawler_name}, {len(venues)} match the name regex.")
       return
     
     VenueApi.objects.create(
