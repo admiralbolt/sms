@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 import logging
+import traceback
 
-from api.constants import IngestionApis
+from api.constants import ChangeTypes, IngestionApis
 from api.models import IngestionRecord, IngestionRun, Venue, VenueApi
 from api.utils import event_utils
 
@@ -71,5 +72,12 @@ class Crawler(ABC):
       )
     except Exception as e:
       logger.error("ERROR Processing Event for ingestion_run: %s. Data: %s, Error: %s.", ingestion_run, event_data, e, exc_info=1)
+      IngestionRecord.objects.create(
+        ingestion_run=ingestion_run,
+        api_name=f"Crawler - {self.titleized_name}",
+        change_type=ChangeTypes.ERROR,
+        change_log=f"Error: {traceback.format_exc()}, for event data: {event_data}",
+        field_changed="event",
+      )
 
 

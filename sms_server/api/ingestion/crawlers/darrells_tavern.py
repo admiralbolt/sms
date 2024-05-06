@@ -18,8 +18,6 @@ from api.ingestion.crawlers.crawler import Crawler
 from api.models import IngestionRun
 from api.utils import parsing_utils
 
-from pprint import pprint
-
 logger = logging.getLogger(__name__)
 
 EVENTS_URL = "https://darrellstavern.com/show-calendar/"
