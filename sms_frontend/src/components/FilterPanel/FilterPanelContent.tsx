@@ -31,7 +31,6 @@ export const FilterPanelContent = () => {
   } = useContext(LocalStorageContext) || {};
   const [filterPanelDate, setFilterPanelDate] = useState(selectedDate);
   const [searchParams, setSearchParams] = useSearchParams();
-  const eventTypeStrings = useMemo(() => ['Open Mic', 'Show', 'Open Jam'], [])
 
   const EVENT_TYPES_KEY = 'eventTypes'
 
@@ -48,19 +47,22 @@ useEffect(() => {
   } else {
     setSelectedEventTypes?.([]);
   }
-}, [eventTypeStrings, getEventTypesFromURL, setSelectedEventTypes]); // Only re-run the effect if the URL changes
+}, [getEventTypesFromURL, setSelectedEventTypes]); // Only re-run the effect if the URL changes
 
   useEffect(() => {
     setFilterPanelDate(selectedDate);
   }, [selectedDate]);
 
   useEffect(() => {
-    if (selectedEventTypes?.length && !eventTypeStrings.every(type => selectedEventTypes.includes(type))) {
+    if(!eventTypes.length){
+      return
+    } 
+    if (selectedEventTypes?.length && !eventTypes.every(type => selectedEventTypes.includes(type))) {
       setSearchParams({ eventTypes: selectedEventTypes.join(',') });
     } else {
       setSearchParams({});
     }
-  }, [eventTypeStrings, selectedEventTypes, setSearchParams]);
+  }, [eventTypes, selectedEventTypes, setSearchParams]);
 
   const updateEventFilters = (event: React.ChangeEvent<HTMLInputElement>) => {
 
