@@ -24,7 +24,7 @@ class SkylarkCrawler(Crawler):
   def get_event_kwargs(self, event_data: dict) -> dict:
     return event_data
   
-  def import_data(self, ingestion_run: IngestionRun, venue: Venue, debug: bool = False) -> None:
+  def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
     skylark_request = requests.get(f"{SKYLARK_ROOT}/calendar", timeout=15)
     soup = BeautifulSoup(skylark_request.text, "html.parser")
     all_events = soup.find_all("div", class_="w-dyn-items")
@@ -51,4 +51,4 @@ class SkylarkCrawler(Crawler):
         "event_image_url": event_image_url
       }
 
-      self.process_event(ingestion_run=ingestion_run, venue=venue, event_data=event_data, debug=debug)
+      self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)
