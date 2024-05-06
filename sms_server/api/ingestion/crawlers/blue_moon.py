@@ -27,7 +27,7 @@ CALENDAR_EVENTS_URL = "https://google-calendar.galilcloud.wixapps.net/_api/getEv
 class BlueMoonCrawler(Crawler):
 
   def __init__(self) -> object:
-    super().__init__("Blue Moon")
+    super().__init__(crawler_name="blue_moon", venue_name_regex="^blue moon tavern$")
 
   def get_event_kwargs(self, event_data: dict) -> dict:
     start_time = None
@@ -43,7 +43,7 @@ class BlueMoonCrawler(Crawler):
       "ticket_price_max": ticket_cost,
     }
   
-  def import_data(self, ingestion_run: IngestionRun, venue: Venue, debug: bool = False) -> None:
+  def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
     """Crawl data for the blue moon tavern!!!"""
     headers = {
       "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"

@@ -19,7 +19,7 @@ SKYLARK_ROOT = "https://www.skylarkcafe.com"
 class SkylarkCrawler(Crawler):
 
   def __init__(self) -> object:
-    super().__init__("Skylark")
+    super().__init__(crawler_name="skylark", venue_name_regex="^skylark$")
 
   def get_event_kwargs(self, event_data: dict) -> dict:
     return event_data

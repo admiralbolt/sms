@@ -174,22 +174,3 @@ def get_crawler(crawler_module_name: str) -> Crawler:
       return getattr(crawler_module, attr)()
 
   return None
-
-def get_crawler_info(crawler_name: str) -> tuple[Optional[Venue], Crawler]:
-  """Load crawler info by crawler name.
-
-  This should match the corresponding crawler name field on the api exactly.
-  Similarly, there should be a definition for the crawler logic in
-  ingestion/crawlers/
-  """
-  venue_apis = VenueApi.objects.filter(crawler_name=crawler_name)
-  if len(venue_apis) != 1:
-    logger.warning(f"Found {len(venue_apis)} matches for {crawler_name=}")
-    return None, None
-
-  venue_api = venue_apis.first()
-  crawler = get_crawler(venue_api.crawler_name)
-  if crawler is None:
-    return None, None
-
-  return venue_api.venue, crawler
