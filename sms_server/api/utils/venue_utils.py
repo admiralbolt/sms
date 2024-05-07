@@ -1,7 +1,8 @@
 """Utils related to Venues."""
 import importlib
 import logging
-from typing import Any, Optional
+import os
+from typing import Any, Generator
 
 import deepdiff
 
@@ -165,25 +166,6 @@ def get_crawler(crawler_module_name: str) -> Crawler:
 
   return None
 
-def get_crawler_info(crawler_name: str) -> tuple[Optional[Venue], Crawler]:
-  """Load crawler info by crawler name.
-
-  This should match the corresponding crawler name field on the api exactly.
-  Similarly, there should be a definition for the crawler logic in
-  ingestion/crawlers/
-  """
-  venue_apis = VenueApi.objects.filter(crawler_name=crawler_name)
-  if len(venue_apis) != 1:
-    logger.warning(f"Found {len(venue_apis)} matches for {crawler_name=}")
-    return None, None
-
-  venue_api = venue_apis.first()
-  crawler = get_crawler(venue_api.crawler_name)
-  if crawler is None:
-    return None, None
-
-  return venue_api.venue, crawler
-
 def merge_venues(from_venue: Venue, to_venue: Venue) -> bool:
   """Merge from_venue => to_venue.
 
@@ -251,3 +233,11 @@ def check_aliasing_and_merge_all():
         continue
 
       merge_venues(venue, proper_venue)
+
+def all_crawler_names() -> Generator[str, None, None]:
+  """Loads all crawler names based on file names on disk."""
+  root_path = importlib.resources.files("api.ingestion.crawlers")
+  for f in root_path.glob("*.py"):
+    name = os.path.basename(f)[:-3]
+    if name != "__init__" and name != "crawler":
+      yield name

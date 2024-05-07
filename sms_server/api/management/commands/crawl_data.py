@@ -25,15 +25,18 @@ class Command(BaseCommand):
         return
       
       ingestion_run = IngestionRun.objects.create(name="Manual Crawl Data All")
-      venue_apis = VenueApi.objects.filter(api_name=IngestionApis.CRAWLER)
-      for venue_api in venue_apis:
-        crawl_data(crawler_name=venue_api.crawler_name, ingestion_run=ingestion_run, debug=kwargs["debug"])
+      for crawler_name in venue_utils.all_crawler_names():
+        crawl_data(crawler_name=crawler_name, ingestion_run=ingestion_run, debug=kwargs["debug"])
       return
     
-    venue, _ = venue_utils.get_crawler(kwargs["crawler"])
+    crawler = venue_utils.get_crawler(kwargs["crawler"])
+    if not crawler.venue:
+      print("No venue associated with the crawler.")
+      return
+    
     if kwargs["truncate"]:
-      Event.objects.filter(venue=venue, event_api=IngestionApis.CRAWLER).delete()
+      Event.objects.filter(venue=crawler.venue, event_api=IngestionApis.CRAWLER).delete()
       return
 
-    ingestion_run = IngestionRun.objects.create(name=f"Manual Crawl Data ({venue.name})")
-    crawl_data(crawler_name=venue_api.crawler_name, ingestion_run=ingestion_run, debug=kwargs["debug"])
+    ingestion_run = IngestionRun.objects.create(name=f"Manual Crawl Data ({crawler.venue.name})")
+    crawl_data(crawler_name=kwargs["crawler"], ingestion_run=ingestion_run, debug=kwargs["debug"])
