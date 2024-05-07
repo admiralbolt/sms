@@ -59,7 +59,7 @@ export const EventPanel = () => {
 
   useEffect(() => {
     search(inputValue);
-  }, [inputValue, search]);
+  }, [inputValue]);
 
   const createEvent = () => {
     setIsNew(true);
