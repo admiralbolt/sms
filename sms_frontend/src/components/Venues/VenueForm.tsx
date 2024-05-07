@@ -81,6 +81,9 @@ export const VenueForm = ({
     description: {
       "ui:widget": "textarea",
     },
+    alias: {
+      "ui:widget": "textarea",
+    },
     venue_tags: {
       "ui:widget": "hidden",
     },

@@ -27,6 +27,10 @@ urlpatterns = [
   path("api/logout", views.LogoutView.as_view()),
   path("api/token/", jwt_views.TokenObtainPairView.as_view()),
   path("api/token/refresh/", jwt_views.TokenRefreshView.as_view()),
+
+  # Management commands triggered from the UI.
+  path("api/commands/alias_and_merge_all_venues", views.alias_and_merge_all_venues),
+
   path("api/schema",
        get_schema_view(
         title="SMS",

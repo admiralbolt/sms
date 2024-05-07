@@ -60,7 +60,8 @@ export const AboutView = () => {
             paddingTop: 0,
           }}
         >
-          Wrote some documentation on how to setup and develop sms.info (that only developers get to see).
+          Wrote some documentation on how to setup and develop sms.info (that
+          only developers get to see).
         </ListItem>
         <ListItem
           sx={{

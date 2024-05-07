@@ -1,4 +1,6 @@
 """Database models."""
+import json
+import logging
 import re
 import requests
 
@@ -6,6 +8,8 @@ from django.core.files.base import ContentFile
 from django.db import models
 
 from api.constants import get_choices, ChangeTypes, EventTypes, IngestionApis, Neighborhoods, OpenMicTypes, VenueTypes
+
+logger = logging.getLogger(__name__)
 
 class APISample(models.Model):
   """Raw data dumps from the api."""
@@ -35,6 +39,12 @@ class Venue(models.Model):
   # Optional.
   description = models.TextField(default="", blank=True, null=True)
   max_capacity = models.IntegerField(default=-1)
+  # Alias is a complicated regex-ish field that helps conditional match venues
+  # based on slightly different naming. The regexes are keyed by the field
+  # that they are applied to, for example:
+  #
+  # {"name": "^(The Tractor|Tractor Tavern)$"}
+  alias = models.TextField(max_length=1024, blank=True, null=True)
 
   # In general we don't want to delete data, we just want to hide it.
   # We add two controls for this:
@@ -46,6 +56,19 @@ class Venue(models.Model):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._original_venue_image_url = self.venue_image_url
+
+  def alias_matches(self, other_venue: object) -> bool:
+    """Check to see if another venue matches based on our aliasing."""
+    try:
+      alias_obj = json.loads(self.alias)
+    except:
+      logger.error(f"Alias field on venue {self.id} is not a json object.")
+      return False
+
+    for key, regex in alias_obj.items():
+      if not re.match(regex, getattr(other_venue, key)):
+        return False
+    return True
 
   def make_pretty(self):
     # Helper method for cleaning venue information.
@@ -102,41 +125,6 @@ class VenueApi(models.Model):
 
   class Meta:
     unique_together = [["venue", "api_name"]]
-
-
-class VenueMask(models.Model):
-  """Venue Masks.
-
-  A mask that gets applied to ingested venue data. This happens when the input
-  data is not the cleaniest. We can get duplicate venue venues with very similar
-  names e.g. "Tractor" vs. "Tractor Tavern". Additionally there can be missing
-  fields, we create the mask to clean all the information when we import it.
-  """
-  proper_name = models.CharField(max_length=128, unique=True)
-  # Match is a complicated regex-ish field that controls when we apply a venue
-  # mask. Regexes are keyed by the field are they are applied to, for example:
-  #
-  # {"name": "^(The Funhouse|El Corazon)$"}
-  created_at = models.DateTimeField(auto_now_add=True)
-  match = models.JSONField(max_length=256)
-  latitude = models.DecimalField(max_digits=11, decimal_places=8, blank=True, null=True)
-  longitude = models.DecimalField(max_digits=11, decimal_places=8, blank=True, null=True)
-  address = models.CharField(max_length=256, blank=True, null=True)
-  postal_code = models.CharField(max_length=8, blank=True, null=True)
-  city = models.CharField(max_length=64, blank=True, null=True)
-
-  venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, blank=True, null=True)
-
-  def __str__(self):
-    return f"{self.proper_name}"
-
-  def should_apply(self, venue: Venue) -> bool:
-    """Check to see if a mask should apply to a particular venue."""
-    for key, regex in self.match.items():
-      if not re.match(regex, getattr(venue, key)):
-        return False
-
-    return True
 
 
 class Event(models.Model):
@@ -262,6 +250,5 @@ ADMIN_MODELS = [
   OpenMic,
   Venue,
   VenueApi,
-  VenueMask,
   VenueTag,
 ]

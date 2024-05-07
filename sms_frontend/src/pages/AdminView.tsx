@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { Box, Tab, Tabs } from "@mui/material";
 
+import { CommandPanel } from "@/components/Commands";
 import { EventPanel } from "@/components/Events";
 import { IngestionRunPanel } from "@/components/IngestionRuns";
 import { OpenMicPanel } from "@/components/OpenMics";
@@ -68,7 +69,7 @@ export const AdminView = () => {
         <IngestionRunPanel />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        Commands!
+        <CommandPanel />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
         <VenuePanel />

@@ -14,7 +14,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from api import models
 from api import serializers
 from api.constants import get_all, EventTypes, VenueTypes
-from api.utils import search_utils
+from api.utils import venue_utils, search_utils
 from sms_server.settings import IS_PROD
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -121,7 +121,7 @@ class LogoutView(APIView):
       return Response(status=status.HTTP_205_RESET_CONTENT)
     except Exception as e:
       return Response(status=status.HTTP_400_BAD_REQUEST)
-
+    
 @api_view(["GET"])
 @permission_classes([AllowAny])
 def get_all_event_types(request):
@@ -148,3 +148,9 @@ def search_events(request: HttpRequest):
     search_utils.search_all_events(keyword),
     many=True
   ).data, safe=False)
+
+@api_view(["POST"])
+@permission_classes([IsAdminUser] if IS_PROD else [])
+def alias_and_merge_all_venues(request: HttpRequest):
+  venue_utils.check_aliasing_and_merge_all()
+  return Response(status=200)
