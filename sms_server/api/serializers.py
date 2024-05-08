@@ -120,7 +120,7 @@ class PeriodicTaskSerializer(serializers.ModelSerializer):
     schedule = f"{task.crontab.minute} {task.crontab.hour} {task.crontab.day_of_month} {task.crontab.month_of_year} {task.crontab.day_of_week}"
     now = datetime.datetime.now()
     itr = croniter.croniter(schedule, now)
-    healthy_last_run = itr.get_prev(datetime.datetime).replace(tzinfo=pytz.timezone(TIME_ZONE))
+    healthy_last_run = itr.get_prev(datetime.datetime).replace(tzinfo=pytz.timezone(TIME_ZONE)) - datetime.timedelta(hours=1)
     return task.last_run_at > healthy_last_run
 
   class Meta:
