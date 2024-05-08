@@ -33,6 +33,7 @@ export const DateSelectorTabs = () => {
   ) => {
     setValue(newValue);
     setSelectedDate?.(dayjs(newValue));
+    window.scrollTo(0, 0);
   };
 
   useEffect(() => {
