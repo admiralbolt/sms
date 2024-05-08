@@ -15,7 +15,7 @@ const useIsAuthenticated = (): [boolean, (auth: boolean) => void] => {
 const refreshTokens = async () => {
   try {
     await customAxios
-      .put(
+      .post(
         "/api/token/refresh/",
         {
           refresh: localStorage.getItem("refreshToken"),

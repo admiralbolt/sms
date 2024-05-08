@@ -38,6 +38,8 @@ customAxios.interceptors.response.use(
   async (error) => {
     const config = error?.config;
 
+    // If we get an error when we refresh our tokens, we don't want to end up
+    // in an infinite refresh loop.
     if (error?.response?.status === 401 && !config?.sent) {
       config.sent = true;
 
