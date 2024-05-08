@@ -80,7 +80,7 @@ class Venue(models.Model):
     self.longitude = round(float(self.longitude), 6)
 
   def save(self, *args, **kwargs):
-    self.name_lower = self.name.lower()
+    self.make_pretty()
     super().save(*args, **kwargs)
     if self.venue_image_url:
       if self.venue_image_url != self._original_venue_image_url or not self.venue_image:

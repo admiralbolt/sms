@@ -10,6 +10,16 @@ from rest_framework import serializers
 from api import models
 from sms_server.settings import TIME_ZONE
 
+class RoundingDecimalField(serializers.DecimalField):
+  """Custom rounding decimal field.
+
+  Wholesale from:
+  https://stackoverflow.com/questions/46949544/how-do-i-get-django-rest-framework-to-round-decimals-to-the-maximum-precision
+  """
+  def validate_precision(self, value):
+    """Don't validate anything!"""
+    return value
+
 class VenueTagSerializer(serializers.ModelSerializer):
 
   class Meta:
@@ -20,6 +30,8 @@ class VenueSerializer(serializers.ModelSerializer):
   """Serialize Venue data."""
   venue_image = serializers.ImageField(max_length=None, use_url=True, required=False)
   venue_tags = VenueTagSerializer(many=True, read_only=True)
+  latitude = RoundingDecimalField(max_digits=9, decimal_places=6)
+  longitude = RoundingDecimalField(max_digits=9, decimal_places=6)
 
   class Meta:
     model = models.Venue
