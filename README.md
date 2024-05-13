@@ -100,9 +100,13 @@ Huzzah!
 There are venues that don't use any ticketing apis, and for these there are manual
 crawlers written to extract their data (in `sms_server/api/ingestion/crawlers`).
 Crawlers require some special setup to work properly, since they are dynamic code
-that requires awareness of a particular venue in the DB.
+that requires awareness of a particular venue in the DB. Crawlers attempt to find
+their corresponding venue automatically based on a venue name regex in the crawler:
 
-For each crawler a `VenueApi` needs to be created with:
+<img width="685" alt="Screenshot 2024-05-13 at 3 07 09 PM" src="https://github.com/admiralbolt/sms/assets/1838577/328fceb3-e7f6-450d-8a1f-dee8784c138a">
+
+Each time a crawler is invoked, it will attempt to match itself with the corresponding venue.
+When matched successfully it will create a `VenueApi` object with
 
 1. The appropriate venue attached.
 2. The Api Name set to "Crawler"
