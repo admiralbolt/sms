@@ -7,6 +7,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser, IsAuthenticatedOrReadOnly, SAFE_METHODS
+from rest_framework.schemas.openapi import AutoSchema
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -63,6 +64,7 @@ class OpenMicViewSet(viewsets.ModelViewSet):
 class VenueEventsView(ListAPIView):
   """List all events for a particular venue."""
   serializer_class = serializers.EventSerializer
+  schema = AutoSchema(operation_id_base="VenueEvents")
 
   def get_permissions(self):
     permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
