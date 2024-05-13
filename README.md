@@ -116,14 +116,6 @@ Here's an example record for the crawler for Blue Moon Tavern:
 
 ![image](https://github.com/admiralbolt/sms/assets/1838577/31fb1dcd-b195-4758-b92c-85912754867e)
 
-### Venue Masks
-
-Venue Masks are weird and I hate them. Basically, there are lots of mistyping of venue
-names, and venue masks are a way of associating the correct data for a venue.
-I hope to be able to delete these because they are gross. Here's an example:
-
-![image](https://github.com/admiralbolt/sms/assets/1838577/ee4943f6-38c6-4e0c-ab78-ee10d94fce3a)
-
 ## Frontend Setup
 
 A **MUCH** easier process:
