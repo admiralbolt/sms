@@ -1,5 +1,6 @@
 beautifulsoup4==4.12.3
 croniter==2.0.1
+cssutils==2.10.2
 deepdiff==6.6.1
 Django==4.2.4
 django_celery_beat==2.6.0
