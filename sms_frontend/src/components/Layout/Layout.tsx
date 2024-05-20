@@ -1,6 +1,6 @@
 // import { LocalStorageContext } from "@/contexts/LocalStorageContext";
 import { useContext, useEffect, useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useSearchParams } from "react-router-dom";
 
 import {
   AdminPanelSettings,
@@ -31,6 +31,12 @@ export const NavBar = () => {
   const huh = () => {
     setDrawerOpen?.(!drawerOpen);
   };
+  const [searchParams] = useSearchParams();
+  const queryParams = new URLSearchParams(searchParams).toString()
+  
+  const addParamsToLink = (route: string) => {
+    return `${route}/${queryParams}`
+  }
 
   useEffect(() => {
     setShowFilters(["/list", "/map"].includes(pathname));
@@ -40,7 +46,7 @@ export const NavBar = () => {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" sx={{ zIndex: 999999, padding: 0, margin: 0 }}>
         <Toolbar>
-          <NavLink to="/list">
+          <NavLink to={addParamsToLink("/list")}>
             {({ isActive }) => (
               <IconButton
                 size="large"
@@ -53,7 +59,7 @@ export const NavBar = () => {
               </IconButton>
             )}
           </NavLink>
-          <NavLink to="/map">
+          <NavLink to={addParamsToLink("/map")}>
             {({ isActive }) => (
               <IconButton
                 size="large"
@@ -66,7 +72,7 @@ export const NavBar = () => {
               </IconButton>
             )}
           </NavLink>
-          <NavLink to="/search">
+          <NavLink to={"/search"}>
             {({ isActive }) => (
               <IconButton
                 size="large"
@@ -79,7 +85,7 @@ export const NavBar = () => {
               </IconButton>
             )}
           </NavLink>
-          <NavLink to="/about">
+          <NavLink to={"/about"}>
             {({ isActive }) => (
               <IconButton
                 size="large"
