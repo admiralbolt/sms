@@ -122,10 +122,9 @@ useEffect(() => {
         <Divider />
         <FormGroup id="event-type-filters">
           {eventTypes.map((type) => (
-            <div className="flex flex-row">
+            <div key={type} className="flex flex-row">
             <FormControlLabel
             className="w-52"
-              key={type}
               control={
                 <Checkbox
                   checked={selectedEventTypes?.includes(type)}
