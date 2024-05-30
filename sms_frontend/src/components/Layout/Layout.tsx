@@ -35,11 +35,13 @@ export const NavBar = () => {
   const queryParams = new URLSearchParams(searchParams).toString()
   
   const addParamsToLink = (route: string) => {
-    return `${route}/${queryParams}`
+    return `${route}/?${queryParams}`
   }
 
   useEffect(() => {
-    setShowFilters(["/list", "/map"].includes(pathname));
+    setShowFilters(["/list", "/map"].some((path) => {
+      return pathname.includes(path);
+    }));
   }, [pathname]);
 
   return (
