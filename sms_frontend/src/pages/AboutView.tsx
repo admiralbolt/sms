@@ -41,6 +41,108 @@ export const AboutView = () => {
       <Typography variant={"h5"}>Changelog</Typography>
       <br />
       <Typography sx={{ fontSize: "1.3rem" }}>
+        <b>V1.4.0</b> -- June 1st, 2024 <br />
+      </Typography>
+      <List sx={{ listStyleType: "disc", pl: 4 }}>
+        <ListItem
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
+        >
+          Improved venue deduping once again:
+          <List sx={{ listStyleType: "circle" }}>
+            <ListItem
+              sx={{
+                display: "list-item",
+                paddingBottom: 0,
+                paddingTop: 0,
+              }}
+            >
+              Fixed a bug where lat/long weren't being rounded before deduping
+              venues.
+            </ListItem>
+            <ListItem
+              sx={{
+                display: "list-item",
+                paddingBottom: 0,
+                paddingTop: 0,
+              }}
+            >
+              Added better controls for merging venues with similar names.
+            </ListItem>
+          </List>
+        </ListItem>
+        <ListItem
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
+        >
+          Refactored website crawlers, and added crawlers for:
+          <List sx={{ listStyleType: "circle" }}>
+            <ListItem
+              sx={{
+                display: "list-item",
+                paddingBottom: 0,
+                paddingTop: 0,
+              }}
+            >
+              The Little Red Hen
+            </ListItem>
+            <ListItem
+              sx={{
+                display: "list-item",
+                paddingBottom: 0,
+                paddingTop: 0,
+              }}
+            >
+              The Sea Monster Lounge
+            </ListItem>
+            <ListItem
+              sx={{
+                display: "list-item",
+                paddingBottom: 0,
+                paddingTop: 0,
+              }}
+            >
+              Darrell's Tavern
+            </ListItem>
+            <ListItem
+              sx={{
+                display: "list-item",
+                paddingBottom: 0,
+                paddingTop: 0,
+              }}
+            >
+              The Royal Room
+            </ListItem>
+          </List>
+        </ListItem>
+        <ListItem
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
+        >
+          Filter params are persisted in the url! You can now link directly to
+          particular dates / event types!
+        </ListItem>
+        <ListItem
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
+        >
+          Cleaned up many bugs with the admin panel (that only admins get to see).
+        </ListItem>
+      </List>
+      <br />
+      <Typography sx={{ fontSize: "1.3rem" }}>
         <b>V1.3.0</b> -- May 1st, 2024 <br />
       </Typography>
       <List sx={{ listStyleType: "disc", pl: 4 }}>
@@ -106,35 +208,37 @@ export const AboutView = () => {
         >
           Fixed a couple bugs with the data ingester, and added stats tracking
           for runs of the ingester. The couple bugs are things like:
-          <ListItem
-            sx={{
-              display: "list-item",
-              paddingBottom: 0,
-              paddingTop: 0,
-            }}
-          >
-            One failed import would break the entire ingester.
-          </ListItem>
-          <ListItem
-            sx={{
-              display: "list-item",
-              paddingBottom: 0,
-              paddingTop: 0,
-            }}
-          >
-            Venues that have very similar latitude / longitude breaking the
-            ingester.
-          </ListItem>
-          <ListItem
-            sx={{
-              display: "list-item",
-              paddingBottom: 0,
-              paddingTop: 0,
-            }}
-          >
-            Venues that have the same name but different latitude / longitude
-            breaking the ingester.
-          </ListItem>
+          <List sx={{ listStyleType: "circle" }}>
+            <ListItem
+              sx={{
+                display: "list-item",
+                paddingBottom: 0,
+                paddingTop: 0,
+              }}
+            >
+              One failed import would break the entire ingester.
+            </ListItem>
+            <ListItem
+              sx={{
+                display: "list-item",
+                paddingBottom: 0,
+                paddingTop: 0,
+              }}
+            >
+              Venues that have very similar latitude / longitude breaking the
+              ingester.
+            </ListItem>
+            <ListItem
+              sx={{
+                display: "list-item",
+                paddingBottom: 0,
+                paddingTop: 0,
+              }}
+            >
+              Venues that have the same name but different latitude / longitude
+              breaking the ingester.
+            </ListItem>
+          </List>
         </ListItem>
       </List>
       Open Mic/Jam Adjustments <br />
