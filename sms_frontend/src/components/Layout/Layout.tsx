@@ -40,7 +40,7 @@ export const NavBar = () => {
   const queryParams = new URLSearchParams(searchParams).toString();
 
   const addParamsToLink = (route: string) => {
-    return `${route}/?${queryParams}`;
+    return `${route}?${queryParams}`;
   };
 
   useEffect(() => {
