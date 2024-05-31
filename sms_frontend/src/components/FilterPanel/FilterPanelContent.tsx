@@ -1,4 +1,6 @@
+import dayjs from "dayjs";
 import { useCallback, useContext, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import { Button, Checkbox, FormControlLabel } from "@mui/material";
 import Box from "@mui/material/Box";
@@ -8,8 +10,6 @@ import Typography from "@mui/material/Typography";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { useSearchParams } from 'react-router-dom';
-
 
 import { LocalStorageContext } from "@/contexts/LocalStorageContext";
 import {
@@ -32,40 +32,63 @@ export const FilterPanelContent = () => {
   const [filterPanelDate, setFilterPanelDate] = useState(selectedDate);
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const EVENT_TYPES_KEY = 'eventTypes'
+  const EVENT_TYPES_KEY = "eventTypes";
+  const DATE_KEY = "date";
 
-  
   const getEventTypesFromURL = useCallback(() => {
     const params = searchParams.get(EVENT_TYPES_KEY);
-    return params ? params.split(',') : [];
+    return params ? params.split(",") : [];
   }, [searchParams]);
 
-useEffect(() => {
-  const initialEventTypes = getEventTypesFromURL();
-  if (initialEventTypes.length > 0) {
-    setSelectedEventTypes?.(initialEventTypes);
-  } else {
-    setSelectedEventTypes?.([]);
-  }
-}, [getEventTypesFromURL, setSelectedEventTypes]); // Only re-run the effect if the URL changes
+  const getDateFromURL = useCallback(() => {
+    const date = searchParams.get(DATE_KEY);
+    return date ? date : undefined;
+  }, [searchParams]);
+
+  useEffect(() => {
+    const initialEventTypes = getEventTypesFromURL();
+    if (initialEventTypes.length > 0) {
+      setSelectedEventTypes?.(initialEventTypes);
+    } else {
+      setSelectedEventTypes?.([]);
+    }
+  }, [getEventTypesFromURL, setSelectedEventTypes]); // Only re-run the effect if the URL changes
+
+  useEffect(() => {
+    const date = getDateFromURL();
+    if (
+      date != undefined &&
+      selectedDate != undefined &&
+      selectedDate.format("YYYY-MM-DD") != date
+    ) {
+      setSelectedDate?.(dayjs(date));
+    }
+  }, []); // We only want to run this once on page load.
 
   useEffect(() => {
     setFilterPanelDate(selectedDate);
   }, [selectedDate]);
 
   useEffect(() => {
-    if(!eventTypes.length){
-      return
-    } 
-    if (selectedEventTypes?.length && !eventTypes.every(type => selectedEventTypes.includes(type))) {
-      setSearchParams({ eventTypes: selectedEventTypes.join(',') });
-    } else {
-      setSearchParams({});
+    if (!eventTypes.length) {
+      return;
     }
-  }, [eventTypes, selectedEventTypes, setSearchParams]);
+    let params: any = {};
+    if (
+      selectedEventTypes?.length &&
+      !eventTypes.every((type) => selectedEventTypes.includes(type))
+    ) {
+      params.eventTypes = selectedEventTypes.join(",");
+    }
+
+    if (selectedDate != undefined) {
+      params.date = selectedDate.format("YYYY-MM-DD");
+    }
+
+    setSearchParams(params);
+  }, [eventTypes, selectedEventTypes, selectedDate, setSearchParams]);
 
   const updateEventFilters = (event: React.ChangeEvent<HTMLInputElement>) => {
-
     if (
       event.target.checked &&
       !selectedEventTypes?.includes(event.target.value)
@@ -123,18 +146,20 @@ useEffect(() => {
         <FormGroup id="event-type-filters">
           {eventTypes.map((type) => (
             <div key={type} className="flex flex-row">
-            <FormControlLabel
-            className="w-52"
-              control={
-                <Checkbox
-                  checked={selectedEventTypes?.includes(type)}
-                  value={type}
-                  onChange={updateEventFilters}
-                />
-              }
-              label={type}
-            />
-            <Button onClick={() => setSelectedEventTypes?.([type])}>Only</Button>
+              <FormControlLabel
+                className="w-52"
+                control={
+                  <Checkbox
+                    checked={selectedEventTypes?.includes(type)}
+                    value={type}
+                    onChange={updateEventFilters}
+                  />
+                }
+                label={type}
+              />
+              <Button onClick={() => setSelectedEventTypes?.([type])}>
+                Only
+              </Button>
             </div>
           ))}
         </FormGroup>

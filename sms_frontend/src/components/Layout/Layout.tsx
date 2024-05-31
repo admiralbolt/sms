@@ -1,6 +1,11 @@
 // import { LocalStorageContext } from "@/contexts/LocalStorageContext";
 import { useContext, useEffect, useState } from "react";
-import { NavLink, Outlet, useLocation, useSearchParams } from "react-router-dom";
+import {
+  NavLink,
+  Outlet,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 
 import {
   AdminPanelSettings,
@@ -32,16 +37,18 @@ export const NavBar = () => {
     setDrawerOpen?.(!drawerOpen);
   };
   const [searchParams] = useSearchParams();
-  const queryParams = new URLSearchParams(searchParams).toString()
-  
+  const queryParams = new URLSearchParams(searchParams).toString();
+
   const addParamsToLink = (route: string) => {
-    return `${route}/?${queryParams}`
-  }
+    return `${route}/?${queryParams}`;
+  };
 
   useEffect(() => {
-    setShowFilters(["/list", "/map"].some((path) => {
-      return pathname.includes(path);
-    }));
+    setShowFilters(
+      ["/list", "/map"].some((path) => {
+        return pathname.includes(path);
+      }),
+    );
   }, [pathname]);
 
   return (
