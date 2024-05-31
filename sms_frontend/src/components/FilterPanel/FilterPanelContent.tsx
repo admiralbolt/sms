@@ -73,20 +73,32 @@ export const FilterPanelContent = () => {
     if (!eventTypes.length) {
       return;
     }
-    let params: any = {};
+
     if (
       selectedEventTypes?.length &&
       !eventTypes.every((type) => selectedEventTypes.includes(type))
     ) {
-      params.eventTypes = selectedEventTypes.join(",");
+      setSearchParams(searchParams => {
+        searchParams.set(EVENT_TYPES_KEY, selectedEventTypes.join(","));
+        return searchParams;
+      });
+    } else {
+      setSearchParams(searchParams => {
+        searchParams.delete(EVENT_TYPES_KEY);
+        return searchParams;
+      });
     }
+  }, [eventTypes, selectedEventTypes, setSearchParams]);
 
+  useEffect(() => {
     if (selectedDate != undefined) {
-      params.date = selectedDate.format("YYYY-MM-DD");
+      setSearchParams(searchParams => {
+        searchParams.set(DATE_KEY, selectedDate.format("YYYY-MM-DD"));
+        return searchParams;
+      });
     }
 
-    setSearchParams(params);
-  }, [eventTypes, selectedEventTypes, selectedDate, setSearchParams]);
+  }, [selectedDate, searchParams, setSearchParams]);
 
   const updateEventFilters = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (
