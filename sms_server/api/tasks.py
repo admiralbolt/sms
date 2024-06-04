@@ -96,3 +96,11 @@ def write_latest_data():
   all_events = events_request.json()
   with open(os.path.join(MEDIA_ROOT, "latest_events.json"), "w") as wh:
     json.dump(all_events, wh)
+
+@shared_task
+def delete_old_ingestion_runs():
+  """Delete old ingestion runs to save some space."""
+  # Keep ingestion runs for 3 weeks by default.
+  delete_threshold = datetime.datetime.now() - datetime.timedelta(days=18)
+  for ingestion_run in IngestionRun.objects.filter(created_at__lte=delete_threshold):
+    ingestion_run.delete()
