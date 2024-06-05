@@ -1,4 +1,3 @@
-import { AxiosResponse } from "axios";
 import mem from "mem";
 import { useState } from "react";
 
@@ -14,7 +13,7 @@ const useIsAuthenticated = (): [boolean, (auth: boolean) => void] => {
 
 const refreshTokens = async () => {
   try {
-    await customAxios
+    const response = await customAxios
       .post(
         "/api/token/refresh/",
         {
@@ -23,22 +22,15 @@ const refreshTokens = async () => {
         {
           withCredentials: true,
         },
-      )
-      .then(
-        (response: AxiosResponse<any>) => {
-          if (response.data.access) {
-            localStorage.setItem("accessToken", response.data.access);
-            localStorage.setItem("refreshToken", response.data.refresh);
-          } else {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-          }
-        },
-        () => {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
-        },
       );
+
+      if (response.data.access) {
+        localStorage.setItem("accessToken", response.data.access);
+        localStorage.setItem("refreshToken", response.data.refresh);
+      } else {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+      }
   } catch (error) {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
@@ -95,6 +87,9 @@ const logout = async (): Promise<Error | null> => {
     customAxios.defaults.headers.common.Authorization = null;
     return null;
   } catch (error: any) {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    customAxios.defaults.headers.common.Authorization = null;
     return error;
   }
 };

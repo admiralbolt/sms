@@ -9,14 +9,10 @@ export const LogoutView = () => {
 
   useEffect(() => {
     (async () => {
-      const result = await logout();
+      await logout();
 
-      if (result === null) {
-        setIsAuthenticated(false);
-        navigate("/login");
-      } else {
-        console.log("LOGOUT BUSTED", result);
-      }
+      setIsAuthenticated(false);
+      navigate("/login");
     })();
   }, [navigate, setIsAuthenticated]);
 

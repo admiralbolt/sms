@@ -16,9 +16,9 @@ const customAxios = axios.create({
 });
 
 // Set authorization headers on load if we have an accessToken.
-if (localStorage.getItem("accessToken") !== null) {
-  customAxios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem("accessToken")}`;
-}
+// if (localStorage.getItem("accessToken") !== null) {
+//   customAxios.defaults.headers.common.Authorization = `Bearer ${localStorage.getItem("accessToken")}`;
+// }
 
 customAxios.interceptors.request.use(
   async (config) => {
@@ -38,9 +38,11 @@ customAxios.interceptors.response.use(
   async (error) => {
     const config = error?.config;
 
-    // If we get an error when we refresh our tokens, we don't want to end up
-    // in an infinite refresh loop.
-    if (error?.response?.status === 401 && !config?.sent) {
+    // If we get a 401 error, we want to try and refresh tokens, then repeat
+    // the request. We don't want to a repeat a request multiple times, so we
+    // set a flag config.sent, and we don't want to repeat requests that go
+    // explicitly to the token refresh endpoint.
+    if (error?.response?.status === 401 && !config?.sent && config!.url != "/api/token/refresh/") {
       config.sent = true;
 
       await memoizedRefreshTokens();
