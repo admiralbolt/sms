@@ -23,6 +23,7 @@ def event_list_request() -> Iterator[dict]:
       "lat": 47.6062,
       "lng": -122.3321,
       "tag": "music:gig",
+      "count": 200,
     },
     headers={
       "Content-Type": "application/json"
