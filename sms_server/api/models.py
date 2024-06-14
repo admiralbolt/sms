@@ -159,29 +159,23 @@ class RawEvent(models.Model):
     return f"{self.title} ({self.venue_name}, {self.event_day}, {self.title})"
 
 class Event(models.Model):
-  """Shows to be had!"""
-  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+  """Finalized list of events."""
   created_at = models.DateTimeField(auto_now_add=True)
+  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
   event_type = models.CharField(max_length=16, choices=get_choices(EventTypes), default="Show")
-  # I think eventually this could get replaced by linking to artists
-  # participating in the show, but for a rough draft this is good enough.
   title = models.CharField(max_length=256)
   event_day = models.DateField()
-  # Only applicable if an open mic.
-  signup_start_time = models.TimeField(default=None, blank=True, null=True)
-
-  cash_only = models.BooleanField(default=False)
   start_time = models.TimeField(default=None, blank=True, null=True)
-  end_time = models.TimeField(default=None, blank=True, null=True)
-  doors_open = models.TimeField(default=None, blank=True, null=True)
-  is_ticketed = models.BooleanField(default=False)
-  ticket_price_min = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
-  ticket_price_max = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
-  event_api = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
   event_url = models.CharField(max_length=512, blank=True, null=True)
   description = models.TextField(blank=True, null=True)
   event_image_url = models.CharField(max_length=1024, blank=True, null=True)
   event_image = models.ImageField(upload_to="event_images", blank=True, null=True)
+
+  # Only applicable if an open mic.
+  signup_start_time = models.TimeField(default=None, blank=True, null=True)
+
+  # Meta control for display of events.
+  show_event = models.BooleanField(default=True)
 
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
@@ -196,9 +190,6 @@ class Event(models.Model):
         content_file = ContentFile(image_request.content)
         self._original_event_image_url = self.event_image_url
         self.event_image.save(f"{self.title.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
-
-  # Meta control for display of events.
-  show_event = models.BooleanField(default=True)
 
   def __str__(self):
     return f"[{self.venue}] ({self.event_day}) {self.title}"
