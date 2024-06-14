@@ -90,7 +90,7 @@ class EventbriteIngester(Ingester):
       "Content-Type": "application/json",
       "Authorization": f"Bearer {settings.EVENTBRITE_TOKEN}"
     }
-    return requests.get(f"https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes", headers=headers, timeout=35).json()
+    return requests.get(f"https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes,format,music_properties", headers=headers, timeout=35).json()
 
   def get_venue_kwargs(self, event_data: dict) -> dict:
     venue_data = event_data["primary_venue"]
@@ -120,33 +120,12 @@ class EventbriteIngester(Ingester):
     event_start = event_detail["start"]["local"]
     event_day, start_time = event_start.split("T")
 
-    # Eventbrite returns a list of ticket classes -- General Advance, Student
-    # Advance, Box Office e.t.c. We aggregate data across the ticket classes to
-    # get an idea of the cost. The cost value field is in cents, so we need to
-    # divide by 100 after the fact.
-    #
-    # ALSO
-    # Occasionally costs is `None` if it's a free / donation event.
-    min_cost = 0
-    max_cost = 0
-    costs = []
-    for ticket_class in event_detail["ticket_classes"]:
-      if not ticket_class["cost"]:
-        break
-      costs.append(ticket_class["cost"]["value"] / 100)
-
-    if costs:
-      min_cost = min(costs)
-      max_cost = max(costs)
-
     event_image_url = event_detail.get("logo", {}).get("url", "")
 
     return {
       "title": event_detail["name"]["text"],
       "event_day": event_day,
       "start_time": start_time,
-      "ticket_price_min": min_cost,
-      "ticket_price_max": max_cost,
       "event_url": event_detail["url"],
       "event_image_url": event_image_url,
       "description": get_full_event_description(event_detail["id"]) or event_detail.get("summary", "")

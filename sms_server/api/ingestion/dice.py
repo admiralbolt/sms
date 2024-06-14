@@ -68,13 +68,10 @@ class DiceIngester(Ingester):
     event_day, start_time = event_data["dates"]["event_start_date"].split("T")
     # Need to remove the -07:00 from the start time.
     start_time = start_time[:8]
-    price = (event_data["price"]["amount"] or event_data["price"]["amount_from"] or 0) / 100
     return {
       "title": event_data["name"],
       "event_day": event_day,
       "start_time": start_time,
-      "ticket_price_min": price,
-      "ticket_price_max": price,
       "event_url": event_data["social_links"]["event_share"],
       "event_image_url": event_data["images"]["landscape"],
       "description": event_data["about"]["description"]

@@ -113,8 +113,6 @@ class VenuepilotIngester(Ingester):
       "title": event_data["name"],
       "event_day": event_data["date"],
       "start_time": event_data["startTime"],
-      "ticket_price_min": event_data["priceMin"] or 0,
-      "ticket_price_max": event_data["priceMax"] or 0,
       "event_url": event_data["ticketsUrl"],
       "description": event_data["description"],
       "event_image_url": event_data["highlightedImage"],

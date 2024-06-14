@@ -83,8 +83,6 @@ class TicketmasterIngester(Ingester):
       "title": event_data["name"],
       "event_day": event_data["dates"]["start"]["localDate"],
       "start_time": event_data["dates"]["start"].get("localTime", None),
-      "ticket_price_min": 0 if "priceRanges" not in event_data else event_data["priceRanges"][0]["min"],
-      "ticket_price_max": 0 if "priceRanges" not in event_data else event_data["priceRanges"][0]["max"],
       "event_url": event_data["url"],
       "event_image_url": select_image(event_data["images"])
     }

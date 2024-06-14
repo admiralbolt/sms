@@ -92,8 +92,6 @@ class AXSIngester(Ingester):
       "title": event_data["title"]["eventTitleText"],
       "event_day": event_day,
       "start_time": start_time,
-      "ticket_price_max": parsing_utils.parse_cost(event_data["ticketPriceHigh"]),
-      "ticket_price_min": parsing_utils.parse_cost(event_data["ticketPriceLow"]),
       "event_url": event_data["ticketing"]["url"],
       "event_image_url": get_biggest_non_default_image(event_data["media"]),
       "description": event_data["description"],
