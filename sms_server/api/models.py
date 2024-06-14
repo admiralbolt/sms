@@ -128,6 +128,7 @@ class VenueApi(models.Model):
 
 class RawEvent(models.Model):
   """Events directly imported from the API without any modification."""
+  created_at = models.DateTimeField(auto_now_add=True)
   venue_name = models.CharField(max_length=64)
   venue_api_id = models.CharField(max_length=64, blank=True, null=True)
   title = models.CharField(max_length=256)
