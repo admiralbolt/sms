@@ -60,10 +60,6 @@ class Ingester(ABC):
         )
         self.venue_logs[venue_change_type].add(change_tuple)
 
-      # If we shouldn't gather data for the venue, we're done!
-      if not venue.gather_data:
-        return
-
       event_kwargs = self.get_event_kwargs(event_data=event_data)
       event_change_type, event_change_log, event = event_utils.create_or_update_event(venue=venue, **event_kwargs, event_api=self.api_name, debug=debug)
       IngestionRecord.objects.create(
