@@ -164,9 +164,6 @@ class EventBase(models.Model):
         self._original_event_image_url = self.event_image_url
         self.event_image.save(f"{self.title.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
 
-  def __str__(self):
-    return f"{self.title} ({self.venue_name}, {self.event_day}, {self.title})"
-  
   class Meta:
     abstract = True
 
@@ -180,14 +177,21 @@ class Event(EventBase):
   # Meta control for display of events.
   show_event = models.BooleanField(default=True)
 
+  def __str__(self):
+    return f"{self.title} ({self.venue.name}, {self.event_day}, {self.title})"
+
   class Meta:
     unique_together = [["venue", "event_day", "start_time"]]
+
 
 class RawEvent(EventBase):
   """Events directly imported from the API without any modification."""
   raw_venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
   event_api = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
   event_api_id = models.CharField(max_length=64, blank=True, null=True)
+
+  def __str__(self):
+    return f"{self.title} ({self.raw_venue.name}, {self.event_day}, {self.title})"
 
 
 class OpenMic(models.Model):
