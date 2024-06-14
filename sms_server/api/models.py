@@ -69,14 +69,6 @@ class VenueBase(models.Model):
     return self.name
 
 
-class RawVenue(VenueBase):
-  """A venue directly imported from an api without modification."""
-  venue_api = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
-
-  class Meta:
-    unique_together = [["venue_api", "latitude", "longitude"]]
-
-
 class Venue(VenueBase):
   """Places to go!"""
   neighborhood = models.CharField(max_length=64, blank=True, null=True, choices=get_choices(Neighborhoods))
@@ -108,6 +100,15 @@ class Venue(VenueBase):
 
   class Meta:
     unique_together = [["latitude", "longitude"]]
+
+
+class RawVenue(VenueBase):
+  """A venue directly imported from an api without modification."""
+  venue_api = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
+  finalized_venue = models.ForeignKey(Venue, related_name="venues", on_delete=models.SET_NULL, null=True, blank=True)
+
+  class Meta:
+    unique_together = [["venue_api", "latitude", "longitude"]]
 
 class VenueTag(models.Model):
   """Tags for venue types."""
