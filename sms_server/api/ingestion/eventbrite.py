@@ -71,26 +71,26 @@ def get_full_event_description(event_id: str) -> str:
 
   return None
 
-def event_detail_request(event_id: str):
-  """Get detailed info about an event.
-
-  All information about an event isn't included unless you specify specific
-  expansions. See the "Using Expansions to Get Information on an Event" section
-  of the Eventbrite docs. We add a list of comma separated keywords to get the
-  full set of information for an event.
-  """
-  headers = {
-    "Content-Type": "application/json",
-    "Authorization": f"Bearer {settings.EVENTBRITE_TOKEN}"
-  }
-  return requests.get(f"https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes", headers=headers, timeout=35).json()
-
 class EventbriteIngester(Ingester):
 
   delay: float = 0.5
 
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.EVENTBRITE)
+
+  def get_event_detail(self, event_id: str) -> dict:
+    """Get detailed info about an event.
+
+    All information about an event isn't included unless you specify specific
+    expansions. See the "Using Expansions to Get Information on an Event" section
+    of the Eventbrite docs. We add a list of comma separated keywords to get the
+    full set of information for an event.
+    """
+    headers = {
+      "Content-Type": "application/json",
+      "Authorization": f"Bearer {settings.EVENTBRITE_TOKEN}"
+    }
+    return requests.get(f"https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes", headers=headers, timeout=35).json()
 
   def get_venue_kwargs(self, event_data: dict) -> dict:
     venue_data = event_data["primary_venue"]
@@ -113,7 +113,7 @@ class EventbriteIngester(Ingester):
     # Funny spot to include this, but because we make a request to get full
     # details, we add our artificial delay here.
     time.sleep(self.delay)
-    event_detail = event_detail_request(event_id=event_data["id"])
+    event_detail = self.get_event_detail(event_id=event_data["id"])
     if not event_detail:
       return {}
     

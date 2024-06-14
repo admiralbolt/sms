@@ -4,7 +4,7 @@ Venuepilot doesn't have any sort of search scope features, so we query all
 events and then filter by city accordingly.
 """
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 
 import requests
 
@@ -89,6 +89,9 @@ class VenuepilotIngester(Ingester):
 
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.VENUEPILOT)
+
+  def get_event_detail(self, event_id: str) -> dict:
+    return {}
 
   def get_venue_kwargs(self, event_data: dict) -> dict:
     venue_data = event_data["venue"]

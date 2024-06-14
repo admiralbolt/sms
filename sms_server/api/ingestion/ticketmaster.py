@@ -59,6 +59,9 @@ class TicketmasterIngester(Ingester):
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.TICKETMASTER)
 
+  def get_event_detail(self, event_id: str) -> dict:
+    return {}
+
   def get_venue_kwargs(self, event_data: dict) -> dict:
     if len(event_data["_embedded"]["venues"]) > 1:
       logger.warning("Multiple venues returned within single event. Full data:")

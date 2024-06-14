@@ -1,6 +1,7 @@
 import collections
 import logging
 from abc import ABC, abstractmethod
+from typing import Any
 
 from api.models import IngestionRecord, IngestionRun
 from api.utils import event_utils, venue_utils
@@ -23,6 +24,10 @@ class Ingester(ABC):
 
   @abstractmethod
   def get_event_kwargs(self, event_data: dict) -> dict:
+    pass
+
+  @abstractmethod
+  def get_event_detail(self, event_id: str) -> Any:
     pass
 
   def import_data(self, ingestion_run: IngestionRun, debug: bool=False) -> None:
@@ -71,7 +76,3 @@ class Ingester(ABC):
       )
     except Exception as e:
       logger.error("ERROR Processing Event for ingestion_run: %s. Data: %s, Error: %s.", ingestion_run, event_data, e, exc_info=1)
-
-
-
-
