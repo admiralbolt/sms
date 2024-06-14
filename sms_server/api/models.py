@@ -140,16 +140,11 @@ class VenueApi(models.Model):
   class Meta:
     unique_together = [["venue", "api_name"]]
 
-class RawEvent(models.Model):
-  """Events directly imported from the API without any modification."""
+class EventBase(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
-  venue_name = models.CharField(max_length=64)
-  venue_api_id = models.CharField(max_length=64, blank=True, null=True)
   title = models.CharField(max_length=256)
   event_day = models.DateField()
   start_time = models.TimeField(default=None, blank=True, null=True)
-  event_api = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
-  event_api_id = models.CharField(max_length=64, blank=True, null=True)
   event_url = models.CharField(max_length=512, blank=True, null=True)
   description = models.TextField(blank=True, null=True)
   event_image_url = models.CharField(max_length=1024, blank=True, null=True)
@@ -171,45 +166,28 @@ class RawEvent(models.Model):
 
   def __str__(self):
     return f"{self.title} ({self.venue_name}, {self.event_day}, {self.title})"
+  
+  class Meta:
+    abstract = True
 
-class Event(models.Model):
+
+class Event(EventBase):
   """Finalized list of events."""
-  created_at = models.DateTimeField(auto_now_add=True)
   venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
   event_type = models.CharField(max_length=16, choices=get_choices(EventTypes), default="Show")
-  title = models.CharField(max_length=256)
-  event_day = models.DateField()
-  start_time = models.TimeField(default=None, blank=True, null=True)
-  event_url = models.CharField(max_length=512, blank=True, null=True)
-  description = models.TextField(blank=True, null=True)
-  event_image_url = models.CharField(max_length=1024, blank=True, null=True)
-  event_image = models.ImageField(upload_to="event_images", blank=True, null=True)
-
   # Only applicable if an open mic.
   signup_start_time = models.TimeField(default=None, blank=True, null=True)
-
   # Meta control for display of events.
   show_event = models.BooleanField(default=True)
 
-  def __init__(self, *args, **kwargs):
-    super().__init__(*args, **kwargs)
-    self._original_event_image_url = self.event_image_url
-
-  def save(self, *args, **kwargs):
-    super().save(*args, **kwargs)
-    if self.event_image_url:
-      if self.event_image_url != self._original_event_image_url or not self.event_image:
-        image_request = requests.get(self.event_image_url, timeout=15)
-        file_extension = image_request.headers["Content-Type"].split("/")[1]
-        content_file = ContentFile(image_request.content)
-        self._original_event_image_url = self.event_image_url
-        self.event_image.save(f"{self.title.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
-
-  def __str__(self):
-    return f"[{self.venue}] ({self.event_day}) {self.title}"
-
   class Meta:
     unique_together = [["venue", "event_day", "start_time"]]
+
+class RawEvent(EventBase):
+  """Events directly imported from the API without any modification."""
+  raw_venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+  event_api = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
+  event_api_id = models.CharField(max_length=64, blank=True, null=True)
 
 
 class OpenMic(models.Model):
@@ -284,6 +262,8 @@ ADMIN_MODELS = [
   IngestionRun,
   IngestionRecord,
   OpenMic,
+  RawEvent,
+  RawVenue,
   Venue,
   VenueApi,
   VenueTag,
