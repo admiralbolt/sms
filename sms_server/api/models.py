@@ -20,6 +20,62 @@ class APISample(models.Model):
 
   def __str__(self):
     return f"[{self.api_name}] ({self.created_at}) {self.name}"
+  
+  
+class VenueBase(models.Model):
+  """Shared venue fields."""
+  created_at = models.DateTimeField(auto_now_add=True)
+  name = models.CharField(max_length=128, unique=True)
+  name_lower = models.CharField(max_length=128, unique=True)
+  latitude = models.DecimalField(max_digits=9, decimal_places=6)
+  longitude = models.DecimalField(max_digits=9, decimal_places=6)
+  address = models.CharField(max_length=256)
+  postal_code = models.CharField(max_length=8)
+  city = models.CharField(max_length=64)
+  venue_url = models.CharField(max_length=256, blank=True, null=True)
+  venue_image_url = models.CharField(max_length=1024, blank=True, null=True)
+  venue_image = models.ImageField(upload_to="venue_images", blank=True, null=True)
+  description = models.TextField(default="", blank=True, null=True)
+  
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self._original_venue_image_url = self.venue_image_url
+
+  class Meta:
+    abstract = True
+
+  def make_pretty(self):
+    # Helper method for cleaning venue information.
+    # Ideally I'd just trigger whatever black magic is happening in pre_save(),
+    # but judging from: https://code.djangoproject.com/ticket/27825#comment:9
+    # seems unlikely.
+    self.name_lower = self.name.lower()
+    self.latitude = round(float(self.latitude), 6)
+    self.longitude = round(float(self.longitude), 6)
+
+  def save(self, *args, **kwargs):
+    self.make_pretty()
+    super().save(*args, **kwargs)
+    if self.venue_image_url:
+      if self.venue_image_url != self._original_venue_image_url or not self.venue_image:
+        image_request = requests.get(self.venue_image_url, timeout=15)
+        file_extension = image_request.headers["Content-Type"].split("/")[1]
+        content_file = ContentFile(image_request.content)
+        self._original_venue_image_url = self.venue_image_url
+        self.venue_image.save(f"{self.name}.{file_extension}", content_file)
+
+  def __str__(self):
+    return self.name
+
+
+class RawVenue(VenueBase):
+  """A venue directly imported from an api without modification."""
+  venue_api = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
+
+  class Meta:
+    unique_together = [["venue_api", "latitude", "longitude"]]
+
 
 class Venue(models.Model):
   """Places to go!"""
