@@ -20,10 +20,10 @@ class APISample(models.Model):
 
   def __str__(self):
     return f"[{self.api_name}] ({self.created_at}) {self.name}"
-  
-  
-class VenueBase(models.Model):
-  """Shared venue fields."""
+
+
+class Venue(models.Model):
+  """Places to go!"""
   created_at = models.DateTimeField(auto_now_add=True)
   name = models.CharField(max_length=128, unique=True)
   name_lower = models.CharField(max_length=128, unique=True)
@@ -36,41 +36,7 @@ class VenueBase(models.Model):
   venue_image_url = models.CharField(max_length=1024, blank=True, null=True)
   venue_image = models.ImageField(upload_to="venue_images", blank=True, null=True)
   description = models.TextField(default="", blank=True, null=True)
-  
 
-  def __init__(self, *args, **kwargs):
-    super().__init__(*args, **kwargs)
-    self._original_venue_image_url = self.venue_image_url
-
-  class Meta:
-    abstract = True
-
-  def make_pretty(self):
-    # Helper method for cleaning venue information.
-    # Ideally I'd just trigger whatever black magic is happening in pre_save(),
-    # but judging from: https://code.djangoproject.com/ticket/27825#comment:9
-    # seems unlikely.
-    self.name_lower = self.name.lower()
-    self.latitude = round(float(self.latitude), 6)
-    self.longitude = round(float(self.longitude), 6)
-
-  def save(self, *args, **kwargs):
-    self.make_pretty()
-    super().save(*args, **kwargs)
-    if self.venue_image_url:
-      if self.venue_image_url != self._original_venue_image_url or not self.venue_image:
-        image_request = requests.get(self.venue_image_url, timeout=15)
-        file_extension = image_request.headers["Content-Type"].split("/")[1]
-        content_file = ContentFile(image_request.content)
-        self._original_venue_image_url = self.venue_image_url
-        self.venue_image.save(f"{self.name}.{file_extension}", content_file)
-
-  def __str__(self):
-    return self.name
-
-
-class Venue(VenueBase):
-  """Places to go!"""
   neighborhood = models.CharField(max_length=64, blank=True, null=True, choices=get_choices(Neighborhoods))
   # Alias is a complicated regex-ish field that helps conditional match venues
   # based on slightly different naming. The regexes are keyed by the field
@@ -97,18 +63,37 @@ class Venue(VenueBase):
       if not re.match(regex, getattr(other_venue, key)):
         return False
     return True
+  
+  def __str__(self):
+    return self.name
+  
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self._original_venue_image_url = self.venue_image_url
+
+  def make_pretty(self):
+    # Helper method for cleaning venue information.
+    # Ideally I'd just trigger whatever black magic is happening in pre_save(),
+    # but judging from: https://code.djangoproject.com/ticket/27825#comment:9
+    # seems unlikely.
+    self.name_lower = self.name.lower()
+    self.latitude = round(float(self.latitude), 6)
+    self.longitude = round(float(self.longitude), 6)
+
+  def save(self, *args, **kwargs):
+    self.make_pretty()
+    super().save(*args, **kwargs)
+    if self.venue_image_url:
+      if self.venue_image_url != self._original_venue_image_url or not self.venue_image:
+        image_request = requests.get(self.venue_image_url, timeout=15)
+        file_extension = image_request.headers["Content-Type"].split("/")[1]
+        content_file = ContentFile(image_request.content)
+        self._original_venue_image_url = self.venue_image_url
+        self.venue_image.save(f"{self.name}.{file_extension}", content_file)
 
   class Meta:
     unique_together = [["latitude", "longitude"]]
 
-
-class RawVenue(VenueBase):
-  """A venue directly imported from an api without modification."""
-  venue_api = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
-  finalized_venue = models.ForeignKey(Venue, related_name="venues", on_delete=models.SET_NULL, null=True, blank=True)
-
-  class Meta:
-    unique_together = [["venue_api", "latitude", "longitude"]]
 
 class VenueTag(models.Model):
   """Tags for venue types."""
@@ -140,7 +125,9 @@ class VenueApi(models.Model):
   class Meta:
     unique_together = [["venue", "api_name"]]
 
-class EventBase(models.Model):
+
+class Event(models.Model):
+  """Finalized list of events."""
   created_at = models.DateTimeField(auto_now_add=True)
   title = models.CharField(max_length=256)
   event_day = models.DateField()
@@ -149,7 +136,16 @@ class EventBase(models.Model):
   description = models.TextField(blank=True, null=True)
   event_image_url = models.CharField(max_length=1024, blank=True, null=True)
   event_image = models.ImageField(upload_to="event_images", blank=True, null=True)
+  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+  event_type = models.CharField(max_length=16, choices=get_choices(EventTypes), default="Show")
+  # Only applicable if an open mic.
+  signup_start_time = models.TimeField(default=None, blank=True, null=True)
+  # Meta control for display of events.
+  show_event = models.BooleanField(default=True)
 
+  def __str__(self):
+    return f"{self.title} ({self.venue.name}, {self.event_day}, {self.title})"
+  
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._original_event_image_url = self.event_image_url
@@ -165,33 +161,7 @@ class EventBase(models.Model):
         self.event_image.save(f"{self.title.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
 
   class Meta:
-    abstract = True
-
-
-class Event(EventBase):
-  """Finalized list of events."""
-  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
-  event_type = models.CharField(max_length=16, choices=get_choices(EventTypes), default="Show")
-  # Only applicable if an open mic.
-  signup_start_time = models.TimeField(default=None, blank=True, null=True)
-  # Meta control for display of events.
-  show_event = models.BooleanField(default=True)
-
-  def __str__(self):
-    return f"{self.title} ({self.venue.name}, {self.event_day}, {self.title})"
-
-  class Meta:
     unique_together = [["venue", "event_day", "start_time"]]
-
-
-class RawEvent(EventBase):
-  """Events directly imported from the API without any modification."""
-  raw_venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
-  event_api = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
-  event_api_id = models.CharField(max_length=64, blank=True, null=True)
-
-  def __str__(self):
-    return f"{self.title} ({self.raw_venue.name}, {self.event_day}, {self.title})"
 
 
 class OpenMic(models.Model):
@@ -266,8 +236,6 @@ ADMIN_MODELS = [
   IngestionRun,
   IngestionRecord,
   OpenMic,
-  RawEvent,
-  RawVenue,
   Venue,
   VenueApi,
   VenueTag,
