@@ -232,6 +232,37 @@ class OpenMic(models.Model):
       return self.title
 
     return "UNKNOWN_VENUE" if not self.venue else f"{self.venue.name} {self.event_mic_type}"
+  
+class JanitorRun(models.Model):
+  """Logs for runs from the janitor."""
+  created_at = models.DateTimeField(auto_now_add=True)
+  name = models.CharField(max_length=64)
+
+  def __str__(self):
+    return f"{self.name} ({self.created_at})"
+  
+class JanitorRecord(models.Model):
+  created_at = models.DateTimeField(auto_now_add=True)
+  janitor_run = models.ForeignKey(JanitorRun, on_delete=models.CASCADE)
+  api_name = models.CharField(max_length=32, default="Manual")
+  raw_data = models.ForeignKey(RawData, on_delete=models.CASCADE)
+  change_type = models.CharField(max_length=16, choices=get_choices(ChangeTypes))
+  change_log = models.TextField(blank=True, null=True)
+  
+  # Helper field for seeing what got added/changed/deleted -> either an event,
+  # a venue, or an artist.
+  field_changed = models.CharField(max_length=32)
+  # In some cases we are avoiding adding data, so these may be blank.
+  event = models.ForeignKey(Event, on_delete=models.SET_NULL, blank=True, null=True)
+  venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, blank=True, null=True)
+  artist = models.ForeignKey(Artist, on_delete=models.SET_NULL, blank=True, null=True)
+
+  def name_of_object_changed(self):
+    obj = getattr(self, self.field_changed)
+    return getattr(obj, "name", getattr(obj, "title", "None"))
+
+  def __str__(self):
+    return f"{self.janitor_run} - {self.api_name}: ({self.name_of_object_changed()}, {self.change_type})"
 
 class IngestionRun(models.Model):
   """Logs for runs from the ingester."""
@@ -264,6 +295,8 @@ ADMIN_MODELS = [
   Event,
   IngestionRun,
   IngestionRecord,
+  JanitorRun,
+  JanitorRecord,
   OpenMic,
   SocialLink,
   Venue,
