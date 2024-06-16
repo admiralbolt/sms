@@ -107,6 +107,15 @@ class VenueTag(models.Model):
   class Meta:
     unique_together = [["venue", "venue_type"]]
 
+class Crawler(models.Model):
+  """Information about a crawler."""
+  created_at = models.DateTimeField(auto_now_add=True)
+  crawler_name = models.CharField(max_length=32, unique=True)
+  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+
+  def __str__(self):
+    return self.crawler_name
+
 class VenueApi(models.Model):
   """API information for a venue.
 
