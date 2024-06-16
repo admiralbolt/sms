@@ -90,9 +90,6 @@ class VenuepilotApi(EventApi):
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.VENUEPILOT)
 
-  def get_event_detail(self, event_id: str) -> dict:
-    return {}
-
   def get_venue_kwargs(self, event_data: dict) -> dict:
     venue_data = event_data["venue"]
     address = venue_data["street1"]

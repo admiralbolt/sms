@@ -40,12 +40,6 @@ class DiceApi(EventApi):
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.DICE)
 
-  def get_event_detail(self, event_id: str) -> dict:
-    return {}
-  
-  def get_artists_kwargs(self, event_data: dict) -> Iterator[dict]:
-    yield {}
-
   def get_venue_kwargs(self, event_data: dict) -> dict:
     venue_data = event_data["venues"][0]
     address_data = normalize_address_record(venue_data["address"])

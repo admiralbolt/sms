@@ -27,10 +27,6 @@ class EventApi(ABC):
     pass
 
   @abstractmethod
-  def get_event_detail(self, event_id: str) -> Any:
-    pass
-
-  @abstractmethod
   def get_artists_kwargs(self, event_data: dict) -> Generator[dict, None, None]:
     pass
 
