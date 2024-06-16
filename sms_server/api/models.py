@@ -126,6 +126,23 @@ class VenueApi(models.Model):
     unique_together = [["venue", "api_name"]]
 
 
+class Artist(models.Model):
+  created_at = models.DateTimeField(auto_now_add=True)
+  name = models.CharField(max_length=64, unique=True)
+  bio = models.TextField(max_length=256, blank=True, null=True)
+
+
+class SocialLink(models.Model):
+  """Social Links for artists."""
+  created_at = models.DateTimeField(auto_now_add=True)
+  artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
+  platform = models.CharField(max_length=32)
+  url = models.CharField(max_length=128)
+
+  class Meta:
+    unique_together = [["artist", "platform"]]
+
+
 class Event(models.Model):
   """Finalized list of events."""
   created_at = models.DateTimeField(auto_now_add=True)
@@ -137,6 +154,7 @@ class Event(models.Model):
   event_image_url = models.CharField(max_length=1024, blank=True, null=True)
   event_image = models.ImageField(upload_to="event_images", blank=True, null=True)
   venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+  artists = models.ManyToManyField(Artist)
   event_type = models.CharField(max_length=16, choices=get_choices(EventTypes), default="Show")
   # Only applicable if an open mic.
   signup_start_time = models.TimeField(default=None, blank=True, null=True)
@@ -206,23 +224,6 @@ class Event(models.Model):
 
 #   class Meta:
 #     unique_together = [["api_name", "event_api_id"]]
-
-
-class Artist(models.Model):
-  created_at = models.DateTimeField(auto_now_add=True)
-  name = models.CharField(max_length=64, unique=True)
-  bio = models.TextField(max_length=256, blank=True, null=True)
-
-
-class SocialLink(models.Model):
-  """Social Links for artists."""
-  created_at = models.DateTimeField(auto_now_add=True)
-  artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
-  platform = models.CharField(max_length=32)
-  url = models.CharField(max_length=128)
-
-  class Meta:
-    unique_together = [["artist", "platform"]]
 
 
 class OpenMic(models.Model):
