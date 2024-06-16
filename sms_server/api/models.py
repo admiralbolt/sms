@@ -127,6 +127,7 @@ class VenueApi(models.Model):
 
 
 class Artist(models.Model):
+  """Artists!"""
   created_at = models.DateTimeField(auto_now_add=True)
   name = models.CharField(max_length=64, unique=True)
   bio = models.TextField(max_length=256, blank=True, null=True)
@@ -182,48 +183,33 @@ class Event(models.Model):
     unique_together = [["venue", "event_day", "start_time"]]
 
 
-# class RawData(models.Model):
-#   """Raw data from an api request.
+class RawData(models.Model):
+  """Raw data from an api request.
 
-#   We save data from api requests in a staging table before it becomes finalized
-#   data. This will require some duplication of fields / code, but will provide
-#   some nice benefits:
+  We save data from api requests in a staging table before it becomes finalized
+  data. This will require some duplication of fields / code, but will provide
+  some nice benefits:
 
-#   1) Better debugging, and we won't need to re-poll APIs to see where data
-#      comes from.
-#   2) The ability to link finalized events to the raw data where they come from.
-#   3) The ability to change merging/deduping rules and immediately see results.
-#   4) We can edit finalized venues / events, without losing the underlying data
-#      that they come from. 
-#   """
-#   created_at = models.DateTimeField(auto_now_add=True)
-#   api_name = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
-#   event_api_id = models.CharField(max_length=64)
-#   data = models.JSONField()
+  1) Better debugging, and we won't need to re-poll APIs to see where data
+     comes from.
+  2) The ability to link finalized events to the raw data where they come from.
+  3) The ability to change merging/deduping rules and immediately see results.
+  4) We can edit finalized venues / events, without losing the underlying data
+     that they come from. 
+  """
+  created_at = models.DateTimeField(auto_now_add=True)
+  api_name = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
+  event_api_id = models.CharField(max_length=64)
+  # We include event and venue name for sanity purposes.
+  event_name = models.CharField(max_length=256)
+  venue_name = models.CharField(max_length=128)
+  data = models.JSONField()
 
-#   # Event related fields.
-#   event_title = models.CharField(max_length=256)
-#   event_day = models.DateField()
-#   event_start_time = models.TimeField(default=None, blank=True, null=True)
-#   event_url = models.CharField(max_length=512, blank=True, null=True)
-#   event_description = models.TextField(blank=True, null=True)
-#   event_image_url = models.CharField(max_length=1024, blank=True, null=True)
+  def __str__(self):
+    return f"[{self.api_name}] ({self.venue_name}, {self.event_name})"
 
-#   # Venue related fields.
-#   venue_name = models.CharField(max_length=128)
-#   venue_latitude = models.DecimalField(max_digits=9, decimal_places=6)
-#   venue_longitude = models.DecimalField(max_digits=9, decimal_places=6)
-#   venue_address = models.CharField(max_length=256)
-#   venue_postal_code = models.CharField(max_length=8)
-#   venue_city = models.CharField(max_length=64)
-#   venue_url = models.CharField(max_length=256, blank=True, null=True)
-#   venue_image_url = models.CharField(max_length=1024, blank=True, null=True)
-#   venue_description = models.TextField(default="", blank=True, null=True)
-
-#   # Artist related fields.
-
-#   class Meta:
-#     unique_together = [["api_name", "event_api_id"]]
+  class Meta:
+    unique_together = [["api_name", "event_api_id"]]
 
 
 class OpenMic(models.Model):
