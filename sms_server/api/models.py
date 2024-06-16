@@ -290,6 +290,7 @@ class IngestionRecord(models.Model):
 ADMIN_MODELS = [
   Artist,
   APISample,
+  Crawler,
   Event,
   IngestionRun,
   IngestionRecord,
