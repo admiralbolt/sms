@@ -10,7 +10,7 @@ import requests
 
 from api.constants import IngestionApis
 from api.ingestion.ingester import Ingester
-from api.models import APISample, IngestionRun
+from api.models import IngestionRun
 from sms_server import settings
 
 def event_list_request(venue_id: str="", client_key: str=""):
@@ -48,12 +48,6 @@ class TIXRIngester(Ingester):
   def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
     for venue_name, venue_id, client_key in settings.TIXR_CLIENTS:
       event_list = event_list_request(venue_id=venue_id, client_key=client_key)
-      # Save the response from the first page.
-      APISample.objects.create(
-        name=f"{venue_name} ALL Data",
-        api_name=IngestionApis.TIXR,
-        data=event_list
-      )
 
       for event in event_list:
         self.process_event(ingestion_run=ingestion_run, event_data=event, debug=debug)

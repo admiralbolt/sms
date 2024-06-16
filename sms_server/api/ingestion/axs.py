@@ -14,7 +14,7 @@ from selenium import webdriver
 
 from api.constants import IngestionApis
 from api.ingestion.ingester import Ingester
-from api.models import APISample, IngestionRun
+from api.models import IngestionRun
 from api.utils import crawler_utils, parsing_utils
 
 logger = logging.getLogger(__name__)
@@ -101,12 +101,6 @@ class AXSIngester(Ingester):
     driver = crawler_utils.create_chrome_driver()
     csrf_token = get_csrf_token(driver)
     data = event_list_request(driver, csrf_token, page=1)
-    # Save the response from the first page.
-    APISample.objects.create(
-      name="All data page 1",
-      api_name=IngestionApis.AXS,
-      data=data
-    )
     for event_data in data["events"]:
       self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)
     # AXS returns total events, not total pages. Little bit of maths.

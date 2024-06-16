@@ -23,7 +23,7 @@ import requests
 
 from api.constants import IngestionApis
 from api.ingestion.ingester import Ingester
-from api.models import APISample, IngestionRun
+from api.models import IngestionRun
 from sms_server import settings
 
 logger = logging.getLogger(__name__)
@@ -134,12 +134,6 @@ class EventbriteIngester(Ingester):
   def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
     """Import data from Eventbrite."""
     data = event_list_request(page=1)
-    # Save the response from the first page.
-    APISample.objects.create(
-      name="All data page 1",
-      api_name=IngestionApis.EVENTBRITE,
-      data=data
-    )
     for event_data in data["search_data"]["events"]["results"]:
       self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)
       

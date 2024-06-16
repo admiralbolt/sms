@@ -11,17 +11,6 @@ from api.constants import get_choices, ChangeTypes, EventTypes, IngestionApis, N
 
 logger = logging.getLogger(__name__)
 
-class APISample(models.Model):
-  """Raw data dumps from the api."""
-  name = models.CharField(max_length=256)
-  created_at = models.DateTimeField(auto_now_add=True)
-  api_name = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
-  data = models.JSONField()
-
-  def __str__(self):
-    return f"[{self.api_name}] ({self.created_at}) {self.name}"
-
-
 class Venue(models.Model):
   """Places to go!"""
   created_at = models.DateTimeField(auto_now_add=True)
@@ -271,7 +260,6 @@ class IngestionRecord(models.Model):
 
 ADMIN_MODELS = [
   Artist,
-  APISample,
   Crawler,
   Event,
   IngestionRun,

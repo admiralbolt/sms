@@ -12,7 +12,7 @@ from scourgify import normalize_address_record
 
 from api.constants import IngestionApis
 from api.ingestion.ingester import Ingester
-from api.models import APISample, IngestionRun
+from api.models import IngestionRun
 
 logger = logging.getLogger(__name__)
 
@@ -29,13 +29,6 @@ def event_list_request() -> Iterator[dict]:
       "Content-Type": "application/json"
     }
   ).json()
-
-  # Save the entire raw request as an api sample.
-  APISample.objects.create(
-    name="All data",
-    api_name=IngestionApis.DICE,
-    data=raw_data
-  )
 
   for section in raw_data["sections"]:
     for event in section.get("events", []):

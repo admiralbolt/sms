@@ -10,7 +10,7 @@ import requests
 
 from api.constants import IngestionApis
 from api.ingestion.ingester import Ingester
-from api.models import APISample, IngestionRun
+from api.models import IngestionRun
 
 REQUEST_TEMPLATE = """
 query PaginatedEvents {
@@ -126,12 +126,6 @@ class VenuepilotIngester(Ingester):
   
   def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
     event_list = event_list_request(page=0)
-    # Save the response from the first page.
-    APISample.objects.create(
-      name="All data page 1",
-      api_name=IngestionApis.VENUEPILOT,
-      data=event_list
-    )
     total_pages = event_list["data"]["paginatedEvents"]["metadata"]["totalPages"]
     self.process_event_list(ingestion_run=ingestion_run, event_list=event_list, debug=debug)
     for page in range(1, total_pages):

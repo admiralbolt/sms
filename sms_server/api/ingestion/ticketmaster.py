@@ -6,7 +6,7 @@ import requests
 
 from api.constants import IngestionApis
 from api.ingestion.ingester import Ingester
-from api.models import APISample, IngestionRun
+from api.models import IngestionRun
 from sms_server import settings
 
 logger = logging.getLogger(__name__)
@@ -89,12 +89,6 @@ class TicketmasterIngester(Ingester):
   
   def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
     events = event_list_request(page=0)
-    # Save the response from the first page.
-    APISample.objects.create(
-      name="All data page 1",
-      api_name=IngestionApis.TICKETMASTER,
-      data=events
-    )
     if "_embedded" not in events:
       logger.warning(f"Empty events list: {events}, while ingesting from Ticketmaster.")
       return
