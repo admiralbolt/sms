@@ -9,7 +9,7 @@ from datetime import datetime
 import requests
 
 from api.constants import IngestionApis
-from api.ingestion.ingester import Ingester
+from sms_server.api.ingestion.event_api import EventApi
 from api.models import IngestionRun
 from sms_server import settings
 
@@ -20,7 +20,7 @@ def event_list_request(venue_id: str="", client_key: str=""):
   }
   return requests.get(f"https://tixr.com/v1/groups/{venue_id}/events?cpk={client_key}", headers=headers, timeout=15).json()
 
-class TIXRIngester(Ingester):
+class TIXRApi(EventApi):
 
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.TIXR)

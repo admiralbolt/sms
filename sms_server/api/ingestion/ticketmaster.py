@@ -5,7 +5,7 @@ import time
 import requests
 
 from api.constants import IngestionApis
-from api.ingestion.ingester import Ingester
+from sms_server.api.ingestion.event_api import EventApi
 from api.models import IngestionRun
 from sms_server import settings
 
@@ -52,7 +52,7 @@ def select_image(images: list[dict]) -> str:
 
   return images[max_index]["url"]
 
-class TicketmasterIngester(Ingester):
+class TicketmasterApi(EventApi):
 
   delay: float = 0.5
 

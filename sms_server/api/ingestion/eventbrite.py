@@ -22,7 +22,7 @@ import json
 import requests
 
 from api.constants import IngestionApis
-from api.ingestion.ingester import Ingester
+from sms_server.api.ingestion.event_api import EventApi
 from api.models import IngestionRun
 from sms_server import settings
 
@@ -71,7 +71,7 @@ def get_full_event_description(event_id: str) -> str:
 
   return None
 
-class EventbriteIngester(Ingester):
+class EventbriteApi(EventApi):
 
   delay: float = 0.5
 

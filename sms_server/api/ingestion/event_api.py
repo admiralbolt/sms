@@ -1,15 +1,15 @@
 import collections
 import logging
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Generator
 
 from api.models import IngestionRecord, IngestionRun
 from api.utils import event_utils, venue_utils
 
 logger = logging.getLogger(__name__)
 
-class Ingester(ABC):
-  """Abstract ingestion class."""
+class EventApi(ABC):
+  """Abstract api class."""
 
   api_name: str = ""
   venue_logs: dict = {}
@@ -28,6 +28,10 @@ class Ingester(ABC):
 
   @abstractmethod
   def get_event_detail(self, event_id: str) -> Any:
+    pass
+
+  @abstractmethod
+  def get_artists_kwargs(self, event_data: dict) -> Generator[dict, None, None]:
     pass
 
   def import_data(self, ingestion_run: IngestionRun, debug: bool=False) -> None:

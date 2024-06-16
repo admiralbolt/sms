@@ -9,7 +9,7 @@ from typing import Any, Optional
 import requests
 
 from api.constants import IngestionApis
-from api.ingestion.ingester import Ingester
+from sms_server.api.ingestion.event_api import EventApi
 from api.models import IngestionRun
 
 REQUEST_TEMPLATE = """
@@ -85,7 +85,7 @@ def event_list_request(min_start_date: Optional[str]=None, page: int=0):
   }
   return requests.post("https://www.venuepilot.co/graphql", headers=headers, json=data, timeout=30).json()
 
-class VenuepilotIngester(Ingester):
+class VenuepilotApi(EventApi):
 
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.VENUEPILOT)

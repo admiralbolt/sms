@@ -13,7 +13,7 @@ import json
 from selenium import webdriver
 
 from api.constants import IngestionApis
-from api.ingestion.ingester import Ingester
+from sms_server.api.ingestion.event_api import EventApi
 from api.models import IngestionRun
 from api.utils import crawler_utils, parsing_utils
 
@@ -60,7 +60,7 @@ def get_biggest_non_default_image(media: dict) -> str:
 
   return media[max_key]["file_name"]
 
-class AXSIngester(Ingester):
+class AXSApi(EventApi):
 
   delay: float = 0.5
 

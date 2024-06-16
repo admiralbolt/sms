@@ -9,7 +9,7 @@ from celery import shared_task
 
 from api.constants import AUTOMATIC_APIS, IngestionApis
 from api.ingestion import axs, dice, eventbrite, ticketmaster, tixr, venuepilot
-from api.ingestion.ingester import Ingester
+from sms_server.api.ingestion.event_api import EventApi
 from api.models import IngestionRun, OpenMic
 from api.utils import open_mic_utils, venue_utils
 from sms_server.settings import IS_PROD, MEDIA_ROOT
@@ -40,13 +40,13 @@ def generate_open_mic_events(name_filter: str="", max_diff: datetime.timedelta =
 @shared_task
 def import_api_data(api_name: str, ingestion_run: IngestionRun, debug: bool=False):
   """Import data from apis!"""
-  ingester_dict: dict[str, Ingester] = {
-    IngestionApis.AXS: axs.AXSIngester,
-    IngestionApis.DICE: dice.DiceIngester,
-    IngestionApis.EVENTBRITE: eventbrite.EventbriteIngester,
-    IngestionApis.TICKETMASTER: ticketmaster.TicketmasterIngester,
-    IngestionApis.TIXR: tixr.TIXRIngester,
-    IngestionApis.VENUEPILOT: venuepilot.VenuepilotIngester,
+  ingester_dict: dict[str, EventApi] = {
+    IngestionApis.AXS: axs.AXSApi,
+    IngestionApis.DICE: dice.DiceApi,
+    IngestionApis.EVENTBRITE: eventbrite.EventbriteApi,
+    IngestionApis.TICKETMASTER: ticketmaster.TicketmasterApi,
+    IngestionApis.TIXR: tixr.TIXRApi,
+    IngestionApis.VENUEPILOT: venuepilot.VenuepilotApi,
   }
 
   if api_name not in ingester_dict:
