@@ -10,7 +10,7 @@ from celery import shared_task
 from api.constants import AUTOMATIC_APIS, IngestionApis
 from api.ingestion import axs, dice, eventbrite, ticketmaster, tixr, venuepilot
 from api.ingestion.ingester import Ingester
-from api.models import IngestionRun, OpenMic, VenueApi
+from api.models import IngestionRun, OpenMic
 from api.utils import open_mic_utils, venue_utils
 from sms_server.settings import IS_PROD, MEDIA_ROOT
 
@@ -76,9 +76,9 @@ def import_all(debug: bool=False):
     except Exception as e:
       logger.warning("[INGESTER_FAILED] API: %s, error: %s", api_name, e)
   # Run all the crawlers.
-  venue_apis = VenueApi.objects.filter(api_name=IngestionApis.CRAWLER)
-  for venue_api in venue_apis:
-    crawl_data(crawler_name=venue_api.crawler_name, ingestion_run=ingestion_run, debug=debug)
+  # venue_apis = VenueApi.objects.filter(api_name=IngestionApis.CRAWLER)
+  # for venue_api in venue_apis:
+  #   crawl_data(crawler_name=venue_api.crawler_name, ingestion_run=ingestion_run, debug=debug)
 
 @shared_task
 def write_latest_data():

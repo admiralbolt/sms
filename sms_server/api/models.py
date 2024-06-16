@@ -116,24 +116,6 @@ class Crawler(models.Model):
   def __str__(self):
     return self.crawler_name
 
-class VenueApi(models.Model):
-  """API information for a venue.
-
-  Venues can potentially use multiple apis, so this is done as a separate model
-  instead of as a field.
-  """
-  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
-  created_at = models.DateTimeField(auto_now_add=True)
-  api_name = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
-  api_id = models.CharField(max_length=32, blank=True, null=True)
-  crawler_name = models.CharField(max_length=32, blank=True, null=True)
-
-  def __str__(self):
-    return f"{self.venue.name} - {self.api_name}"
-
-  class Meta:
-    unique_together = [["venue", "api_name"]]
-
 
 class Artist(models.Model):
   """Artists!"""
@@ -297,6 +279,5 @@ ADMIN_MODELS = [
   OpenMic,
   SocialLink,
   Venue,
-  VenueApi,
   VenueTag,
 ]

@@ -3,7 +3,6 @@ from django.core.management.base import BaseCommand
 from api.constants import AUTOMATIC_APIS, IngestionApis
 from api.models import Event, IngestionRun
 from api.tasks import import_all, import_api_data
-from api.utils import venue_utils
 
 class Command(BaseCommand):
 
@@ -24,7 +23,6 @@ class Command(BaseCommand):
         if result == "Y":
           for api in AUTOMATIC_APIS:
             Event.objects.filter(event_api=api).delete()
-            venue_utils.clear_api_data(api_name=api)
         return
       import_all(debug=kwargs["debug"])
       return
@@ -36,7 +34,6 @@ class Command(BaseCommand):
     
     if kwargs["truncate"]:
       Event.objects.filter(event_api=api_name).delete()
-      venue_utils.clear_api_data(api_name=api_name)
       return
 
     ingestion_run = IngestionRun.objects.create(name=f"Manual Run {api_name}")

@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from api.constants import IngestionApis
-from api.models import Event, IngestionRun, VenueApi
+from api.models import Crawler, Event, IngestionRun
 from api.tasks import crawl_data
 from api.utils import venue_utils
 

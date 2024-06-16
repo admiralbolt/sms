@@ -3,7 +3,7 @@ import logging
 import traceback
 
 from api.constants import ChangeTypes, IngestionApis
-from api.models import IngestionRecord, IngestionRun, Venue, VenueApi
+from api.models import Crawler, IngestionRecord, IngestionRun, Venue
 from api.utils import event_utils
 
 logger = logging.getLogger(__name__)
@@ -37,8 +37,8 @@ class Crawler(ABC):
     crawler name. If one doesn't exist, we attempt to create one matching to
     an existing venue based on the regex name.
     """
-    # Check to see if a VenueApi object already exists for this crawler.
-    apis = VenueApi.objects.filter(api_name=IngestionApis.CRAWLER, crawler_name=self.crawler_name)
+    # Check to see if a Crawler object already exists for this crawler.
+    apis = Crawler.objects.filter(crawler_name=self.crawler_name)
     if apis.exists():
       self.venue = apis.first().venue
       return
@@ -50,9 +50,8 @@ class Crawler(ABC):
       logger.warn(f"Unable to create venue api object for crawler: {self.crawler_name}, {len(venues)} match the name regex.")
       return
     
-    VenueApi.objects.create(
+    Crawler.objects.create(
       venue=venues.first(),
-      api_name=IngestionApis.CRAWLER,
       crawler_name=self.crawler_name
     )
     self.venue = venues.first()

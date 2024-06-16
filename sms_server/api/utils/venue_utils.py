@@ -8,24 +8,10 @@ import deepdiff
 
 from api.constants import get_all, ChangeTypes, VenueTypes
 from api.ingestion.crawlers.crawler import Crawler
-from api.models import Event, IngestionRecord, Venue, VenueTag, VenueApi
+from api.models import Event, IngestionRecord, Venue, VenueTag
 from api.utils import diff_utils
 
 logger = logging.getLogger(__name__)
-
-def clear_api_data(api_name: str) -> None:
-  """Clear all venue data associated with a paritcular api."""
-  venue_apis = VenueApi.objects.filter(api_name=api_name)
-  # Gather all venues for potential deletion.
-  venues = [venue_api.venue for venue_api in venue_apis]
-  VenueApi.objects.filter(api_name=api_name).delete()
-  # For each venue, if we deleted an associated API and it was the last one
-  # left, we delete the venues.
-  for venue in venues:
-    if VenueApi.objects.filter(venue=venue).count() > 0:
-      continue
-
-    venue.delete()
 
 def _get_venue(venue: Venue) -> Venue:
   """Get a venue by name, lat/long fields, or aliasing."""
@@ -57,18 +43,6 @@ def _get_or_create_venue(venue: Venue, debug: bool=False) -> Venue:
 
   venue.save()
   return venue
-
-def add_venue_api(venue: Venue, api_name: str, api_id: str) -> None:
-  """Add venue api if it doesn't already exist."""
-  venue_api = VenueApi.objects.filter(venue=venue, api_name=api_name).first()
-  if venue_api:
-    return
-
-  VenueApi.objects.create(
-    venue=venue,
-    api_name=api_name,
-    api_id=api_id
-  )
 
 def add_venue_tags(venue: Venue, tags: list[str]) -> None:
   """Add venue tags if they don't exist."""
@@ -188,15 +162,7 @@ def merge_venues(from_venue: Venue, to_venue: Venue) -> bool:
       event.venue = to_venue
       event.save()
 
-  # 2. Move all venue apis to the new venue. Delete them if they aren't needed.
-  for venue_api in VenueApi.objects.filter(venue=from_venue):
-    if VenueApi.objects.filter(venue=to_venue, api_name=venue_api.api_name).exists():
-      venue_api.delete()
-    else:
-      venue_api.venue = to_venue
-      venue_api.save()
-
-  # 3. Update all ingestion records to point to the new venue.
+  # 2. Update all ingestion records to point to the new venue.
   for record in IngestionRecord.objects.filter(venue=from_venue):
     record.venue = to_venue
     record.save()
