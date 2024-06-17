@@ -178,7 +178,7 @@ class RawData(models.Model):
      that they come from. 
   """
   created_at = models.DateTimeField(auto_now_add=True)
-  api_name = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
+  api_name = models.CharField(max_length=32, choices=get_choices(IngestionApis), default="Manual")
   event_api_id = models.CharField(max_length=64)
   # We include event and venue name for sanity purposes.
   event_name = models.CharField(max_length=256)
@@ -279,12 +279,7 @@ class IngestionRecord(models.Model):
   api_name = models.CharField(max_length=32, default="Manual")
   change_type = models.CharField(max_length=16, choices=get_choices(ChangeTypes))
   change_log = models.TextField(blank=True, null=True)
-  # Helper field for which one of event / venue has been changed.
-  field_changed = models.CharField(max_length=32)
-  # In some cases we are avoiding adding an event or venue, so these fields may
-  # be blank.
-  event = models.ForeignKey(Event, on_delete=models.SET_NULL, blank=True, null=True)
-  venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, blank=True, null=True)
+  raw_data = models.ForeignKey(RawData, on_delete=models.CASCADE)
 
   def __str__(self):
     return f"{self.ingestion_run} - {self.api_name}: ({self.venue}, {self.change_type})"
