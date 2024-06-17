@@ -19,38 +19,25 @@ class EventApi(ABC):
     self.venue_logs = collections.defaultdict(set)
 
   @abstractmethod
-  def get_venue_kwargs(self, event_data: dict) -> dict:
+  def get_venue_kwargs(self, raw_data: dict) -> dict:
     pass
 
   @abstractmethod
-  def get_event_kwargs(self, event_data: dict) -> dict:
+  def get_event_kwargs(self, raw_data: dict) -> dict:
     pass
 
   @abstractmethod
-  def get_artists_kwargs(self, event_data: dict) -> Generator[dict, None, None]:
+  def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
     pass
 
   @abstractmethod
-  def get_raw_data_info(self, event_data: dict) -> dict:
+  def get_raw_data_info(self, raw_data: dict) -> dict:
     """Helper method to get extra info for raw data specifically."""
     pass
 
   @abstractmethod
   def get_event_list(self) -> Generator[dict, None, None]:
     pass
-
-  def import_data(self, ingestion_run: IngestionRun, debug: bool=False) -> None:
-    for venue_change_type, venue_data in self.venue_logs.items():
-      for venue_change_log, venue in venue_data:
-        IngestionRecord.objects.create(
-          ingestion_run=ingestion_run,
-          api_name=self.api_name,
-          change_type=venue_change_type,
-          change_log=venue_change_log,
-          field_changed="venue",
-          venue=venue
-        )
-
 
   def process_event(self, ingestion_run: IngestionRun, event_data: dict, debug: bool=False) -> None:
     """Process a single event."""

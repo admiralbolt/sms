@@ -4,29 +4,21 @@ Still waiting to hear back from dice about a direct api integration. HOWEVER,
 I found their primary api by poking around their site. Event search is done
 through a single unprotected endpoint: https://api.dice.fm/unified_search.
 """
-import logging
 from typing import Generator
 
 import requests
 from scourgify import normalize_address_record
 
 from api.constants import IngestionApis
-from sms_server.api.ingestion.event_api import EventApi
-from api.models import IngestionRun
-
-logger = logging.getLogger(__name__)
-
-def event_list_request() -> Iterator[dict]:
-  
-
+from api.ingestion.event_apis.event_api import EventApi
 
 class DiceApi(EventApi):
 
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.DICE)
 
-  def get_venue_kwargs(self, event_data: dict) -> dict:
-    venue_data = event_data["venues"][0]
+  def get_venue_kwargs(self, raw_data: dict) -> dict:
+    venue_data = raw_data["venues"][0]
     address_data = normalize_address_record(venue_data["address"])
     return {
       "name": venue_data["name"],
@@ -39,24 +31,24 @@ class DiceApi(EventApi):
       "api_id": venue_data["id"]
     }
 
-  def get_event_kwargs(self, event_data: dict) -> dict:
-    event_day, start_time = event_data["dates"]["event_start_date"].split("T")
+  def get_event_kwargs(self, raw_data: dict) -> dict:
+    event_day, start_time = raw_data["dates"]["event_start_date"].split("T")
     # Need to remove the -07:00 from the start time.
     start_time = start_time[:8]
     return {
-      "title": event_data["name"],
+      "title": raw_data["name"],
       "event_day": event_day,
       "start_time": start_time,
-      "event_url": event_data["social_links"]["event_share"],
-      "event_image_url": event_data["images"]["landscape"],
-      "description": event_data["about"]["description"]
+      "event_url": raw_data["social_links"]["event_share"],
+      "event_image_url": raw_data["images"]["landscape"],
+      "description": raw_data["about"]["description"]
     }
   
-  def get_raw_data_info(self, event_data: dict) -> dict:
+  def get_raw_data_info(self, raw_data: dict) -> dict:
     return {
-      "event_api_id": event_data["id"],
-      "event_name": event_data["name"],
-      "venue_name": event_data["venues"][0]["name"]
+      "event_api_id": raw_data["id"],
+      "event_name": raw_data["name"],
+      "venue_name": raw_data["venues"][0]["name"]
     }
   
   def get_event_list(self) -> Generator[dict, None, None]:
@@ -76,7 +68,3 @@ class DiceApi(EventApi):
     for section in raw_data["sections"]:
       for event in section.get("events", []):
         yield event
-  
-  def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
-    for event in event_list_request():
-      self.process_event(ingestion_run=ingestion_run, event_data=event, debug=debug)

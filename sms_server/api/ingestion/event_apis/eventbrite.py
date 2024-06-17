@@ -17,12 +17,13 @@ Don't forget we need to include the `Authorization: Bearer {token}` header.
 """
 import logging
 import time
+from typing import Generator
 
 import json
 import requests
 
 from api.constants import IngestionApis
-from sms_server.api.ingestion.event_api import EventApi
+from api.ingestion.event_apis.event_api import EventApi
 from api.models import IngestionRun
 from sms_server import settings
 
@@ -78,22 +79,8 @@ class EventbriteApi(EventApi):
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.EVENTBRITE)
 
-  def get_event_detail(self, event_id: str) -> dict:
-    """Get detailed info about an event.
-
-    All information about an event isn't included unless you specify specific
-    expansions. See the "Using Expansions to Get Information on an Event" section
-    of the Eventbrite docs. We add a list of comma separated keywords to get the
-    full set of information for an event.
-    """
-    headers = {
-      "Content-Type": "application/json",
-      "Authorization": f"Bearer {settings.EVENTBRITE_TOKEN}"
-    }
-    return requests.get(f"https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes,format,music_properties", headers=headers, timeout=35).json()
-
-  def get_venue_kwargs(self, event_data: dict) -> dict:
-    venue_data = event_data["primary_venue"]
+  def get_venue_kwargs(self, raw_data: dict) -> dict:
+    venue_data = raw_data["primary_venue"]
 
     address = venue_data["address"]["address_1"]
     if venue_data["address"]["address_2"]:
@@ -109,11 +96,11 @@ class EventbriteApi(EventApi):
       "api_id": venue_data["id"],
     }
   
-  def get_event_kwargs(self, event_data: dict) -> dict:
+  def get_event_kwargs(self, raw_data: dict) -> dict:
     # Funny spot to include this, but because we make a request to get full
     # details, we add our artificial delay here.
     time.sleep(self.delay)
-    event_detail = self.get_event_detail(event_id=event_data["id"])
+    event_detail = self.get_event_detail(event_id=raw_data["id"])
     if not event_detail:
       return {}
     
@@ -123,21 +110,28 @@ class EventbriteApi(EventApi):
     event_image_url = event_detail.get("logo", {}).get("url", "")
 
     return {
-      "title": event_detail["name"]["text"],
+      "title": raw_data["name"],
       "event_day": event_day,
       "start_time": start_time,
       "event_url": event_detail["url"],
       "event_image_url": event_image_url,
       "description": get_full_event_description(event_detail["id"]) or event_detail.get("summary", "")
     }
+  
+  def get_raw_data_info(self, raw_data: dict) -> dict:
+    return {
+      "event_api_id": raw_data["id"],
+      "event_name": raw_data["name"],
+      "venue_name": raw_data["primary_venue"]["name"]
+    }
 
-  def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
+  def get_event_list(self) -> Generator[dict, None, None]:
     """Import data from Eventbrite."""
     data = event_list_request(page=1)
     for event_data in data["search_data"]["events"]["results"]:
-      self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)
+      yield event_data
       
     for page in range(2, data["page_count"]):
       data = event_list_request(page=page)
       for event_data in data["search_data"]["events"]["results"]:
-        self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)
+        yield event_data

@@ -4,12 +4,12 @@ Venuepilot doesn't have any sort of search scope features, so we query all
 events and then filter by city accordingly.
 """
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, Generator, Optional
 
 import requests
 
 from api.constants import IngestionApis
-from sms_server.api.ingestion.event_api import EventApi
+from api.ingestion.event_apis.event_api import EventApi
 from api.models import IngestionRun
 
 REQUEST_TEMPLATE = """
@@ -115,16 +115,24 @@ class VenuepilotApi(EventApi):
       "event_image_url": event_data["highlightedImage"],
     }
   
-  def process_event_list(self, ingestion_run: IngestionRun, event_list: list[dict], debug: bool=False):
+  def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
+    for act in raw_data["lineups"]["acts"]:
+      yield {
+        "name": act["artist"]["name"]
+      }
+  
+  def process_event_list(self, event_list: list[dict]) -> Generator[dict, None, None]:
     for event_data in event_list["data"]["paginatedEvents"]["collection"]:
       if event_data["venue"]["city"].lower() != "seattle":
         continue
-      self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)
+      yield event_data
   
-  def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
+  def get_event_list(self) -> Generator[dict, None, None]:
     event_list = event_list_request(page=0)
     total_pages = event_list["data"]["paginatedEvents"]["metadata"]["totalPages"]
-    self.process_event_list(ingestion_run=ingestion_run, event_list=event_list, debug=debug)
+    for event in self.process_event_list(event_list):
+      yield event
     for page in range(1, total_pages):
       event_list = event_list_request(page=page)
-      self.process_event_list(ingestion_run=ingestion_run, event_list=event_list, debug=debug)
+      for event in self.process_event_list(event_list):
+        yield event

@@ -5,19 +5,16 @@ AXS has much better protections in place than the rest of the apis I've been
 to get a valid CSRF Token, and then using that in subsequent requests to their
 API.
 """
-import logging
 import math
 import time
+from typing import Generator
 
 import json
 from selenium import webdriver
 
 from api.constants import IngestionApis
-from sms_server.api.ingestion.event_api import EventApi
-from api.models import IngestionRun
-from api.utils import crawler_utils, parsing_utils
-
-logger = logging.getLogger(__name__)
+from api.ingestion.event_apis.event_api import EventApi
+from api.utils import crawler_utils
 
 PER_PAGE = 15
 
@@ -67,8 +64,8 @@ class AXSApi(EventApi):
   def __init__(self):
     super().__init__(api_name=IngestionApis.AXS)
 
-  def get_venue_kwargs(self, event_data: dict) -> dict:
-    venue_data = event_data["venue"]
+  def get_venue_kwargs(self, raw_data: dict) -> dict:
+    venue_data = raw_data["venue"]
     return {
       "name": venue_data["title"],
       "latitude": venue_data["latitude"],
@@ -80,26 +77,34 @@ class AXSApi(EventApi):
       "api_id": venue_data["venueId"],
     }
   
-  def get_event_kwargs(self, event_data: dict) -> dict:
+  def get_event_kwargs(self, raw_data: dict) -> dict:
     event_day, start_time = None, None
-    if event_data["eventDateTime"] != "TBD":
-      event_day, start_time = event_data["eventDateTime"].split("T")
+    if raw_data["eventDateTime"] != "TBD":
+      event_day, start_time = raw_data["eventDateTime"].split("T")
 
     return {
-      "title": event_data["title"]["eventTitleText"],
+      "title": raw_data["title"]["eventTitleText"],
       "event_day": event_day,
       "start_time": start_time,
-      "event_url": event_data["ticketing"]["url"],
-      "event_image_url": get_biggest_non_default_image(event_data["media"]),
-      "description": event_data["description"],
+      "event_url": raw_data["ticketing"]["url"],
+      "event_image_url": get_biggest_non_default_image(raw_data["media"]),
+      "description": raw_data["description"],
     }
   
-  def import_data(self, ingestion_run: IngestionRun, debug: bool=False) -> None:
+  def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
+    pass
+
+  def get_raw_data_info(self, raw_data: dict) -> dict:
+    return {
+      "event_api_id": raw_data["id"],
+      "event_name": raw_data["title"]["eventTitleText"],
+      "venue_name": raw_data["venue"]["title"]
+    }
+  
+  def get_event_list(self) -> Generator[dict, None, None]:
     driver = crawler_utils.create_chrome_driver()
     csrf_token = get_csrf_token(driver)
     data = event_list_request(driver, csrf_token, page=1)
-    for event_data in data["events"]:
-      self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)
     # AXS returns total events, not total pages. Little bit of maths.
     last_page = math.ceil(data["meta"]["total"] / PER_PAGE) + 1
     for page in range(2, last_page):
@@ -107,4 +112,4 @@ class AXSApi(EventApi):
       time.sleep(self.delay)
       data = event_list_request(driver, csrf_token, page=page)
       for event_data in data["events"]:
-        self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)
+        yield event_data
