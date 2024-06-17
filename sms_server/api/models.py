@@ -110,8 +110,12 @@ class Artist(models.Model):
   """Artists!"""
   created_at = models.DateTimeField(auto_now_add=True)
   name = models.CharField(max_length=64, unique=True)
+  name_slug = models.CharField(max_length=128, unique=True)
   bio = models.TextField(max_length=256, blank=True, null=True)
 
+  def save(self, *args, **kwargs):
+    self.name_slug = self.name.lower().replace(" ", "-")
+    super().save(*args, **kwargs)
 
 class SocialLink(models.Model):
   """Social Links for artists."""
