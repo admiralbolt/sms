@@ -30,6 +30,15 @@ class EventApi(ABC):
   def get_artists_kwargs(self, event_data: dict) -> Generator[dict, None, None]:
     pass
 
+  @abstractmethod
+  def get_raw_data_info(self, event_data: dict) -> dict:
+    """Helper method to get extra info for raw data specifically."""
+    pass
+
+  @abstractmethod
+  def get_event_list(self) -> Generator[dict, None, None]:
+    pass
+
   def import_data(self, ingestion_run: IngestionRun, debug: bool=False) -> None:
     for venue_change_type, venue_data in self.venue_logs.items():
       for venue_change_log, venue in venue_data:

@@ -16,7 +16,12 @@ class EventTypes:
 
 class IngestionApis:
   AXS = "AXS"
-  CRAWLER = "Crawler"
+  CRAWLER_BLUE_MOON = "Crawler - Blue Moon"
+  CRAWLER_DARRELLS_TAVERN = "Crawler - Darrell's Tavern"
+  CRAWLER_LITTLE_RED_HEN = "Crawler - Little Red Hen"
+  CRAWLER_SEA_MONSTER_LOUNGE = "Crawler - Sea Monster Lounge"
+  CRAWLER_SKYLARK = "Crawler - Skylark"
+  CRAWLER_THE_ROYAL_ROOM = "Crawler - The Royal Room"
   DICE = "Dice"
   EVENTBRITE = "Eventbrite"
   MANUAL = "Manual"
@@ -58,6 +63,15 @@ AUTOMATIC_APIS = [
   IngestionApis.TICKETMASTER,
   IngestionApis.TIXR,
   IngestionApis.VENUEPILOT
+]
+
+CRAWLERS = [
+  IngestionApis.CRAWLER_BLUE_MOON,
+  IngestionApis.CRAWLER_DARRELLS_TAVERN,
+  IngestionApis.CRAWLER_LITTLE_RED_HEN,
+  IngestionApis.CRAWLER_SEA_MONSTER_LOUNGE,
+  IngestionApis.CRAWLER_SKYLARK,
+  IngestionApis.CRAWLER_THE_ROYAL_ROOM
 ]
 
 def get_all(cls) -> list[str]:

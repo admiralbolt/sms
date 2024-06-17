@@ -12,11 +12,10 @@ https://google-calendar.galilcloud.wixapps.net/_api/getEvents?compId=comp-kurk0g
 """
 import logging
 import requests
+from typing import Generator
 
 from api.constants import IngestionApis
 from api.ingestion.crawlers.crawler import Crawler
-from api.models import IngestionRun, Venue
-from api.utils import event_utils, parsing_utils
 
 logger = logging.getLogger(__name__)
 
@@ -27,24 +26,9 @@ CALENDAR_EVENTS_URL = "https://google-calendar.galilcloud.wixapps.net/_api/getEv
 class BlueMoonCrawler(Crawler):
 
   def __init__(self) -> object:
-    super().__init__(crawler_name="blue_moon", venue_name_regex="^blue moon tavern$")
+    super().__init__(crawler_name=IngestionApis.CRAWLER_BLUE_MOON, venue_name_regex="^blue moon tavern$")
 
-  def get_event_kwargs(self, event_data: dict) -> dict:
-    start_time = None
-    if "T" in event_data["startDate"]:
-      _, start_time = event_data["startDate"].split("T")
-      start_time = start_time.split("-")[0]
-    ticket_cost = parsing_utils.find_cost(event_data["summary"])
-    return {
-      "title": event_data["title"],
-      "event_day": event_data["day"],
-      "start_time": start_time,
-      "ticket_price_min": ticket_cost,
-      "ticket_price_max": ticket_cost,
-    }
-  
-  def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
-    """Crawl data for the blue moon tavern!!!"""
+  def get_event_list(self) -> Generator[dict, None, None]:
     headers = {
       "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
     }
@@ -52,4 +36,17 @@ class BlueMoonCrawler(Crawler):
     for day, events in all_data["eventsByDates"].items():
       event_data = events[0]
       event_data["day"] = day
-      self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)
+      event_data["event_name"] = event_data["title"]
+      yield event_data
+
+
+  def get_event_kwargs(self, event_data: dict) -> dict:
+    start_time = None
+    if "T" in event_data["startDate"]:
+      _, start_time = event_data["startDate"].split("T")
+      start_time = start_time.split("-")[0]
+    return {
+      "title": event_data["title"],
+      "event_day": event_data["day"],
+      "start_time": start_time,
+    }

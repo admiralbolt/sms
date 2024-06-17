@@ -5,26 +5,34 @@ Entry point: https://www.skylarkcafe.com/calendar
 Upcoming shows are contained within divs emulating list items.
 Very sparse information about the shows themselves, but it's a start.
 """
+import os
 import re
 from datetime import datetime
+from typing import Generator
 
 import requests
 from bs4 import BeautifulSoup
 
+from api.constants import IngestionApis
 from api.ingestion.crawlers.crawler import Crawler
-from api.models import IngestionRun, Venue
 
 SKYLARK_ROOT = "https://www.skylarkcafe.com"
 
 class SkylarkCrawler(Crawler):
 
   def __init__(self) -> object:
-    super().__init__(crawler_name="skylark", venue_name_regex="^skylark$")
+    super().__init__(crawler_name=IngestionApis.CRAWLER_SKYLARK, venue_name_regex="^skylark$")
 
   def get_event_kwargs(self, event_data: dict) -> dict:
-    return event_data
+    return {
+      "title": event_data["title"],
+      "event_day": event_data["event_day"],
+      "start_time": event_data["start_time"],
+      "event_url": event_data["event_url"],
+      "event_image_url": event_data["event_image_url"]
+    }
   
-  def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
+  def get_event_list(self) -> Generator[dict, None, None]:
     skylark_request = requests.get(f"{SKYLARK_ROOT}/calendar", timeout=15)
     soup = BeautifulSoup(skylark_request.text, "html.parser")
     all_events = soup.find_all("div", class_="w-dyn-items")
@@ -43,12 +51,12 @@ class SkylarkCrawler(Crawler):
       urls = re.findall(r'url\([\'"](.*?)[\'"]\)', image_div["style"])
       event_image_url = "" if not urls else urls[0]
 
-      event_data={
+      yield {
         "title": event_titles[0].text,
         "event_day": start_date.date(),
         "start_time": start_date.time(),
         "event_url": event_url,
-        "event_image_url": event_image_url
+        "event_image_url": event_image_url,
+        "event_name": event_titles[0].text,
+        "event_api_id": os.path.basename(os.path.normpath(event_url))
       }
-
-      self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)

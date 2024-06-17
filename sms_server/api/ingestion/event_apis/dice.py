@@ -5,7 +5,7 @@ I found their primary api by poking around their site. Event search is done
 through a single unprotected endpoint: https://api.dice.fm/unified_search.
 """
 import logging
-from typing import Iterator
+from typing import Generator
 
 import requests
 from scourgify import normalize_address_record
@@ -17,22 +17,7 @@ from api.models import IngestionRun
 logger = logging.getLogger(__name__)
 
 def event_list_request() -> Iterator[dict]:
-  raw_data = requests.post(
-    "https://api.dice.fm/unified_search",
-    json={
-      "lat": 47.6062,
-      "lng": -122.3321,
-      "tag": "music:gig",
-      "count": 200,
-    },
-    headers={
-      "Content-Type": "application/json"
-    }
-  ).json()
-
-  for section in raw_data["sections"]:
-    for event in section.get("events", []):
-      yield event
+  
 
 
 class DiceApi(EventApi):
@@ -66,6 +51,31 @@ class DiceApi(EventApi):
       "event_image_url": event_data["images"]["landscape"],
       "description": event_data["about"]["description"]
     }
+  
+  def get_raw_data_info(self, event_data: dict) -> dict:
+    return {
+      "event_api_id": event_data["id"],
+      "event_name": event_data["name"],
+      "venue_name": event_data["venues"][0]["name"]
+    }
+  
+  def get_event_list(self) -> Generator[dict, None, None]:
+    raw_data = requests.post(
+      "https://api.dice.fm/unified_search",
+      json={
+        "lat": 47.6062,
+        "lng": -122.3321,
+        "tag": "music:gig",
+        "count": 500,
+      },
+      headers={
+        "Content-Type": "application/json"
+      }
+    ).json()
+
+    for section in raw_data["sections"]:
+      for event in section.get("events", []):
+        yield event
   
   def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
     for event in event_list_request():

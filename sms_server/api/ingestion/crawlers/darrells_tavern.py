@@ -11,11 +11,12 @@ Finally, shows are 8pm, and $10 unless otherwise specified.
 import logging
 import requests
 from datetime import datetime
+from typing import Generator
 
 from bs4 import BeautifulSoup
 
+from api.constants import IngestionApis
 from api.ingestion.crawlers.crawler import Crawler
-from api.models import IngestionRun
 from api.utils import parsing_utils
 
 logger = logging.getLogger(__name__)
@@ -39,12 +40,24 @@ def _get_first_uppercase_letters(text: str) -> str:
 class DarellsTavernCrawler(Crawler):
 
   def __init__(self) -> object:
-    super().__init__(crawler_name="darrells_tavern", venue_name_regex="^darrell's tavern$")
+    super().__init__(crawler_name=IngestionApis.CRAWLER_DARRELLS_TAVERN, venue_name_regex="^darrell's tavern$")
 
-  def get_event_kwargs(self, event_data: dict) -> dict:
-    return event_data
+  def get_event_kwargs(self, raw_data: dict) -> dict:
+    return {
+      "title": raw_data["title"],
+      "event_day": raw_data["event_day"],
+      "start_time": raw_data["start_time"],
+      "event_url": raw_data["event_url"],
+      "description": raw_data["description"],
+    }
   
-  def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
+  def get_artist_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
+    for artist in raw_data["artists"]:
+      yield {
+        "name": artist
+      }
+  
+  def get_event_list(self) -> Generator[dict, None, None]:
     """Crawl data for Darell's!!!"""
     headers = {
       "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
@@ -80,7 +93,6 @@ class DarellsTavernCrawler(Crawler):
       if event_date < today:
         event_date = event_date.replace(year=event_date.year + 1)
 
-      ticket_price = 10
       show_title = ""
       start_time = "20:00"
       description = ""
@@ -90,10 +102,6 @@ class DarellsTavernCrawler(Crawler):
         for extra_info in date_info[1:]:
           if (new_start := parsing_utils.find_time(extra_info)):
             start_time = new_start
-            continue
-
-          if (new_cost := parsing_utils.find_cost(extra_info)):
-            ticket_price = new_cost
             continue
 
           show_title = f"{extra_info} - "
@@ -119,14 +127,11 @@ class DarellsTavernCrawler(Crawler):
       
       show_title += ", ".join(artists)
 
-      event_data={
+      yield {
         "title": show_title,
         "event_day": event_date,
         "start_time": start_time,
         "event_url": EVENTS_URL,
         "description": description,
-        "ticket_price_min": ticket_price,
-        "ticket_price_max": ticket_price,
+        "artist_names": artists,
       }
-
-      self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)

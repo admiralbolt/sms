@@ -25,8 +25,8 @@ from typing import Generator, Optional
 
 from bs4 import BeautifulSoup
 
+from api.constants import IngestionApis
 from api.ingestion.crawlers.crawler import Crawler
-from api.models import IngestionRun, Venue
 from api.utils import parsing_utils
 
 logger = logging.getLogger(__name__)
@@ -108,46 +108,39 @@ class Calendar:
           parsing_utils.find_cost(cost)
         )
 
-
-def get_all_events() -> Generator[dict, None, None]:
-  """Gets all events from little red hen calendars."""
-  calendar = Calendar(url=HEN_CAL_START)
-  if not calendar:
-    logger.error(f"Could not load calendar {HEN_CAL_START}")
-
-  today = datetime.today()
-  max_event_date = datetime.today()
-  while (max_event_date - today) < timedelta(days=DAYS_LOOKAHEAD):
-    for day, band, cost in calendar.get_events():
-      if today.date() > day.date():
-        continue
-
-      event_data = {
-        "title": band,
-        "event_day": day.date(),
-        "start_time": "21:00:00",
-        "ticket_price_min": cost,
-        "ticket_price_max": cost,
-        "event_url": calendar.url,
-      }
-      max_event_date = day
-      yield event_data
-    # Exhausted all of this calendars data without hitting the lookahead.
-    # Load the next calendar
-    calendar = calendar.get_next_calendar()
-
-
 class LittleRedHenCrawler(Crawler):
   """Crawl data for the little red hen!"""
 
   def __init__(self) -> object:
-    super().__init__(crawler_name="little_red_hen", venue_name_regex="^little red hen$")
+    super().__init__(crawler_name=IngestionApis.CRAWLER_LITTLE_RED_HEN, venue_name_regex="^little red hen$")
 
   def get_event_kwargs(self, event_data: dict) -> dict:
     return event_data
   
-  def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
-    """Crawl data for the blue moon tavern!!!"""
-    for event_data in get_all_events():
-      self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)
+  def get_event_list(self) -> Generator[dict, None, None]:
+    """Gets all events from little red hen calendars."""
+    calendar = Calendar(url=HEN_CAL_START)
+    if not calendar:
+      logger.error(f"Could not load calendar {HEN_CAL_START}")
+
+    today = datetime.today()
+    max_event_date = datetime.today()
+    while (max_event_date - today) < timedelta(days=DAYS_LOOKAHEAD):
+      for day, band, cost in calendar.get_events():
+        if today.date() > day.date():
+          continue
+
+        event_data = {
+          "title": band,
+          "event_day": day.date(),
+          "start_time": "21:00:00",
+          "ticket_price_min": cost,
+          "ticket_price_max": cost,
+          "event_url": calendar.url,
+        }
+        max_event_date = day
+        yield event_data
+      # Exhausted all of this calendars data without hitting the lookahead.
+      # Load the next calendar
+      calendar = calendar.get_next_calendar()
 
