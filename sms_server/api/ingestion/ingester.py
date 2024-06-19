@@ -1,3 +1,4 @@
+from typing import Optional
 
 from api.constants import ChangeTypes
 from api.ingestion.crawlers.crawler import Crawler
@@ -11,12 +12,13 @@ class Ingester:
   ingestion_apis: list[str]
   run_name: str
 
-  def __init__(self, ingestion_apis: list[str]):
-    self.ingestion_apis = ingestion_apis
-    run_name = f"Ingestion Run - {', '.join(ingestion_apis)}"
-    if all([api_name in ingestion_apis for api_name in EVENT_API_MAPPING.keys()] and [api_name in ingestion_apis for api_name in CRAWLER_MAPPING.keys()]):
-      run_name = "Ingestion Run - All"
-    self.run_name = run_name
+  def __init__(self, ingestion_apis: Optional[list[str]] = None):
+    if not ingestion_apis:
+      self.ingestion_apis = list(EVENT_API_MAPPING.keys()) + list(CRAWLER_MAPPING.keys())
+      self.run_name = "Ingestion Run - All"
+    else:
+      self.ingestion_apis = ingestion_apis
+      self.run_name = f"Ingestion Run - {', '.join(ingestion_apis)}"
 
   def import_from_crawler(self, crawler: Crawler):
     """Import data from a crawler."""

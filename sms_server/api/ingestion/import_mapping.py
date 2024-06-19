@@ -22,3 +22,12 @@ CRAWLER_MAPPING: dict[str, Crawler] = {
   IngestionApis.CRAWLER_SKYLARK: skylark.SkylarkCrawler(),
   IngestionApis.CRAWLER_THE_ROYAL_ROOM: the_royal_room.TheRoyalRoomCrawler()
 }
+
+CRAWLER_NICE_NAMES: dict[str, str] = {
+  "blue_moon": IngestionApis.CRAWLER_BLUE_MOON,
+  "darrells_tavern": IngestionApis.CRAWLER_DARRELLS_TAVERN,
+  "little_red_hen": IngestionApis.CRAWLER_LITTLE_RED_HEN,
+  "sea_monster_lounge": IngestionApis.CRAWLER_SEA_MONSTER_LOUNGE,
+  "skylark": IngestionApis.CRAWLER_SKYLARK,
+  "the_royal_room": IngestionApis.CRAWLER_THE_ROYAL_ROOM
+}
