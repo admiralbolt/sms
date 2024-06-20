@@ -32,9 +32,6 @@ class SkylarkCrawler(AbstractCrawler):
       "event_image_url": event_data["event_image_url"]
     }
   
-  def get_artist_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
-    yield {}
-  
   def get_event_list(self) -> Generator[dict, None, None]:
     skylark_request = requests.get(f"{SKYLARK_ROOT}/calendar", timeout=15)
     soup = BeautifulSoup(skylark_request.text, "html.parser")

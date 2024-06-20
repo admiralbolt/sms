@@ -117,9 +117,6 @@ class LittleRedHenCrawler(AbstractCrawler):
   def get_event_kwargs(self, event_data: dict) -> dict:
     return event_data
   
-  def get_artist_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
-    yield {}
-  
   def get_event_list(self) -> Generator[dict, None, None]:
     """Gets all events from little red hen calendars."""
     calendar = Calendar(url=HEN_CAL_START)

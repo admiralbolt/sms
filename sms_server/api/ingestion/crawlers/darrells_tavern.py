@@ -39,6 +39,8 @@ def _get_first_uppercase_letters(text: str) -> str:
 
 class DarellsTavernCrawler(AbstractCrawler):
 
+  has_artists = True
+
   def __init__(self) -> object:
     super().__init__(crawler_name=IngestionApis.CRAWLER_DARRELLS_TAVERN, venue_name_regex="^darrell's tavern$")
 

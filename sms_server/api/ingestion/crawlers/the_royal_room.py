@@ -48,9 +48,6 @@ class TheRoyalRoomCrawler(AbstractCrawler):
       "start_time": event_data["start_time"]
     }
   
-  def get_artist_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
-    yield {}
-  
   def get_event_list(self) -> Generator[dict, None, None]:
     """Crawl data!!!"""
     headers = {

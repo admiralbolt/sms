@@ -22,6 +22,8 @@ def event_list_request(venue_id: str="", client_key: str=""):
 
 class TIXRApi(EventApi):
 
+  has_artists = True
+
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.TIXR)
 

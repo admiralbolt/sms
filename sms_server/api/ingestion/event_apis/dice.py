@@ -14,6 +14,8 @@ from api.ingestion.event_apis.event_api import EventApi
 
 class DiceApi(EventApi):
 
+  has_artists = True
+
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.DICE)
 

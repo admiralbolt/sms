@@ -38,9 +38,6 @@ class SeaMonsterLoungeCrawler(AbstractCrawler):
       "title": event_data["title"].strip(),
     }
   
-  def get_artist_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
-    yield {}
-  
   def get_event_list(self) -> Generator[dict, None, None]:
     headers = {
       "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"

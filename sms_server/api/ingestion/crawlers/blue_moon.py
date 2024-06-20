@@ -38,9 +38,6 @@ class BlueMoonCrawler(AbstractCrawler):
       "event_day": event_data["day"],
       "start_time": start_time,
     }
-  
-  def get_artist_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
-    yield {}
 
   def get_event_list(self) -> Generator[dict, None, None]:
     headers = {

@@ -13,6 +13,7 @@ class EventApi(ABC):
 
   api_name: str = ""
   venue_logs: dict = {}
+  has_artists: bool = False
 
   def __init__(self, api_name: str) -> object:
     self.api_name = api_name
@@ -26,9 +27,8 @@ class EventApi(ABC):
   def get_event_kwargs(self, raw_data: dict) -> dict:
     pass
 
-  @abstractmethod
   def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
-    pass
+    yield {}
 
   @abstractmethod
   def get_raw_data_info(self, raw_data: dict) -> dict:

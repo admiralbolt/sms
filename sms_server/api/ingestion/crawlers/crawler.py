@@ -11,6 +11,7 @@ class AbstractCrawler(ABC):
   crawler_name: str = ""
   venue_name_regex: str = ""
   venue: Venue = None
+  has_artists: bool = False
 
   def __init__(self, crawler_name: str, venue_name_regex: str) -> object:
     self.crawler_name = crawler_name
@@ -27,10 +28,9 @@ class AbstractCrawler(ABC):
     """
     pass
 
-  @abstractmethod
   def get_artist_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
     """Get kwargs necessary for creating or updating an artist."""
-    pass
+    yield {}
 
   @abstractmethod
   def get_event_list(self) -> Generator[dict, None, None]:
