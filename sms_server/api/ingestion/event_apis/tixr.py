@@ -11,6 +11,7 @@ import requests
 
 from api.constants import IngestionApis
 from api.ingestion.event_apis.event_api import EventApi
+from api.models import Venue
 from sms_server import settings
 
 def event_list_request(venue_id: str="", client_key: str=""):
@@ -28,10 +29,7 @@ class TIXRApi(EventApi):
     super().__init__(api_name=IngestionApis.TIXR)
 
   def get_venue_kwargs(self, raw_data: dict) -> dict:
-    return {
-      "name": raw_data["venue"]["name"],
-      "api_id": raw_data["venue"]["id"]
-    }
+    return raw_data["venue"]
   
   def get_event_kwargs(self, raw_data: dict) -> dict:
     absolute_start = datetime.fromtimestamp(raw_data["start_date"] / 1000)
@@ -60,8 +58,14 @@ class TIXRApi(EventApi):
     }
   
   def get_event_list(self) -> Generator[dict, None, None]:
-    for _, venue_id, client_key in settings.TIXR_CLIENTS:
-      event_list = event_list_request(venue_id=venue_id, client_key=client_key)
-
+    for venue_name, tixr_venue_id, client_key in settings.TIXR_CLIENTS:
+      venues = Venue.objects.filter(name__iregex=venue_name)
+      venue = venues.first()
+      event_list = event_list_request(venue_id=tixr_venue_id, client_key=client_key)
       for event in event_list:
+        event["venue"] = {
+          "name": venue.name,
+          "latitude": str(venue.latitude),
+          "longitude": str(venue.longitude)
+        }
         yield event
