@@ -7,7 +7,7 @@ from typing import Any, Generator
 import deepdiff
 
 from api.constants import get_all, ChangeTypes, VenueTypes
-from api.ingestion.crawlers.crawler import Crawler
+from api.ingestion.crawlers.crawler import AbstractCrawler
 from api.models import Event, IngestionRecord, Venue, VenueTag
 from api.utils import diff_utils
 
@@ -131,7 +131,7 @@ def get_or_create_venue(name: str, latitude: float=0, longitude: float=0, addres
   add_venue_api(venue=venue, api_name=api_name, api_id=api_id)
   return venue
 
-def get_crawler(crawler_module_name: str) -> Crawler:
+def get_crawler(crawler_module_name: str) -> AbstractCrawler:
   """Get an instance of a Crawler class from the module name."""
   crawler_module = importlib.import_module(f"api.ingestion.crawlers.{crawler_module_name}")
   for attr in dir(crawler_module):

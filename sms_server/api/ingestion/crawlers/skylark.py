@@ -14,11 +14,11 @@ import requests
 from bs4 import BeautifulSoup
 
 from api.constants import IngestionApis
-from api.ingestion.crawlers.crawler import Crawler
+from api.ingestion.crawlers.crawler import AbstractCrawler
 
 SKYLARK_ROOT = "https://www.skylarkcafe.com"
 
-class SkylarkCrawler(Crawler):
+class SkylarkCrawler(AbstractCrawler):
 
   def __init__(self) -> object:
     super().__init__(crawler_name=IngestionApis.CRAWLER_SKYLARK, venue_name_regex="^skylark$")
@@ -31,6 +31,9 @@ class SkylarkCrawler(Crawler):
       "event_url": event_data["event_url"],
       "event_image_url": event_data["event_image_url"]
     }
+  
+  def get_artist_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
+    yield {}
   
   def get_event_list(self) -> Generator[dict, None, None]:
     skylark_request = requests.get(f"{SKYLARK_ROOT}/calendar", timeout=15)
@@ -53,8 +56,8 @@ class SkylarkCrawler(Crawler):
 
       yield {
         "title": event_titles[0].text,
-        "event_day": start_date.date(),
-        "start_time": start_date.time(),
+        "event_day": start_date.strftime("%Y-%m-%d"),
+        "start_time": start_date.strftime("%H:%M:%S"),
         "event_url": event_url,
         "event_image_url": event_image_url,
         "event_name": event_titles[0].text,

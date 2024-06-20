@@ -120,6 +120,13 @@ class VenuepilotApi(EventApi):
       yield {
         "name": act["artist"]["name"]
       }
+
+  def get_raw_data_info(self, raw_data: dict) -> dict:
+    return {
+      "event_api_id": raw_data["id"],
+      "event_name": raw_data["name"],
+      "venue_name": raw_data["venue"]["name"]
+    }
   
   def process_event_list(self, event_list: list[dict]) -> Generator[dict, None, None]:
     for event_data in event_list["data"]["paginatedEvents"]["collection"]:

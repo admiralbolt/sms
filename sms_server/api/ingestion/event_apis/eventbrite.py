@@ -118,6 +118,9 @@ class EventbriteApi(EventApi):
       "description": get_full_event_description(event_detail["id"]) or event_detail.get("summary", "")
     }
   
+  def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
+    yield {}
+  
   def get_raw_data_info(self, raw_data: dict) -> dict:
     return {
       "event_api_id": raw_data["id"],

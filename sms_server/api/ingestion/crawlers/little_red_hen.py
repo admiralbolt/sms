@@ -26,7 +26,7 @@ from typing import Generator, Optional
 from bs4 import BeautifulSoup
 
 from api.constants import IngestionApis
-from api.ingestion.crawlers.crawler import Crawler
+from api.ingestion.crawlers.crawler import AbstractCrawler
 from api.utils import parsing_utils
 
 logger = logging.getLogger(__name__)
@@ -76,7 +76,7 @@ class Calendar:
         continue
 
       is_next_year = self.is_next_year or self.month_number == 12
-      return Calendar(url=os.path.join(HEN_CAL_BASE, os.path.basename(a_tag["href"])))
+      return Calendar(url=os.path.join(HEN_CAL_BASE, os.path.basename(a_tag["href"])), is_next_year=is_next_year)
 
     logger.error(f"Could not load next months calendar from {self.url}")
     return None
@@ -108,7 +108,7 @@ class Calendar:
           parsing_utils.find_cost(cost)
         )
 
-class LittleRedHenCrawler(Crawler):
+class LittleRedHenCrawler(AbstractCrawler):
   """Crawl data for the little red hen!"""
 
   def __init__(self) -> object:
@@ -116,6 +116,9 @@ class LittleRedHenCrawler(Crawler):
 
   def get_event_kwargs(self, event_data: dict) -> dict:
     return event_data
+  
+  def get_artist_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
+    yield {}
   
   def get_event_list(self) -> Generator[dict, None, None]:
     """Gets all events from little red hen calendars."""
@@ -132,8 +135,9 @@ class LittleRedHenCrawler(Crawler):
 
         event_data = {
           "title": band,
-          "event_day": day.date(),
-          "start_time": "21:00:00",
+          "event_name": band,
+          "event_day": day.strftime("%Y-%m-%d"),
+          "event_api_id": f"{day.strftime('%Y-%m-%d')}-{band[:30]}",
           "ticket_price_min": cost,
           "ticket_price_max": cost,
           "event_url": calendar.url,
@@ -143,4 +147,6 @@ class LittleRedHenCrawler(Crawler):
       # Exhausted all of this calendars data without hitting the lookahead.
       # Load the next calendar
       calendar = calendar.get_next_calendar()
+      if calendar is None:
+        return
 

@@ -17,14 +17,14 @@ from typing import Generator
 from bs4 import BeautifulSoup
 
 from api.constants import IngestionApis
-from api.ingestion.crawlers.crawler import Crawler
+from api.ingestion.crawlers.crawler import AbstractCrawler
 from api.utils import parsing_utils
 
 logger = logging.getLogger(__name__)
 
 SEAMONSTER_URL = "https://www.seamonsterlounge.com/buy-tickets-in-advance"
 
-class SeaMonsterLoungeCrawler(Crawler):
+class SeaMonsterLoungeCrawler(AbstractCrawler):
 
   def __init__(self) -> object:
     super().__init__(crawler_name=IngestionApis.CRAWLER_SEA_MONSTER_LOUNGE, venue_name_regex="^sea monster lounge$")
@@ -37,6 +37,9 @@ class SeaMonsterLoungeCrawler(Crawler):
       "start_time": parsing_utils.parse_12hr_time(event_data["scheduling"]["startTimeFormatted"]),
       "title": event_data["title"].strip(),
     }
+  
+  def get_artist_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
+    yield {}
   
   def get_event_list(self) -> Generator[dict, None, None]:
     headers = {

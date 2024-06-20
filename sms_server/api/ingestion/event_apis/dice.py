@@ -44,6 +44,9 @@ class DiceApi(EventApi):
       "description": raw_data["about"]["description"]
     }
   
+  def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
+    yield {}
+  
   def get_raw_data_info(self, raw_data: dict) -> dict:
     return {
       "event_api_id": raw_data["id"],

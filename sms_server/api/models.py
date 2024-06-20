@@ -286,7 +286,7 @@ class IngestionRecord(models.Model):
   raw_data = models.ForeignKey(RawData, on_delete=models.CASCADE)
 
   def __str__(self):
-    return f"{self.ingestion_run} - {self.api_name}: ({self.venue}, {self.change_type})"
+    return f"{self.ingestion_run} - {self.change_type}, {self.raw_data}"
 
 ADMIN_MODELS = [
   Artist,
@@ -297,6 +297,7 @@ ADMIN_MODELS = [
   JanitorRun,
   JanitorRecord,
   OpenMic,
+  RawData,
   SocialLink,
   Venue,
   VenueTag,

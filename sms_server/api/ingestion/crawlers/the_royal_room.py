@@ -20,7 +20,7 @@ import cssutils
 from bs4 import BeautifulSoup
 
 from api.constants import IngestionApis
-from api.ingestion.crawlers.crawler import Crawler
+from api.ingestion.crawlers.crawler import AbstractCrawler
 from api.utils import parsing_utils
 
 logger = logging.getLogger(__name__)
@@ -34,7 +34,7 @@ FORM_DATA = {
   "show_pagination": False
 }
 
-class TheRoyalRoomCrawler(Crawler):
+class TheRoyalRoomCrawler(AbstractCrawler):
 
   def __init__(self) -> object:
     super().__init__(crawler_name=IngestionApis.CRAWLER_THE_ROYAL_ROOM, venue_name_regex="^the royal room$")
@@ -47,6 +47,9 @@ class TheRoyalRoomCrawler(Crawler):
       "event_day": event_data["event_day"],
       "start_time": event_data["start_time"]
     }
+  
+  def get_artist_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
+    yield {}
   
   def get_event_list(self) -> Generator[dict, None, None]:
     """Crawl data!!!"""
@@ -76,9 +79,10 @@ class TheRoyalRoomCrawler(Crawler):
 
       yield {
         "title": event_title_heading.text,
+        "event_name": event_title_heading.text,
         "event_image_url": event_image_url,
         "event_url": anchor_link["href"],
-        "event_day": event_day,
+        "event_day": event_day.strftime("%Y-%m-%d"),
         "start_time": start_time,
         "event_name": event_title_heading.text,
         "event_api_id": os.path.basename(os.path.normpath(anchor_link["href"]))

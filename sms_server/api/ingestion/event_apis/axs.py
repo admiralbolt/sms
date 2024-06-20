@@ -6,6 +6,7 @@ to get a valid CSRF Token, and then using that in subsequent requests to their
 API.
 """
 import math
+import requests
 import time
 from typing import Generator
 

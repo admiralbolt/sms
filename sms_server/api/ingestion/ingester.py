@@ -1,10 +1,13 @@
+import logging
 from typing import Optional
 
 from api.constants import ChangeTypes
-from api.ingestion.crawlers.crawler import Crawler
+from api.ingestion.crawlers.crawler import AbstractCrawler
 from api.ingestion.event_apis.event_api import EventApi
 from api.ingestion.import_mapping import CRAWLER_MAPPING, EVENT_API_MAPPING
 from api.models import IngestionRecord, IngestionRun, RawData
+
+logger = logging.getLogger(__name__)
 
 class Ingester:
   """Load some data."""
@@ -20,7 +23,7 @@ class Ingester:
       self.ingestion_apis = ingestion_apis
       self.run_name = f"Ingestion Run - {', '.join(ingestion_apis)}"
 
-  def import_from_crawler(self, crawler: Crawler):
+  def import_from_crawler(self, crawler: AbstractCrawler):
     """Import data from a crawler."""
     for event_data in crawler.get_event_list():
       raw_data = RawData.objects.filter(api_name=crawler.crawler_name, event_api_id=event_data["event_api_id"]).first()
@@ -68,7 +71,12 @@ class Ingester:
   def import_data(self):
     self.ingestion_run = IngestionRun.objects.create(name=self.run_name)
     for api in self.ingestion_apis:
-      if api in CRAWLER_MAPPING:
-        self.import_from_crawler(CRAWLER_MAPPING[api])
-      elif api in EVENT_API_MAPPING:
-        self.import_from_api(EVENT_API_MAPPING[api])
+      try:
+        if api in CRAWLER_MAPPING:
+          self.import_from_crawler(CRAWLER_MAPPING[api])
+        elif api in EVENT_API_MAPPING:
+          self.import_from_api(EVENT_API_MAPPING[api])
+      except Exception as e:
+        print(f"Error importing from api {api}, error: {e}")
+        print(e)
+        logger.error("Error importing from api %s, error: %s.", api, e, exc_info=1)

@@ -6,7 +6,7 @@ from api.models import Crawler, Venue
 
 logger = logging.getLogger(__name__)
 
-class Crawler(ABC):
+class AbstractCrawler(ABC):
   """Abstract crawler class."""
   crawler_name: str = ""
   venue_name_regex: str = ""
@@ -28,7 +28,7 @@ class Crawler(ABC):
     pass
 
   @abstractmethod
-  def get_artist_kwargs(self, raw_data: dict) -> dict:
+  def get_artist_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
     """Get kwargs necessary for creating or updating an artist."""
     pass
 
