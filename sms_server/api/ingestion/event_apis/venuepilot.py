@@ -3,6 +3,7 @@
 Venuepilot doesn't have any sort of search scope features, so we query all
 events and then filter by city accordingly.
 """
+import logging
 from datetime import datetime
 from typing import Any, Generator, Optional
 
@@ -73,6 +74,8 @@ query PaginatedEvents {
   }
 """
 
+logger = logging.getLogger(__name__)
+
 def event_list_request(min_start_date: Optional[str]=None, page: int=0):
   """Get a list of events from Venuepilot."""
   min_start_date = min_start_date or datetime.today().strftime("%Y-%m-%d")
@@ -116,10 +119,13 @@ class VenuepilotApi(EventApi):
     }
   
   def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
-    for act in raw_data["lineups"]["acts"]:
-      yield {
-        "name": act["artist"]["name"]
-      }
+    # Technically venuepilot has artist info, but in practice I've never seen
+    # the 'artist' field actually populated.
+    if "artist" in raw_data:
+      logger.info("WE HAVE ARTIST!!!")
+      logger.info(raw_data["artist"])
+
+    yield {}
 
   def get_raw_data_info(self, raw_data: dict) -> dict:
     return {
