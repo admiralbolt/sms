@@ -57,6 +57,13 @@ class OpenMicSerializer(serializers.ModelSerializer):
     model = models.OpenMic
     fields = ("id", "name", "open_mic_type", "description", "signup_start_time", "event_start_time", "event_end_time", "all_ages", "house_piano", "house_pa", "drums", "cadence_crontab", "cadence_readable", "generate_events", "venue")
 
+class RawDataSerializer(serializers.ModelSerializer):
+  """Serialize Raw Data."""
+
+  class Meta:
+    model = models.RawData
+    fields = "__all__"
+
 class IngestionRunSerializer(serializers.ModelSerializer):
   """Serialize IngestionRun data."""
   summary = serializers.SerializerMethodField()
@@ -66,7 +73,7 @@ class IngestionRunSerializer(serializers.ModelSerializer):
 
     We also include the index to use as an ID in the react data table view.
     """
-    data = list(models.IngestionRecord.objects.filter(ingestion_run=ingestion_run).values("api_name", "change_type", "field_changed").annotate(total=Count("id")))
+    data = list(models.IngestionRecord.objects.filter(ingestion_run=ingestion_run).values("api_name", "change_type").annotate(total=Count("id")))
     for i, agg in enumerate(data):
       agg["index"] = i
     return data
@@ -78,20 +85,9 @@ class IngestionRunSerializer(serializers.ModelSerializer):
 class IngestionRecordSerializer(serializers.ModelSerializer):
   """Serialize Ingestion Records."""
 
-  # For ease of use, we want to get the name of the object that was changed.
-  # Staring at a bunch of event / venue ids makes it much harder to look at.
-  event_name = serializers.SerializerMethodField()
-  venue_name = serializers.SerializerMethodField()
-
-  def get_event_name(self, record: models.IngestionRecord):
-    return "" if record.event == None else record.event.title
-  
-  def get_venue_name(self, record: models.IngestionRecord):
-    return "" if record.venue == None else record.venue.name
-
   class Meta:
     model = models.IngestionRecord
-    fields = ("id", "api_name", "change_type", "change_log", "field_changed", "ingestion_run", "event", "event_name", "venue", "venue_name")
+    fields = "__all__"
 
 class CrontabScheduleSerializer(serializers.ModelSerializer):
   schedule = serializers.SerializerMethodField()

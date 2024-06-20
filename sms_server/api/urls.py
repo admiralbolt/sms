@@ -14,6 +14,7 @@ router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"celery", views.PeriodicTaskViewSet)
 router.register(r"events", views.EventViewSet)
 router.register(r"open_mics", views.OpenMicViewSet)
+router.register(r"raw_datas", views.RawDataViewSet)
 router.register(r"venues", views.VenueViewSet)
 router.register(r"ingestion_runs", views.IngestionRunViewSet)
 

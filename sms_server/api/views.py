@@ -73,6 +73,20 @@ class VenueEventsView(ListAPIView):
   def get_queryset(self):
     venue = models.Venue.objects.filter(id=self.kwargs.get("venue_id", None)).first()
     return models.Event.objects.filter(venue=venue)
+
+
+class RawDataViewSet(viewsets.ModelViewSet):
+  """List all raw data."""
+  resource_name = "raw_datas"
+  serializer_class = serializers.RawDataSerializer
+  queryset = models.RawData.objects.all()
+
+  def get_permissions(self):
+    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
+    return [permission() for permission in permission_classes]
+  
+  def get_queryset(self):
+    return models.RawData.objects.order_by("created_at")
   
 class IngestionRunViewSet(viewsets.ReadOnlyModelViewSet):
   """List all ingestion runs."""
