@@ -35,6 +35,7 @@ class Ingester:
           event_api_id=event_data["event_api_id"],
           event_name=event_data["event_name"],
           venue_name=crawler.venue.name,
+          event_day=event_data["event_day"],
           data=event_data
         )
 
@@ -58,6 +59,7 @@ class Ingester:
           event_api_id=raw_event_info["event_api_id"],
           event_name=raw_event_info["event_name"],
           venue_name=raw_event_info["venue_name"],
+          event_day=raw_event_info["event_day"],
           data=event_data
         )
 

@@ -84,14 +84,12 @@ class TicketmasterApi(EventApi):
       "event_image_url": select_image(raw_data["images"])
     }
   
-  def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
-    yield {}
-  
   def get_raw_data_info(self, raw_data: dict) -> dict:
     return {
       "event_api_id": raw_data["id"],
       "event_name": raw_data["name"],
-      "venue_name": raw_data["_embedded"]["venues"][0]["name"]
+      "venue_name": raw_data["_embedded"]["venues"][0]["name"],
+      "event_day": raw_data["dates"]["start"]["localDate"],
     }
   
   def get_event_list(self) -> Generator[dict, None, None]:

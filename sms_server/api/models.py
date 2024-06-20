@@ -187,6 +187,7 @@ class RawData(models.Model):
   # We include event and venue name for sanity purposes.
   event_name = models.CharField(max_length=256)
   venue_name = models.CharField(max_length=128)
+  event_day = models.DateField()
   data = models.JSONField()
 
   def __str__(self):

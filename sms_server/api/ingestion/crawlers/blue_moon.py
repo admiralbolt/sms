@@ -28,16 +28,13 @@ class BlueMoonCrawler(AbstractCrawler):
   def __init__(self) -> object:
     super().__init__(crawler_name=IngestionApis.CRAWLER_BLUE_MOON, venue_name_regex="^blue moon tavern$")
 
-  def get_event_kwargs(self, event_data: dict) -> dict:
+  def get_event_kwargs(self, raw_data: dict) -> dict:
     start_time = None
-    if "T" in event_data["startDate"]:
-      _, start_time = event_data["startDate"].split("T")
+    if "T" in raw_data["startDate"]:
+      _, start_time = raw_data["startDate"].split("T")
       start_time = start_time.split("-")[0]
-    return {
-      "title": event_data["title"],
-      "event_day": event_data["day"],
-      "start_time": start_time,
-    }
+    raw_data["start_time"] = start_time
+    return raw_data
 
   def get_event_list(self) -> Generator[dict, None, None]:
     headers = {
@@ -46,7 +43,7 @@ class BlueMoonCrawler(AbstractCrawler):
     all_data = requests.get(CALENDAR_EVENTS_URL, headers=headers, timeout=15).json()
     for day, events in all_data["eventsByDates"].items():
       event_data = events[0]
-      event_data["day"] = day
+      event_data["event_day"] = day
       event_data["event_name"] = event_data["title"]
       event_data["event_api_id"] = event_data["id"]
       yield event_data

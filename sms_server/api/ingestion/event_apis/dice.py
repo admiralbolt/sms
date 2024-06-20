@@ -50,10 +50,12 @@ class DiceApi(EventApi):
     yield {}
   
   def get_raw_data_info(self, raw_data: dict) -> dict:
+    event_day, _ = raw_data["dates"]["event_start_date"].split("T")
     return {
       "event_api_id": raw_data["id"],
       "event_name": raw_data["name"],
-      "venue_name": raw_data["venues"][0]["name"]
+      "venue_name": raw_data["venues"][0]["name"],
+      "event_day": event_day
     }
   
   def get_event_list(self) -> Generator[dict, None, None]:

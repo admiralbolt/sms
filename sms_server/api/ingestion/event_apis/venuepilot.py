@@ -125,7 +125,8 @@ class VenuepilotApi(EventApi):
     return {
       "event_api_id": raw_data["id"],
       "event_name": raw_data["name"],
-      "venue_name": raw_data["venue"]["name"]
+      "venue_name": raw_data["venue"]["name"],
+      "event_day": raw_data["date"],
     }
   
   def process_event_list(self, event_list: list[dict]) -> Generator[dict, None, None]:

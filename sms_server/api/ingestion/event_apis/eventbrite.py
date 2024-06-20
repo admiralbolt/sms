@@ -57,21 +57,6 @@ def event_list_request(page: int=1) -> dict:
     return data
   return {}
 
-def get_full_event_description(event_id: str) -> str:
-  """Loads full HTML body of the event description."""
-  headers = {
-    "Content-Type": "application/json",
-    "Authorization": f"Bearer {settings.EVENTBRITE_TOKEN}"
-  }
-  response = requests.get(f"https://www.eventbriteapi.com/v3/events/{event_id}/structured_content/?purpose=listing", headers=headers, timeout=10).json()
-  for module in response["modules"]:
-    if module["type"] != "text":
-      continue
-
-    return module.get("data", {}).get("body", {}).get("text", None)
-
-  return None
-
 class EventbriteApi(EventApi):
 
   delay: float = 0.5
@@ -97,35 +82,21 @@ class EventbriteApi(EventApi):
     }
   
   def get_event_kwargs(self, raw_data: dict) -> dict:
-    # Funny spot to include this, but because we make a request to get full
-    # details, we add our artificial delay here.
-    time.sleep(self.delay)
-    event_detail = self.get_event_detail(event_id=raw_data["id"])
-    if not event_detail:
-      return {}
-    
-    event_start = event_detail["start"]["local"]
-    event_day, start_time = event_start.split("T")
-
-    event_image_url = event_detail.get("logo", {}).get("url", "")
-
     return {
       "title": raw_data["name"],
-      "event_day": event_day,
-      "start_time": start_time,
-      "event_url": event_detail["url"],
-      "event_image_url": event_image_url,
-      "description": get_full_event_description(event_detail["id"]) or event_detail.get("summary", "")
+      "event_day": raw_data["start_date"],
+      "start_time": raw_data["start_time"],
+      "event_url": raw_data["url"],
+      "event_image_url": raw_data["image"]["url"],
+      "description": raw_data.get("summary", "")
     }
-  
-  def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
-    yield {}
   
   def get_raw_data_info(self, raw_data: dict) -> dict:
     return {
       "event_api_id": raw_data["id"],
       "event_name": raw_data["name"],
-      "venue_name": raw_data["primary_venue"]["name"]
+      "venue_name": raw_data["primary_venue"]["name"],
+      "event_day": raw_data["start_date"]
     }
 
   def get_event_list(self) -> Generator[dict, None, None]:

@@ -96,10 +96,12 @@ class AXSApi(EventApi):
     pass
 
   def get_raw_data_info(self, raw_data: dict) -> dict:
+    event_day, _ = raw_data["eventDateTime"].split("T")
     return {
       "event_api_id": raw_data["id"],
       "event_name": raw_data["title"]["eventTitleText"],
-      "venue_name": raw_data["venue"]["title"]
+      "venue_name": raw_data["venue"]["title"],
+      "event_day": event_day,
     }
   
   def get_event_list(self) -> Generator[dict, None, None]:

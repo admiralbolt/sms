@@ -51,10 +51,12 @@ class TIXRApi(EventApi):
       }
   
   def get_raw_data_info(self, raw_data: dict) -> dict:
+    absolute_start = datetime.fromtimestamp(raw_data["start_date"] / 1000)
     return {
       "event_api_id": raw_data["id"],
       "event_name": raw_data["name"],
-      "venue_name": raw_data["venue"]["name"]
+      "venue_name": raw_data["venue"]["name"],
+      "event_day": absolute_start.strftime("%Y-%m-%d"),
     }
   
   def get_event_list(self) -> Generator[dict, None, None]:

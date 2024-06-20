@@ -33,7 +33,7 @@ class SeaMonsterLoungeCrawler(AbstractCrawler):
     return {
       "event_url": f"https://www.seamonsterlounge.com/event-info/{event_data['slug']}",
       "event_image_url": event_data.get("mainImage", {}).get("url", ""),
-      "event_day": datetime.strptime(event_data["scheduling"]["startDateFormatted"], "%B %d, %Y"),
+      "event_day": event_data["event_day"],
       "start_time": parsing_utils.parse_12hr_time(event_data["scheduling"]["startTimeFormatted"]),
       "title": event_data["title"].strip(),
     }
@@ -49,6 +49,7 @@ class SeaMonsterLoungeCrawler(AbstractCrawler):
     for _, val in data["appsWarmupData"].items():
       for _, val2 in val.items():
         for event_data in val2["events"]["events"]:
+          event_data["event_day"] = datetime.strptime(event_data["scheduling"]["startDateFormatted"], "%B %d, %Y"),
           event_data["event_api_id"] = event_data["slug"]
           event_data["event_name"] = event_data["title"].strip()
           yield event_data
