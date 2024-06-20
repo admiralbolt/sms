@@ -56,24 +56,6 @@ class Neighborhoods:
   UNIVERSITY_DISTRICT = "University District"
   WEST_SEATTLE = "West Seattle"
 
-AUTOMATIC_APIS = [
-  IngestionApis.AXS,
-  IngestionApis.DICE,
-  IngestionApis.EVENTBRITE,
-  IngestionApis.TICKETMASTER,
-  IngestionApis.TIXR,
-  IngestionApis.VENUEPILOT
-]
-
-CRAWLERS = [
-  IngestionApis.CRAWLER_BLUE_MOON,
-  IngestionApis.CRAWLER_DARRELLS_TAVERN,
-  IngestionApis.CRAWLER_LITTLE_RED_HEN,
-  IngestionApis.CRAWLER_SEA_MONSTER_LOUNGE,
-  IngestionApis.CRAWLER_SKYLARK,
-  IngestionApis.CRAWLER_THE_ROYAL_ROOM
-]
-
 def get_all(cls) -> list[str]:
   """Get a list of all options."""
   instance = cls()

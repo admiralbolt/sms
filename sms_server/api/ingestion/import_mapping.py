@@ -1,9 +1,22 @@
-from api.constants import IngestionApis
+from api.constants import get_all, IngestionApis
 from api.ingestion.crawlers import blue_moon, darrells_tavern, little_red_hen, sea_monster_lounge, skylark, the_royal_room
 from api.ingestion.crawlers.crawler import AbstractCrawler
 from api.ingestion.event_apis import axs, dice, eventbrite, ticketmaster, tixr, venuepilot
 from api.ingestion.event_apis.event_api import EventApi
 
+API_PRIORITY_LIST = [
+  # Manual events should always take highest priority.
+  [IngestionApis.MANUAL],
+  # Apis that have artist integrations.
+  [IngestionApis.DICE, IngestionApis.AXS, IngestionApis.TIXR],
+  # Apis that don't have artist integrations.
+  [IngestionApis.VENUEPILOT],
+  # All the Crawlers
+  [api for api in get_all(IngestionApis) if api.lower().startswith("crawler")],
+  # Low quality data below here.
+  [IngestionApis.EVENTBRITE],
+  [IngestionApis.TICKETMASTER],
+]
 
 EVENT_API_MAPPING: dict[str, EventApi] = {
   IngestionApis.AXS: axs.AXSApi(),
