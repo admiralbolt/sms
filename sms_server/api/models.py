@@ -259,7 +259,7 @@ class JanitorRecord(models.Model):
   
   # Helper field for seeing what got added/changed/deleted -> either an event,
   # a venue, or an artist.
-  field_changed = models.CharField(max_length=32)
+  field_changed = models.CharField(max_length=32, choices=[("event", "event"), ("venue", "venue"), ("artist", "artist"), ("none", "none")])
   # In some cases we are avoiding adding data, so these may be blank.
   event = models.ForeignKey(Event, on_delete=models.SET_NULL, blank=True, null=True)
   venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, blank=True, null=True)
