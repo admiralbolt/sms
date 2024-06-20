@@ -2,7 +2,6 @@ from django.core.management.base import BaseCommand
 
 from api.ingestion.import_mapping import EVENT_API_MAPPING, CRAWLER_NICE_NAMES
 from api.ingestion.ingester import Ingester
-from api.tasks import import_all
 
 class Command(BaseCommand):
 
@@ -16,7 +15,8 @@ class Command(BaseCommand):
       return
 
     if kwargs["all"]:
-      import_all()
+      ingester = Ingester()
+      ingester.import_data()
       return
     
     if kwargs["api"] not in EVENT_API_MAPPING and kwargs["api"] not in CRAWLER_NICE_NAMES:

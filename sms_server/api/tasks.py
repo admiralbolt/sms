@@ -37,14 +37,10 @@ def generate_open_mic_events(name_filter: str="", max_diff: datetime.timedelta =
     open_mic_utils.generate_open_mic_events(mic, max_diff=max_diff, debug=debug)
 
 @shared_task
-def import_all(debug: bool=False):
+def import_and_clean(debug: bool=False):
   """Import data from ALL APIs & Crawlers."""
   ingester = Ingester()
   ingester.import_data()
-
-@shared_task
-def clean_all():
-  """Run the Janitor to clean some data!"""
   janitor = Janitor()
   janitor.run()
 
