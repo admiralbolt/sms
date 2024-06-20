@@ -128,45 +128,6 @@ class SocialLink(models.Model):
     unique_together = [["artist", "platform"]]
 
 
-class Event(models.Model):
-  """Finalized list of events."""
-  created_at = models.DateTimeField(auto_now_add=True)
-  title = models.CharField(max_length=256)
-  event_day = models.DateField()
-  start_time = models.TimeField(default=None, blank=True, null=True)
-  event_url = models.CharField(max_length=512, blank=True, null=True)
-  description = models.TextField(blank=True, null=True)
-  event_image_url = models.CharField(max_length=1024, blank=True, null=True)
-  event_image = models.ImageField(upload_to="event_images", blank=True, null=True)
-  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
-  artists = models.ManyToManyField(Artist)
-  event_type = models.CharField(max_length=16, choices=get_choices(EventTypes), default="Show")
-  # Only applicable if an open mic.
-  signup_start_time = models.TimeField(default=None, blank=True, null=True)
-  # Meta control for display of events.
-  show_event = models.BooleanField(default=True)
-
-  def __str__(self):
-    return f"{self.title} ({self.venue.name}, {self.event_day}, {self.title})"
-  
-  def __init__(self, *args, **kwargs):
-    super().__init__(*args, **kwargs)
-    self._original_event_image_url = self.event_image_url
-
-  def save(self, *args, **kwargs):
-    super().save(*args, **kwargs)
-    if self.event_image_url:
-      if self.event_image_url != self._original_event_image_url or not self.event_image:
-        image_request = requests.get(self.event_image_url, timeout=15)
-        file_extension = image_request.headers["Content-Type"].split("/")[1]
-        content_file = ContentFile(image_request.content)
-        self._original_event_image_url = self.event_image_url
-        self.event_image.save(f"{self.title.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
-
-  class Meta:
-    unique_together = [["venue", "event_day", "start_time"]]
-
-
 class RawData(models.Model):
   """Raw data from an api request.
 
@@ -195,6 +156,48 @@ class RawData(models.Model):
 
   class Meta:
     unique_together = [["api_name", "event_api_id"]]
+
+
+class Event(models.Model):
+  """Finalized list of events."""
+  created_at = models.DateTimeField(auto_now_add=True)
+  title = models.CharField(max_length=256)
+  event_day = models.DateField()
+  start_time = models.TimeField(default=None, blank=True, null=True)
+  event_url = models.CharField(max_length=512, blank=True, null=True)
+  description = models.TextField(blank=True, null=True)
+  event_image_url = models.CharField(max_length=1024, blank=True, null=True)
+  event_image = models.ImageField(upload_to="event_images", blank=True, null=True)
+  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+  artists = models.ManyToManyField(Artist)
+  event_type = models.CharField(max_length=16, choices=get_choices(EventTypes), default="Show")
+  # Only applicable if an open mic.
+  signup_start_time = models.TimeField(default=None, blank=True, null=True)
+  # Meta control for display of events.
+  show_event = models.BooleanField(default=True)
+
+  # Link back to the raw data that an event comes from.
+  raw_datas = models.ManyToManyField(RawData)
+
+  def __str__(self):
+    return f"{self.title} ({self.venue.name}, {self.event_day}, {self.title})"
+  
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self._original_event_image_url = self.event_image_url
+
+  def save(self, *args, **kwargs):
+    super().save(*args, **kwargs)
+    if self.event_image_url:
+      if self.event_image_url != self._original_event_image_url or not self.event_image:
+        image_request = requests.get(self.event_image_url, timeout=15)
+        file_extension = image_request.headers["Content-Type"].split("/")[1]
+        content_file = ContentFile(image_request.content)
+        self._original_event_image_url = self.event_image_url
+        self.event_image.save(f"{self.title.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
+
+  class Meta:
+    unique_together = [["venue", "event_day", "start_time"]]
 
 
 class OpenMic(models.Model):
