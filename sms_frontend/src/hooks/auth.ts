@@ -13,24 +13,23 @@ const useIsAuthenticated = (): [boolean, (auth: boolean) => void] => {
 
 const refreshTokens = async () => {
   try {
-    const response = await customAxios
-      .post(
-        "/api/token/refresh/",
-        {
-          refresh: localStorage.getItem("refreshToken"),
-        },
-        {
-          withCredentials: true,
-        },
-      );
+    const response = await customAxios.post(
+      "/api/token/refresh/",
+      {
+        refresh: localStorage.getItem("refreshToken"),
+      },
+      {
+        withCredentials: true,
+      },
+    );
 
-      if (response.data.access) {
-        localStorage.setItem("accessToken", response.data.access);
-        localStorage.setItem("refreshToken", response.data.refresh);
-      } else {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-      }
+    if (response.data.access) {
+      localStorage.setItem("accessToken", response.data.access);
+      localStorage.setItem("refreshToken", response.data.refresh);
+    } else {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+    }
   } catch (error) {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");

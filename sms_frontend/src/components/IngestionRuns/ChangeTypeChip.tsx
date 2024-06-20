@@ -1,4 +1,3 @@
-import { ChangeType } from "@/types";
 import {
   AddCircleOutline,
   Delete,
@@ -7,14 +6,14 @@ import {
   SkipNext,
   Upgrade,
 } from "@mui/icons-material";
-
 import { Chip } from "@mui/material";
+
+import { ChangeType } from "@/types";
 
 type OpIcon = {
   icon: any;
   color: string;
 };
-
 
 const opFormat: Map<ChangeType, OpIcon> = new Map([
   [
@@ -61,13 +60,11 @@ const opFormat: Map<ChangeType, OpIcon> = new Map([
   ],
 ]);
 
-
 interface Props {
   changeType: ChangeType;
 }
 
 export const ChangeTypeChip = ({ changeType }: Props) => {
-
   const Icon = opFormat.get(changeType)?.icon;
   const color = opFormat.get(changeType)?.color;
 
@@ -79,5 +76,5 @@ export const ChangeTypeChip = ({ changeType }: Props) => {
       variant="outlined"
       style={{ borderColor: color, color: color, width: "7em" }}
     />
-  )
-}
+  );
+};
