@@ -99,7 +99,7 @@ class JanitorRunSerializer(serializers.ModelSerializer):
 
     We also include the index to use as an ID in the react data table view.
     """
-    data = list(models.JanitorRecord.objects.filter(janitor_run=janitor_run).values("api_name", "change_type").annotate(total=Count("id")))
+    data = list(models.JanitorRecord.objects.filter(janitor_run=janitor_run).values("api_name", "field_changed", "change_type").annotate(total=Count("id")))
     for i, agg in enumerate(data):
       agg["index"] = i
     return data

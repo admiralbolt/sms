@@ -5,7 +5,7 @@
 import { useEffect, useState } from "react";
 
 import customAxios from "@/hooks/customAxios";
-import { Event, IngestionRun, OpenMic, PeriodicTask, Venue } from "@/types";
+import { Event, IngestionRun, JanitorRun, OpenMic, PeriodicTask, Venue } from "@/types";
 
 const getVenueById = async (id: any): Promise<Venue> => {
   const result = await customAxios.get(`/api/venues/${id}`);
@@ -139,6 +139,18 @@ const useIngestionRuns = (): IngestionRun[] => {
   return runs;
 };
 
+const useJanitorRuns = (): JanitorRun[] => {
+  const [runs, setRuns] = useState<JanitorRun[]>([]);
+
+  useEffect(() => {
+    customAxios.get("api/janitor_runs").then((res) => {
+      setRuns(res.data);
+    });
+  }, []);
+
+  return runs;
+};
+
 export {
   getEventById,
   getOpenMicById,
@@ -146,6 +158,7 @@ export {
   updateEvent,
   useEventTypes,
   useIngestionRuns,
+  useJanitorRuns,
   createEvent,
   createVenue,
   updateVenue,

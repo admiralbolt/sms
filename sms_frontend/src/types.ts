@@ -53,6 +53,35 @@ export interface IngestionRun {
   summary: IngestionRunSummary[];
 }
 
+export interface JanitorRunRecord {
+  id: number;
+  created_at: Date;
+  api_name: string;
+  change_type: ChangeType;
+  change_log: string;
+  field_changed: string;
+  raw_data: RawData;
+  event: number;
+  venue: number;
+  artist: number;
+  artist_name: string;
+}
+
+export interface JanitorRunSummary {
+  api_name: string;
+  change_type: string;
+  field_changed: string;
+  total: number;
+  index: number;
+}
+
+export interface JanitorRun {
+  id: string;
+  name: string;
+  created_at: Date;
+  summary: JanitorRunSummary[];
+}
+
 export interface RawData {
   id: string;
   api_name: string;
