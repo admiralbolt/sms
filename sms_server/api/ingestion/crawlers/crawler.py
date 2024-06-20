@@ -62,27 +62,3 @@ class AbstractCrawler(ABC):
     )
     self.venue = venues.first()
 
-  # def process_event(self, ingestion_run: IngestionRun, event_data: dict, debug: bool = False) -> None:
-  #   """Process one event!"""
-  #   try:
-  #     event_kwargs = self.get_event_kwargs(event_data=event_data)
-  #     event_change_type, event_change_log, event = event_utils.create_or_update_event(venue=self.venue, **event_kwargs, event_api=IngestionApis.CRAWLER, debug=debug)
-  #     IngestionRecord.objects.create(
-  #       ingestion_run=ingestion_run,
-  #       api_name=f"Crawler - {self.titleized_name}",
-  #       change_type=event_change_type,
-  #       change_log=event_change_log,
-  #       field_changed="event",
-  #       event=event
-  #     )
-  #   except Exception as e:
-  #     logger.error("ERROR Processing Event for ingestion_run: %s. Data: %s, Error: %s.", ingestion_run, event_data, e, exc_info=1)
-  #     IngestionRecord.objects.create(
-  #       ingestion_run=ingestion_run,
-  #       api_name=f"Crawler - {self.titleized_name}",
-  #       change_type=ChangeTypes.ERROR,
-  #       change_log=f"Error: {traceback.format_exc()}, for event data: {event_data}",
-  #       field_changed="event",
-  #     )
-
-

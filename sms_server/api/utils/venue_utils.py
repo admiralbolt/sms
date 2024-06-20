@@ -63,7 +63,9 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
   about the changes applied / fields created. The Venue returned will be the 
   finalized version of the created or updated venue.
   """
-  new_venue = Venue(**kwargs)
+  allowed_keys = set([field.name for field in Venue._meta.get_fields()])
+  filtered_kwargs = {key: kwargs[key] for key in kwargs if key in allowed_keys}
+  new_venue = Venue(**filtered_kwargs)
   new_venue.make_pretty()
 
   # THIS IS AMERICA.
@@ -77,7 +79,6 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
   db_venue = _get_venue(new_venue)
   if not db_venue:
     new_venue.save()
-    add_venue_api(venue=new_venue, api_name=api_name, api_id=api_id)
     return ChangeTypes.CREATE, str(new_venue.__dict__), new_venue
 
   # If the venue does exist we need to determine what the diffs are, and how
@@ -109,7 +110,6 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
     change_log = final_diff.to_json()
     db_venue.save()
   
-  add_venue_api(venue=db_venue, api_name=api_name, api_id=api_id)
   return change_type, change_log, db_venue
 
 def get_or_create_venue(name: str, latitude: float=0, longitude: float=0, address: str="", postal_code: int=0, city: str="", api_name: str="", api_id: int=0, debug: bool=False) -> Venue:
@@ -127,8 +127,6 @@ def get_or_create_venue(name: str, latitude: float=0, longitude: float=0, addres
       city=city,
     ), debug=debug)
 
-  # Get or create an associated venue API record before returning.
-  add_venue_api(venue=venue, api_name=api_name, api_id=api_id)
   return venue
 
 def get_crawler(crawler_module_name: str) -> AbstractCrawler:

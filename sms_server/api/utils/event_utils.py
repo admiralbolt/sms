@@ -4,7 +4,7 @@ import logging
 import deepdiff
 
 from api.constants import IngestionApis
-from api.models import ChangeTypes, Event, Venue
+from api.models import ChangeTypes, Event, Venue, RawData
 from api.utils import diff_utils
 
 logger = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ def handle_open_mic_gen_diff(event: Event, values_changed: dict) -> tuple[bool, 
 
   return diff_utils.apply_diff(event, values_changed, fields=["event_type", "title", "event_api"])
 
-def create_or_update_event(venue: Venue, debug: bool=False, **kwargs) -> tuple[str, str, Event]:
+def create_or_update_event(venue: Venue, raw_data: RawData, debug: bool=False, **kwargs) -> tuple[str, str, Event]:
   """Create or update an event.‘
 
   Returns a tuple of (change_type, change_log, Event). The change_type will be 
@@ -46,17 +46,28 @@ def create_or_update_event(venue: Venue, debug: bool=False, **kwargs) -> tuple[s
   if not kwargs.get("event_day", None) or not kwargs.get("start_time", None):
     logger.warning(f"Can't process event, not enough information to proceed. {venue}, {kwargs}")
     return ChangeTypes.SKIP, f"Skipping because there isn't enough info to proceed. {venue=}, {kwargs=}", None
+  
+  allowed_keys = set([field.name for field in Event._meta.get_fields()])
+  filtered_kwargs = {key: kwargs[key] for key in kwargs if key in allowed_keys}
 
   # If the event doesn't exist, create it and move on.
   event = get_event(venue, kwargs["event_day"], kwargs["start_time"])
   if not event:
-    event = Event(venue=venue, **kwargs)
+    event = Event(venue=venue, **filtered_kwargs)
+    event.save()
+    event.raw_datas.add(raw_data)
     event.save()
     return ChangeTypes.CREATE, f"Event created {event.__dict__}", event
+  
+  # Check list of raw data links on event. If it doesn't include our input
+  # raw_data, we need to add it.
+  if not event.raw_datas.contains(raw_data):
+    event.raw_datas.add(raw_data)
+    event.save()
 
   # If the event does exist we need to determine what the diffs are, and how
   # to handle them.
-  new_event = Event(venue=venue, **kwargs)
+  new_event = Event(venue=venue, **filtered_kwargs)
 
   # Compute diffs on the serialized data.
   original_event_data = event.__dict__

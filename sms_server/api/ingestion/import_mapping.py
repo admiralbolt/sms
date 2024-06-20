@@ -18,6 +18,15 @@ API_PRIORITY_LIST = [
   [IngestionApis.TICKETMASTER],
 ]
 
+API_TO_PRIORITY = {}
+
+def get_api_priority(api: IngestionApis):
+  if not API_TO_PRIORITY:
+    for i, sub_list in enumerate(API_PRIORITY_LIST):
+      for api in sub_list:
+        API_TO_PRIORITY[api]
+  return API_TO_PRIORITY.get(api, 10)
+
 EVENT_API_MAPPING: dict[str, EventApi] = {
   IngestionApis.AXS: axs.AXSApi(),
   IngestionApis.DICE: dice.DiceApi(),

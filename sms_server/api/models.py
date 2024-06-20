@@ -266,6 +266,9 @@ class JanitorRecord(models.Model):
   artist = models.ForeignKey(Artist, on_delete=models.SET_NULL, blank=True, null=True)
 
   def name_of_object_changed(self):
+    if self.field_changed == "none":
+      return "None"
+    
     obj = getattr(self, self.field_changed)
     return getattr(obj, "name", getattr(obj, "title", "None"))
 
