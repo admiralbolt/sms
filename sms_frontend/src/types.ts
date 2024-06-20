@@ -36,17 +36,12 @@ export interface IngestionRunRecord {
   api_name: string;
   change_type: ChangeType;
   change_log: string;
-  field_changed: string;
-  event: number;
-  event_name: string;
-  venue: number;
-  venue_name: string;
+  raw_data: RawData;
 }
 
 export interface IngestionRunSummary {
   api_name: string;
   change_type: string;
-  field_changed: string;
   total: number;
   index: number;
 }
@@ -56,6 +51,14 @@ export interface IngestionRun {
   name: string;
   created_at: Date;
   summary: IngestionRunSummary[];
+}
+
+export interface RawData {
+  id: string;
+  api_name: string;
+  event_api_id: string;
+  event_name: string;
+  venue_name: string;
 }
 
 export interface Venue {

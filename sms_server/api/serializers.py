@@ -84,6 +84,7 @@ class IngestionRunSerializer(serializers.ModelSerializer):
 
 class IngestionRecordSerializer(serializers.ModelSerializer):
   """Serialize Ingestion Records."""
+  raw_data = RawDataSerializer()
 
   class Meta:
     model = models.IngestionRecord
