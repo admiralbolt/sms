@@ -88,6 +88,16 @@ class RawDataViewSet(viewsets.ModelViewSet):
   def get_queryset(self):
     return models.RawData.objects.order_by("created_at")
   
+class PeriodicTaskViewSet(viewsets.ReadOnlyModelViewSet):
+  """List periodic tasks!"""
+  resource_name = "periodic_tasks"
+  queryset = PeriodicTask.objects.all()
+  serializer_class = serializers.PeriodicTaskSerializer
+
+  def get_permissions(self):
+    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
+    return [permission() for permission in permission_classes]
+  
 class IngestionRunViewSet(viewsets.ReadOnlyModelViewSet):
   """List all ingestion runs."""
   resource_name = "ingestion_runs"
@@ -102,16 +112,6 @@ class IngestionRunViewSet(viewsets.ReadOnlyModelViewSet):
     runs = models.IngestionRun.objects.order_by("-created_at")
     return runs
   
-class PeriodicTaskViewSet(viewsets.ReadOnlyModelViewSet):
-  """List periodic tasks!"""
-  resource_name = "periodic_tasks"
-  queryset = PeriodicTask.objects.all()
-  serializer_class = serializers.PeriodicTaskSerializer
-
-  def get_permissions(self):
-    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
-    return [permission() for permission in permission_classes]
-  
 class IngestionRunRecordsView(ListAPIView):
   """List all ingestion records for a particular run."""
   serializer_class = serializers.IngestionRecordSerializer
@@ -124,6 +124,33 @@ class IngestionRunRecordsView(ListAPIView):
     models.IngestionRecord.objects.prefetch_related("event", "venue")
     ingestion_run = models.IngestionRun.objects.filter(id=self.kwargs.get("ingestion_run_id", None)).first()
     return models.IngestionRecord.objects.filter(ingestion_run=ingestion_run)
+  
+class JanitorRunViewSet(viewsets.ReadOnlyModelViewSet):
+  """List all janitor runs."""
+  resource_name = "janitor_runs"
+  queryset = models.JanitorRun.objects.all()
+  serializer_class = serializers.JanitorRunSerializer
+
+  def get_permissions(self):
+    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
+    return [permission() for permission in permission_classes]
+
+  def get_queryset(self):
+    runs = models.JanitorRun.objects.order_by("-created_at")
+    return runs
+  
+class JanitorRunRecordsView(ListAPIView):
+  """List all janitor records for a particular run."""
+  serializer_class = serializers.JanitorRecordSerializer
+
+  def get_permissions(self):
+    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
+    return [permission() for permission in permission_classes]
+
+  def get_queryset(self):
+    models.JanitorRecord.objects.prefetch_related("event", "venue")
+    janitor_run = models.JanitorRun.objects.filter(id=self.kwargs.get("janitor_run_id", None)).first()
+    return models.JanitorRecord.objects.filter(janitor_run=janitor_run)
 
 class LogoutView(APIView):
   """Logout!"""

@@ -90,6 +90,32 @@ class IngestionRecordSerializer(serializers.ModelSerializer):
     model = models.IngestionRecord
     fields = "__all__"
 
+class JanitorRunSerializer(serializers.ModelSerializer):
+  """Serialize JanitorRun data."""
+  summary = serializers.SerializerMethodField()
+
+  def get_summary(self, janitor_run: models.JanitorRun) -> list[dict]:
+    """Render a summary of the run for easy use.
+
+    We also include the index to use as an ID in the react data table view.
+    """
+    data = list(models.JanitorRecord.objects.filter(janitor_run=janitor_run).values("api_name", "change_type").annotate(total=Count("id")))
+    for i, agg in enumerate(data):
+      agg["index"] = i
+    return data
+
+  class Meta:
+    model = models.JanitorRun
+    fields = "__all__"
+
+class JanitorRecordSerializer(serializers.ModelSerializer):
+  """Serialize Janitor Records."""
+  raw_data = RawDataSerializer()
+
+  class Meta:
+    model = models.JanitorRecord
+    fields = "__all__"
+
 class CrontabScheduleSerializer(serializers.ModelSerializer):
   schedule = serializers.SerializerMethodField()
   healthy_last_run = serializers.SerializerMethodField()
