@@ -29,13 +29,13 @@ class SeaMonsterLoungeCrawler(AbstractCrawler):
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.CRAWLER_SEA_MONSTER_LOUNGE, venue_name_regex="^sea monster lounge$")
 
-  def get_event_kwargs(self, event_data: dict) -> dict:
+  def get_event_kwargs(self, raw_data: dict) -> dict:
     return {
-      "event_url": f"https://www.seamonsterlounge.com/event-info/{event_data['slug']}",
-      "event_image_url": event_data.get("mainImage", {}).get("url", ""),
-      "event_day": event_data["event_day"],
-      "start_time": parsing_utils.parse_12hr_time(event_data["scheduling"]["startTimeFormatted"]),
-      "title": event_data["title"].strip(),
+      "event_url": f"https://www.seamonsterlounge.com/event-info/{raw_data['slug']}",
+      "event_image_url": raw_data.get("mainImage", {}).get("url", ""),
+      "event_day": raw_data["event_day"],
+      "start_time": parsing_utils.parse_12hr_time(raw_data["scheduling"]["startTimeFormatted"]),
+      "title": raw_data["title"].strip(),
     }
   
   def get_event_list(self) -> Generator[dict, None, None]:

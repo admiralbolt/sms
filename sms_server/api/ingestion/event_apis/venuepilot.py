@@ -93,8 +93,8 @@ class VenuepilotApi(EventApi):
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.VENUEPILOT)
 
-  def get_venue_kwargs(self, event_data: dict) -> dict:
-    venue_data = event_data["venue"]
+  def get_venue_kwargs(self, raw_data: dict) -> dict:
+    venue_data = raw_data["venue"]
     address = venue_data["street1"]
     if venue_data["street2"]:
       address += f" {venue_data['street2']}"
@@ -108,14 +108,14 @@ class VenuepilotApi(EventApi):
       "api_id": venue_data["id"],
     }
   
-  def get_event_kwargs(self, event_data: dict) -> dict:
+  def get_event_kwargs(self, raw_data: dict) -> dict:
     return {
-      "title": event_data["name"],
-      "event_day": event_data["date"],
-      "start_time": event_data["startTime"],
-      "event_url": event_data["ticketsUrl"],
-      "description": event_data["description"],
-      "event_image_url": event_data["highlightedImage"],
+      "title": raw_data["name"],
+      "event_day": raw_data["date"],
+      "start_time": raw_data["startTime"],
+      "event_url": raw_data["ticketsUrl"],
+      "description": raw_data["description"],
+      "event_image_url": raw_data["highlightedImage"],
     }
   
   def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:

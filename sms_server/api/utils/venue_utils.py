@@ -64,6 +64,7 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
   finalized version of the created or updated venue.
   """
   allowed_keys = set([field.name for field in Venue._meta.get_fields()])
+  allowed_keys.remove("id")
   filtered_kwargs = {key: kwargs[key] for key in kwargs if key in allowed_keys}
   new_venue = Venue(**filtered_kwargs)
   new_venue.make_pretty()

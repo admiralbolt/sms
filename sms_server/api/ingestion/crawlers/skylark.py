@@ -23,13 +23,13 @@ class SkylarkCrawler(AbstractCrawler):
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.CRAWLER_SKYLARK, venue_name_regex="^skylark$")
 
-  def get_event_kwargs(self, event_data: dict) -> dict:
+  def get_event_kwargs(self, raw_data: dict) -> dict:
     return {
-      "title": event_data["title"],
-      "event_day": event_data["event_day"],
-      "start_time": event_data["start_time"],
-      "event_url": event_data["event_url"],
-      "event_image_url": event_data["event_image_url"]
+      "title": raw_data["title"],
+      "event_day": raw_data["event_day"],
+      "start_time": raw_data["start_time"],
+      "event_url": raw_data["event_url"],
+      "event_image_url": raw_data["event_image_url"]
     }
   
   def get_event_list(self) -> Generator[dict, None, None]:

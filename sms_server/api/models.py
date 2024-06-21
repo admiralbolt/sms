@@ -117,6 +117,9 @@ class Artist(models.Model):
     self.name_slug = self.name.lower().replace(" ", "-")
     super().save(*args, **kwargs)
 
+  def __str__(self):
+    return self.name
+
 class SocialLink(models.Model):
   """Social Links for artists."""
   created_at = models.DateTimeField(auto_now_add=True)
@@ -152,7 +155,7 @@ class RawData(models.Model):
   data = models.JSONField()
 
   def __str__(self):
-    return f"[{self.api_name}] ({self.venue_name}, {self.event_name})"
+    return f"|{self.id}| [{self.api_name}] ({self.venue_name}, {self.event_name})"
 
   class Meta:
     unique_together = [["api_name", "event_api_id"]]

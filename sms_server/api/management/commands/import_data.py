@@ -7,14 +7,9 @@ class Command(BaseCommand):
 
   def add_arguments(self, parser):
     parser.add_argument("--api", dest="api", help="Which API / crawler to import data from.")
-    parser.add_argument("--all", dest="all", action="store_true", default=False, help="Import data from ALL available sources.")
 
   def handle(self, *args, **kwargs):
-    if not kwargs["api"] and not kwargs["all"]:
-      print("Please provide one of --api, --crawler, or --all")
-      return
-
-    if kwargs["all"]:
+    if not kwargs["api"]:
       ingester = Ingester()
       ingester.import_data()
       return

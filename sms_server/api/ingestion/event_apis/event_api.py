@@ -2,6 +2,8 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Generator
 
+from api.models import Venue
+
 logger = logging.getLogger(__name__)
 
 class EventApi(ABC):
@@ -32,6 +34,9 @@ class EventApi(ABC):
 
   def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
     yield {}
+
+  def get_venue(self) -> Venue:
+    return None
 
 
 

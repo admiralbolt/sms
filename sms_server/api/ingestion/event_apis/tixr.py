@@ -24,7 +24,6 @@ def event_list_request(venue_id: str="", client_key: str=""):
 class TIXRApi(EventApi):
 
   has_artists = True
-  has_venues = False
 
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.TIXR)
@@ -59,7 +58,11 @@ class TIXRApi(EventApi):
     }
   
   def get_event_list(self) -> Generator[dict, None, None]:
-    for _, tixr_venue_id, client_key in settings.TIXR_CLIENTS:
+    for venue_name, tixr_venue_id, client_key in settings.TIXR_CLIENTS:
+      venues = Venue.objects.filter(name__iregex=venue_name)
+      venue = venues.first()
       event_list = event_list_request(venue_id=tixr_venue_id, client_key=client_key)
       for event in event_list:
+        event["venue"]["latitude"] = str(venue.latitude)
+        event["venue"]["longitude"] = str(venue.longitude)
         yield event

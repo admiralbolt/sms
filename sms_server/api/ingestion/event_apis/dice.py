@@ -47,8 +47,12 @@ class DiceApi(EventApi):
     }
   
   def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
-    yield {}
-  
+    if raw_data["summary_lineup"]["total_artists"] == 0:
+      return
+    
+    for artist in raw_data["summary_lineup"]["top_artists"]:
+      yield {"name": artist["name"]}
+
   def get_raw_data_info(self, raw_data: dict) -> dict:
     event_day, _ = raw_data["dates"]["event_start_date"].split("T")
     return {

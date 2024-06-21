@@ -24,6 +24,9 @@ class AbstractCrawler(EventApi):
   def get_raw_data_info(self, raw_data: dict) -> dict:
     raw_data["venue_name"] = self.venue.name
     return raw_data
+  
+  def get_venue(self) -> Venue:
+    return self.venue
 
   def _load_venue(self):
     """Loads the proper venue information for the crawler.

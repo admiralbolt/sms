@@ -114,8 +114,8 @@ class LittleRedHenCrawler(AbstractCrawler):
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.CRAWLER_LITTLE_RED_HEN, venue_name_regex="^little red hen$")
 
-  def get_event_kwargs(self, event_data: dict) -> dict:
-    return event_data
+  def get_event_kwargs(self, raw_data: dict) -> dict:
+    return raw_data
   
   def get_event_list(self) -> Generator[dict, None, None]:
     """Gets all events from little red hen calendars."""
