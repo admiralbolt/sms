@@ -27,11 +27,10 @@ class Venue(models.Model):
   description = models.TextField(default="", blank=True, null=True)
 
   neighborhood = models.CharField(max_length=64, blank=True, null=True, choices=get_choices(Neighborhoods))
-  # Alias is a complicated regex-ish field that helps conditional match venues
-  # based on slightly different naming. The regexes are keyed by the field
-  # that they are applied to, for example:
+  # Alias is a complicated regex field that helps conditional match venues
+  # based on slightly different naming. For example:
   #
-  # {"name": "^(The Tractor|Tractor Tavern)$"}
+  # "(The Tractor|Tractor Tavern)$"
   alias = models.TextField(max_length=1024, blank=True, null=True)
 
   # In general we don't want to delete data, we just want to hide it.
@@ -39,19 +38,6 @@ class Venue(models.Model):
   # 1) Hiding / showing the venue.
   # 2) Turning off / on data gathering for the venue.
   show_venue = models.BooleanField(default=True)
-
-  def alias_matches(self, other_venue: object) -> bool:
-    """Check to see if another venue matches based on our aliasing."""
-    try:
-      alias_obj = json.loads(self.alias)
-    except:
-      logger.error(f"Alias field on venue {self.id} is not a json object.")
-      return False
-
-    for key, regex in alias_obj.items():
-      if not re.match(regex, getattr(other_venue, key)):
-        return False
-    return True
   
   def __str__(self):
     return self.name

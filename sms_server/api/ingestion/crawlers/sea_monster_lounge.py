@@ -53,15 +53,9 @@ class SeaMonsterLoungeCrawler(AbstractCrawler):
           event_data["event_api_id"] = event_data["slug"]
           event_data["event_name"] = event_data["title"].strip()
           yield event_data
-          # Explicit handling for monday night jams aka la luz. We want to
-          # handle those via the open mic generator instead of importing.
-          # if "la luz" in event_data["title"].lower():
-          #   IngestionRecord.objects.create(
-          #     ingestion_run=ingestion_run,
-          #     api_name=f"Crawler - {self.titleized_name}",
-          #     change_type=ChangeTypes.SKIP,
-          #     change_log=f"Skipping La Luz event, handled by open mic gen.",
-          #     field_changed="event",
-          #   )
-          #   continue
-      
+
+  def should_skip(self, raw_data: dict) -> tuple[bool, str]:
+    if "la luz" in raw_data["title"].lower():
+      return True, "Skipping La Luz Open Jam Event."
+    
+    return False, ""

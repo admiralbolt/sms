@@ -43,7 +43,7 @@ class TIXRApi(EventApi):
     }
   
   def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
-    for act in raw_data["lineups"]["acts"]:
+    for act in raw_data["lineups"][0]["acts"]:
       yield {
         "name": act["artist"]["name"]
       }

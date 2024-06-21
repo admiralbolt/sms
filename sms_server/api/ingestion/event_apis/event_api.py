@@ -35,6 +35,14 @@ class EventApi(ABC):
   def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
     yield {}
 
+  def should_skip(self, raw_data: dict) -> tuple[bool, str]:
+    """Customizable reasons to skip particular events.
+
+    This is particular useful for crawlers that have some venue specific events
+    that should be skipped.
+    """
+    return False, ""
+
   def get_venue(self) -> Venue:
     return None
 

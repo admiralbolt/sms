@@ -26,7 +26,7 @@ class Janitor:
       return api.get_venue()
     
     venue_kwargs = api.get_venue_kwargs(raw_data=raw_data.data)
-    venue_change_type, venue_change_log, venue = venue_utils.create_or_update_venue(**venue_kwargs, api_name=api.api_name)
+    venue_change_type, venue_change_log, venue = venue_utils.get_or_create_venue(**venue_kwargs)
     change_tuple = (venue_change_log, venue)
     if change_tuple not in self.venue_logs[api.api_name][venue_change_type]:
       JanitorRecord.objects.create(
@@ -65,6 +65,18 @@ class Janitor:
     return artists
   
   def get_or_create_event(self, raw_data: RawData, api: EventApi, venue: Venue, artists: list[Artist]) -> Event:
+    should_skip, skip_log = api.should_skip(raw_data=raw_data.data)
+    if should_skip:
+      JanitorRecord.objects.create(
+        janitor_run=self.janitor_run,
+        api_name=api.api_name,
+        raw_data=raw_data,
+        change_type=ChangeTypes.SKIP,
+        change_log=skip_log,
+        field_changed="none",
+      )
+      return None
+
     event_kwargs = api.get_event_kwargs(raw_data=raw_data.data)
     event_change_type, event_change_log, event = event_utils.create_or_update_event(venue=venue, raw_data=raw_data, artists=artists, **event_kwargs, event_api=api.api_name)
     JanitorRecord.objects.create(
@@ -79,7 +91,13 @@ class Janitor:
     return event
 
   def process_api(self, api: EventApi, min_date: datetime):
-    # Get a list of raw data objects to process:
+    """Process all raw data past min_date for a particular api.
+
+    We iterate through each raw data record and =>
+      1) Create or update the venue associated with that record.
+      2) Create or update the artists associated with that record.
+      3) Create or update the event associated with that record.
+    """
     raw_datas = RawData.objects.filter(api_name=api.api_name, event_day__gt=min_date)
 
     for raw_data in raw_datas:

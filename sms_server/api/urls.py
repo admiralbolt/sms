@@ -18,6 +18,7 @@ router.register(r"raw_datas", views.RawDataViewSet)
 router.register(r"venues", views.VenueViewSet)
 router.register(r"ingestion_runs", views.IngestionRunViewSet)
 router.register(r"janitor_runs", views.JanitorRunViewSet)
+router.register(r"janitor_records", views.JanitorRecordViewSet)
 
 urlpatterns = [
   path("api/", include(router.urls)),

@@ -139,6 +139,19 @@ class JanitorRunViewSet(viewsets.ReadOnlyModelViewSet):
     runs = models.JanitorRun.objects.order_by("-created_at")
     return runs
   
+class JanitorRecordViewSet(viewsets.ReadOnlyModelViewSet):
+  """List all janitor records."""
+  resource_name = "janitor_records"
+  queryset = models.JanitorRecord.objects.all()
+  serializer_class = serializers.JanitorRecordSerializer
+
+  def get_permissions(self):
+    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
+    return [permission() for permission in permission_classes]
+
+  def get_queryset(self):
+    return models.JanitorRecord.objects.order_by("-created_at")
+  
 class JanitorRunRecordsView(ListAPIView):
   """List all janitor records for a particular run."""
   serializer_class = serializers.JanitorRecordSerializer
