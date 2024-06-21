@@ -48,6 +48,7 @@ class EventSerializer(serializers.ModelSerializer):
   """Serialize Event data."""
   event_image = serializers.ImageField(max_length=None, use_url=True, required=False)
   venue = serializers.PrimaryKeyRelatedField(queryset=models.Venue.objects.order_by("name"))
+  artists = ArtistSerializer(read_only=True, many=True)
 
   class Meta:
     model = models.Event
