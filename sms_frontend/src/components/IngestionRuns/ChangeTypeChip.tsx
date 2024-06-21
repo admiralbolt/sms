@@ -6,7 +6,7 @@ import {
   SkipNext,
   Upgrade,
 } from "@mui/icons-material";
-import { Chip } from "@mui/material";
+import { Chip, Typography } from "@mui/material";
 
 import { ChangeType } from "@/types";
 
@@ -62,19 +62,22 @@ const opFormat: Map<ChangeType, OpIcon> = new Map([
 
 interface Props {
   changeType: ChangeType;
+  value?: any;
 }
 
-export const ChangeTypeChip = ({ changeType }: Props) => {
+export const ChangeTypeChip = ({ changeType, value }: Props) => {
   const Icon = opFormat.get(changeType)?.icon;
   const color = opFormat.get(changeType)?.color;
+
+  const label = (value) ? `${changeType} - ${value}` : `${changeType} - 0`;
 
   return (
     <Chip
       //@ts-ignore
       icon={<Icon color={color} />}
-      label={changeType}
+      label={label}
       variant="outlined"
-      style={{ borderColor: color, color: color, width: "7em" }}
+      style={{ borderColor: color, color: color, width: "10.5em" }}
     />
   );
 };

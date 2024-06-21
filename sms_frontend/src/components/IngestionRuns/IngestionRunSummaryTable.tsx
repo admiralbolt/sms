@@ -9,29 +9,38 @@ interface Props {
 }
 
 export const IngestionRunSummaryTable = ({ ingestionRun }: Props) => {
+  // We map api -> change type -> val.
   const s: any = {};
-  changeTypes.forEach((t: string) => {
-    s[t] = 0;
-    s[t] = 0;
-  });
 
   ingestionRun.summary.forEach((record) => {
-    s[record.change_type] += record.total;
+    if (!(record.api_name in s)) {
+      s[record.api_name] = {};
+    }
+    s[record.api_name][record.change_type] = record.total;
   });
+
+  const sortedApiNames = Object.keys(s);
+  sortedApiNames.sort();
 
   return (
     <Box>
       <Typography>Summary</Typography>
       <Box width="100%" />
-      {changeTypes.map((t) => (
-        <Box
-          sx={{ display: "flex", alignItems: "center", marginBottom: "0.4em" }}
-          key={`ingestion-record-${t}`}
-        >
-          <ChangeTypeChip changeType={t} />
-          <Typography sx={{ marginLeft: "1em" }}>{s[t]}</Typography>
-        </Box>
-      ))}
+      <Box sx={{ display: "flex", alignItems: "start", flexDirection: "row", overflowX: "scroll"}}>
+        {sortedApiNames.map((api_name) => (
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", maxWidth: "150px", marginRight: "1em"}} key={`api-name-${api_name}`}>
+            <Typography sx={{maxWidth: "140px"}} noWrap>{api_name}</Typography>
+            {changeTypes.map((t) => (
+              <Box
+                sx={{ display: "flex", alignItems: "center", flexDirection: "row", marginBottom: "0.4em" }}
+                key={`ingestion-record-${api_name}-${t}`}
+              >
+                <ChangeTypeChip changeType={t} value={s[api_name][t]} />
+              </Box>
+            ))}
+          </Box>
+        ))}
+      </Box>
     </Box>
   );
 };
