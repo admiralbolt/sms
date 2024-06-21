@@ -29,7 +29,7 @@ def create_or_update_raw_data(**kwargs) -> tuple[str, str, RawData]:
     old_data,
     new_data,
     ignore_order=True,
-    exclude_paths=["impression_ids"],
+    exclude_paths=["impression_id"],
   )
 
   if not diff:
