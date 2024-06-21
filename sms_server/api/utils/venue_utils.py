@@ -89,7 +89,7 @@ def create_or_update_venue(api_name: str="", api_id: str="", debug: bool=False, 
     original_db_data,
     new_venue.__dict__,
     ignore_order=True,
-    exclude_paths=["id"]
+    exclude_paths=["_state", "id"]
   )
 
   # If brand new fields are added, add them!
