@@ -74,6 +74,18 @@ class VenueEventsView(ListAPIView):
     venue = models.Venue.objects.filter(id=self.kwargs.get("venue_id", None)).first()
     return models.Event.objects.filter(venue=venue)
 
+class ArtistViewSet(viewsets.ModelViewSet):
+  """List artists."""
+  resource_name = "artists"
+  queryset = models.Artist.objects.all()
+  serializer_class = serializers.ArtistSerializer
+
+  def get_permissions(self):
+    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
+    return [permission() for permission in permission_classes]
+  
+  def get_queryset(self):
+    return models.Artist.objects.order_by("name")
 
 class RawDataViewSet(viewsets.ModelViewSet):
   """List all raw data."""

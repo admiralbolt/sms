@@ -12,6 +12,8 @@ def create_or_update_artist(**kwargs) -> tuple[str, str, Artist]:
 
   Returns a tuple of (change_type, change_log, Artist).
   """
+  # Remove leading / trailing spaces from the name.
+  kwargs["name"] = kwargs["name"].strip()
   allowed_keys = set([field.name for field in Artist._meta.get_fields()])
   allowed_keys.remove("id")
   filtered_kwargs = {key: kwargs[key] for key in kwargs if key in allowed_keys}

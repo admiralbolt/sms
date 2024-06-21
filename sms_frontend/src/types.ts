@@ -61,10 +61,9 @@ export interface JanitorRunRecord {
   change_log: string;
   field_changed: string;
   raw_data: RawData;
-  event: number;
-  venue: number;
-  artist: number;
-  artist_name: string;
+  event: Event;
+  venue: Venue;
+  artist: Artist;
 }
 
 export interface JanitorRunSummary {
@@ -121,6 +120,11 @@ export interface OpenMic {
   cadence_readable: string;
   signup_start_time: string;
   event_start_time: string;
+}
+
+export interface Artist {
+  id: number;
+  name: string;
 }
 
 export interface Crontab {
