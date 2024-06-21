@@ -1,40 +1,29 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Generator
 import logging
 
 from api.models import Crawler, Venue
+from api.ingestion.event_apis.event_api import EventApi
 
 logger = logging.getLogger(__name__)
 
-class AbstractCrawler(ABC):
+class AbstractCrawler(EventApi):
   """Abstract crawler class."""
-  crawler_name: str = ""
   venue_name_regex: str = ""
   venue: Venue = None
-  has_artists: bool = False
 
-  def __init__(self, crawler_name: str, venue_name_regex: str) -> object:
-    self.crawler_name = crawler_name
-    self.titleized_name = crawler_name.replace("_", " ").title()
+  has_artists = False
+  has_venues = False
+
+  def __init__(self, api_name: str, venue_name_regex: str) -> object:
+    super().__init__(api_name=api_name)
+    self.titleized_name = self.api_name.replace("_", " ").title()
     self.venue_name_regex = venue_name_regex
     self._load_venue()
 
-  @abstractmethod
-  def get_event_kwargs(self, raw_data: dict) -> dict:
-    """Get kwargs necessary for creating or updating an event based on raw data.
-
-    For crawlers this is mostly unnecessary, since most of the time we need to
-    structure the data from html.
-    """
-    pass
-
-  def get_artist_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
-    """Get kwargs necessary for creating or updating an artist."""
-    yield {}
-
-  @abstractmethod
-  def get_event_list(self) -> Generator[dict, None, None]:
-    pass
+  def get_raw_data_info(self, raw_data: dict) -> dict:
+    raw_data["venue_name"] = self.venue.name
+    return raw_data
 
   def _load_venue(self):
     """Loads the proper venue information for the crawler.
@@ -44,7 +33,7 @@ class AbstractCrawler(ABC):
     an existing venue based on the regex name.
     """
     # Check to see if a Crawler object already exists for this crawler.
-    apis = Crawler.objects.filter(crawler_name=self.crawler_name)
+    apis = Crawler.objects.filter(crawler_name=self.api_name)
     if apis.exists():
       self.venue = apis.first().venue
       return
@@ -53,12 +42,12 @@ class AbstractCrawler(ABC):
     # venue matches.
     venues = Venue.objects.filter(name__iregex=self.venue_name_regex)
     if len(venues) != 1:
-      logger.warn(f"Unable to create venue api object for crawler: {self.crawler_name}, {len(venues)} match the name regex.")
+      logger.warn(f"Unable to create venue api object for crawler: {self.api_name}, {len(venues)} match the name regex.")
       return
     
     Crawler.objects.create(
       venue=venues.first(),
-      crawler_name=self.crawler_name
+      crawler_name=self.api_name
     )
     self.venue = venues.first()
 

@@ -27,6 +27,21 @@ def get_api_priority(api: IngestionApis):
         API_TO_PRIORITY[api]
   return API_TO_PRIORITY.get(api, 10)
 
+API_MAPPING: dict[str, EventApi] = {
+  IngestionApis.AXS: axs.AXSApi(),
+  IngestionApis.DICE: dice.DiceApi(),
+  IngestionApis.EVENTBRITE: eventbrite.EventbriteApi(),
+  IngestionApis.TICKETMASTER: ticketmaster.TicketmasterApi(),
+  IngestionApis.TIXR: tixr.TIXRApi(),
+  IngestionApis.VENUEPILOT: venuepilot.VenuepilotApi(),
+  IngestionApis.CRAWLER_BLUE_MOON: blue_moon.BlueMoonCrawler(),
+  IngestionApis.CRAWLER_DARRELLS_TAVERN: darrells_tavern.DarellsTavernCrawler(),
+  IngestionApis.CRAWLER_LITTLE_RED_HEN: little_red_hen.LittleRedHenCrawler(),
+  IngestionApis.CRAWLER_SEA_MONSTER_LOUNGE: sea_monster_lounge.SeaMonsterLoungeCrawler(),
+  IngestionApis.CRAWLER_SKYLARK: skylark.SkylarkCrawler(),
+  IngestionApis.CRAWLER_THE_ROYAL_ROOM: the_royal_room.TheRoyalRoomCrawler()
+}
+
 EVENT_API_MAPPING: dict[str, EventApi] = {
   IngestionApis.AXS: axs.AXSApi(),
   IngestionApis.DICE: dice.DiceApi(),

@@ -26,7 +26,7 @@ CALENDAR_EVENTS_URL = "https://google-calendar.galilcloud.wixapps.net/_api/getEv
 class BlueMoonCrawler(AbstractCrawler):
 
   def __init__(self) -> object:
-    super().__init__(crawler_name=IngestionApis.CRAWLER_BLUE_MOON, venue_name_regex="^blue moon tavern$")
+    super().__init__(api_name=IngestionApis.CRAWLER_BLUE_MOON, venue_name_regex="^blue moon tavern$")
 
   def get_event_kwargs(self, raw_data: dict) -> dict:
     start_time = None

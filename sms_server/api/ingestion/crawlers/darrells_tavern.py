@@ -42,7 +42,7 @@ class DarellsTavernCrawler(AbstractCrawler):
   has_artists = True
 
   def __init__(self) -> object:
-    super().__init__(crawler_name=IngestionApis.CRAWLER_DARRELLS_TAVERN, venue_name_regex="^darrell's tavern$")
+    super().__init__(api_name=IngestionApis.CRAWLER_DARRELLS_TAVERN, venue_name_regex="^darrell's tavern$")
 
   def get_event_kwargs(self, raw_data: dict) -> dict:
     return {

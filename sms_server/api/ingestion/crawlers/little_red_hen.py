@@ -112,7 +112,7 @@ class LittleRedHenCrawler(AbstractCrawler):
   """Crawl data for the little red hen!"""
 
   def __init__(self) -> object:
-    super().__init__(crawler_name=IngestionApis.CRAWLER_LITTLE_RED_HEN, venue_name_regex="^little red hen$")
+    super().__init__(api_name=IngestionApis.CRAWLER_LITTLE_RED_HEN, venue_name_regex="^little red hen$")
 
   def get_event_kwargs(self, event_data: dict) -> dict:
     return event_data

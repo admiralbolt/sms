@@ -37,7 +37,7 @@ FORM_DATA = {
 class TheRoyalRoomCrawler(AbstractCrawler):
 
   def __init__(self) -> object:
-    super().__init__(crawler_name=IngestionApis.CRAWLER_THE_ROYAL_ROOM, venue_name_regex="^the royal room$")
+    super().__init__(api_name=IngestionApis.CRAWLER_THE_ROYAL_ROOM, venue_name_regex="^the royal room$")
 
   def get_event_kwargs(self, event_data: dict) -> dict:
     return {

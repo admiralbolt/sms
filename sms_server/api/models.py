@@ -290,7 +290,9 @@ class IngestionRecord(models.Model):
   api_name = models.CharField(max_length=32, default="Manual")
   change_type = models.CharField(max_length=16, choices=get_choices(ChangeTypes))
   change_log = models.TextField(blank=True, null=True)
-  raw_data = models.ForeignKey(RawData, on_delete=models.CASCADE)
+  # Occasionally we have errors, and raw_data isn't inserted properly.
+  # Leave this field as optional just in case.
+  raw_data = models.ForeignKey(RawData, on_delete=models.CASCADE, blank=True, null=True)
 
   def __str__(self):
     return f"{self.ingestion_run} - {self.change_type}, {self.raw_data}"
