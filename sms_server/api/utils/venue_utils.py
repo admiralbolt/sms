@@ -3,14 +3,11 @@ import importlib
 import logging
 import os
 import re
-from typing import Any, Generator, Optional
-
-import deepdiff
+from typing import Generator, Optional
 
 from api.constants import get_all, ChangeTypes, VenueTypes
 from api.ingestion.crawlers.crawler import AbstractCrawler
 from api.models import Event, IngestionRecord, Venue, VenueTag
-from api.utils import diff_utils
 
 logger = logging.getLogger(__name__)
 
@@ -28,23 +25,14 @@ def _get_venue(name: Optional[str], latitude: Optional[float], longitude: Option
         return db_venue
 
   if latitude and longitude:
+    # We need to round the inputs before we search the DB.
+    latitude = round(float(latitude), 6)
+    longitude = round(float(longitude), 6)
     db_venue = Venue.objects.filter(latitude=latitude, longitude=longitude)
     if db_venue.exists():
       return db_venue.first()
 
   return None
-
-def _get_or_create_venue(venue: Venue, debug: bool=False) -> Venue:
-  """See if a venue exists."""
-  if debug:
-    logger.info(f"Get or create venue: {venue.__dict__}")
-
-  db_venue = _get_venue(venue)
-  if db_venue:
-    return db_venue
-
-  venue.save()
-  return venue
 
 def add_venue_tags(venue: Venue, tags: list[str]) -> None:
   """Add venue tags if they don't exist."""
