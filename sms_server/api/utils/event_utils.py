@@ -118,7 +118,7 @@ def create_or_update_event(venue: Venue, raw_data: RawData, artists: list[Artist
   if new_artists:
     change_type = ChangeTypes.UPDATE
     for artist in new_artists:
-      change_log += f"\nAdded new artist ({artist.id}, {artist.name})"
+      change_log += f"\nAdded new artist to event ({artist.id}, {artist.name})"
 
   event.save()
   return change_type, change_log, event

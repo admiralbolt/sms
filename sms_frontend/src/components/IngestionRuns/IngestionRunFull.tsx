@@ -107,7 +107,7 @@ export const IngestionRunFull = ({ run }: Props) => {
           {filteredRecords.map((record) => (
             <Box onClick={recordClickHandler(record)} key={`record-${record.id}`}>
               <Typography fontSize="0.9em">{record.id} | {record.raw_data.event_name} | {record.raw_data.venue_name}</Typography>
-              <pre style={{fontSize: "0.7em"}}>{record.change_log}</pre>
+              <pre style={{fontSize: "0.7em"}}>{record.change_log.split("\n")[0]}</pre>
               <Divider sx={{ marginTop: "1em", marginBottom: "1em"}} />
             </Box>
           ))}
