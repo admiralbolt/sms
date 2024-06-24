@@ -114,7 +114,12 @@ export const IngestionRunFull = ({ run }: Props) => {
         </Grid>
         <Grid sx={{overflowY: "scroll", height: "40em", padding: "0.4em"}} item xs={6}>
           {selectedRecord.raw_data != undefined && (
-            <RawDataComponent rawData={selectedRecord.raw_data} />
+            <Box>
+              <Typography>Record ID: {selectedRecord.id}</Typography>
+              <pre style={{fontSize: "0.7em"}}>{selectedRecord.change_log}</pre>
+              <br />
+              <RawDataComponent rawData={selectedRecord.raw_data} />
+            </Box>
           )}
         </Grid>
       </Grid>
