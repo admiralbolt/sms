@@ -1,42 +1,66 @@
 import React, { useEffect, useState } from "react";
 
+import { Box, Divider, Grid, Tab, Tabs, Typography } from "@mui/material";
+
 import customAxios from "@/hooks/customAxios";
 import { ChangeType, IngestionRun } from "@/types";
 import { IngestionRunRecord } from "@/types";
 
-import { ChangeTypeChip } from "./ChangeTypeChip";
-
-import { Box, Divider, Grid, Tabs, Tab, Typography} from "@mui/material";
 import { RawDataComponent } from "../RawData";
+import { ChangeTypeChip } from "./ChangeTypeChip";
 
 interface Props {
   run: IngestionRun;
 }
 
 export const IngestionRunFull = ({ run }: Props) => {
-  const [selectedRecord, setSelectedRecord] = useState<IngestionRunRecord>({} as IngestionRunRecord);
+  const [selectedRecord, setSelectedRecord] = useState<IngestionRunRecord>(
+    {} as IngestionRunRecord,
+  );
   const [records, setRecords] = useState<IngestionRunRecord[]>([]);
   const [sortedApis, setSortedApis] = useState<string[]>([]);
-  const [apisToChangeTypes, setApisToChangeTypes] = useState<{[key: string]: ChangeType[]}>({});
-  const [selectedApiChangeTypes, setSelectedApiChangeTypes] = useState<ChangeType[]>([]);
+  const [apisToChangeTypes, setApisToChangeTypes] = useState<{
+    [key: string]: ChangeType[];
+  }>({});
+  const [selectedApiChangeTypes, setSelectedApiChangeTypes] = useState<
+    ChangeType[]
+  >([]);
   const [breakdowns, setBreakdowns] = useState<any>({});
 
-  const [filteredRecords, setFilteredRecords] = useState<IngestionRunRecord[]>([]);
+  const [filteredRecords, setFilteredRecords] = useState<IngestionRunRecord[]>(
+    [],
+  );
 
   const [selectedApiIndex, setSelectedApiIndex] = useState<number>(-1);
-  const [selectedChangeTypeIndex, setSelectedChangeTypeIndex] = useState<number>(0);
+  const [selectedChangeTypeIndex, setSelectedChangeTypeIndex] =
+    useState<number>(0);
 
   const handleApiChange = (event: React.SyntheticEvent, newVal: number) => {
     setSelectedApiIndex(newVal);
-  }
+  };
 
-  const handleChangeTypeChange = (event: React.SyntheticEvent, newVal: number) => {
+  const handleChangeTypeChange = (
+    event: React.SyntheticEvent,
+    newVal: number,
+  ) => {
     setSelectedChangeTypeIndex(newVal);
-  }
+  };
 
   useEffect(() => {
-    setFilteredRecords(records.filter((record) => record.api_name == sortedApis[selectedApiIndex] && record.change_type == selectedApiChangeTypes[selectedChangeTypeIndex]))
-  }, [records, sortedApis, selectedApiIndex, selectedApiChangeTypes, selectedChangeTypeIndex]);
+    setFilteredRecords(
+      records.filter(
+        (record) =>
+          record.api_name == sortedApis[selectedApiIndex] &&
+          record.change_type == selectedApiChangeTypes[selectedChangeTypeIndex],
+      ),
+    );
+  }, [
+    records,
+    sortedApis,
+    selectedApiIndex,
+    selectedApiChangeTypes,
+    selectedChangeTypeIndex,
+  ]);
 
   useEffect(() => {
     if (Object.keys(breakdowns).length == 0) return;
@@ -86,37 +110,65 @@ export const IngestionRunFull = ({ run }: Props) => {
 
   const recordClickHandler = (record: IngestionRunRecord) => () => {
     setSelectedRecord(record);
-  }
+  };
 
   return (
     <Box>
-      <Box sx={{marginBottom: "0.5em"}}>
-        <Tabs variant="scrollable" value={selectedApiIndex} onChange={handleApiChange}>
-          {sortedApis?.map((api) => (
-            <Tab key={`api-${api}`} label={api} />
-          ))}
+      <Box sx={{ marginBottom: "0.5em" }}>
+        <Tabs
+          variant="scrollable"
+          value={selectedApiIndex}
+          onChange={handleApiChange}
+        >
+          {sortedApis?.map((api) => <Tab key={`api-${api}`} label={api} />)}
         </Tabs>
         <Tabs value={selectedChangeTypeIndex} onChange={handleChangeTypeChange}>
           {selectedApiChangeTypes?.map((t) => (
-            <Tab icon={<ChangeTypeChip changeType={t} value={breakdowns?.[sortedApis[selectedApiIndex]]?.[t]} />} key={`api-change-type-${t}`} />
+            <Tab
+              icon={
+                <ChangeTypeChip
+                  changeType={t}
+                  value={breakdowns?.[sortedApis[selectedApiIndex]]?.[t]}
+                />
+              }
+              key={`api-change-type-${t}`}
+            />
           ))}
         </Tabs>
       </Box>
-      <Grid sx={{border: "1px solid #cccccc", padding: "0.5em"}} container>
-        <Grid sx={{overflowY: "scroll", height: "40em", padding: "0.4em"}} item xs={6}>
+      <Grid sx={{ border: "1px solid #cccccc", padding: "0.5em" }} container>
+        <Grid
+          sx={{ overflowY: "scroll", height: "40em", padding: "0.4em" }}
+          item
+          xs={6}
+        >
           {filteredRecords.map((record) => (
-            <Box onClick={recordClickHandler(record)} key={`record-${record.id}`}>
-              <Typography fontSize="0.9em">{record.id} | {record.raw_data.event_name} | {record.raw_data.venue_name}</Typography>
-              <pre style={{fontSize: "0.7em"}}>{record.change_log.split("\n")[0]}</pre>
-              <Divider sx={{ marginTop: "1em", marginBottom: "1em"}} />
+            <Box
+              onClick={recordClickHandler(record)}
+              key={`record-${record.id}`}
+            >
+              <Typography fontSize="0.9em">
+                {record.id} | {record.raw_data.event_name} |{" "}
+                {record.raw_data.venue_name}
+              </Typography>
+              <pre style={{ fontSize: "0.7em" }}>
+                {record.change_log.split("\n")[0]}
+              </pre>
+              <Divider sx={{ marginTop: "1em", marginBottom: "1em" }} />
             </Box>
           ))}
         </Grid>
-        <Grid sx={{overflowY: "scroll", height: "40em", padding: "0.4em"}} item xs={6}>
+        <Grid
+          sx={{ overflowY: "scroll", height: "40em", padding: "0.4em" }}
+          item
+          xs={6}
+        >
           {selectedRecord.raw_data != undefined && (
             <Box>
               <Typography>Record ID: {selectedRecord.id}</Typography>
-              <pre style={{fontSize: "0.7em"}}>{selectedRecord.change_log}</pre>
+              <pre style={{ fontSize: "0.7em" }}>
+                {selectedRecord.change_log}
+              </pre>
               <br />
               <RawDataComponent rawData={selectedRecord.raw_data} />
             </Box>

@@ -69,7 +69,7 @@ export const ChangeTypeChip = ({ changeType, value }: Props) => {
   const Icon = opFormat.get(changeType)?.icon;
   const color = opFormat.get(changeType)?.color;
 
-  const label = (value) ? `${changeType} - ${value}` : `${changeType} - 0`;
+  const label = value ? `${changeType} - ${value}` : `${changeType} - 0`;
 
   return (
     <Chip

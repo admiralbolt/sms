@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 
+import { Box, Divider, Grid, Tab, Tabs, Typography } from "@mui/material";
+
+import { ChangeTypeChip } from "@/components/IngestionRuns/ChangeTypeChip";
 import customAxios from "@/hooks/customAxios";
 import { ChangeType, JanitorRun } from "@/types";
 import { JanitorRunRecord } from "@/types";
 
-import { ChangeTypeChip } from "@/components/IngestionRuns/ChangeTypeChip";
-
-import { Box, Divider, Grid, Tabs, Tab, Typography} from "@mui/material";
 import { RawDataComponent } from "../RawData";
 
 interface Props {
@@ -14,29 +14,53 @@ interface Props {
 }
 
 export const JanitorRunFull = ({ run }: Props) => {
-  const [selectedRecord, setSelectedRecord] = useState<JanitorRunRecord>({} as JanitorRunRecord);
+  const [selectedRecord, setSelectedRecord] = useState<JanitorRunRecord>(
+    {} as JanitorRunRecord,
+  );
   const [records, setRecords] = useState<JanitorRunRecord[]>([]);
   const [sortedApis, setSortedApis] = useState<string[]>([]);
-  const [apisToChangeTypes, setApisToChangeTypes] = useState<{[key: string]: ChangeType[]}>({});
-  const [selectedApiChangeTypes, setSelectedApiChangeTypes] = useState<ChangeType[]>([]);
+  const [apisToChangeTypes, setApisToChangeTypes] = useState<{
+    [key: string]: ChangeType[];
+  }>({});
+  const [selectedApiChangeTypes, setSelectedApiChangeTypes] = useState<
+    ChangeType[]
+  >([]);
   const [breakdowns, setBreakdowns] = useState<any>({});
 
-  const [filteredRecords, setFilteredRecords] = useState<JanitorRunRecord[]>([]);
+  const [filteredRecords, setFilteredRecords] = useState<JanitorRunRecord[]>(
+    [],
+  );
 
   const [selectedApiIndex, setSelectedApiIndex] = useState<number>(-1);
-  const [selectedChangeTypeIndex, setSelectedChangeTypeIndex] = useState<number>(0);
+  const [selectedChangeTypeIndex, setSelectedChangeTypeIndex] =
+    useState<number>(0);
 
   const handleApiChange = (event: React.SyntheticEvent, newVal: number) => {
     setSelectedApiIndex(newVal);
-  }
+  };
 
-  const handleChangeTypeChange = (event: React.SyntheticEvent, newVal: number) => {
+  const handleChangeTypeChange = (
+    event: React.SyntheticEvent,
+    newVal: number,
+  ) => {
     setSelectedChangeTypeIndex(newVal);
-  }
+  };
 
   useEffect(() => {
-    setFilteredRecords(records.filter((record) => record.api_name == sortedApis[selectedApiIndex] && record.change_type == selectedApiChangeTypes[selectedChangeTypeIndex]))
-  }, [records, sortedApis, selectedApiIndex, selectedApiChangeTypes, selectedChangeTypeIndex]);
+    setFilteredRecords(
+      records.filter(
+        (record) =>
+          record.api_name == sortedApis[selectedApiIndex] &&
+          record.change_type == selectedApiChangeTypes[selectedChangeTypeIndex],
+      ),
+    );
+  }, [
+    records,
+    sortedApis,
+    selectedApiIndex,
+    selectedApiChangeTypes,
+    selectedChangeTypeIndex,
+  ]);
 
   useEffect(() => {
     if (Object.keys(breakdowns).length == 0) return;
@@ -86,7 +110,7 @@ export const JanitorRunFull = ({ run }: Props) => {
 
   const recordClickHandler = (record: JanitorRunRecord) => () => {
     setSelectedRecord(record);
-  }
+  };
 
   const getObjId = (record: JanitorRunRecord) => {
     let id = undefined;
@@ -100,7 +124,7 @@ export const JanitorRunFull = ({ run }: Props) => {
     }
 
     return id || -1;
-  }
+  };
 
   const getObjName = (record: JanitorRunRecord) => {
     let name = undefined;
@@ -114,7 +138,7 @@ export const JanitorRunFull = ({ run }: Props) => {
     }
 
     return name || "UNKNOWN";
-  }
+  };
 
   const getObjData = (record: JanitorRunRecord) => {
     let data = {};
@@ -128,42 +152,72 @@ export const JanitorRunFull = ({ run }: Props) => {
     }
 
     return JSON.stringify(data, null, 2);
-  }
+  };
 
   return (
     <Box>
-      <Box sx={{marginBottom: "0.5em"}}>
-        <Tabs variant="scrollable" value={selectedApiIndex} onChange={handleApiChange}>
-          {sortedApis?.map((api) => (
-            <Tab key={`api-${api}`} label={api} />
-          ))}
+      <Box sx={{ marginBottom: "0.5em" }}>
+        <Tabs
+          variant="scrollable"
+          value={selectedApiIndex}
+          onChange={handleApiChange}
+        >
+          {sortedApis?.map((api) => <Tab key={`api-${api}`} label={api} />)}
         </Tabs>
         <Tabs value={selectedChangeTypeIndex} onChange={handleChangeTypeChange}>
           {selectedApiChangeTypes?.map((t) => (
-            <Tab icon={<ChangeTypeChip changeType={t} value={breakdowns?.[sortedApis[selectedApiIndex]]?.[t]} />} key={`api-change-type-${t}`} />
+            <Tab
+              icon={
+                <ChangeTypeChip
+                  changeType={t}
+                  value={breakdowns?.[sortedApis[selectedApiIndex]]?.[t]}
+                />
+              }
+              key={`api-change-type-${t}`}
+            />
           ))}
         </Tabs>
       </Box>
-      <Grid sx={{border: "1px solid #cccccc", padding: "0.5em"}} container>
-        <Grid sx={{overflowY: "scroll", height: "40em", padding: "0.4em"}} item xs={6}>
+      <Grid sx={{ border: "1px solid #cccccc", padding: "0.5em" }} container>
+        <Grid
+          sx={{ overflowY: "scroll", height: "40em", padding: "0.4em" }}
+          item
+          xs={6}
+        >
           {filteredRecords.map((record) => (
-            <Box onClick={recordClickHandler(record)} key={`record-${record.id}`}>
-              <Typography fontSize="0.9em">{record.id} | {record.field_changed} | {getObjId(record)}: {getObjName(record)}</Typography>
-              <pre style={{fontSize: "0.7em"}}>{record.change_log.split("\n")[0]}</pre>
-              <Divider sx={{ marginTop: "1em", marginBottom: "1em"}} />
+            <Box
+              onClick={recordClickHandler(record)}
+              key={`record-${record.id}`}
+            >
+              <Typography fontSize="0.9em">
+                {record.id} | {record.field_changed} | {getObjId(record)}:{" "}
+                {getObjName(record)}
+              </Typography>
+              <pre style={{ fontSize: "0.7em" }}>
+                {record.change_log.split("\n")[0]}
+              </pre>
+              <Divider sx={{ marginTop: "1em", marginBottom: "1em" }} />
             </Box>
           ))}
         </Grid>
-        <Grid sx={{overflowY: "scroll", height: "40em", padding: "0.4em"}} item xs={6}>
+        <Grid
+          sx={{ overflowY: "scroll", height: "40em", padding: "0.4em" }}
+          item
+          xs={6}
+        >
           {selectedRecord.raw_data != undefined && (
             <Box>
               <Typography>Record ID: {selectedRecord.id}</Typography>
-              <pre style={{fontSize: "0.7em"}}>{selectedRecord.change_log}</pre>
+              <pre style={{ fontSize: "0.7em" }}>
+                {selectedRecord.change_log}
+              </pre>
               <br />
               <Typography>Obj ID: {getObjId(selectedRecord)}</Typography>
               <Typography>Obj Name: {getObjId(selectedRecord)}</Typography>
               <Typography>Obj Data:</Typography>
-              <pre style={{fontSize: "0.7em"}}>{getObjData(selectedRecord)}</pre>
+              <pre style={{ fontSize: "0.7em" }}>
+                {getObjData(selectedRecord)}
+              </pre>
               <br />
               <RawDataComponent rawData={selectedRecord.raw_data} />
             </Box>

@@ -29,22 +29,47 @@ export const IngestionRunSummaryTable = ({ ingestionRun }: Props) => {
 
   return (
     <Box>
-      <Typography sx={{fontSize: "1.2em", fontWeight: "bold"}}>Summary</Typography>
-      <Box sx={{ display: "flex", alignItems: "start", flexDirection: "row"}}>
+      <Typography sx={{ fontSize: "1.2em", fontWeight: "bold" }}>
+        Summary
+      </Typography>
+      <Box sx={{ display: "flex", alignItems: "start", flexDirection: "row" }}>
         {changeTypes.map((t) => (
-          <Box key={`change-type-${t}`} sx={{ marginRight: "0.5em"}}>
+          <Box key={`change-type-${t}`} sx={{ marginRight: "0.5em" }}>
             <ChangeTypeChip changeType={t} value={totals[t]} />
           </Box>
         ))}
       </Box>
-      <Divider sx={{marginTop: "0.5em", marginBottom: "0.25em"}} />
-      <Box sx={{ display: "flex", alignItems: "start", flexDirection: "row", overflowX: "scroll"}}>
+      <Divider sx={{ marginTop: "0.5em", marginBottom: "0.25em" }} />
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "start",
+          flexDirection: "row",
+          overflowX: "scroll",
+        }}
+      >
         {sortedApiNames.map((api_name) => (
-          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", maxWidth: "150px", marginRight: "1em"}} key={`api-name-${api_name}`}>
-            <Typography sx={{maxWidth: "140px"}} noWrap>{api_name}</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "start",
+              maxWidth: "150px",
+              marginRight: "1em",
+            }}
+            key={`api-name-${api_name}`}
+          >
+            <Typography sx={{ maxWidth: "140px" }} noWrap>
+              {api_name}
+            </Typography>
             {changeTypes.map((t) => (
               <Box
-                sx={{ display: "flex", alignItems: "center", flexDirection: "row", marginBottom: "0.4em" }}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "row",
+                  marginBottom: "0.4em",
+                }}
                 key={`ingestion-record-${api_name}-${t}`}
               >
                 <ChangeTypeChip changeType={t} value={s[api_name][t]} />
