@@ -103,7 +103,7 @@ export const IngestionRunFull = ({ run }: Props) => {
         </Tabs>
       </Box>
       <Grid sx={{border: "1px solid #cccccc", padding: "0.5em"}} container>
-        <Grid sx={{overflowY: "scroll", height: "40em"}} item xs={6}>
+        <Grid sx={{overflowY: "scroll", height: "40em", padding: "0.4em"}} item xs={6}>
           {filteredRecords.map((record) => (
             <Box onClick={recordClickHandler(record)} key={`record-${record.id}`}>
               <Typography fontSize="0.9em">{record.id} | {record.raw_data.event_name} | {record.raw_data.venue_name}</Typography>
@@ -112,7 +112,7 @@ export const IngestionRunFull = ({ run }: Props) => {
             </Box>
           ))}
         </Grid>
-        <Grid sx={{overflowY: "scroll", height: "40em"}} item xs={6}>
+        <Grid sx={{overflowY: "scroll", height: "40em", padding: "0.4em"}} item xs={6}>
           {selectedRecord.raw_data != undefined && (
             <RawDataComponent rawData={selectedRecord.raw_data} />
           )}
