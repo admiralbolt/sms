@@ -6,7 +6,7 @@ import { IngestionRunRecord } from "@/types";
 
 import { ChangeTypeChip } from "./ChangeTypeChip";
 
-import { Box, Divider, Tabs, Tab, Typography} from "@mui/material";
+import { Box, Divider, Grid, Tabs, Tab, Typography} from "@mui/material";
 import { RawDataComponent } from "../RawData";
 
 interface Props {
@@ -14,11 +14,14 @@ interface Props {
 }
 
 export const IngestionRunFull = ({ run }: Props) => {
+  const [selectedRecord, setSelectedRecord] = useState<IngestionRunRecord>({} as IngestionRunRecord);
   const [records, setRecords] = useState<IngestionRunRecord[]>([]);
   const [sortedApis, setSortedApis] = useState<string[]>([]);
   const [apisToChangeTypes, setApisToChangeTypes] = useState<{[key: string]: ChangeType[]}>({});
   const [selectedApiChangeTypes, setSelectedApiChangeTypes] = useState<ChangeType[]>([]);
   const [breakdowns, setBreakdowns] = useState<any>({});
+
+  const [filteredRecords, setFilteredRecords] = useState<IngestionRunRecord[]>([]);
 
   const [selectedApiIndex, setSelectedApiIndex] = useState<number>(-1);
   const [selectedChangeTypeIndex, setSelectedChangeTypeIndex] = useState<number>(0);
@@ -30,6 +33,10 @@ export const IngestionRunFull = ({ run }: Props) => {
   const handleChangeTypeChange = (event: React.SyntheticEvent, newVal: number) => {
     setSelectedChangeTypeIndex(newVal);
   }
+
+  useEffect(() => {
+    setFilteredRecords(records.filter((record) => record.api_name == sortedApis[selectedApiIndex] && record.change_type == selectedApiChangeTypes[selectedChangeTypeIndex]))
+  }, [records, sortedApis, selectedApiIndex, selectedApiChangeTypes, selectedChangeTypeIndex]);
 
   useEffect(() => {
     if (Object.keys(breakdowns).length == 0) return;
@@ -77,9 +84,13 @@ export const IngestionRunFull = ({ run }: Props) => {
     });
   }, [run.id]);
 
+  const recordClickHandler = (record: IngestionRunRecord) => () => {
+    setSelectedRecord(record);
+  }
+
   return (
     <Box>
-      <Box>
+      <Box sx={{marginBottom: "0.5em"}}>
         <Tabs variant="scrollable" value={selectedApiIndex} onChange={handleApiChange}>
           {sortedApis?.map((api) => (
             <Tab key={`api-${api}`} label={api} />
@@ -91,16 +102,22 @@ export const IngestionRunFull = ({ run }: Props) => {
           ))}
         </Tabs>
       </Box>
-      <Box sx={{overflowY: "scroll", height: "40em"}}>
-        {records.filter((record) => record.api_name == sortedApis[selectedApiIndex] && record.change_type == selectedApiChangeTypes[selectedChangeTypeIndex]).map((record) => (
-          <Box key={`record-${record.id}`}>
-            <Typography fontSize="1.3em">Record ID: {record.id}</Typography>
-            <Typography sx={{marginBottom: "0.4em"}} fontSize="1.1em">Log: {record.change_log}</Typography>
-            <RawDataComponent rawData={record.raw_data} />
-            <Divider sx={{ marginTop: "1em", marginBottom: "1em"}} />
-          </Box>
-        ))}
-      </Box>
+      <Grid sx={{border: "1px solid #cccccc", padding: "0.5em"}} container>
+        <Grid sx={{overflowY: "scroll", height: "40em"}} item xs={6}>
+          {filteredRecords.map((record) => (
+            <Box onClick={recordClickHandler(record)} key={`record-${record.id}`}>
+              <Typography fontSize="0.9em">{record.id} | {record.raw_data.event_name} | {record.raw_data.venue_name}</Typography>
+              <pre style={{fontSize: "0.7em"}}>{record.change_log}</pre>
+              <Divider sx={{ marginTop: "1em", marginBottom: "1em"}} />
+            </Box>
+          ))}
+        </Grid>
+        <Grid sx={{overflowY: "scroll", height: "40em"}} item xs={6}>
+          {selectedRecord.raw_data != undefined && (
+            <RawDataComponent rawData={selectedRecord.raw_data} />
+          )}
+        </Grid>
+      </Grid>
     </Box>
   );
 };

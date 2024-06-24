@@ -13,7 +13,7 @@ export const RawDataComponent = ({ rawData }: Props) => {
       <Typography fontWeight="bold">Raw Data ID: {rawData.id}</Typography>
       <Typography>Event Name: {rawData.event_name}</Typography>
       <Typography>Venue Name: {rawData.venue_name}</Typography>
-      <pre style={{fontSize: "0.7em", overflowY: "scroll", height: "15em"}}>{JSON.stringify(rawData.data, null, 2)}</pre>
+      <pre style={{fontSize: "0.8em"}}>{JSON.stringify(rawData.data, null, 2)}</pre>
     </Box>
   )
 };
