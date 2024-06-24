@@ -42,7 +42,11 @@ customAxios.interceptors.response.use(
     // the request. We don't want to a repeat a request multiple times, so we
     // set a flag config.sent, and we don't want to repeat requests that go
     // explicitly to the token refresh endpoint.
-    if (error?.response?.status === 401 && !config?.sent && config!.url != "/api/token/refresh/") {
+    if (
+      error?.response?.status === 401 &&
+      !config?.sent &&
+      config!.url != "/api/token/refresh/"
+    ) {
       config.sent = true;
 
       await memoizedRefreshTokens();

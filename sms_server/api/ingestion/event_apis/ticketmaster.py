@@ -1,12 +1,12 @@
 """Ticketmaster integration."""
 import logging
 import time
+from typing import Generator
 
 import requests
 
 from api.constants import IngestionApis
-from api.ingestion.ingester import Ingester
-from api.models import APISample, IngestionRun
+from api.ingestion.event_apis.event_api import EventApi
 from sms_server import settings
 
 logger = logging.getLogger(__name__)
@@ -52,19 +52,19 @@ def select_image(images: list[dict]) -> str:
 
   return images[max_index]["url"]
 
-class TicketmasterIngester(Ingester):
+class TicketmasterApi(EventApi):
 
   delay: float = 0.5
 
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.TICKETMASTER)
 
-  def get_venue_kwargs(self, event_data: dict) -> dict:
-    if len(event_data["_embedded"]["venues"]) > 1:
+  def get_venue_kwargs(self, raw_data: dict) -> dict:
+    if len(raw_data["_embedded"]["venues"]) > 1:
       logger.warning("Multiple venues returned within single event. Full data:")
-      logger.warning(event_data)
+      logger.warning(raw_data)
 
-    venue_data = event_data["_embedded"]["venues"][0]
+    venue_data = raw_data["_embedded"]["venues"][0]
     return {
       "name": venue_data["name"],
       "latitude": venue_data["location"]["latitude"],
@@ -75,32 +75,32 @@ class TicketmasterIngester(Ingester):
       "api_id": venue_data["id"],
     }
   
-  def get_event_kwargs(self, event_data: dict) -> dict:
+  def get_event_kwargs(self, raw_data: dict) -> dict:
     return {
-      "title": event_data["name"],
-      "event_day": event_data["dates"]["start"]["localDate"],
-      "start_time": event_data["dates"]["start"].get("localTime", None),
-      "ticket_price_min": 0 if "priceRanges" not in event_data else event_data["priceRanges"][0]["min"],
-      "ticket_price_max": 0 if "priceRanges" not in event_data else event_data["priceRanges"][0]["max"],
-      "event_url": event_data["url"],
-      "event_image_url": select_image(event_data["images"])
+      "title": raw_data["name"],
+      "event_day": raw_data["dates"]["start"]["localDate"],
+      "start_time": raw_data["dates"]["start"].get("localTime", None),
+      "event_url": raw_data["url"],
+      "event_image_url": select_image(raw_data["images"])
     }
   
-  def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
+  def get_raw_data_info(self, raw_data: dict) -> dict:
+    return {
+      "event_api_id": raw_data["id"],
+      "event_name": raw_data["name"],
+      "venue_name": raw_data["_embedded"]["venues"][0]["name"],
+      "event_day": raw_data["dates"]["start"]["localDate"],
+    }
+  
+  def get_event_list(self) -> Generator[dict, None, None]:
     events = event_list_request(page=0)
-    # Save the response from the first page.
-    APISample.objects.create(
-      name="All data page 1",
-      api_name=IngestionApis.TICKETMASTER,
-      data=events
-    )
     if "_embedded" not in events:
       logger.warning(f"Empty events list: {events}, while ingesting from Ticketmaster.")
       return
     
     num_pages = events["page"]["totalPages"]
     for event_data in events["_embedded"]["events"]:
-      self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)
+      yield event_data
     
     for page in range(1, num_pages):
       # We are only allowed a maximum of 5 QPS worth of traffic, so we insert
@@ -112,5 +112,5 @@ class TicketmasterIngester(Ingester):
         continue
 
       for event_data in events["_embedded"]["events"]:
-        self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)
+        yield event_data
   

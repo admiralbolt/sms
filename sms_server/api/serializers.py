@@ -35,16 +35,24 @@ class VenueSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.Venue
-    fields = ("id", "venue_image_url", "venue_image", "name", "latitude", "longitude", "address", "postal_code", "city", "venue_url", "description", "venue_tags", "alias", "show_venue", "gather_data")
+    fields = ("id", "venue_image_url", "venue_image", "name", "latitude", "longitude", "address", "postal_code", "city", "venue_url", "description", "venue_tags", "alias", "show_venue")
+
+class ArtistSerializer(serializers.ModelSerializer):
+  """Serialize artists."""
+  
+  class Meta:
+    model = models.Artist
+    fields = "__all__"
 
 class EventSerializer(serializers.ModelSerializer):
   """Serialize Event data."""
   event_image = serializers.ImageField(max_length=None, use_url=True, required=False)
   venue = serializers.PrimaryKeyRelatedField(queryset=models.Venue.objects.order_by("name"))
+  artists = ArtistSerializer(read_only=True, many=True)
 
   class Meta:
     model = models.Event
-    fields = ("id", "event_image", "event_image_url", "event_type", "title", "event_day", "signup_start_time", "cash_only", "start_time", "end_time", "doors_open", "is_ticketed", "ticket_price_min", "ticket_price_max", "event_api", "event_url", "description", "venue")
+    fields = ("id", "event_image", "event_image_url", "event_type", "title", "event_day", "signup_start_time", "start_time", "event_url", "description", "venue", "artists")
 
 class OpenMicSerializer(serializers.ModelSerializer):
   """Serialize OpenMic data."""
@@ -57,6 +65,13 @@ class OpenMicSerializer(serializers.ModelSerializer):
     model = models.OpenMic
     fields = ("id", "name", "open_mic_type", "description", "signup_start_time", "event_start_time", "event_end_time", "all_ages", "house_piano", "house_pa", "drums", "cadence_crontab", "cadence_readable", "generate_events", "venue")
 
+class RawDataSerializer(serializers.ModelSerializer):
+  """Serialize Raw Data."""
+
+  class Meta:
+    model = models.RawData
+    fields = "__all__"
+
 class IngestionRunSerializer(serializers.ModelSerializer):
   """Serialize IngestionRun data."""
   summary = serializers.SerializerMethodField()
@@ -66,7 +81,7 @@ class IngestionRunSerializer(serializers.ModelSerializer):
 
     We also include the index to use as an ID in the react data table view.
     """
-    data = list(models.IngestionRecord.objects.filter(ingestion_run=ingestion_run).values("api_name", "change_type", "field_changed").annotate(total=Count("id")))
+    data = list(models.IngestionRecord.objects.filter(ingestion_run=ingestion_run).values("api_name", "change_type").annotate(total=Count("id")))
     for i, agg in enumerate(data):
       agg["index"] = i
     return data
@@ -77,21 +92,40 @@ class IngestionRunSerializer(serializers.ModelSerializer):
 
 class IngestionRecordSerializer(serializers.ModelSerializer):
   """Serialize Ingestion Records."""
-
-  # For ease of use, we want to get the name of the object that was changed.
-  # Staring at a bunch of event / venue ids makes it much harder to look at.
-  event_name = serializers.SerializerMethodField()
-  venue_name = serializers.SerializerMethodField()
-
-  def get_event_name(self, record: models.IngestionRecord):
-    return "" if record.event == None else record.event.title
-  
-  def get_venue_name(self, record: models.IngestionRecord):
-    return "" if record.venue == None else record.venue.name
+  raw_data = RawDataSerializer()
 
   class Meta:
     model = models.IngestionRecord
-    fields = ("id", "api_name", "change_type", "change_log", "field_changed", "ingestion_run", "event", "event_name", "venue", "venue_name")
+    fields = "__all__"
+
+class JanitorRunSerializer(serializers.ModelSerializer):
+  """Serialize JanitorRun data."""
+  summary = serializers.SerializerMethodField()
+
+  def get_summary(self, janitor_run: models.JanitorRun) -> list[dict]:
+    """Render a summary of the run for easy use.
+
+    We also include the index to use as an ID in the react data table view.
+    """
+    data = list(models.JanitorRecord.objects.filter(janitor_run=janitor_run).values("api_name", "field_changed", "change_type").annotate(total=Count("id")))
+    for i, agg in enumerate(data):
+      agg["index"] = i
+    return data
+
+  class Meta:
+    model = models.JanitorRun
+    fields = "__all__"
+
+class JanitorRecordSerializer(serializers.ModelSerializer):
+  """Serialize Janitor Records."""
+  raw_data = RawDataSerializer()
+  event = EventSerializer()
+  venue = VenueSerializer()
+  artist = ArtistSerializer()
+
+  class Meta:
+    model = models.JanitorRecord
+    fields = "__all__"
 
 class CrontabScheduleSerializer(serializers.ModelSerializer):
   schedule = serializers.SerializerMethodField()

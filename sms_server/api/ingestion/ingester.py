@@ -1,77 +1,63 @@
-import collections
 import logging
-from abc import ABC, abstractmethod
+from typing import Optional
 
-from api.models import IngestionRecord, IngestionRun
-from api.utils import event_utils, venue_utils
+from api.constants import ChangeTypes
+from api.ingestion.event_apis.event_api import EventApi
+from api.ingestion.import_mapping import API_MAPPING
+from api.models import IngestionRecord, IngestionRun, RawData
+from api.utils import raw_data_utils
 
 logger = logging.getLogger(__name__)
 
-class Ingester(ABC):
-  """Abstract ingestion class."""
+class Ingester:
+  """Load some data."""
 
-  api_name: str = ""
-  venue_logs: dict = {}
+  ingestion_apis: list[str]
+  run_name: str
 
-  def __init__(self, api_name: str) -> object:
-    self.api_name = api_name
-    self.venue_logs = collections.defaultdict(set)
+  def __init__(self, ingestion_apis: Optional[list[str]] = None):
+    if not ingestion_apis:
+      self.ingestion_apis = list(API_MAPPING.keys())
+      self.run_name = "Ingestion Run - All"
+    else:
+      self.ingestion_apis = ingestion_apis
+      self.run_name = f"Ingestion Run - {', '.join(ingestion_apis)}"
 
-  @abstractmethod
-  def get_venue_kwargs(self, event_data: dict) -> dict:
-    pass
-
-  @abstractmethod
-  def get_event_kwargs(self, event_data: dict) -> dict:
-    pass
-
-  def import_data(self, ingestion_run: IngestionRun, debug: bool=False) -> None:
-    for venue_change_type, venue_data in self.venue_logs.items():
-      for venue_change_log, venue in venue_data:
-        IngestionRecord.objects.create(
-          ingestion_run=ingestion_run,
-          api_name=self.api_name,
-          change_type=venue_change_type,
-          change_log=venue_change_log,
-          field_changed="venue",
-          venue=venue
+  def import_from_api(self, api: EventApi):
+    """Import data from an event api."""
+    for event_data in api.get_event_list():
+      raw_event_info = api.get_raw_data_info(event_data)
+      try:
+        change_type, change_log, raw_data = raw_data_utils.create_or_update_raw_data(
+          api_name=api.api_name,
+          event_api_id=raw_event_info["event_api_id"],
+          event_name=raw_event_info["event_name"],
+          venue_name=raw_event_info["venue_name"],
+          event_day=raw_event_info["event_day"],
+          data=event_data
         )
 
-
-  def process_event(self, ingestion_run: IngestionRun, event_data: dict, debug: bool=False) -> None:
-    """Process a single event."""
-    try:
-      venue_kwargs = self.get_venue_kwargs(event_data=event_data)
-      venue_change_type, venue_change_log, venue = venue_utils.create_or_update_venue(**venue_kwargs, api_name=self.api_name, debug=debug)
-      change_tuple = (venue_change_log, venue)
-      if change_tuple not in self.venue_logs[venue_change_type]:
         IngestionRecord.objects.create(
-          ingestion_run=ingestion_run,
-          api_name=self.api_name,
-          change_type=venue_change_type,
-          change_log=venue_change_log,
-          field_changed="venue",
-          venue=venue
+          ingestion_run=self.ingestion_run,
+          api_name=api.api_name,
+          change_type=change_type,
+          change_log=change_log,
+          raw_data=raw_data
         )
-        self.venue_logs[venue_change_type].add(change_tuple)
+      except Exception as e:
+        IngestionRecord.objects.create(
+          ingestion_run=self.ingestion_run,
+          api_name=api.api_name,
+          change_type=ChangeTypes.ERROR,
+          change_log=f"Error importing data: {event_data}"
+        )
 
-      # If we shouldn't gather data for the venue, we're done!
-      if not venue.gather_data:
-        return
-
-      event_kwargs = self.get_event_kwargs(event_data=event_data)
-      event_change_type, event_change_log, event = event_utils.create_or_update_event(venue=venue, **event_kwargs, event_api=self.api_name, debug=debug)
-      IngestionRecord.objects.create(
-        ingestion_run=ingestion_run,
-        api_name=self.api_name,
-        change_type=event_change_type,
-        change_log=event_change_log,
-        field_changed="event",
-        event=event
-      )
-    except Exception as e:
-      logger.error("ERROR Processing Event for ingestion_run: %s. Data: %s, Error: %s.", ingestion_run, event_data, e, exc_info=1)
-
-
-
-
+  def import_data(self):
+    self.ingestion_run = IngestionRun.objects.create(name=self.run_name)
+    for api in self.ingestion_apis:
+      try:
+        self.import_from_api(API_MAPPING[api])
+      except Exception as e:
+        print(f"Error importing from api {api}, error: {e}")
+        print(e)
+        logger.error("Error importing from api %s, error: %s.", api, e, exc_info=1)

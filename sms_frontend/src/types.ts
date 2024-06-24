@@ -36,17 +36,12 @@ export interface IngestionRunRecord {
   api_name: string;
   change_type: ChangeType;
   change_log: string;
-  field_changed: string;
-  event: number;
-  event_name: string;
-  venue: number;
-  venue_name: string;
+  raw_data: RawData;
 }
 
 export interface IngestionRunSummary {
   api_name: string;
-  change_type: string;
-  field_changed: string;
+  change_type: ChangeType;
   total: number;
   index: number;
 }
@@ -56,6 +51,43 @@ export interface IngestionRun {
   name: string;
   created_at: Date;
   summary: IngestionRunSummary[];
+}
+
+export interface JanitorRunRecord {
+  id: number;
+  created_at: Date;
+  api_name: string;
+  change_type: ChangeType;
+  change_log: string;
+  field_changed: string;
+  raw_data: RawData;
+  event: Event;
+  venue: Venue;
+  artist: Artist;
+}
+
+export interface JanitorRunSummary {
+  api_name: string;
+  change_type: string;
+  field_changed: string;
+  total: number;
+  index: number;
+}
+
+export interface JanitorRun {
+  id: string;
+  name: string;
+  created_at: Date;
+  summary: JanitorRunSummary[];
+}
+
+export interface RawData {
+  id: string;
+  api_name: string;
+  event_api_id: string;
+  event_name: string;
+  venue_name: string;
+  data: object;
 }
 
 export interface Venue {
@@ -89,6 +121,11 @@ export interface OpenMic {
   cadence_readable: string;
   signup_start_time: string;
   event_start_time: string;
+}
+
+export interface Artist {
+  id: number;
+  name: string;
 }
 
 export interface Crontab {

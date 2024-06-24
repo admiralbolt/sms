@@ -16,7 +16,12 @@ class EventTypes:
 
 class IngestionApis:
   AXS = "AXS"
-  CRAWLER = "Crawler"
+  CRAWLER_BLUE_MOON = "Crawler - Blue Moon"
+  CRAWLER_DARRELLS_TAVERN = "Crawler - Darrell's Tavern"
+  CRAWLER_LITTLE_RED_HEN = "Crawler - Little Red Hen"
+  CRAWLER_SEA_MONSTER_LOUNGE = "Crawler - Sea Monster Lounge"
+  CRAWLER_SKYLARK = "Crawler - Skylark"
+  CRAWLER_THE_ROYAL_ROOM = "Crawler - The Royal Room"
   DICE = "Dice"
   EVENTBRITE = "Eventbrite"
   MANUAL = "Manual"
@@ -50,15 +55,6 @@ class Neighborhoods:
   QUEEN_ANNE = "Queen Anne"
   UNIVERSITY_DISTRICT = "University District"
   WEST_SEATTLE = "West Seattle"
-
-AUTOMATIC_APIS = [
-  IngestionApis.AXS,
-  IngestionApis.DICE,
-  IngestionApis.EVENTBRITE,
-  IngestionApis.TICKETMASTER,
-  IngestionApis.TIXR,
-  IngestionApis.VENUEPILOT
-]
 
 def get_all(cls) -> list[str]:
   """Get a list of all options."""

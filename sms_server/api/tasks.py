@@ -7,11 +7,10 @@ import os
 import requests
 from celery import shared_task
 
-from api.constants import AUTOMATIC_APIS, IngestionApis
-from api.ingestion import axs, dice, eventbrite, ticketmaster, tixr, venuepilot
 from api.ingestion.ingester import Ingester
-from api.models import IngestionRun, OpenMic, VenueApi
-from api.utils import open_mic_utils, venue_utils
+from api.ingestion.janitor import Janitor
+from api.models import IngestionRun, OpenMic
+from api.utils import open_mic_utils
 from sms_server.settings import IS_PROD, MEDIA_ROOT
 
 logger = logging.getLogger(__name__)
@@ -38,47 +37,12 @@ def generate_open_mic_events(name_filter: str="", max_diff: datetime.timedelta =
     open_mic_utils.generate_open_mic_events(mic, max_diff=max_diff, debug=debug)
 
 @shared_task
-def import_api_data(api_name: str, ingestion_run: IngestionRun, debug: bool=False):
-  """Import data from apis!"""
-  ingester_dict: dict[str, Ingester] = {
-    IngestionApis.AXS: axs.AXSIngester,
-    IngestionApis.DICE: dice.DiceIngester,
-    IngestionApis.EVENTBRITE: eventbrite.EventbriteIngester,
-    IngestionApis.TICKETMASTER: ticketmaster.TicketmasterIngester,
-    IngestionApis.TIXR: tixr.TIXRIngester,
-    IngestionApis.VENUEPILOT: venuepilot.VenuepilotIngester,
-  }
-
-  if api_name not in ingester_dict:
-    print("Invalid api name specified.")
-    return
-  
-  ingester = ingester_dict[api_name]()
-  ingester.import_data(ingestion_run=ingestion_run, debug=debug)
-
-@shared_task
-def crawl_data(crawler_name: str, ingestion_run: IngestionRun, debug: bool=False):
-  """Crawl data from individual venues!"""
-  crawler = venue_utils.get_crawler(crawler_module_name=crawler_name)
-  if crawler is None:
-    print(f"Crawler {crawler_name} does not exist.")
-    return
-
-  crawler.import_data(ingestion_run=ingestion_run, debug=debug)
-
-@shared_task
-def import_all(debug: bool=False):
-  """Import data from ALL APIs."""
-  ingestion_run = IngestionRun.objects.create(name="Full Run")
-  for api_name in AUTOMATIC_APIS:
-    try:
-      import_api_data(api_name=api_name, ingestion_run=ingestion_run, debug=debug)
-    except Exception as e:
-      logger.warning("[INGESTER_FAILED] API: %s, error: %s", api_name, e)
-  # Run all the crawlers.
-  venue_apis = VenueApi.objects.filter(api_name=IngestionApis.CRAWLER)
-  for venue_api in venue_apis:
-    crawl_data(crawler_name=venue_api.crawler_name, ingestion_run=ingestion_run, debug=debug)
+def import_and_clean(debug: bool=False):
+  """Import data from ALL APIs & Crawlers."""
+  ingester = Ingester()
+  ingester.import_data()
+  janitor = Janitor()
+  janitor.run()
 
 @shared_task
 def write_latest_data():

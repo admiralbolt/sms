@@ -3,14 +3,15 @@
 Venuepilot doesn't have any sort of search scope features, so we query all
 events and then filter by city accordingly.
 """
+import logging
 from datetime import datetime
-from typing import Optional
+from typing import Any, Generator, Optional
 
 import requests
 
 from api.constants import IngestionApis
-from api.ingestion.ingester import Ingester
-from api.models import APISample, IngestionRun
+from api.ingestion.event_apis.event_api import EventApi
+from api.models import IngestionRun
 
 REQUEST_TEMPLATE = """
 query PaginatedEvents {
@@ -73,6 +74,8 @@ query PaginatedEvents {
   }
 """
 
+logger = logging.getLogger(__name__)
+
 def event_list_request(min_start_date: Optional[str]=None, page: int=0):
   """Get a list of events from Venuepilot."""
   min_start_date = min_start_date or datetime.today().strftime("%Y-%m-%d")
@@ -85,13 +88,13 @@ def event_list_request(min_start_date: Optional[str]=None, page: int=0):
   }
   return requests.post("https://www.venuepilot.co/graphql", headers=headers, json=data, timeout=30).json()
 
-class VenuepilotIngester(Ingester):
+class VenuepilotApi(EventApi):
 
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.VENUEPILOT)
 
-  def get_venue_kwargs(self, event_data: dict) -> dict:
-    venue_data = event_data["venue"]
+  def get_venue_kwargs(self, raw_data: dict) -> dict:
+    venue_data = raw_data["venue"]
     address = venue_data["street1"]
     if venue_data["street2"]:
       address += f" {venue_data['street2']}"
@@ -105,34 +108,45 @@ class VenuepilotIngester(Ingester):
       "api_id": venue_data["id"],
     }
   
-  def get_event_kwargs(self, event_data: dict) -> dict:
+  def get_event_kwargs(self, raw_data: dict) -> dict:
     return {
-      "title": event_data["name"],
-      "event_day": event_data["date"],
-      "start_time": event_data["startTime"],
-      "ticket_price_min": event_data["priceMin"] or 0,
-      "ticket_price_max": event_data["priceMax"] or 0,
-      "event_url": event_data["ticketsUrl"],
-      "description": event_data["description"],
-      "event_image_url": event_data["highlightedImage"],
+      "title": raw_data["name"],
+      "event_day": raw_data["date"],
+      "start_time": raw_data["startTime"],
+      "event_url": raw_data["ticketsUrl"],
+      "description": raw_data["description"],
+      "event_image_url": raw_data["highlightedImage"],
     }
   
-  def process_event_list(self, ingestion_run: IngestionRun, event_list: list[dict], debug: bool=False):
+  def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
+    # Technically venuepilot has artist info, but in practice I've never seen
+    # the 'artist' field actually populated.
+    if "artist" in raw_data:
+      logger.info("WE HAVE ARTIST!!!")
+      logger.info(raw_data["artist"])
+
+    yield {}
+
+  def get_raw_data_info(self, raw_data: dict) -> dict:
+    return {
+      "event_api_id": raw_data["id"],
+      "event_name": raw_data["name"],
+      "venue_name": raw_data["venue"]["name"],
+      "event_day": raw_data["date"],
+    }
+  
+  def process_event_list(self, event_list: list[dict]) -> Generator[dict, None, None]:
     for event_data in event_list["data"]["paginatedEvents"]["collection"]:
       if event_data["venue"]["city"].lower() != "seattle":
         continue
-      self.process_event(ingestion_run=ingestion_run, event_data=event_data, debug=debug)
+      yield event_data
   
-  def import_data(self, ingestion_run: IngestionRun, debug: bool = False) -> None:
+  def get_event_list(self) -> Generator[dict, None, None]:
     event_list = event_list_request(page=0)
-    # Save the response from the first page.
-    APISample.objects.create(
-      name="All data page 1",
-      api_name=IngestionApis.VENUEPILOT,
-      data=event_list
-    )
     total_pages = event_list["data"]["paginatedEvents"]["metadata"]["totalPages"]
-    self.process_event_list(ingestion_run=ingestion_run, event_list=event_list, debug=debug)
+    for event in self.process_event_list(event_list):
+      yield event
     for page in range(1, total_pages):
       event_list = event_list_request(page=page)
-      self.process_event_list(ingestion_run=ingestion_run, event_list=event_list, debug=debug)
+      for event in self.process_event_list(event_list):
+        yield event

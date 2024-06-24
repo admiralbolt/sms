@@ -11,21 +11,11 @@ from api.constants import get_choices, ChangeTypes, EventTypes, IngestionApis, N
 
 logger = logging.getLogger(__name__)
 
-class APISample(models.Model):
-  """Raw data dumps from the api."""
-  name = models.CharField(max_length=256)
-  created_at = models.DateTimeField(auto_now_add=True)
-  api_name = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
-  data = models.JSONField()
-
-  def __str__(self):
-    return f"[{self.api_name}] ({self.created_at}) {self.name}"
-
 class Venue(models.Model):
   """Places to go!"""
+  created_at = models.DateTimeField(auto_now_add=True)
   name = models.CharField(max_length=128, unique=True)
   name_lower = models.CharField(max_length=128, unique=True)
-  created_at = models.DateTimeField(auto_now_add=True)
   latitude = models.DecimalField(max_digits=9, decimal_places=6)
   longitude = models.DecimalField(max_digits=9, decimal_places=6)
   address = models.CharField(max_length=256)
@@ -34,16 +24,13 @@ class Venue(models.Model):
   venue_url = models.CharField(max_length=256, blank=True, null=True)
   venue_image_url = models.CharField(max_length=1024, blank=True, null=True)
   venue_image = models.ImageField(upload_to="venue_images", blank=True, null=True)
-  neighborhood = models.CharField(max_length=64, blank=True, null=True, choices=get_choices(Neighborhoods))
-
-  # Optional.
   description = models.TextField(default="", blank=True, null=True)
-  max_capacity = models.IntegerField(default=-1)
-  # Alias is a complicated regex-ish field that helps conditional match venues
-  # based on slightly different naming. The regexes are keyed by the field
-  # that they are applied to, for example:
+
+  neighborhood = models.CharField(max_length=64, blank=True, null=True, choices=get_choices(Neighborhoods))
+  # Alias is a complicated regex field that helps conditional match venues
+  # based on slightly different naming. For example:
   #
-  # {"name": "^(The Tractor|Tractor Tavern)$"}
+  # "(The Tractor|Tractor Tavern)$"
   alias = models.TextField(max_length=1024, blank=True, null=True)
 
   # In general we don't want to delete data, we just want to hide it.
@@ -51,24 +38,13 @@ class Venue(models.Model):
   # 1) Hiding / showing the venue.
   # 2) Turning off / on data gathering for the venue.
   show_venue = models.BooleanField(default=True)
-  gather_data = models.BooleanField(default=True)
-
+  
+  def __str__(self):
+    return self.name
+  
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._original_venue_image_url = self.venue_image_url
-
-  def alias_matches(self, other_venue: object) -> bool:
-    """Check to see if another venue matches based on our aliasing."""
-    try:
-      alias_obj = json.loads(self.alias)
-    except:
-      logger.error(f"Alias field on venue {self.id} is not a json object.")
-      return False
-
-    for key, regex in alias_obj.items():
-      if not re.match(regex, getattr(other_venue, key)):
-        return False
-    return True
 
   def make_pretty(self):
     # Helper method for cleaning venue information.
@@ -90,11 +66,9 @@ class Venue(models.Model):
         self._original_venue_image_url = self.venue_image_url
         self.venue_image.save(f"{self.name}.{file_extension}", content_file)
 
-  def __str__(self):
-    return self.name
-
   class Meta:
     unique_together = [["latitude", "longitude"]]
+
 
 class VenueTag(models.Model):
   """Tags for venue types."""
@@ -108,50 +82,95 @@ class VenueTag(models.Model):
   class Meta:
     unique_together = [["venue", "venue_type"]]
 
-class VenueApi(models.Model):
-  """API information for a venue.
-
-  Venues can potentially use multiple apis, so this is done as a separate model
-  instead of as a field.
-  """
-  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+class Crawler(models.Model):
+  """Information about a crawler."""
   created_at = models.DateTimeField(auto_now_add=True)
-  api_name = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
-  api_id = models.CharField(max_length=32, blank=True, null=True)
-  crawler_name = models.CharField(max_length=32, blank=True, null=True)
+  crawler_name = models.CharField(max_length=32, unique=True)
+  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
 
   def __str__(self):
-    return f"{self.venue.name} - {self.api_name}"
+    return self.crawler_name
+
+
+class Artist(models.Model):
+  """Artists!"""
+  created_at = models.DateTimeField(auto_now_add=True)
+  name = models.CharField(max_length=64, unique=True)
+  name_slug = models.CharField(max_length=128, unique=True)
+  bio = models.TextField(max_length=256, blank=True, null=True)
+
+  def save(self, *args, **kwargs):
+    self.name_slug = self.name.lower().replace(" ", "-")
+    super().save(*args, **kwargs)
+
+  def __str__(self):
+    return self.name
+
+class SocialLink(models.Model):
+  """Social Links for artists."""
+  created_at = models.DateTimeField(auto_now_add=True)
+  artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
+  platform = models.CharField(max_length=32)
+  url = models.CharField(max_length=128)
 
   class Meta:
-    unique_together = [["venue", "api_name"]]
+    unique_together = [["artist", "platform"]]
+
+
+class RawData(models.Model):
+  """Raw data from an api request.
+
+  We save data from api requests in a staging table before it becomes finalized
+  data. This will require some duplication of fields / code, but will provide
+  some nice benefits:
+
+  1) Better debugging, and we won't need to re-poll APIs to see where data
+     comes from.
+  2) The ability to link finalized events to the raw data where they come from.
+  3) The ability to change merging/deduping rules and immediately see results.
+  4) We can edit finalized venues / events, without losing the underlying data
+     that they come from. 
+  """
+  created_at = models.DateTimeField(auto_now_add=True)
+  api_name = models.CharField(max_length=32, choices=get_choices(IngestionApis), default="Manual")
+  event_api_id = models.CharField(max_length=64)
+  # We include event and venue name for sanity purposes.
+  event_name = models.CharField(max_length=256)
+  venue_name = models.CharField(max_length=128)
+  event_day = models.DateField()
+  data = models.JSONField()
+
+  def __str__(self):
+    return f"|{self.id}| [{self.api_name}] ({self.venue_name}, {self.event_name})"
+
+  class Meta:
+    unique_together = [["api_name", "event_api_id"]]
 
 
 class Event(models.Model):
-  """Shows to be had!"""
-  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+  """Finalized list of events."""
   created_at = models.DateTimeField(auto_now_add=True)
-  event_type = models.CharField(max_length=16, choices=get_choices(EventTypes), default="Show")
-  # I think eventually this could get replaced by linking to artists
-  # participating in the show, but for a rough draft this is good enough.
   title = models.CharField(max_length=256)
   event_day = models.DateField()
-  # Only applicable if an open mic.
-  signup_start_time = models.TimeField(default=None, blank=True, null=True)
-
-  cash_only = models.BooleanField(default=False)
   start_time = models.TimeField(default=None, blank=True, null=True)
-  end_time = models.TimeField(default=None, blank=True, null=True)
-  doors_open = models.TimeField(default=None, blank=True, null=True)
-  is_ticketed = models.BooleanField(default=False)
-  ticket_price_min = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
-  ticket_price_max = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
-  event_api = models.CharField(max_length=20, choices=get_choices(IngestionApis), default="Manual")
   event_url = models.CharField(max_length=512, blank=True, null=True)
   description = models.TextField(blank=True, null=True)
   event_image_url = models.CharField(max_length=1024, blank=True, null=True)
   event_image = models.ImageField(upload_to="event_images", blank=True, null=True)
+  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+  artists = models.ManyToManyField(Artist)
+  event_type = models.CharField(max_length=16, choices=get_choices(EventTypes), default="Show")
+  # Only applicable if an open mic.
+  signup_start_time = models.TimeField(default=None, blank=True, null=True)
+  # Meta control for display of events.
+  show_event = models.BooleanField(default=True)
 
+  # Link back to the raw data that an event comes from.
+  raw_datas = models.ManyToManyField(RawData)
+
+  def __str__(self):
+    return f"{self.title} ({self.venue.name}, {self.event_day}, {self.title})"
+  
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._original_event_image_url = self.event_image_url
@@ -165,12 +184,6 @@ class Event(models.Model):
         content_file = ContentFile(image_request.content)
         self._original_event_image_url = self.event_image_url
         self.event_image.save(f"{self.title.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
-
-  # Meta control for display of events.
-  show_event = models.BooleanField(default=True)
-
-  def __str__(self):
-    return f"[{self.venue}] ({self.event_day}) {self.title}"
 
   class Meta:
     unique_together = [["venue", "event_day", "start_time"]]
@@ -216,6 +229,40 @@ class OpenMic(models.Model):
       return self.title
 
     return "UNKNOWN_VENUE" if not self.venue else f"{self.venue.name} {self.event_mic_type}"
+  
+class JanitorRun(models.Model):
+  """Logs for runs from the janitor."""
+  created_at = models.DateTimeField(auto_now_add=True)
+  name = models.CharField(max_length=64)
+
+  def __str__(self):
+    return f"{self.name} ({self.created_at})"
+  
+class JanitorRecord(models.Model):
+  created_at = models.DateTimeField(auto_now_add=True)
+  janitor_run = models.ForeignKey(JanitorRun, on_delete=models.CASCADE)
+  api_name = models.CharField(max_length=32, default="Manual")
+  raw_data = models.ForeignKey(RawData, on_delete=models.CASCADE)
+  change_type = models.CharField(max_length=16, choices=get_choices(ChangeTypes))
+  change_log = models.TextField(blank=True, null=True)
+  
+  # Helper field for seeing what got added/changed/deleted -> either an event,
+  # a venue, or an artist.
+  field_changed = models.CharField(max_length=32, choices=[("event", "event"), ("venue", "venue"), ("artist", "artist"), ("none", "none")])
+  # In some cases we are avoiding adding data, so these may be blank.
+  event = models.ForeignKey(Event, on_delete=models.SET_NULL, blank=True, null=True)
+  venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, blank=True, null=True)
+  artist = models.ForeignKey(Artist, on_delete=models.SET_NULL, blank=True, null=True)
+
+  def name_of_object_changed(self):
+    if self.field_changed == "none":
+      return "None"
+    
+    obj = getattr(self, self.field_changed)
+    return getattr(obj, "name", getattr(obj, "title", "None"))
+
+  def __str__(self):
+    return f"{self.janitor_run} - {self.api_name}: ({self.name_of_object_changed()}, {self.change_type})"
 
 class IngestionRun(models.Model):
   """Logs for runs from the ingester."""
@@ -232,23 +279,24 @@ class IngestionRecord(models.Model):
   api_name = models.CharField(max_length=32, default="Manual")
   change_type = models.CharField(max_length=16, choices=get_choices(ChangeTypes))
   change_log = models.TextField(blank=True, null=True)
-  # Helper field for which one of event / venue has been changed.
-  field_changed = models.CharField(max_length=32)
-  # In some cases we are avoiding adding an event or venue, so these fields may
-  # be blank.
-  event = models.ForeignKey(Event, on_delete=models.SET_NULL, blank=True, null=True)
-  venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, blank=True, null=True)
+  # Occasionally we have errors, and raw_data isn't inserted properly.
+  # Leave this field as optional just in case.
+  raw_data = models.ForeignKey(RawData, on_delete=models.CASCADE, blank=True, null=True)
 
   def __str__(self):
-    return f"{self.ingestion_run} - {self.api_name}: ({self.venue}, {self.change_type})"
+    return f"{self.ingestion_run} - {self.change_type}, {self.raw_data}"
 
 ADMIN_MODELS = [
-  APISample,
+  Artist,
+  Crawler,
   Event,
   IngestionRun,
   IngestionRecord,
+  JanitorRun,
+  JanitorRecord,
   OpenMic,
+  RawData,
+  SocialLink,
   Venue,
-  VenueApi,
   VenueTag,
 ]

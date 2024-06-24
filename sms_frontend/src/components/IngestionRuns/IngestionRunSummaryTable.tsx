@@ -1,81 +1,83 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Divider, Typography } from "@mui/material";
 
 import { IngestionRun, changeTypes } from "@/types";
+
+import { ChangeTypeChip } from "./ChangeTypeChip";
 
 interface Props {
   ingestionRun: IngestionRun;
 }
 
 export const IngestionRunSummaryTable = ({ ingestionRun }: Props) => {
-  const s: any = { event: {}, venue: {} };
-  changeTypes.forEach((t: string) => {
-    s["event"][t] = 0;
-    s["venue"][t] = 0;
+  // We map api -> change type -> val.
+  const s: any = {};
+  const totals: any = {};
+  changeTypes.forEach((t) => {
+    totals[t] = 0;
   });
 
   ingestionRun.summary.forEach((record) => {
-    s[record.field_changed][record.change_type] += record.total;
+    if (!(record.api_name in s)) {
+      s[record.api_name] = {};
+    }
+    s[record.api_name][record.change_type] = record.total;
+    totals[record.change_type] += record.total;
   });
+
+  const sortedApiNames = Object.keys(s);
+  sortedApiNames.sort();
 
   return (
     <Box>
-      <Typography>Summary View</Typography>
-      <Grid container>
-        <Grid textAlign="center" border="1px solid white" item xs={6}>
-          Events
-        </Grid>
-        <Grid textAlign="center" border="1px solid white" item xs={6}>
-          Venues
-        </Grid>
-
-        <Box width="100%" />
+      <Typography sx={{ fontSize: "1.2em", fontWeight: "bold" }}>
+        Summary
+      </Typography>
+      <Box sx={{ display: "flex", alignItems: "start", flexDirection: "row" }}>
         {changeTypes.map((t) => (
-          <Grid
-            key={`event-${t}`}
-            padding="1em"
-            border="1px solid white"
-            item
-            xs={1}
-          >
-            <Typography>{t}</Typography>
-          </Grid>
+          <Box key={`change-type-${t}`} sx={{ marginRight: "0.5em" }}>
+            <ChangeTypeChip changeType={t} value={totals[t]} />
+          </Box>
         ))}
-        {changeTypes.map((t) => (
-          <Grid
-            key={`venue-${t}`}
-            padding="1em"
-            border="1px solid white"
-            borderRight="1px solid white"
-            item
-            xs={1}
+      </Box>
+      <Divider sx={{ marginTop: "0.5em", marginBottom: "0.25em" }} />
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "start",
+          flexDirection: "row",
+          overflowX: "scroll",
+        }}
+      >
+        {sortedApiNames.map((api_name) => (
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "start",
+              maxWidth: "150px",
+              marginRight: "1em",
+            }}
+            key={`api-name-${api_name}`}
           >
-            <Typography>{t}</Typography>
-          </Grid>
+            <Typography sx={{ maxWidth: "140px" }} noWrap>
+              {api_name}
+            </Typography>
+            {changeTypes.map((t) => (
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  flexDirection: "row",
+                  marginBottom: "0.4em",
+                }}
+                key={`ingestion-record-${api_name}-${t}`}
+              >
+                <ChangeTypeChip changeType={t} value={s[api_name][t]} />
+              </Box>
+            ))}
+          </Box>
         ))}
-        {changeTypes.map((t) => (
-          <Grid
-            key={`event-val-${t}`}
-            padding="1em"
-            border="1px solid white"
-            item
-            xs={1}
-          >
-            <Typography>{s["event"][t]}</Typography>
-          </Grid>
-        ))}
-        {changeTypes.map((t) => (
-          <Grid
-            key={`venue-val-${t}`}
-            padding="1em"
-            border="1px solid white"
-            borderRight="1px solid white"
-            item
-            xs={1}
-          >
-            <Typography>{s["venue"][t]}</Typography>
-          </Grid>
-        ))}
-      </Grid>
+      </Box>
     </Box>
   );
 };

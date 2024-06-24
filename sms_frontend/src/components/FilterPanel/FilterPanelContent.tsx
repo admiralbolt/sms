@@ -78,12 +78,12 @@ export const FilterPanelContent = () => {
       selectedEventTypes?.length &&
       !eventTypes.every((type) => selectedEventTypes.includes(type))
     ) {
-      setSearchParams(searchParams => {
+      setSearchParams((searchParams) => {
         searchParams.set(EVENT_TYPES_KEY, selectedEventTypes.join(","));
         return searchParams;
       });
     } else {
-      setSearchParams(searchParams => {
+      setSearchParams((searchParams) => {
         searchParams.delete(EVENT_TYPES_KEY);
         return searchParams;
       });
@@ -92,12 +92,11 @@ export const FilterPanelContent = () => {
 
   useEffect(() => {
     if (selectedDate != undefined) {
-      setSearchParams(searchParams => {
+      setSearchParams((searchParams) => {
         searchParams.set(DATE_KEY, selectedDate.format("YYYY-MM-DD"));
         return searchParams;
       });
     }
-
   }, [selectedDate, searchParams, setSearchParams]);
 
   const updateEventFilters = (event: React.ChangeEvent<HTMLInputElement>) => {

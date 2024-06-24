@@ -138,7 +138,8 @@ export const AboutView = () => {
             paddingTop: 0,
           }}
         >
-          Cleaned up many bugs with the admin panel (that only admins get to see).
+          Cleaned up many bugs with the admin panel (that only admins get to
+          see).
         </ListItem>
       </List>
       <br />
