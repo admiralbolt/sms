@@ -26,6 +26,7 @@ class IngestionApis:
   EVENTBRITE = "Eventbrite"
   MANUAL = "Manual"
   OPEN_MIC_GENERATOR = "Open Mic Generator"
+  SONGKICK = "Songkick"
   TICKETMASTER = "Ticketmaster"
   TIXR = "TIXR"
   VENUEPILOT = "Venuepilot"
