@@ -1,5 +1,5 @@
 """Database models."""
-import json
+import filetype
 import logging
 import re
 import requests
@@ -60,8 +60,13 @@ class Venue(models.Model):
     super().save(*args, **kwargs)
     if self.venue_image_url:
       if self.venue_image_url != self._original_venue_image_url or not self.venue_image:
-        image_request = requests.get(self.venue_image_url, timeout=15)
-        file_extension = image_request.headers["Content-Type"].split("/")[1]
+        file_extension = ""
+        parts = image_request.headers["Content-Type"].split("/")
+        if len(parts) == 2:
+          file_extension = parts[1]
+        kind = filetype.guess(image_request.content)
+        if kind is not None:
+          file_extension = kind.extension
         content_file = ContentFile(image_request.content)
         self._original_venue_image_url = self.venue_image_url
         self.venue_image.save(f"{self.name}.{file_extension}", content_file)
@@ -180,7 +185,13 @@ class Event(models.Model):
     if self.event_image_url:
       if self.event_image_url != self._original_event_image_url or not self.event_image:
         image_request = requests.get(self.event_image_url, timeout=15)
-        file_extension = image_request.headers["Content-Type"].split("/")[1]
+        file_extension = ""
+        parts = image_request.headers["Content-Type"].split("/")
+        if len(parts) == 2:
+          file_extension = parts[1]
+        kind = filetype.guess(image_request.content)
+        if kind is not None:
+          file_extension = kind.extension
         content_file = ContentFile(image_request.content)
         self._original_event_image_url = self.event_image_url
         self.event_image.save(f"{self.title.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
