@@ -16,6 +16,7 @@ class EventTypes:
 
 class IngestionApis:
   AXS = "AXS"
+  BANDSINTOWN = "Bandsintown"
   CRAWLER_BLUE_MOON = "Crawler - Blue Moon"
   CRAWLER_DARRELLS_TAVERN = "Crawler - Darrell's Tavern"
   CRAWLER_LITTLE_RED_HEN = "Crawler - Little Red Hen"

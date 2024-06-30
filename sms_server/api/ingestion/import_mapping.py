@@ -1,11 +1,12 @@
 from api.constants import get_all, IngestionApis
 from api.ingestion.crawlers import blue_moon, darrells_tavern, little_red_hen, sea_monster_lounge, skylark, the_royal_room
 from api.ingestion.crawlers.crawler import AbstractCrawler
-from api.ingestion.event_apis import axs, dice, eventbrite, songkick, ticketmaster, tixr, venuepilot
+from api.ingestion.event_apis import axs, bandsintown, dice, eventbrite, songkick, ticketmaster, tixr, venuepilot
 from api.ingestion.event_apis.event_api import EventApi
 
 EVENT_API_MAPPING: dict[str, EventApi] = {
   IngestionApis.AXS: axs.AXSApi(),
+  IngestionApis.BANDSINTOWN: bandsintown.BandsintownApi(),
   IngestionApis.DICE: dice.DiceApi(),
   IngestionApis.EVENTBRITE: eventbrite.EventbriteApi(),
   IngestionApis.SONGKICK: songkick.SongkickApi(),
@@ -39,8 +40,6 @@ API_PRIORITY_LIST = [
   [IngestionApis.MANUAL],
   # Trustworthy Primary APIS,
   [IngestionApis.DICE, IngestionApis.AXS, IngestionApis.TIXR],
-  # Mostly good data, but are aggregators of existing sources.
-  [IngestionApis.SONGKICK],
   # Apis that don't have artist integrations.
   [IngestionApis.VENUEPILOT],
   # All the Crawlers
@@ -48,6 +47,8 @@ API_PRIORITY_LIST = [
   # Low quality data below here.
   [IngestionApis.EVENTBRITE],
   [IngestionApis.TICKETMASTER],
+  # Mostly good data, but are aggregators of existing sources.
+  [IngestionApis.SONGKICK, IngestionApis.BANDSINTOWN]
 ]
 
 API_TO_PRIORITY = {}
