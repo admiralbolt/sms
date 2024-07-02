@@ -60,6 +60,7 @@ class Venue(models.Model):
     super().save(*args, **kwargs)
     if self.venue_image_url:
       if self.venue_image_url != self._original_venue_image_url or not self.venue_image:
+        image_request = requests.get(self.venue_image_url, timeout=15)
         file_extension = ""
         parts = image_request.headers["Content-Type"].split("/")
         if len(parts) == 2:
