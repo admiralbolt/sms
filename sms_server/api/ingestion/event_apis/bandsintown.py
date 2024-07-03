@@ -25,6 +25,7 @@ import bs4
 from api.constants import IngestionApis
 from api.ingestion.event_apis.event_api import EventApi
 from api.utils import crawler_utils
+from sms_server.settings import BANDSINTOWN_APP_ID
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +38,7 @@ class BandsintownApi(EventApi):
     self.driver = crawler_utils.create_chrome_driver()
 
   def get_venue_kwargs(self, raw_data: dict) -> dict:
-    venue_data = raw_data["location"]
+    venue_data = raw_data["jsonLdContainer"]["eventJsonLd"]["location"]
     address_data = venue_data["address"]
     return {
       "name": venue_data["name"],
@@ -49,28 +50,52 @@ class BandsintownApi(EventApi):
     }
 
   def get_event_kwargs(self, raw_data: dict) -> dict:
-    event_day, start_time = raw_data["startDate"].split("T")
+    event_info = raw_data["jsonLdContainer"]["eventJsonLd"]
+    event_day, start_time = event_info["startDate"].split("T")
     # Need to remove the -07:00 from the start time.
     start_time = start_time[:8]
     return {
-      "title": raw_data["name"],
+      "title": event_info["name"],
       "event_day": event_day,
       "start_time": start_time,
-      "event_url": raw_data["url"],
-      "event_image_url": raw_data["image"],
-      "description": raw_data["description"]
+      "event_url": event_info["url"],
+      "event_image_url": event_info["image"],
+      "description": event_info["description"]
     }
   
+  def get_artist_detail(self, artist_name: str) -> dict:
+    """Get detailed info for an artist."""
+    try:
+      r = requests.get(f"https://rest.bandsintown.com/artists/{artist_name}?app_id={BANDSINTOWN_APP_ID}", headers={"Content-Type": "application/json"}, timeout=10)
+      return r.json()
+    except Exception as e:
+      return {}
+  
   def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
-    for performer in raw_data["performer"]:
-      yield {"name": performer["name"], "bio": performer.get("description", "")}
+    for performer in raw_data["lineup"]:
+      detail = self.get_artist_detail(performer["name"])
+      if detail:
+        yield {
+          "name": detail["name"],
+          "bio": detail.get("description", ""),
+          "artist_image_url": detail.get("image_url", ""),
+          "social_links": [
+            {"platform": link["type"], "url": link["url"]} for link in detail.get("links", [])
+          ]
+        }
+      else:
+        yield {
+          "name": performer["name"],
+          "bio": performer.get("description", ""),
+        }
 
   def get_raw_data_info(self, raw_data: dict) -> dict:
+    event_info = raw_data["jsonLdContainer"]["eventJsonLd"]
     return {
-      "event_api_id": raw_data["url"].split("?")[0],
-      "event_name": raw_data["name"],
-      "venue_name": raw_data["location"]["name"],
-      "event_day": raw_data["startDate"].split("T")[0]
+      "event_api_id": event_info["url"].split("?")[0],
+      "event_name": event_info["name"],
+      "venue_name": event_info["location"]["name"],
+      "event_day": event_info["startDate"].split("T")[0]
     }
   
   def get_paginated_url(self, page_number: int=1) -> str:
@@ -78,12 +103,21 @@ class BandsintownApi(EventApi):
   
   def get_event_detail(self, event_url: str) -> dict:
     r = requests.get(event_url, headers={"User-Agent": crawler_utils.USER_AGENT})
-    soup = bs4.BeautifulSoup(r.text, "html.parser")
-    script_tags = soup.find_all("script", type="application/ld+json")
-    for script_tag in script_tags:
-      data = json.loads(script_tag.string)
-      if data and data["@type"] == "MusicEvent":
-        return data
+    start = "<script>window.__data="
+    end = "</script>"
+    # Interestingly, the window data for the page contains a LOT more
+    # information in it than the event info.
+    for line in r.text.split("\n"):
+      line = line.strip()
+      if not line.startswith(start):
+        continue
+
+      all_data = json.loads(line[len(start):-len(end)])
+      # Return a subset so it's actually readable.
+      return {
+        "jsonLdContainer": all_data["jsonLdContainer"],
+        "lineup": all_data["eventView"]["body"]["eventInfoContainer"]["lineupContainer"]["lineupItems"]
+      }
     
     logger.error("no data found for url: %s, raw_html: %s", event_url, r.text)
     return None
@@ -101,12 +135,15 @@ class BandsintownApi(EventApi):
         break
 
       page_number += 1
-      time.sleep(1.5)
+      time.sleep(2)
 
     logger.info("API=Bandsintown, Total Events: %s", len(all_event_urls))
+    time.sleep(60)
     for i, event_url in enumerate(all_event_urls):
       logger.info("API=Bandsintown, processing event (%s, %s)", i, event_url)
-      time.sleep(1.5)
-      event_data = self.get_event_detail(event_url)
-      if event_data and "url" in event_data:
+      time.sleep(3)
+      try:
+        event_data = self.get_event_detail(event_url)
         yield event_data
+      except:
+        yield {"failed_on_url": event_url}
