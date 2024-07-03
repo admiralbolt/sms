@@ -125,7 +125,7 @@ class Artist(models.Model):
         self.artist_image.save(f"{self.title.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
 
   def __str__(self):
-    return self.name
+    return f"|{self.id}| {self.name}"
 
 class SocialLink(models.Model):
   """Social Links for artists."""
@@ -137,6 +137,8 @@ class SocialLink(models.Model):
   class Meta:
     unique_together = [["artist", "platform"]]
 
+    def __str__(self):
+      return f"|{self.id}| [{self.artist}, {self.platform}]"
 
 class RawData(models.Model):
   """Raw data from an api request.
