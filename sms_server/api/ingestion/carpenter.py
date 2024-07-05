@@ -7,17 +7,17 @@ from typing import Optional
 from api.constants import ChangeTypes, IngestionApis
 from api.ingestion.event_apis.event_api import EventApi
 from api.ingestion.import_mapping import API_MAPPING, API_PRIORITY_LIST
-from api.models import Artist, Event, JanitorRun, JanitorRecord, RawData, Venue
+from api.models import Artist, Event, CarpenterRun, CarpenterRecord, RawData, Venue
 from api.utils import artist_utils, event_utils, venue_utils
 
 logger = logging.getLogger(__name__)
 
-class Janitor:
+class Carpenter:
   """Clean some data!"""
 
   def __init__(self, ingestion_apis: Optional[list[str]] = None, run_name: str=""):
     self.ingestion_apis = ingestion_apis
-    self.janitor_run = JanitorRun.objects.create(name="Full" if not run_name else run_name)
+    self.janitor_run = CarpenterRun.objects.create(name="Full" if not run_name else run_name)
     self.venue_logs = collections.defaultdict(lambda: collections.defaultdict(set))
     self.artist_logs = collections.defaultdict(lambda: collections.defaultdict(set))
 
@@ -29,7 +29,7 @@ class Janitor:
     venue_change_type, venue_change_log, venue = venue_utils.get_or_create_venue(**venue_kwargs)
     change_tuple = (venue_change_log, venue)
     if change_tuple not in self.venue_logs[api.api_name][venue_change_type]:
-      JanitorRecord.objects.create(
+      CarpenterRecord.objects.create(
         janitor_run=self.janitor_run,
         api_name=api.api_name,
         raw_data=raw_data,
@@ -51,7 +51,7 @@ class Janitor:
       artists.append(artist)
       change_tuple = (artist_change_log, artist)
       if change_tuple not in self.artist_logs[api.api_name][artist_change_type]:
-        JanitorRecord.objects.create(
+        CarpenterRecord.objects.create(
           janitor_run=self.janitor_run,
           api_name=api.api_name,
           raw_data=raw_data,
@@ -67,7 +67,7 @@ class Janitor:
   def get_or_create_event(self, raw_data: RawData, api: EventApi, venue: Venue, artists: list[Artist]) -> Event:
     should_skip, skip_log = api.should_skip(raw_data=raw_data.data)
     if should_skip:
-      JanitorRecord.objects.create(
+      CarpenterRecord.objects.create(
         janitor_run=self.janitor_run,
         api_name=api.api_name,
         raw_data=raw_data,
@@ -79,7 +79,7 @@ class Janitor:
 
     event_kwargs = api.get_event_kwargs(raw_data=raw_data.data)
     event_change_type, event_change_log, event = event_utils.create_or_update_event(venue=venue, raw_data=raw_data, artists=artists, **event_kwargs, event_api=api.api_name)
-    JanitorRecord.objects.create(
+    CarpenterRecord.objects.create(
       janitor_run=self.janitor_run,
       api_name=api.api_name,
       raw_data=raw_data,
@@ -108,7 +108,7 @@ class Janitor:
 
       except Exception as e:
         logger.error("ERROR Processing Event for janitor_run: %s. Data: %s, Error: %s.", self.janitor_run, raw_data, e, exc_info=1)
-        JanitorRecord.objects.create(
+        CarpenterRecord.objects.create(
            janitor_run=self.janitor_run,
            api_name=api.api_name,
            raw_data=raw_data,

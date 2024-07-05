@@ -4,20 +4,20 @@ import { Box, Divider, Grid, Tab, Tabs, Typography } from "@mui/material";
 
 import { ChangeTypeChip } from "@/components/IngestionRuns/ChangeTypeChip";
 import customAxios from "@/hooks/customAxios";
-import { ChangeType, JanitorRun } from "@/types";
-import { JanitorRunRecord } from "@/types";
+import { ChangeType, CarpenterRun } from "@/types";
+import { CarpenterRunRecord } from "@/types";
 
 import { RawDataComponent } from "../RawData";
 
 interface Props {
-  run: JanitorRun;
+  run: CarpenterRun;
 }
 
-export const JanitorRunFull = ({ run }: Props) => {
-  const [selectedRecord, setSelectedRecord] = useState<JanitorRunRecord>(
-    {} as JanitorRunRecord,
+export const CarpenterRunFull = ({ run }: Props) => {
+  const [selectedRecord, setSelectedRecord] = useState<CarpenterRunRecord>(
+    {} as CarpenterRunRecord,
   );
-  const [records, setRecords] = useState<JanitorRunRecord[]>([]);
+  const [records, setRecords] = useState<CarpenterRunRecord[]>([]);
   const [sortedApis, setSortedApis] = useState<string[]>([]);
   const [apisToChangeTypes, setApisToChangeTypes] = useState<{
     [key: string]: ChangeType[];
@@ -27,7 +27,7 @@ export const JanitorRunFull = ({ run }: Props) => {
   >([]);
   const [breakdowns, setBreakdowns] = useState<any>({});
 
-  const [filteredRecords, setFilteredRecords] = useState<JanitorRunRecord[]>(
+  const [filteredRecords, setFilteredRecords] = useState<CarpenterRunRecord[]>(
     [],
   );
 
@@ -103,16 +103,16 @@ export const JanitorRunFull = ({ run }: Props) => {
     setSortedApis(apis);
     setSelectedApiIndex(0);
 
-    customAxios.get(`api/janitor_runs/${run.id}/records`).then((response) => {
+    customAxios.get(`api/carpenter_runs/${run.id}/records`).then((response) => {
       setRecords(response.data);
     });
   }, [run.id]);
 
-  const recordClickHandler = (record: JanitorRunRecord) => () => {
+  const recordClickHandler = (record: CarpenterRunRecord) => () => {
     setSelectedRecord(record);
   };
 
-  const getObjId = (record: JanitorRunRecord) => {
+  const getObjId = (record: CarpenterRunRecord) => {
     let id = undefined;
 
     if (record.field_changed == "artist") {
@@ -126,7 +126,7 @@ export const JanitorRunFull = ({ run }: Props) => {
     return id || -1;
   };
 
-  const getObjName = (record: JanitorRunRecord) => {
+  const getObjName = (record: CarpenterRunRecord) => {
     let name = undefined;
 
     if (record.field_changed == "artist") {
@@ -140,7 +140,7 @@ export const JanitorRunFull = ({ run }: Props) => {
     return name || "UNKNOWN";
   };
 
-  const getObjData = (record: JanitorRunRecord) => {
+  const getObjData = (record: CarpenterRunRecord) => {
     let data = {};
 
     if (record.field_changed == "artist") {

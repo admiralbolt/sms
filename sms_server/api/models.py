@@ -263,17 +263,17 @@ class OpenMic(models.Model):
 
     return "UNKNOWN_VENUE" if not self.venue else f"{self.venue.name} {self.event_mic_type}"
   
-class JanitorRun(models.Model):
-  """Logs for runs from the janitor."""
+class CarpenterRun(models.Model):
+  """Logs for runs from the carpenter."""
   created_at = models.DateTimeField(auto_now_add=True)
   name = models.CharField(max_length=64)
 
   def __str__(self):
     return f"{self.name} ({self.created_at})"
   
-class JanitorRecord(models.Model):
+class CarpenterRecord(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
-  janitor_run = models.ForeignKey(JanitorRun, on_delete=models.CASCADE)
+  carpenter_run = models.ForeignKey(CarpenterRun, on_delete=models.CASCADE)
   api_name = models.CharField(max_length=32, default="Manual")
   raw_data = models.ForeignKey(RawData, on_delete=models.CASCADE)
   change_type = models.CharField(max_length=16, choices=get_choices(ChangeTypes))
@@ -295,7 +295,7 @@ class JanitorRecord(models.Model):
     return getattr(obj, "name", getattr(obj, "title", "None"))
 
   def __str__(self):
-    return f"{self.janitor_run} - {self.api_name}: ({self.name_of_object_changed()}, {self.change_type})"
+    return f"{self.carpenter_run} - {self.api_name}: ({self.name_of_object_changed()}, {self.change_type})"
 
 class IngestionRun(models.Model):
   """Logs for runs from the ingester."""
@@ -325,8 +325,8 @@ ADMIN_MODELS = [
   Event,
   IngestionRun,
   IngestionRecord,
-  JanitorRun,
-  JanitorRecord,
+  CarpenterRun,
+  CarpenterRecord,
   OpenMic,
   RawData,
   SocialLink,

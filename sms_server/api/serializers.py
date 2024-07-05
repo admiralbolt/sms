@@ -98,33 +98,33 @@ class IngestionRecordSerializer(serializers.ModelSerializer):
     model = models.IngestionRecord
     fields = "__all__"
 
-class JanitorRunSerializer(serializers.ModelSerializer):
-  """Serialize JanitorRun data."""
+class CarpenterRunSerializer(serializers.ModelSerializer):
+  """Serialize CarpenterRun data."""
   summary = serializers.SerializerMethodField()
 
-  def get_summary(self, janitor_run: models.JanitorRun) -> list[dict]:
+  def get_summary(self, carpenter_run: models.CarpenterRun) -> list[dict]:
     """Render a summary of the run for easy use.
 
     We also include the index to use as an ID in the react data table view.
     """
-    data = list(models.JanitorRecord.objects.filter(janitor_run=janitor_run).values("api_name", "field_changed", "change_type").annotate(total=Count("id")))
+    data = list(models.CarpenterRecord.objects.filter(carpenter_run=carpenter_run).values("api_name", "field_changed", "change_type").annotate(total=Count("id")))
     for i, agg in enumerate(data):
       agg["index"] = i
     return data
 
   class Meta:
-    model = models.JanitorRun
+    model = models.CarpenterRun
     fields = "__all__"
 
-class JanitorRecordSerializer(serializers.ModelSerializer):
-  """Serialize Janitor Records."""
+class CarpenterRecordSerializer(serializers.ModelSerializer):
+  """Serialize Carpenter Records."""
   raw_data = RawDataSerializer()
   event = EventSerializer()
   venue = VenueSerializer()
   artist = ArtistSerializer()
 
   class Meta:
-    model = models.JanitorRecord
+    model = models.CarpenterRecord
     fields = "__all__"
 
 class CrontabScheduleSerializer(serializers.ModelSerializer):

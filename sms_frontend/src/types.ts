@@ -53,7 +53,7 @@ export interface IngestionRun {
   summary: IngestionRunSummary[];
 }
 
-export interface JanitorRunRecord {
+export interface CarpenterRunRecord {
   id: number;
   created_at: Date;
   api_name: string;
@@ -66,7 +66,7 @@ export interface JanitorRunRecord {
   artist: Artist;
 }
 
-export interface JanitorRunSummary {
+export interface CarpenterRunSummary {
   api_name: string;
   change_type: string;
   field_changed: string;
@@ -74,11 +74,11 @@ export interface JanitorRunSummary {
   index: number;
 }
 
-export interface JanitorRun {
+export interface CarpenterRun {
   id: string;
   name: string;
   created_at: Date;
-  summary: JanitorRunSummary[];
+  summary: CarpenterRunSummary[];
 }
 
 export interface RawData {

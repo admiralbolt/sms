@@ -8,7 +8,7 @@ import customAxios from "@/hooks/customAxios";
 import {
   Event,
   IngestionRun,
-  JanitorRun,
+  CarpenterRun,
   OpenMic,
   PeriodicTask,
   Venue,
@@ -146,11 +146,11 @@ const useIngestionRuns = (): IngestionRun[] => {
   return runs;
 };
 
-const useJanitorRuns = (): JanitorRun[] => {
-  const [runs, setRuns] = useState<JanitorRun[]>([]);
+const useCarpenterRuns = (): CarpenterRun[] => {
+  const [runs, setRuns] = useState<CarpenterRun[]>([]);
 
   useEffect(() => {
-    customAxios.get("api/janitor_runs").then((res) => {
+    customAxios.get("api/carpenter_runs").then((res) => {
       setRuns(res.data);
     });
   }, []);
@@ -165,7 +165,7 @@ export {
   updateEvent,
   useEventTypes,
   useIngestionRuns,
-  useJanitorRuns,
+  useCarpenterRuns,
   createEvent,
   createVenue,
   updateVenue,

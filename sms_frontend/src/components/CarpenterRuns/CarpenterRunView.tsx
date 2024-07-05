@@ -2,17 +2,17 @@ import { useState } from "react";
 
 import { Box, Button } from "@mui/material";
 
-import { JanitorRun } from "@/types";
+import { CarpenterRun } from "@/types";
 import { formatDateTime } from "@/utils/dateUtils";
 
-import { JanitorRunFull } from "./JanitorRunFull";
-import { JanitorRunSummaryTable } from "./JanitorRunSummaryTable";
+import { CarpenterRunFull } from "./CarpenterRunFull";
+import { CarpenterRunSummaryTable } from "./CarpenterRunSummaryTable";
 
 interface Props {
-  run: JanitorRun;
+  run: CarpenterRun;
 }
 
-export const JanitorRunView = ({ run }: Props) => {
+export const CarpenterRunView = ({ run }: Props) => {
   const [showFullDetails, setShowFullDetails] = useState<boolean>(false);
 
   return (
@@ -24,8 +24,8 @@ export const JanitorRunView = ({ run }: Props) => {
         <Button onClick={() => setShowFullDetails(!showFullDetails)}>
           Toggle Details
         </Button>
-        {showFullDetails && <JanitorRunFull run={run} />}
-        {!showFullDetails && <JanitorRunSummaryTable JanitorRun={run} />}
+        {showFullDetails && <CarpenterRunFull run={run} />}
+        {!showFullDetails && <CarpenterRunSummaryTable run={run} />}
       </Box>
       <Box height="3em" width="100%" />
     </Box>

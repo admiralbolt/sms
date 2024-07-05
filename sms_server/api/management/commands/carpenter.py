@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 
 from api.ingestion.import_mapping import EVENT_API_MAPPING, CRAWLER_NICE_NAMES
-from api.ingestion.janitor import Janitor
+from sms_server.api.ingestion.carpenter import Carpenter
 
 class Command(BaseCommand):
 
@@ -11,8 +11,8 @@ class Command(BaseCommand):
 
   def handle(self, *args, **kwargs):
     if not kwargs["api"]:
-      janitor = Janitor(run_name="Manual")
-      janitor.run(min_date=kwargs["min_date"])
+      carpenter = Carpenter(run_name="Manual")
+      carpenter.run(min_date=kwargs["min_date"])
       return
     
     if kwargs["api"] not in EVENT_API_MAPPING and kwargs["api"] not in CRAWLER_NICE_NAMES:
@@ -22,5 +22,5 @@ class Command(BaseCommand):
       return
     
     api = CRAWLER_NICE_NAMES.get(kwargs["api"], kwargs["api"])
-    janitor = Janitor(ingestion_apis=[api])
-    janitor.run(min_date=kwargs["min_date"])
+    carpenter = Carpenter(ingestion_apis=[api])
+    carpenter.run(min_date=kwargs["min_date"])

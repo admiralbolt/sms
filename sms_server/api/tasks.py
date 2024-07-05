@@ -8,7 +8,7 @@ import requests
 from celery import shared_task
 
 from api.ingestion.ingester import Ingester
-from api.ingestion.janitor import Janitor
+from sms_server.api.ingestion.carpenter import Carpenter
 from api.models import IngestionRun, OpenMic
 from api.utils import open_mic_utils
 from sms_server.settings import IS_PROD, MEDIA_ROOT
@@ -41,8 +41,8 @@ def import_and_clean(debug: bool=False):
   """Import data from ALL APIs & Crawlers."""
   ingester = Ingester()
   ingester.import_data()
-  janitor = Janitor()
-  janitor.run()
+  carpenter = Carpenter()
+  carpenter.run()
 
 @shared_task
 def write_latest_data():
