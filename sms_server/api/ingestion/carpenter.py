@@ -17,7 +17,7 @@ class Carpenter:
 
   def __init__(self, ingestion_apis: Optional[list[str]] = None, run_name: str=""):
     self.ingestion_apis = ingestion_apis
-    self.janitor_run = CarpenterRun.objects.create(name="Full" if not run_name else run_name)
+    self.carpenter_run = CarpenterRun.objects.create(name="Full" if not run_name else run_name)
     self.venue_logs = collections.defaultdict(lambda: collections.defaultdict(set))
     self.artist_logs = collections.defaultdict(lambda: collections.defaultdict(set))
 
@@ -30,7 +30,7 @@ class Carpenter:
     change_tuple = (venue_change_log, venue)
     if change_tuple not in self.venue_logs[api.api_name][venue_change_type]:
       CarpenterRecord.objects.create(
-        janitor_run=self.janitor_run,
+        carpenter_run=self.carpenter_run,
         api_name=api.api_name,
         raw_data=raw_data,
         change_type=venue_change_type,
@@ -52,7 +52,7 @@ class Carpenter:
       change_tuple = (artist_change_log, artist)
       if change_tuple not in self.artist_logs[api.api_name][artist_change_type]:
         CarpenterRecord.objects.create(
-          janitor_run=self.janitor_run,
+          carpenter_run=self.carpenter_run,
           api_name=api.api_name,
           raw_data=raw_data,
           change_type=artist_change_type,
@@ -68,7 +68,7 @@ class Carpenter:
     should_skip, skip_log = api.should_skip(raw_data=raw_data.data)
     if should_skip:
       CarpenterRecord.objects.create(
-        janitor_run=self.janitor_run,
+        carpenter_run=self.carpenter_run,
         api_name=api.api_name,
         raw_data=raw_data,
         change_type=ChangeTypes.SKIP,
@@ -80,7 +80,7 @@ class Carpenter:
     event_kwargs = api.get_event_kwargs(raw_data=raw_data.data)
     event_change_type, event_change_log, event = event_utils.create_or_update_event(venue=venue, raw_data=raw_data, artists=artists, **event_kwargs, event_api=api.api_name)
     CarpenterRecord.objects.create(
-      janitor_run=self.janitor_run,
+      carpenter_run=self.carpenter_run,
       api_name=api.api_name,
       raw_data=raw_data,
       change_type=event_change_type,
@@ -107,9 +107,9 @@ class Carpenter:
         _ = self.get_or_create_event(raw_data=raw_data, api=api, venue=venue, artists=artists)
 
       except Exception as e:
-        logger.error("ERROR Processing Event for janitor_run: %s. Data: %s, Error: %s.", self.janitor_run, raw_data, e, exc_info=1)
+        logger.error("ERROR Processing Event for carpenter_run: %s. Data: %s, Error: %s.", self.carpenter_run, raw_data, e, exc_info=1)
         CarpenterRecord.objects.create(
-           janitor_run=self.janitor_run,
+           carpenter_run=self.carpenter_run,
            api_name=api.api_name,
            raw_data=raw_data,
            change_type=ChangeTypes.ERROR,
