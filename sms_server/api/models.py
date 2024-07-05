@@ -16,8 +16,8 @@ class Venue(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
   name = models.CharField(max_length=128, unique=True)
   name_lower = models.CharField(max_length=128, unique=True)
-  latitude = models.DecimalField(max_digits=9, decimal_places=6)
-  longitude = models.DecimalField(max_digits=9, decimal_places=6)
+  latitude = models.DecimalField(max_digits=8, decimal_places=5)
+  longitude = models.DecimalField(max_digits=8, decimal_places=5)
   address = models.CharField(max_length=256)
   postal_code = models.CharField(max_length=8)
   city = models.CharField(max_length=64)
@@ -52,8 +52,8 @@ class Venue(models.Model):
     # but judging from: https://code.djangoproject.com/ticket/27825#comment:9
     # seems unlikely.
     self.name_lower = self.name.lower()
-    self.latitude = round(float(self.latitude), 6)
-    self.longitude = round(float(self.longitude), 6)
+    self.latitude = round(float(self.latitude), 5)
+    self.longitude = round(float(self.longitude), 5)
 
   def save(self, *args, **kwargs):
     self.make_pretty()

@@ -30,8 +30,8 @@ class VenueSerializer(serializers.ModelSerializer):
   """Serialize Venue data."""
   venue_image = serializers.ImageField(max_length=None, use_url=True, required=False)
   venue_tags = VenueTagSerializer(many=True, read_only=True)
-  latitude = RoundingDecimalField(max_digits=9, decimal_places=6)
-  longitude = RoundingDecimalField(max_digits=9, decimal_places=6)
+  latitude = RoundingDecimalField(max_digits=8, decimal_places=5)
+  longitude = RoundingDecimalField(max_digits=8, decimal_places=5)
 
   class Meta:
     model = models.Venue
