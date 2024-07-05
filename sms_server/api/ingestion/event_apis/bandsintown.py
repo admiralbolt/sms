@@ -70,24 +70,39 @@ class BandsintownApi(EventApi):
       return r.json()
     except Exception as e:
       return {}
+    
+  def load_artist_info(self, all_data: dict) -> list[dict]:
+    artists = []
+    for performer in all_data["eventView"]["body"]["eventInfoContainer"]["lineupContainer"]["lineupItems"]:
+      time.sleep(2)
+      detail = self.get_artist_detail(performer["name"])
+      artists.append(detail if detail else performer)
+
+    return artists
   
   def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
-    for performer in raw_data["lineup"]:
-      detail = self.get_artist_detail(performer["name"])
-      if detail:
-        yield {
-          "name": detail["name"],
-          "bio": detail.get("description", ""),
-          "artist_image_url": detail.get("image_url", ""),
-          "social_links": [
-            {"platform": link["type"], "url": link["url"]} for link in detail.get("links", [])
-          ]
-        }
-      else:
-        yield {
-          "name": performer["name"],
-          "bio": performer.get("description", ""),
-        }
+    for artist in raw_data["artist_info"]:
+      d = {
+        "name": artist["name"],
+        "bio": artist.get("description", "")
+      }
+
+      if "image_url" in artist:
+        d["artist_image_url"] = artist["image_url"]
+
+      if "links" in artist:
+        links = []
+        for link in detail.get("links", []):
+          if "url" not in link and "link" not in link:
+            continue
+
+          links.append({
+            "platform": link["type"],
+            "url": link.get("url", "") or link.get("link", "")
+          })
+        d["social_links"] = links
+
+      yield d
 
   def get_raw_data_info(self, raw_data: dict) -> dict:
     event_info = raw_data["jsonLdContainer"]["eventJsonLd"]
@@ -113,10 +128,13 @@ class BandsintownApi(EventApi):
         continue
 
       all_data = json.loads(line[len(start):-len(end)])
-      # Return a subset so it's actually readable.
+      # Return a subset so it's actually readable. We also want to fetch related
+      # info about artists in the ingestion phase so we aren't pulling data
+      # in the creation phase.
       return {
         "jsonLdContainer": all_data["jsonLdContainer"],
-        "lineup": all_data["eventView"]["body"]["eventInfoContainer"]["lineupContainer"]["lineupItems"]
+        "lineup": all_data["eventView"]["body"]["eventInfoContainer"]["lineupContainer"]["lineupItems"],
+        "artist_info": self.load_artist_info(all_data)
       }
     
     logger.error("no data found for url: %s, raw_html: %s", event_url, r.text)
