@@ -10,7 +10,7 @@ def get_artist(name: str) -> Optional[Artist]:
 def create_or_update_socials(artist: Artist, social_links: list[dict[str, str]]) -> str:
   """Check me out on insta!"""
   if not social_links:
-    return ChangeTypes.SKIP, "", []
+    return ""
 
   existing_links = SocialLink.objects.filter(artist=artist)
   log = ""
@@ -26,7 +26,7 @@ def create_or_update_socials(artist: Artist, social_links: list[dict[str, str]])
       # existing_link.save()
       continue
 
-    link = SocialLink.create(
+    link = SocialLink.objects.create(
       artist=artist,
       platform=arg_link["platform"].lower(),
       url=arg_link["url"]
