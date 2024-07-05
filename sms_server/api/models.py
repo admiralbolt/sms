@@ -166,6 +166,7 @@ class RawData(models.Model):
   venue_name = models.CharField(max_length=128)
   event_day = models.DateField()
   data = models.JSONField()
+  processed = models.BooleanField(default=False)
 
   def __str__(self):
     return f"|{self.id}| [{self.api_name}] ({self.venue_name}, {self.event_name})"
@@ -175,7 +176,7 @@ class RawData(models.Model):
 
 
 class Event(models.Model):
-  """Finalized list of events."""
+  """List of events."""
   created_at = models.DateTimeField(auto_now_add=True)
   title = models.CharField(max_length=256)
   event_day = models.DateField()
@@ -192,6 +193,7 @@ class Event(models.Model):
   # Meta control for display of events.
   show_event = models.BooleanField(default=True)
 
+  finalized = models.BooleanField(default=False)
   # Link back to the raw data that an event comes from.
   raw_datas = models.ManyToManyField(RawData)
 
