@@ -106,12 +106,16 @@ class Artist(models.Model):
   bio = models.TextField(max_length=256, blank=True, null=True)
   artist_image_url = models.CharField(max_length=1024, blank=True, null=True)
   artist_image = models.ImageField(upload_to="event_images", blank=True, null=True)
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self._original_artist_image_url = self.artist_image_url
   
   def save(self, *args, **kwargs):
     self.name_slug = self.name.lower().replace(" ", "-")
     super().save(*args, **kwargs)
     if self.artist_image_url:
-      if self.artist_image_url != self._original_event_image_url or not self.artist_image:
+      if self.artist_image_url != self._original_artist_image_url or not self.artist_image:
         image_request = requests.get(self.artist_image_url, timeout=15)
         file_extension = ""
         parts = image_request.headers["Content-Type"].split("/")
@@ -121,8 +125,8 @@ class Artist(models.Model):
         if kind is not None:
           file_extension = kind.extension
         content_file = ContentFile(image_request.content)
-        self._original_event_image_url = self.artist_image_url
-        self.artist_image.save(f"{self.title.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
+        self._original_artist_image_url = self.artist_image_url
+        self.artist_image.save(f"{self.name_slug.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
 
   def __str__(self):
     return f"|{self.id}| {self.name}"
