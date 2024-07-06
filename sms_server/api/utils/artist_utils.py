@@ -66,7 +66,7 @@ def create_or_update_artist(**kwargs) -> tuple[str, str, Artist]:
     
   # If the image is blank, see if we can add an image.
   if "artist_image_url" in kwargs and not artist.artist_image:
-    artist.artist_image = kwargs["artist_image_url"]
+    artist.artist_image_url = kwargs["artist_image_url"]
     artist.save()
     log += f"Added image '{kwargs['artist_image_url']}'.\n"
     
