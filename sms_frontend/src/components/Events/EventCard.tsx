@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 
 import {
   Delete,
@@ -11,13 +11,11 @@ import {
   Box,
   Button,
   Card,
-  CardMedia,
   Dialog,
   DialogActions,
   DialogTitle,
   IconButton,
   Link,
-  Typography,
 } from "@mui/material";
 
 import { FaGuitar } from "react-icons/fa6";
@@ -133,12 +131,12 @@ export const EventCard = ({
     return <FaGuitar size={24} color={SHOW_COLOR} />;
   };
 
-  const displayImage = () => {
+  const displayImage = useMemo(() => {
     if (event.event_image) return event.event_image;
     if (venue.venue_image) return venue.venue_image;
 
     return "/placeholder.png";
-  };
+  }, [event.event_image, venue.venue_image]);
 
   const venueLink = () => {
     if (
@@ -167,123 +165,81 @@ export const EventCard = ({
     );
   } else {
     return (
-      <Box key={event.id}>
-        <Card
+      <Box
+        key={event.id}
+        className="flex  align-center content-center justify-center"
+      >
+        <div
+          className="flex md:flex-row"
           key={event.id}
-          sx={{
+          style={{
             display: "flex",
-            flexDirection: "column",
             margin: 1,
             padding: 1.5,
-            width: "600px",
-            maxWidth: "96vw",
           }}
         >
-          <Box position="relative">
-            <CardMedia
-              component="img"
-              alt={`Poster for ${event.title}`}
-              image={displayImage()}
-              sx={{
-                filter: "brightness(65%)",
-                width: "sm",
-                aspectRatio: 2,
-              }}
-            />
-            <Typography
-              sx={{
-                width: "100%",
-                top: 0,
-                position: "absolute",
-                fontWeight: "bold",
-                fontSize: "1rem",
-                zIndex: 10,
-                textAlign: "center",
-              }}
-            >
-              {event.title}
-            </Typography>
-            <Box
-              sx={{
-                position: "absolute",
-                left: 0,
-                bottom: 0,
-                padding: "0.2em",
-                opacity: 0.4,
-                backgroundColor: "black",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {getEventIcon(event.event_type)}
-            </Box>
-            <Box
-              sx={{
-                position: "absolute",
-                left: 0,
-                bottom: 0,
-                padding: "0.2em",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {getEventIcon(event.event_type)}
-            </Box>
+          <Box
+            className={`w-24 h-24 md:w-44 md:h-44 bg-cover bg-center flex flex-col justify-end text-center md:text-right relative`}
+            sx={{ backgroundImage: `url(${displayImage})` }}
+          >
+            <div className="z-0 absolute bg-black w-full h-full opacity-20" />
+            <div className="flex flex-col z-index-10 p-4 bg-black/50">
+              <span className="text-xs md:text-xl">{venueLink()}</span>
+              <span className="text-xs md:text-lg fond-bold">
+                {timeAndDate(event)}
+              </span>
+            </div>
+          </Box>
+          <Box
+            sx={{
+              position: "absolute",
+              left: 0,
+              bottom: 0,
+              padding: "0.2em",
+              opacity: 0.4,
+              backgroundColor: "black",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {getEventIcon(event.event_type)}
+          </Box>
 
-            {/* ACTION BUTTONS */}
-            {showActions && (
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: 0,
-                  right: 0,
-                  padding: "0.2em",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  zIndex: 100000,
+          {/* ACTION BUTTONS */}
+          {showActions && (
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                padding: "0.2em",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 100000,
+              }}
+            >
+              <Button variant="contained" onClick={toggleEdit}>
+                <Edit />
+              </Button>
+              <Button
+                sx={{ marginLeft: "1em" }}
+                variant="contained"
+                color="error"
+                onClick={() => {
+                  setOpenConfirmation(true);
                 }}
               >
-                <Button variant="contained" onClick={toggleEdit}>
-                  <Edit />
-                </Button>
-                <Button
-                  sx={{ marginLeft: "1em" }}
-                  variant="contained"
-                  color="error"
-                  onClick={() => {
-                    setOpenConfirmation(true);
-                  }}
-                >
-                  <Delete />
-                </Button>
-              </Box>
-            )}
-          </Box>
-          <Box sx={{ display: "flex", flexDirection: "row", mt: 1 }}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "start",
-                justifyContent: "center",
-              }}
-            >
-              <Typography>{timeAndDate(event)}</Typography>
-              <Typography>{venueLink()}</Typography>
+                <Delete />
+              </Button>
             </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "end",
-                flex: 1,
-                marginTop: 1,
-              }}
-            >
+          )}
+
+          <div className="p-4 md:w-[600px]">
+            <h2 className="md:text-3xl text-wrap">{event.title}</h2>
+            <h3>{venue.address}</h3>
+            <Box sx={{ display: "flex", flexDirection: "row", mt: 1 }}>
               <Link target="_blank" href={mapsLink(venue)}>
                 <IconButton
                   size="large"
@@ -308,8 +264,8 @@ export const EventCard = ({
                 </IconButton>
               </Link>
             </Box>
-          </Box>
-        </Card>
+          </div>
+        </div>
 
         <Dialog
           open={openConfirmation}
