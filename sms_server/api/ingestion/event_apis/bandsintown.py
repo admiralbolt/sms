@@ -82,27 +82,7 @@ class BandsintownApi(EventApi):
   
   def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
     for artist in raw_data["artist_info"]:
-      d = {
-        "name": artist["name"],
-        "bio": artist.get("description", "")
-      }
-
-      if "image_url" in artist:
-        d["artist_image_url"] = artist["image_url"]
-
-      if "links" in artist:
-        links = []
-        for link in detail.get("links", []):
-          if "url" not in link and "link" not in link:
-            continue
-
-          links.append({
-            "platform": link["type"],
-            "url": link.get("url", "") or link.get("link", "")
-          })
-        d["social_links"] = links
-
-      yield d
+      yield artist
 
   def get_raw_data_info(self, raw_data: dict) -> dict:
     event_info = raw_data["jsonLdContainer"]["eventJsonLd"]
