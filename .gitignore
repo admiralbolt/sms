@@ -4,3 +4,5 @@ sms_server/logs/*.log
 sms_server/db.sqlite3
 __pycache__
 .DS_Store
+
+sms_server/sms_server/uploads
