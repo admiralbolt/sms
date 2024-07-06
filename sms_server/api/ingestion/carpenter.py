@@ -90,7 +90,7 @@ class Carpenter:
     )
     return event
 
-  def process_api(self, api: EventApi, min_date: datetime, unprocessed_only: bool = False):
+  def process_api(self, api: EventApi, min_date: datetime, process_all: bool=False):
     """Process all raw data past min_date for a particular api.
 
     We iterate through each raw data record and =>
@@ -98,7 +98,9 @@ class Carpenter:
       2) Create or update the artists associated with that record.
       3) Create or update the event associated with that record.
     """
-    raw_datas = RawData.objects.filter(api_name=api.api_name, event_day__gt=min_date, processed=unprocessed_only)
+    raw_datas = RawData.objects.filter(api_name=api.api_name, event_day__gt=min_date)
+    if not process_all:
+      raw_datas = raw_datas.filter(processed=False)
 
     for raw_data in raw_datas:
       try:
@@ -119,12 +121,12 @@ class Carpenter:
            field_changed="none"
         )
 
-  def run(self, min_date: Optional[datetime], unprocessed_only: bool = False):
+  def run(self, min_date: Optional[datetime], process_all: bool=False):
     """CLEAN UP CLEAN UP EVERYBODY DO YOUR SHARE."""
     min_date = datetime.now() - timedelta(days=1) if not min_date else min_date
     if self.ingestion_apis:
       for ingestion_api in self.ingestion_apis:
-        self.process_api(api=API_MAPPING[ingestion_api], min_date=min_date, unprocessed_only=unprocessed_only)
+        self.process_api(api=API_MAPPING[ingestion_api], min_date=min_date, process_all=process_all)
         return
 
     for sub_list in API_PRIORITY_LIST:
@@ -133,4 +135,4 @@ class Carpenter:
         if ingestion_api == IngestionApis.MANUAL:
           continue
 
-        self.process_api(api=API_MAPPING[ingestion_api], min_date=min_date, unprocessed_only=unprocessed_only)
+        self.process_api(api=API_MAPPING[ingestion_api], min_date=min_date, process_all=process_all)

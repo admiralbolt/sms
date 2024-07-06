@@ -1,13 +1,14 @@
 from django.core.management.base import BaseCommand
 
+from api.ingestion.carpenter import Carpenter
 from api.ingestion.import_mapping import EVENT_API_MAPPING, CRAWLER_NICE_NAMES
-from sms_server.api.ingestion.carpenter import Carpenter
 
 class Command(BaseCommand):
 
   def add_arguments(self, parser):
     parser.add_argument("--api", dest="api", help="Which API / crawler to import data from.")
     parser.add_argument("--min_date", dest="min_date", default=None, help="Min Date.")
+    parser.add_argument("--process_all", dest="processed", default=False, help="Re-process already processed raw datas.")
 
   def handle(self, *args, **kwargs):
     if not kwargs["api"]:
@@ -23,4 +24,4 @@ class Command(BaseCommand):
     
     api = CRAWLER_NICE_NAMES.get(kwargs["api"], kwargs["api"])
     carpenter = Carpenter(ingestion_apis=[api])
-    carpenter.run(min_date=kwargs["min_date"])
+    carpenter.run(min_date=kwargs["min_date"], process_all=kwargs["process_all"])
