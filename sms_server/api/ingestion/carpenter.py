@@ -90,7 +90,7 @@ class Carpenter:
     )
     return event
 
-  def process_api(self, api: EventApi, min_date: datetime):
+  def process_api(self, api: EventApi, min_date: datetime, unprocessed_only: bool = False):
     """Process all raw data past min_date for a particular api.
 
     We iterate through each raw data record and =>
@@ -98,13 +98,15 @@ class Carpenter:
       2) Create or update the artists associated with that record.
       3) Create or update the event associated with that record.
     """
-    raw_datas = RawData.objects.filter(api_name=api.api_name, event_day__gt=min_date)
+    raw_datas = RawData.objects.filter(api_name=api.api_name, event_day__gt=min_date, processed=unprocessed_only)
 
     for raw_data in raw_datas:
       try:
         venue = self.get_or_create_venue(raw_data=raw_data, api=api)
         artists = self.get_or_create_artists(raw_data=raw_data, api=api)
         _ = self.get_or_create_event(raw_data=raw_data, api=api, venue=venue, artists=artists)
+        raw_data.processed = True
+        raw_data.save()
 
       except Exception as e:
         logger.error("ERROR Processing Event for carpenter_run: %s. Data: %s, Error: %s.", self.carpenter_run, raw_data, e, exc_info=1)
@@ -117,12 +119,12 @@ class Carpenter:
            field_changed="none"
         )
 
-  def run(self, min_date: Optional[datetime]):
+  def run(self, min_date: Optional[datetime], unprocessed_only: bool = False):
     """CLEAN UP CLEAN UP EVERYBODY DO YOUR SHARE."""
     min_date = datetime.now() - timedelta(days=1) if not min_date else min_date
     if self.ingestion_apis:
       for ingestion_api in self.ingestion_apis:
-        self.process_api(api=API_MAPPING[ingestion_api], min_date=min_date)
+        self.process_api(api=API_MAPPING[ingestion_api], min_date=min_date, unprocessed_only=unprocessed_only)
         return
 
     for sub_list in API_PRIORITY_LIST:
@@ -131,4 +133,4 @@ class Carpenter:
         if ingestion_api == IngestionApis.MANUAL:
           continue
 
-        self.process_api(api=API_MAPPING[ingestion_api], min_date=min_date)
+        self.process_api(api=API_MAPPING[ingestion_api], min_date=min_date, unprocessed_only=unprocessed_only)
