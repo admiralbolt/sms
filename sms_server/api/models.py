@@ -134,7 +134,7 @@ class Artist(models.Model):
 class SocialLink(models.Model):
   """Social Links for artists."""
   created_at = models.DateTimeField(auto_now_add=True)
-  artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
+  artist = models.ForeignKey(Artist, related_name="social_links", on_delete=models.CASCADE)
   platform = models.CharField(max_length=32)
   url = models.CharField(max_length=128)
 

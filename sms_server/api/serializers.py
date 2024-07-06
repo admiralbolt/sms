@@ -37,12 +37,20 @@ class VenueSerializer(serializers.ModelSerializer):
     model = models.Venue
     fields = ("id", "venue_image_url", "venue_image", "name", "latitude", "longitude", "address", "postal_code", "city", "venue_url", "description", "venue_tags", "alias", "show_venue")
 
+class SocialLink(serializers.ModelSerializer):
+  """Serialize social links."""
+
+  class Meta:
+    model = models.SocialLink
+    fields = "__all__"
+
 class ArtistSerializer(serializers.ModelSerializer):
   """Serialize artists."""
+  social_links = SocialLink(read_only=True, many=True)
   
   class Meta:
     model = models.Artist
-    fields = "__all__"
+    fields = ("id", "created_at", "name", "name_slug", "bio", "artist_image_url", "artist_image", "social_links")
 
 class EventSerializer(serializers.ModelSerializer):
   """Serialize Event data."""

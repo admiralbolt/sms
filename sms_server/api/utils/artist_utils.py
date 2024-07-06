@@ -57,12 +57,18 @@ def create_or_update_artist(**kwargs) -> tuple[str, str, Artist]:
       log = create_or_update_socials(artist, kwargs["social_links"])
     return ChangeTypes.CREATE, log, artist
   
-  # If it does exist, see if we can add *new* socials to it.
   log = ""
+  # See if we can add *new* socials to it.
   if "social_links" in kwargs:
     log = create_or_update_socials(artist, kwargs["social_links"])
     if log:
       return ChangeTypes.UPDATE, log, artist
+    
+  # If the image is blank, see if we can add an image.
+  if "artist_image_url" in kwargs and not artist.artist_image:
+    artist.artist_image = kwargs["artist_image_url"]
+    artist.save()
+    log += f"Added image '{kwargs['artist_image_url']}'.\n"
     
   # Annnnnd we're done!
   return ChangeTypes.NOOP, "", artist
