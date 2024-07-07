@@ -285,6 +285,7 @@ class JanitorRecord(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
   janitor_run = models.ForeignKey(JanitorRun, on_delete=models.CASCADE)
   operation = models.CharField(max_length=16, choices=get_choices(JanitorOperations))
+  change_log = models.TextField(blank=True, null=True)
 
   # Only one of the following should be populated.
   merge_event_record = models.ForeignKey(JanitorMergeEventRecord, on_delete=models.SET_NULL, blank=True, null=True)
