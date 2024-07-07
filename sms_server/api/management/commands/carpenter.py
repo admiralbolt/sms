@@ -12,8 +12,8 @@ class Command(BaseCommand):
 
   def handle(self, *args, **kwargs):
     if not kwargs["api"]:
-      carpenter = Carpenter(run_name="Manual")
-      carpenter.run(min_date=kwargs["min_date"], process_all=kwargs["process_all"])
+      carpenter = Carpenter(min_date=kwargs["min_date"], process_all=kwargs["process_all"])
+      carpenter.run()
       return
     
     if kwargs["api"] not in EVENT_API_MAPPING and kwargs["api"] not in CRAWLER_NICE_NAMES:
@@ -23,5 +23,4 @@ class Command(BaseCommand):
       return
     
     api = CRAWLER_NICE_NAMES.get(kwargs["api"], kwargs["api"])
-    carpenter = Carpenter(ingestion_apis=[api])
-    carpenter.run(min_date=kwargs["min_date"], process_all=kwargs["process_all"])
+    carpenter = Carpenter(ingestion_apis=[api], min_date=kwargs["min_date"], process_all=kwargs["process_all"])

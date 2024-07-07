@@ -15,9 +15,21 @@ logger = logging.getLogger(__name__)
 class Carpenter:
   """Clean some data!"""
 
-  def __init__(self, ingestion_apis: Optional[list[str]] = None, run_name: str=""):
+  def __init__(self, ingestion_apis: Optional[list[str]]=None, min_date: Optional[datetime]=None, process_all: bool=False):
     self.ingestion_apis = ingestion_apis
-    self.carpenter_run = CarpenterRun.objects.create(name="Full" if not run_name else run_name)
+    self.min_date = datetime.now() - timedelta(days=1) if not min_date else min_date
+    self.process_all = process_all
+
+    run_name = "Carpenter Run "
+    if not ingestion_apis:
+      run_name += "- All Apis "
+    else:
+      run_name += f"- {', '.join(ingestion_apis)}"
+
+    run_name += f"- {min_date} "
+    run_name += f"- {process_all=}"
+
+    self.carpenter_run = CarpenterRun.objects.create(name=run_name)
     self.venue_logs = collections.defaultdict(lambda: collections.defaultdict(set))
     self.artist_logs = collections.defaultdict(lambda: collections.defaultdict(set))
 
@@ -90,7 +102,7 @@ class Carpenter:
     )
     return event
 
-  def process_api(self, api: EventApi, min_date: datetime, process_all: bool=False):
+  def process_api(self, api: EventApi):
     """Process all raw data past min_date for a particular api.
 
     We iterate through each raw data record and =>
@@ -98,8 +110,8 @@ class Carpenter:
       2) Create or update the artists associated with that record.
       3) Create or update the event associated with that record.
     """
-    raw_datas = RawData.objects.filter(api_name=api.api_name, event_day__gt=min_date)
-    if not process_all:
+    raw_datas = RawData.objects.filter(api_name=api.api_name, event_day__gt=self.min_date)
+    if not self.process_all:
       raw_datas = raw_datas.filter(processed=False)
 
     for raw_data in raw_datas:
@@ -121,12 +133,11 @@ class Carpenter:
            field_changed="none"
         )
 
-  def run(self, min_date: Optional[datetime], process_all: bool=False):
+  def run(self):
     """CLEAN UP CLEAN UP EVERYBODY DO YOUR SHARE."""
-    min_date = datetime.now() - timedelta(days=1) if not min_date else min_date
     if self.ingestion_apis:
       for ingestion_api in self.ingestion_apis:
-        self.process_api(api=API_MAPPING[ingestion_api], min_date=min_date, process_all=process_all)
+        self.process_api(api=API_MAPPING[ingestion_api])
         return
 
     for sub_list in API_PRIORITY_LIST:
@@ -135,4 +146,4 @@ class Carpenter:
         if ingestion_api == IngestionApis.MANUAL:
           continue
 
-        self.process_api(api=API_MAPPING[ingestion_api], min_date=min_date, process_all=process_all)
+        self.process_api(api=API_MAPPING[ingestion_api])
