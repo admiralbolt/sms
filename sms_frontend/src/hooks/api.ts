@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { useLocalStorageContext } from "@/contexts/LocalStorageContext";
 import customAxios from "@/hooks/customAxios";
 import {
   Artist,
@@ -48,15 +49,36 @@ const getOpenMicById = async (id: any): Promise<OpenMic> => {
   return result.data;
 };
 
-// Cache for fast loading.
-const eventsByDay: { [key: string]: Event[] } = {};
 const getEventsByDay = async (day: string): Promise<Event[]> => {
-  if (!(day in eventsByDay)) {
-    const result = await customAxios.get(`/api/get_events_on_day?day=${day}`);
-    eventsByDay[day] = result.data;
-  }
+  const result = await customAxios.get(`/api/get_events_on_day?day=${day}`);
 
-  return eventsByDay[day];
+  return result.data;
+};
+
+const useSelectedDateEvents = () => {
+  const eventsByDay = useRef<{ [key: string]: Event[] }>({});
+  const { selectedDate } = useLocalStorageContext();
+  const [selectedDateEvents, setSelectedDateEvents] = useState<Event[]>([]);
+  const [eventsLoading, setEventsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!selectedDate) return;
+
+    setEventsLoading(true);
+    const targetDate = selectedDate.format("YYYY-MM-DD");
+
+    (async () => {
+      if (!(targetDate in eventsByDay.current)) {
+        const result = await getEventsByDay(targetDate);
+        eventsByDay.current[targetDate] = result;
+      }
+
+      setSelectedDateEvents(eventsByDay.current[targetDate]);
+      setEventsLoading(false);
+    })();
+  }, [eventsByDay, selectedDate]);
+
+  return { selectedDateEvents, eventsLoading };
 };
 
 const useEventTypes = () => {
@@ -235,4 +257,5 @@ export {
   useVenues,
   getEventDisplayImage,
   getVenueDisplayImage,
+  useSelectedDateEvents,
 };

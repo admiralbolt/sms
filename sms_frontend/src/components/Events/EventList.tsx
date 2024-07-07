@@ -3,14 +3,15 @@ import { useContext, useEffect, useRef } from "react";
 import { Box, CircularProgress, List, ListItem } from "@mui/material";
 
 import { LocalStorageContext } from "@/contexts/LocalStorageContext";
-import { useEventsLoading, useFilteredEvents } from "@/hooks/filteredData";
+import { useSelectedDateEvents } from "@/hooks/api";
+import { useFilteredEvents } from "@/hooks/filteredData";
 
 import { EventCard } from "./EventCard";
 
 export const EventList = () => {
   const listContainer = useRef<HTMLUListElement>(null);
   const filteredEvents = useFilteredEvents();
-  const { eventsLoading } = useEventsLoading();
+  const { eventsLoading } = useSelectedDateEvents();
   const { selectedDate } = useContext(LocalStorageContext) || {};
 
   useEffect(() => {
