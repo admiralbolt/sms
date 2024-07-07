@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { useLocalStorageContext } from "@/contexts/LocalStorageContext.js";
-import { Event} from "@/types.js";
+import { Event } from "@/types.js";
 
 import { getEventsByDay } from "./api.js";
 
@@ -18,7 +18,7 @@ const useSelectedDateEvents = () => {
 
   useEffect(() => {
     setEventsLoading(true);
-    (async() => {
+    (async () => {
       setEvents(await getEventsByDay(selectedDate.format("YYYY-MM-DD")));
     })();
   }, [selectedDate]);
@@ -37,7 +37,7 @@ const useFilteredEvents = () => {
     setFilteredEvents(
       selectedDateEvents.filter((event: Event) => {
         return selectedEventTypes?.includes(event.event_type);
-      })
+      }),
     );
     setEventsLoading(false);
   }, [selectedDateEvents, selectedEventTypes, selectedVenueTypes]);

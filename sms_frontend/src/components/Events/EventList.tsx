@@ -23,7 +23,14 @@ export const EventList = () => {
 
   if (eventsLoading) {
     return (
-      <Box sx={{display: "flex", alignItems: "center", justifyContent: "center", marginTop: "2em"}}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: "2em",
+        }}
+      >
         <CircularProgress size={45} />
       </Box>
     );

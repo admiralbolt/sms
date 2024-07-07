@@ -1,13 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
+import { useDebounce } from "use-debounce";
 
-import { Box, CircularProgress, List, ListItem, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  List,
+  ListItem,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 import { EventCard } from "@/components/Events/EventCard";
-import { Event } from "@/types";
-
 import customAxios from "@/hooks/customAxios";
-
-import { useDebounce } from "use-debounce";
+import { Event } from "@/types";
 
 const MAX_RESULTS = 50;
 
@@ -30,7 +35,7 @@ export const Search = () => {
         setResults(response.data);
         setLoading(false);
       });
-  }
+  };
 
   useEffect(() => {
     search();
@@ -38,9 +43,7 @@ export const Search = () => {
 
   const renderSearch = () => {
     if (loading) {
-      return (
-        <CircularProgress sx={{marginTop: "1em"}} />
-      );
+      return <CircularProgress sx={{ marginTop: "1em" }} />;
     }
 
     return (
@@ -56,13 +59,13 @@ export const Search = () => {
         >
           {results.map((result) => (
             <ListItem key={`event-${result.id}`}>
-                <EventCard event={result} showDate={true} />
+              <EventCard event={result} showDate={true} />
             </ListItem>
           ))}
         </List>
       </>
     );
-  }
+  };
 
   return (
     <Box>

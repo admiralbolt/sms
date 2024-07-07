@@ -94,10 +94,7 @@ export const MapData = ({
     },
   });
 
-  const handleEventClick = (
-    e: LeafletMouseEvent,
-    event: Event,
-  ) => {
+  const handleEventClick = (e: LeafletMouseEvent, event: Event) => {
     // We want to center the clicked circle on screen. The math for this gets
     // a little fuzzy. Depends on if we are on mobile or desktop, and we need
     // to adjust the final latitude and longitude accordingly.

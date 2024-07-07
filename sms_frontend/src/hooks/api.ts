@@ -22,13 +22,13 @@ const getEventDisplayImage = (event: Event): string => {
   if (event.venue.venue_image) return BASE_API_URL + event.venue.venue_image;
 
   return "/placeholder.png";
-}
+};
 
 const getVenueDisplayImage = (venue: Venue): string => {
   if (venue.venue_image) return BASE_API_URL + venue.venue_image;
 
   return "/placeholder.png";
-}
+};
 
 const getVenueById = async (id: any): Promise<Venue> => {
   const result = await customAxios.get(`/api/venues/${id}`);
@@ -49,7 +49,7 @@ const getOpenMicById = async (id: any): Promise<OpenMic> => {
 };
 
 // Cache for fast loading.
-const eventsByDay: {[key: string]: Event[]} = {};
+const eventsByDay: { [key: string]: Event[] } = {};
 const getEventsByDay = async (day: string): Promise<Event[]> => {
   if (!(day in eventsByDay)) {
     const result = await customAxios.get(`/api/get_events_on_day?day=${day}`);
@@ -234,5 +234,5 @@ export {
   useOpenMics,
   useVenues,
   getEventDisplayImage,
-  getVenueDisplayImage
+  getVenueDisplayImage,
 };

@@ -24,11 +24,11 @@ import { FaGuitar } from "react-icons/fa6";
 import { PiMicrophoneStageFill } from "react-icons/pi";
 
 import { SnackbarContext } from "@/contexts/SnackbarContext";
+import { getEventDisplayImage } from "@/hooks/api";
 import customAxios from "@/hooks/customAxios";
 import { Event, EventType, Venue } from "@/types";
 
 import { EventForm } from "./EventForm";
-import { getEventDisplayImage } from "@/hooks/api";
 
 const SHOW_COLOR = "#0070ff";
 const OPEN_JAM_COLOR = "#ff5500";

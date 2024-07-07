@@ -104,6 +104,10 @@ const useLocalStorageContext = () => {
     throw new Error("No idea what triggers this error TBH.");
 
   return ctx;
-}
+};
 
-export { useLocalStorageContext, LocalStorageContext, LocalStorageContextProvider };
+export {
+  useLocalStorageContext,
+  LocalStorageContext,
+  LocalStorageContextProvider,
+};
