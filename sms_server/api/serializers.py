@@ -46,7 +46,7 @@ class SocialLink(serializers.ModelSerializer):
 
 class ArtistSerializer(serializers.ModelSerializer):
   """Serialize artists."""
-  social_links = SocialLink(read_only=True, many=True)
+  social_links = SocialLink(many=True)
   
   class Meta:
     model = models.Artist

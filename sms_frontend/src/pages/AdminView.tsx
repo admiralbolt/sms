@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { Box, Tab, Tabs } from "@mui/material";
 
+import { ArtistPanel } from "@/components/Artists";
 import { CommandPanel } from "@/components/Commands";
 import { EventPanel } from "@/components/Events";
 import { IngestionRunPanel } from "@/components/IngestionRuns";
@@ -62,6 +63,7 @@ export const AdminView = () => {
           <Tab label="Venues" {...a11yProps(4)} />
           <Tab label="Open Mics" {...a11yProps(5)} />
           <Tab label="Events" {...a11yProps(6)} />
+          <Tab label="Artists" {...a11yProps(7)} />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -84,6 +86,9 @@ export const AdminView = () => {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={6}>
         <EventPanel />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={7}>
+        <ArtistPanel />
       </CustomTabPanel>
     </Box>
   );

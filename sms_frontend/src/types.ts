@@ -123,9 +123,19 @@ export interface OpenMic {
   event_start_time: string;
 }
 
+export interface SocialLink {
+  id: number;
+  created_at: Date;
+  platform: string;
+  url: string;
+}
+
 export interface Artist {
   id: number;
   name: string;
+  bio: string;
+  artist_image?: string;
+  social_links: SocialLink[];
 }
 
 export interface Crontab {
