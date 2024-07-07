@@ -1,7 +1,3 @@
-// Eventually, we should probably replace the old api entirely.
-// For now all things that interact with the *actual* api will be here,
-// and all things that interact explicitly with the flat file will be in
-// flatFileApi.ts.
 import { useEffect, useState } from "react";
 
 import customAxios from "@/hooks/customAxios";
