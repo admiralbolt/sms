@@ -17,19 +17,13 @@ import {
   Link,
 } from "@mui/material";
 
-import { FaGuitar } from "react-icons/fa6";
-import { PiMicrophoneStageFill } from "react-icons/pi";
-
 import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { getEventDisplayImage } from "@/hooks/api";
 import customAxios from "@/hooks/customAxios";
-import { Event, EventType, Venue } from "@/types";
+import { Event, Venue } from "@/types";
+import { getEventIcon } from "@/utils/eventIcon";
 
 import { EventForm } from "./EventForm";
-
-const SHOW_COLOR = "#0070ff";
-const OPEN_JAM_COLOR = "#ff5500";
-const OPEN_MIC_COLOR = "#ee6600";
 
 interface Props {
   event: Event;
@@ -104,23 +98,6 @@ export const EventCard = ({
     return formatTime(event.start_time);
   };
 
-  const getEventIcon = (event_type: EventType) => {
-    const lowercaseEventType =
-      event_type != undefined ? event_type.toLowerCase() : "";
-    if (lowercaseEventType == "open mic" || lowercaseEventType == "open jam") {
-      return (
-        <PiMicrophoneStageFill
-          size={24}
-          color={
-            lowercaseEventType == "open jam" ? OPEN_JAM_COLOR : OPEN_MIC_COLOR
-          }
-        />
-      );
-    }
-
-    return <FaGuitar size={24} color={SHOW_COLOR} />;
-  };
-
   const displayImage = getEventDisplayImage(event);
   const venueLink = () => {
     if (
@@ -151,7 +128,7 @@ export const EventCard = ({
     return (
       <Box
         key={event.id}
-        className="flex  align-center content-center justify-center"
+        className="flex align-center content-center justify-center border-b-2 border-blue-500/20"
       >
         <div
           className="flex md:flex-row"
@@ -163,31 +140,16 @@ export const EventCard = ({
           }}
         >
           <Box
-            className={`w-24 h-24 md:w-44 md:h-44 bg-cover bg-center flex flex-col justify-end text-center md:text-right relative`}
+            className={`w-16 h-16 md:w-24 md:h-24 bg-cover bg-center flex flex-col justify-end text-center  relative`}
             sx={{ backgroundImage: `url(${displayImage})` }}
           >
             <div className="z-0 absolute bg-black w-full h-full opacity-20" />
-            <div className="flex flex-col z-index-10 p-4 bg-black/50">
-              <span className="text-xs md:text-xl">{venueLink()}</span>
-              <span className="text-xs md:text-lg fond-bold">
-                {timeAndDate(event)}
+            <div className="flex flex-col z-index-10 bg-black/50">
+              <span className="text-xs md:text-lg font-bold">
+                {venueLink()}
               </span>
+              <span className="text-xs md:text-lg">{timeAndDate(event)}</span>
             </div>
-          </Box>
-          <Box
-            sx={{
-              position: "absolute",
-              left: 0,
-              bottom: 0,
-              padding: "0.2em",
-              opacity: 0.4,
-              backgroundColor: "black",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            {getEventIcon(event.event_type)}
           </Box>
 
           {/* ACTION BUTTONS */}
@@ -220,33 +182,41 @@ export const EventCard = ({
             </Box>
           )}
 
-          <div className="p-4 md:w-[600px]">
-            <h2 className="md:text-3xl text-wrap">{event.title}</h2>
-            <h3>{event.venue.address}</h3>
-            <Box sx={{ display: "flex", flexDirection: "row", mt: 1 }}>
-              <Link target="_blank" href={mapsLink(event.venue)}>
-                <IconButton
-                  size="large"
-                  edge="start"
-                  color="primary"
-                  aria-label="menu"
-                  sx={{ mr: 3, ml: -0.5 }}
-                >
-                  <PlaceIcon />
-                </IconButton>
-              </Link>
-              <Link target="_blank" href={event.event_url || ""}>
-                <IconButton
-                  disabled={!event.event_url}
-                  size="large"
-                  edge="start"
-                  color="primary"
-                  aria-label="menu"
-                  sx={{ mr: 3 }}
-                >
-                  <LinkIcon />
-                </IconButton>
-              </Link>
+          <div className="px-4 md:w-[600px] flex-col content-center">
+            <Box className="flex items-center">
+              <Box className="pr-4">{getEventIcon(event.event_type)}</Box>
+              <Box className="flex flex-col">
+                <h2 className="md:text-lg text-wrap">{event.title}</h2>
+                <Box className="flex items-center">
+                  <span className="text-sm">{event.venue.address}</span>
+                  <Box>
+                    <Link target="_blank" href={mapsLink(event.venue)}>
+                      <IconButton
+                        disabled={!event.event_url}
+                        size="small"
+                        edge="start"
+                        color="primary"
+                        aria-label="menu"
+                        sx={{ mr: 0.25 }}
+                      >
+                        <PlaceIcon fontSize={"small"} />
+                      </IconButton>
+                    </Link>
+                    <Link target="_blank" href={event.event_url || ""}>
+                      <IconButton
+                        disabled={!event.event_url}
+                        size="small"
+                        edge="start"
+                        color="primary"
+                        aria-label="menu"
+                        sx={{ mr: 3 }}
+                      >
+                        <LinkIcon />
+                      </IconButton>
+                    </Link>
+                  </Box>
+                </Box>
+              </Box>
             </Box>
           </div>
         </div>
