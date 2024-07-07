@@ -45,23 +45,6 @@ def import_and_clean(debug: bool=False):
   carpenter.run()
 
 @shared_task
-def write_latest_data():
-  """Write latest data for events and venues to a flat file."""
-  # On plane so can't google, will eventually need to get a server name in
-  # here somewhere to distinguish localhost / prod. For now we hardcode to
-  # localhost.
-  base_url = "http://localhost" if not IS_PROD else "https://seattlemusicscene.info"
-  venues_request = requests.get(f"{base_url}:8000/api/venues")
-  all_venues = venues_request.json()
-  with open(os.path.join(MEDIA_ROOT, "latest_venues.json"), "w") as wh:
-    json.dump(all_venues, wh)
-
-  events_request = requests.get(f"{base_url}:8000/api/events")
-  all_events = events_request.json()
-  with open(os.path.join(MEDIA_ROOT, "latest_events.json"), "w") as wh:
-    json.dump(all_events, wh)
-
-@shared_task
 def delete_old_ingestion_runs():
   """Delete old ingestion runs to save some space."""
   # Keep ingestion runs for 3 weeks by default.
