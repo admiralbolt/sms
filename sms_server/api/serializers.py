@@ -8,6 +8,7 @@ from django_celery_beat.models import CrontabSchedule, PeriodicTask
 from rest_framework import serializers
 
 from api import models
+from api.utils import artist_utils
 from sms_server.settings import TIME_ZONE
 
 class RoundingDecimalField(serializers.DecimalField):
@@ -42,7 +43,7 @@ class SocialLink(serializers.ModelSerializer):
 
   class Meta:
     model = models.SocialLink
-    fields = "__all__"
+    fields = ("id", "created_at", "platform", "url")
 
 class ArtistSerializer(serializers.ModelSerializer):
   """Serialize artists."""
@@ -51,6 +52,11 @@ class ArtistSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.Artist
     fields = ("id", "created_at", "name", "name_slug", "bio", "artist_image_url", "artist_image", "social_links")
+
+  def update(self, instance: models.Artist, validated_data: dict):
+    artist_utils.update_socials(artist=instance, social_links=validated_data["social_links"])
+    del validated_data["social_links"]
+    return super().update(instance, validated_data)
 
 class EventSerializer(serializers.ModelSerializer):
   """Serialize Event data."""

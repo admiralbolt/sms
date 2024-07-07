@@ -7,6 +7,41 @@ def get_artist(name: str) -> Optional[Artist]:
   name_slug = name.lower().replace(" ", "-")
   return Artist.objects.filter(name_slug=name_slug).first()
 
+def update_socials(artist: Artist, social_links: list[dict]) -> None:
+  """Update socials for an artist to an exact set.
+
+  This method potential creates and/or deletes social links.
+  """
+  db_links = SocialLink.objects.filter(artist=artist)
+
+  # Create/update links from the input set.
+  for link in social_links:
+    if "id" in social_links:
+      db_link = SocialLink.objects.filter(id=link["id"])
+      # If we pass an id, but it doesn't exist, who knows what to do.
+      if not db_link.exists():
+        continue
+
+      db_link = db_link.first()
+      if db_link.url != link["url"]:
+        db_link.url = link["url"]
+        db_link.save()
+
+      continue
+
+    SocialLink.objects.create(
+      artist=artist,
+      platform=link["platform"],
+      url=link["url"]
+    )
+
+  # Remove excess db links.
+  input_platforms = set([link["platform"] for link in social_links])
+  for db_link in db_links:
+    if db_link.platform not in input_platforms:
+      db_link.delete()
+
+
 def create_or_update_socials(artist: Artist, social_links: list[dict[str, str]]) -> str:
   """Check me out on insta!"""
   if not social_links:

@@ -84,6 +84,13 @@ export const ArtistForm = ({
     artist_image: {
       "ui:widget": "hidden",
     },
+    social_links: {
+      items: {
+        artist: {
+          "ui:widget": "hidden",
+        }
+      }
+    }
   };
 
   return (

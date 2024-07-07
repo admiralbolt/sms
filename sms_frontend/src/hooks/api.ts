@@ -12,6 +12,7 @@ import {
   CarpenterRun,
   OpenMic,
   PeriodicTask,
+  SocialLink,
   Venue,
 } from "@/types";
 
@@ -82,7 +83,7 @@ const updateArtist = (artist: Artist) => {
   // making updates directly to the "artist_image" field.
   delete artist.artist_image;
 
-  return customAxios.post(`api/artists/${artist.id}`, artist);
+  return customAxios.put(`api/artists/${artist.id}`, artist);
 };
 
 const createVenue = (venue: Venue) => {
