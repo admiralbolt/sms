@@ -1,68 +1,48 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { LocalStorageContext } from "@/contexts/LocalStorageContext.js";
-import { Event, EventsByVenueMap, Venue } from "@/types.js";
+import { useLocalStorageContext } from "@/contexts/LocalStorageContext.js";
+import { Event} from "@/types.js";
 
-import { useFlatEvents, useFlatVenues } from "./flatFileApi.js";
+import { getEventsByDay } from "./api.js";
 
-const useFilteredVenues = () => {
-  const venues = useFlatVenues();
-  const { selectedVenueTypes } = useContext(LocalStorageContext) || {};
-  const [filteredVenues, setFilteredVenues] = useState<{
-    [key: string]: Venue;
-  }>({});
+const useEventsLoading = () => {
+  const [eventsLoading, setEventsLoading] = useState<boolean>(false);
+
+  return { eventsLoading, setEventsLoading };
+};
+
+const useSelectedDateEvents = () => {
+  const { selectedDate } = useLocalStorageContext();
+  const [events, setEvents] = useState<Event[]>([]);
+  const { setEventsLoading } = useEventsLoading();
 
   useEffect(() => {
-    const tmpVenues: { [key: string]: Venue } = {};
+    setEventsLoading(true);
+    (async() => {
+      setEvents(await getEventsByDay(selectedDate.format("YYYY-MM-DD")));
+    })();
+  }, [selectedDate]);
 
-    venues.forEach((venue) => {
-      // TODO(admiralbolt): Put this back -- Temporarily removing venue filters.
-      // if (!(venue.venue_tags.some((venue_type) => selectedVenueTypes.includes(venue_type)))) return;
-
-      tmpVenues[venue.id] = venue;
-    });
-
-    setFilteredVenues(tmpVenues);
-  }, [venues, selectedVenueTypes]);
-
-  return filteredVenues;
+  return events;
 };
 
 const useFilteredEvents = () => {
-  const [_, eventsByDate] = useFlatEvents();
-  const { selectedEventTypes, selectedDate } =
-    useContext(LocalStorageContext) || {};
+  const { selectedVenueTypes, selectedEventTypes } = useLocalStorageContext();
+  const selectedDateEvents = useSelectedDateEvents();
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
+  const { setEventsLoading } = useEventsLoading();
 
   useEffect(() => {
-    const targetDate = selectedDate?.format("YYYY-MM-DD");
-    if (targetDate && targetDate in eventsByDate) {
-      const events = eventsByDate[targetDate];
-      setFilteredEvents(
-        events.filter((event) => {
-          return selectedEventTypes?.includes(event.event_type);
-        }),
-      );
-    }
-  }, [eventsByDate, selectedEventTypes, selectedDate]);
+    // Eventually, we'll want to add venue filtering here as well.
+    setFilteredEvents(
+      selectedDateEvents.filter((event: Event) => {
+        return selectedEventTypes?.includes(event.event_type);
+      })
+    );
+    setEventsLoading(false);
+  }, [selectedDateEvents, selectedEventTypes, selectedVenueTypes]);
 
   return filteredEvents;
 };
 
-const useFilteredEventsByVenue = () => {
-  const [filteredEventsByVenue, setFilteredEventsByVenue] =
-    useState<EventsByVenueMap>();
-  const filteredEvents = useFilteredEvents();
-
-  useEffect(() => {
-    const eventMap: EventsByVenueMap = {};
-    filteredEvents.forEach((event) => {
-      eventMap[event.venue] = event;
-    });
-    setFilteredEventsByVenue(eventMap);
-  }, [filteredEvents]);
-
-  return filteredEventsByVenue;
-};
-
-export { useFilteredEvents, useFilteredEventsByVenue, useFilteredVenues };
+export { useFilteredEvents, useEventsLoading };

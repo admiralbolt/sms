@@ -1,22 +1,17 @@
 import { useContext, useEffect, useRef } from "react";
 
-import { List, ListItem } from "@mui/material";
+import { Box, CircularProgress, List, ListItem } from "@mui/material";
 
 import { LocalStorageContext } from "@/contexts/LocalStorageContext";
-import { useFilteredEvents, useFilteredVenues } from "@/hooks/filteredData";
-import { Event } from "@/types";
+import { useEventsLoading, useFilteredEvents } from "@/hooks/filteredData";
 
 import { EventCard } from "./EventCard";
 
 export const EventList = () => {
   const listContainer = useRef<HTMLUListElement>(null);
-  const filteredVenues = useFilteredVenues();
   const filteredEvents = useFilteredEvents();
+  const { eventsLoading } = useEventsLoading();
   const { selectedDate } = useContext(LocalStorageContext) || {};
-
-  const hasVenue = (event: Event) => {
-    return event.venue in filteredVenues;
-  };
 
   useEffect(() => {
     setTimeout(() => {
@@ -26,6 +21,14 @@ export const EventList = () => {
     }, 1);
   }, [selectedDate]);
 
+  if (eventsLoading) {
+    return (
+      <Box sx={{display: "flex", alignItems: "center", justifyContent: "center", marginTop: "2em"}}>
+        <CircularProgress size={45} />
+      </Box>
+    );
+  }
+
   return (
     <List
       ref={listContainer}
@@ -33,14 +36,11 @@ export const EventList = () => {
         paddingBottom: "2rem",
       }}
     >
-      {filteredEvents.map(
-        (event) =>
-          hasVenue(event) && (
-            <ListItem sx={{ padding: 0 }} key={event.id}>
-              <EventCard event={event} />
-            </ListItem>
-          ),
-      )}
+      {filteredEvents.map((event) => (
+        <ListItem sx={{ padding: 0 }} key={event.id}>
+          <EventCard event={event} />
+        </ListItem>
+      ))}
     </List>
   );
 };

@@ -16,6 +16,24 @@ import {
   Venue,
 } from "@/types";
 
+const BASE_API_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://seattlemusicscene.info:8000"
+    : "http://localhost:8000";
+
+const getEventDisplayImage = (event: Event): string => {
+  if (event.event_image) return BASE_API_URL + event.event_image;
+  if (event.venue.venue_image) return BASE_API_URL + event.venue.venue_image;
+
+  return "/placeholder.png";
+}
+
+const getVenueDisplayImage = (venue: Venue): string => {
+  if (venue.venue_image) return BASE_API_URL + venue.venue_image;
+
+  return "/placeholder.png";
+}
+
 const getVenueById = async (id: any): Promise<Venue> => {
   const result = await customAxios.get(`/api/venues/${id}`);
 
@@ -32,6 +50,39 @@ const getOpenMicById = async (id: any): Promise<OpenMic> => {
   const result = await customAxios.get(`/api/open_mics/${id}`);
 
   return result.data;
+};
+
+// Cache for fast loading.
+const eventsByDay: {[key: string]: Event[]} = {};
+const getEventsByDay = async (day: string): Promise<Event[]> => {
+  if (!(day in eventsByDay)) {
+    console.log(`Fetching data for day: ${day}`);
+    const result = await customAxios.get(`/api/get_events_on_day?day=${day}`);
+    eventsByDay[day] = result.data;
+  }
+
+  return eventsByDay[day];
+};
+
+const useEventsByDate = (day: string) => {
+  const [eventMap, setEventMap] = useState<{[key: string]: Event[]}>({});
+
+  useEffect(() => {
+    (async () => {
+      if (day in eventMap) {
+        console.log(`${day} already exists, nothing to do`);
+        return;
+      }
+
+      console.log(`Fetching data for ${day}`);
+      let tmpMap = eventMap;
+      tmpMap[day] = await getEventsByDay(day);
+      console.log(`Calling set event map`);
+      setEventMap(tmpMap);
+    })();
+  }, [day]);
+
+  return eventMap;
 };
 
 const useEventTypes = () => {
@@ -191,6 +242,7 @@ export {
   getEventById,
   getOpenMicById,
   getVenueById,
+  getEventsByDay,
   updateEvent,
   useEventTypes,
   useIngestionRuns,
@@ -207,4 +259,7 @@ export {
   usePeriodicTasks,
   useOpenMics,
   useVenues,
+  useEventsByDate,
+  getEventDisplayImage,
+  getVenueDisplayImage
 };

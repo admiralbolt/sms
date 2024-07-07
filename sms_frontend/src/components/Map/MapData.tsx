@@ -11,10 +11,7 @@ import {
 import { Box, Typography } from "@mui/material";
 
 import { LocalStorageContext } from "@/contexts/LocalStorageContext";
-import {
-  useFilteredEventsByVenue,
-  useFilteredVenues,
-} from "@/hooks/filteredData";
+import { useFilteredEvents } from "@/hooks/filteredData";
 import { useIsMobile } from "@/hooks/window";
 import { Event, EventType, Venue } from "@/types";
 
@@ -41,19 +38,16 @@ declare global {
 interface Props {
   setBannerOpen: (isOpen: boolean) => void;
   setSelectedEvent: (event?: Event) => void;
-  setSelectedVenue: (venue?: Venue) => void;
   setMapPosition: (latLing: [number, number]) => void;
 }
 
 export const MapData = ({
   setBannerOpen,
   setSelectedEvent,
-  setSelectedVenue,
   setMapPosition,
 }: Props) => {
   const map = useMap();
-  const filteredVenues = useFilteredVenues();
-  const filteredEventsByVenue = useFilteredEventsByVenue();
+  const filteredEvents = useFilteredEvents();
   const isMobile = useIsMobile();
   const [circleSize, setCircleSize] = useState(CIRCLE_SIZES[defaultZoom]);
   const { selectedDate } = useContext(LocalStorageContext) || {};
@@ -95,7 +89,6 @@ export const MapData = ({
     },
     click: () => {
       setBannerOpen(false);
-      setSelectedVenue();
       setSelectedEvent();
       clearAllHighlights();
     },
@@ -103,7 +96,6 @@ export const MapData = ({
 
   const handleEventClick = (
     e: LeafletMouseEvent,
-    venue: Venue,
     event: Event,
   ) => {
     // We want to center the clicked circle on screen. The math for this gets
@@ -124,34 +116,28 @@ export const MapData = ({
     setMapPosition(latlng);
     map.flyTo(latlng);
     e.originalEvent.view?.L?.DomEvent.stopPropagation(e);
-    setSelectedVenue(venue);
     setSelectedEvent(event);
     setBannerOpen(true);
   };
 
-  const renderVenue = (venue: Venue) => {
-    if (!filteredEventsByVenue || !(venue.id in filteredEventsByVenue))
-      return "";
-
-    const event = filteredEventsByVenue[venue.id];
-
+  const renderEvent = (event: Event) => {
     return (
       <Circle
-        key={venue.id}
-        center={[venue.latitude, venue.longitude]}
+        key={event.id}
+        center={[event.venue.latitude, event.venue.longitude]}
         pathOptions={{
           color: getColor(event.event_type),
           fillColor: getColor(event.event_type),
         }}
         eventHandlers={{
-          click: (e: LeafletMouseEvent) => handleEventClick(e, venue, event),
+          click: (e: LeafletMouseEvent) => handleEventClick(e, event),
         }}
         radius={circleSize}
       >
         {!isMobile && (
           <Tooltip>
             <Box>
-              <Typography>{venue.name}</Typography>
+              <Typography>{event.venue.name}</Typography>
             </Box>
           </Tooltip>
         )}
@@ -165,7 +151,7 @@ export const MapData = ({
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {Object.values(filteredVenues).map((venue) => renderVenue(venue))}
+      {filteredEvents.map((event) => renderEvent(event))}
     </div>
   );
 };

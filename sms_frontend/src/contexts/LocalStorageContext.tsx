@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 import { useEventTypes, useVenueTypes } from "@/hooks/api";
 
@@ -97,4 +97,13 @@ const LocalStorageContextProvider = ({
   );
 };
 
-export { LocalStorageContext, LocalStorageContextProvider };
+const useLocalStorageContext = () => {
+  const ctx = useContext(LocalStorageContext);
+
+  if (ctx === undefined)
+    throw new Error("No idea what triggers this error TBH.");
+
+  return ctx;
+}
+
+export { useLocalStorageContext, LocalStorageContext, LocalStorageContextProvider };
