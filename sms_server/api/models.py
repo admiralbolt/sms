@@ -7,7 +7,7 @@ import requests
 from django.core.files.base import ContentFile
 from django.db import models
 
-from api.constants import get_choices, ChangeTypes, EventTypes, IngestionApis, Neighborhoods, OpenMicTypes, VenueTypes
+from api.constants import get_choices, ChangeTypes, EventTypes, IngestionApis, JanitorOperations, Neighborhoods, OpenMicTypes, VenueTypes
 
 logger = logging.getLogger(__name__)
 
@@ -264,6 +264,31 @@ class OpenMic(models.Model):
       return self.title
 
     return "UNKNOWN_VENUE" if not self.venue else f"{self.venue.name} {self.event_mic_type}"
+
+class JanitorRun(models.Model):
+  """Is your janitor running?"""
+  created_at = models.DateTimeField(auto_now_add=True)
+  name = models.CharField(max_length=64)
+
+  def __str__(self):
+    return f"{self.name} ({self.created_at})"
+
+class JanitorMergeEventRecord(models.Model):
+  from_events = models.ManyToManyField(Event, related_name="from_events")
+  to_event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="to_event")
+
+class JanitorApplyArtistRecord(models.Model):
+  event = models.ForeignKey(Event, on_delete=models.CASCADE)
+  artists = models.ManyToManyField(Artist)
+
+class JanitorRecord(models.Model):
+  created_at = models.DateTimeField(auto_now_add=True)
+  janitor_run = models.ForeignKey(JanitorRun, on_delete=models.CASCADE)
+  operation = models.CharField(max_length=16, choices=get_choices(JanitorOperations))
+
+  # Only one of the following should be populated.
+  merge_event_record = models.ForeignKey(JanitorMergeEventRecord, on_delete=models.SET_NULL, blank=True, null=True)
+  apply_artists_record = models.ForeignKey(JanitorApplyArtistRecord, on_delete=models.SET_NULL, blank=True, null=True)
   
 class CarpenterRun(models.Model):
   """Logs for runs from the carpenter."""
