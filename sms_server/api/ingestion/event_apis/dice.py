@@ -53,7 +53,8 @@ class DiceApi(EventApi):
     for artist in raw_data["summary_lineup"]["top_artists"]:
       yield {
         "name": artist["name"],
-        "artist_image_url": artist.get("image", {}).get("url", "")
+        "bio": artist.get("about", ""),
+        "artist_image_url": (artist.get("image", {}) or {}).get("url", "")
       }
 
   def get_raw_data_info(self, raw_data: dict) -> dict:
