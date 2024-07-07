@@ -141,6 +141,33 @@ class CarpenterRecordSerializer(serializers.ModelSerializer):
     model = models.CarpenterRecord
     fields = "__all__"
 
+class JanitorRunSerializer(serializers.ModelSerializer):
+  """Serialize JanitorRun data."""
+  class Meta:
+    model = models.JanitorRun
+    fields = "__all__"
+
+class JanitorMergeEventRecordSerializer(serializers.ModelSerializer):
+  """Serialize merge event records."""
+  class Meta:
+    model = models.JanitorMergeEventRecord
+    fields = "__all__"
+
+class JanitorApplyArtistsRecordSerializer(serializers.ModelSerializer):
+  """Serialize apply artists records."""
+  class Meta:
+    models = models.JanitorApplyArtistRecord
+    fields = "__all__"
+
+class JanitorRecordSerializer(serializers.ModelSerializer):
+  """Serialize Janitor Records."""
+  merge_event_record = JanitorMergeEventRecordSerializer()
+  apply_artists_record = JanitorApplyArtistsRecordSerializer()
+
+  class Meta:
+    model = models.JanitorRecord
+    fields = "__all__"
+
 class CrontabScheduleSerializer(serializers.ModelSerializer):
   schedule = serializers.SerializerMethodField()
   healthy_last_run = serializers.SerializerMethodField()

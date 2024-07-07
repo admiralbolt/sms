@@ -151,19 +151,6 @@ class CarpenterRunViewSet(viewsets.ReadOnlyModelViewSet):
     runs = models.CarpenterRun.objects.order_by("-created_at")
     return runs
   
-class CarpenterRecordViewSet(viewsets.ReadOnlyModelViewSet):
-  """List all carpenter records."""
-  resource_name = "carpenter_records"
-  queryset = models.CarpenterRecord.objects.all()
-  serializer_class = serializers.CarpenterRecordSerializer
-
-  def get_permissions(self):
-    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
-    return [permission() for permission in permission_classes]
-
-  def get_queryset(self):
-    return models.CarpenterRecord.objects.order_by("-created_at")
-  
 class CarpenterRunRecordsView(ListAPIView):
   """List all carpenter records for a particular run."""
   serializer_class = serializers.CarpenterRecordSerializer
@@ -176,6 +163,33 @@ class CarpenterRunRecordsView(ListAPIView):
     models.CarpenterRecord.objects.prefetch_related("event", "venue")
     carpenter_run = models.CarpenterRun.objects.filter(id=self.kwargs.get("carpenter_run_id", None)).first()
     return models.CarpenterRecord.objects.filter(carpenter_run=carpenter_run)
+  
+class JanitorRunViewSet(viewsets.ReadOnlyModelViewSet):
+  """List all janitor runs."""
+  resource_name = "janitor_runs"
+  queryset = models.JanitorRun.objects.all()
+  serializer_class = serializers.JanitorRunSerializer
+
+  def get_permissions(self):
+    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
+    return [permission() for permission in permission_classes]
+
+  def get_queryset(self):
+    runs = models.JanitorRun.objects.order_by("-created_at")
+    return runs
+  
+class JanitorRunRecordsView(ListAPIView):
+  """List all janitor records for a particular run."""
+  serializer_class = serializers.JanitorRecordSerializer
+
+  def get_permissions(self):
+    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
+    return [permission() for permission in permission_classes]
+
+  def get_queryset(self):
+    models.JanitorRecord.objects.prefetch_related("event", "venue")
+    carpenter_run = models.JanitorRun.objects.filter(id=self.kwargs.get("janitor_run_id", None)).first()
+    return models.JanitorRecord.objects.filter(carpenter_run=carpenter_run)
 
 class LogoutView(APIView):
   """Logout!"""
