@@ -56,33 +56,11 @@ const getOpenMicById = async (id: any): Promise<OpenMic> => {
 const eventsByDay: {[key: string]: Event[]} = {};
 const getEventsByDay = async (day: string): Promise<Event[]> => {
   if (!(day in eventsByDay)) {
-    console.log(`Fetching data for day: ${day}`);
     const result = await customAxios.get(`/api/get_events_on_day?day=${day}`);
     eventsByDay[day] = result.data;
   }
 
   return eventsByDay[day];
-};
-
-const useEventsByDate = (day: string) => {
-  const [eventMap, setEventMap] = useState<{[key: string]: Event[]}>({});
-
-  useEffect(() => {
-    (async () => {
-      if (day in eventMap) {
-        console.log(`${day} already exists, nothing to do`);
-        return;
-      }
-
-      console.log(`Fetching data for ${day}`);
-      let tmpMap = eventMap;
-      tmpMap[day] = await getEventsByDay(day);
-      console.log(`Calling set event map`);
-      setEventMap(tmpMap);
-    })();
-  }, [day]);
-
-  return eventMap;
 };
 
 const useEventTypes = () => {
@@ -259,7 +237,6 @@ export {
   usePeriodicTasks,
   useOpenMics,
   useVenues,
-  useEventsByDate,
   getEventDisplayImage,
   getVenueDisplayImage
 };
