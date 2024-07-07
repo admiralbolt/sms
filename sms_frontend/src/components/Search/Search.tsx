@@ -18,7 +18,7 @@ const MAX_RESULTS = 50;
 
 export const Search = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [keyword] = useDebounce(searchTerm, 1000);
+  const [keyword] = useDebounce(searchTerm, 500);
   const [results, setResults] = useState<Event[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
