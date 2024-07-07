@@ -51,7 +51,11 @@ class DiceApi(EventApi):
       return
     
     for artist in raw_data["summary_lineup"]["top_artists"]:
-      yield {"name": artist["name"]}
+      yield {
+        "name": artist["name"],
+        "bio": artist.get("about", ""),
+        "artist_image_url": (artist.get("image", {}) or {}).get("url", "")
+      }
 
   def get_raw_data_info(self, raw_data: dict) -> dict:
     event_day, _ = raw_data["dates"]["event_start_date"].split("T")

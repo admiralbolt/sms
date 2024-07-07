@@ -6,11 +6,13 @@ import { useEffect, useState } from "react";
 
 import customAxios from "@/hooks/customAxios";
 import {
+  Artist,
+  CarpenterRun,
   Event,
   IngestionRun,
-  JanitorRun,
   OpenMic,
   PeriodicTask,
+  SocialLink,
   Venue,
 } from "@/types";
 
@@ -72,6 +74,18 @@ const updateEvent = (event: Event) => {
   return customAxios.put(`api/events/${event.id}`, event);
 };
 
+const createArtist = (artist: Artist) => {
+  return customAxios.post(`api/artists`, artist);
+};
+
+const updateArtist = (artist: Artist) => {
+  // Until we get file uploading from the UI figured out, we want to avoid
+  // making updates directly to the "artist_image" field.
+  delete artist.artist_image;
+
+  return customAxios.put(`api/artists/${artist.id}`, artist);
+};
+
 const createVenue = (venue: Venue) => {
   return customAxios.post(`api/venues`, venue);
 };
@@ -105,6 +119,21 @@ const useOpenMics = (): [
   }, []);
 
   return [openMics, setOpenMics];
+};
+
+const useArtists = (): [
+  Artist[],
+  React.Dispatch<React.SetStateAction<Artist[]>>,
+] => {
+  const [artists, setArtists] = useState<Artist[]>([]);
+
+  useEffect(() => {
+    customAxios.get("api/artists").then((res) => {
+      setArtists(res.data);
+    });
+  }, []);
+
+  return [artists, setArtists];
 };
 
 const useVenues = (): [
@@ -146,11 +175,11 @@ const useIngestionRuns = (): IngestionRun[] => {
   return runs;
 };
 
-const useJanitorRuns = (): JanitorRun[] => {
-  const [runs, setRuns] = useState<JanitorRun[]>([]);
+const useCarpenterRuns = (): CarpenterRun[] => {
+  const [runs, setRuns] = useState<CarpenterRun[]>([]);
 
   useEffect(() => {
-    customAxios.get("api/janitor_runs").then((res) => {
+    customAxios.get("api/carpenter_runs").then((res) => {
       setRuns(res.data);
     });
   }, []);
@@ -165,12 +194,15 @@ export {
   updateEvent,
   useEventTypes,
   useIngestionRuns,
-  useJanitorRuns,
+  useCarpenterRuns,
+  createArtist,
+  updateArtist,
   createEvent,
   createVenue,
   updateVenue,
   createOpenMic,
   updateOpenMic,
+  useArtists,
   useVenueTypes,
   usePeriodicTasks,
   useOpenMics,

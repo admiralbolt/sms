@@ -8,6 +8,7 @@ from django_celery_beat.models import CrontabSchedule, PeriodicTask
 from rest_framework import serializers
 
 from api import models
+from api.utils import artist_utils
 from sms_server.settings import TIME_ZONE
 
 class RoundingDecimalField(serializers.DecimalField):
@@ -30,19 +31,32 @@ class VenueSerializer(serializers.ModelSerializer):
   """Serialize Venue data."""
   venue_image = serializers.ImageField(max_length=None, use_url=True, required=False)
   venue_tags = VenueTagSerializer(many=True, read_only=True)
-  latitude = RoundingDecimalField(max_digits=9, decimal_places=6)
-  longitude = RoundingDecimalField(max_digits=9, decimal_places=6)
+  latitude = RoundingDecimalField(max_digits=8, decimal_places=5)
+  longitude = RoundingDecimalField(max_digits=8, decimal_places=5)
 
   class Meta:
     model = models.Venue
     fields = ("id", "venue_image_url", "venue_image", "name", "latitude", "longitude", "address", "postal_code", "city", "venue_url", "description", "venue_tags", "alias", "show_venue")
 
+class SocialLink(serializers.ModelSerializer):
+  """Serialize social links."""
+
+  class Meta:
+    model = models.SocialLink
+    fields = ("id", "created_at", "platform", "url")
+
 class ArtistSerializer(serializers.ModelSerializer):
   """Serialize artists."""
+  social_links = SocialLink(many=True)
   
   class Meta:
     model = models.Artist
-    fields = "__all__"
+    fields = ("id", "created_at", "name", "name_slug", "bio", "artist_image_url", "artist_image", "social_links")
+
+  def update(self, instance: models.Artist, validated_data: dict):
+    artist_utils.update_socials(artist=instance, social_links=validated_data["social_links"])
+    del validated_data["social_links"]
+    return super().update(instance, validated_data)
 
 class EventSerializer(serializers.ModelSerializer):
   """Serialize Event data."""
@@ -98,33 +112,33 @@ class IngestionRecordSerializer(serializers.ModelSerializer):
     model = models.IngestionRecord
     fields = "__all__"
 
-class JanitorRunSerializer(serializers.ModelSerializer):
-  """Serialize JanitorRun data."""
+class CarpenterRunSerializer(serializers.ModelSerializer):
+  """Serialize CarpenterRun data."""
   summary = serializers.SerializerMethodField()
 
-  def get_summary(self, janitor_run: models.JanitorRun) -> list[dict]:
+  def get_summary(self, carpenter_run: models.CarpenterRun) -> list[dict]:
     """Render a summary of the run for easy use.
 
     We also include the index to use as an ID in the react data table view.
     """
-    data = list(models.JanitorRecord.objects.filter(janitor_run=janitor_run).values("api_name", "field_changed", "change_type").annotate(total=Count("id")))
+    data = list(models.CarpenterRecord.objects.filter(carpenter_run=carpenter_run).values("api_name", "field_changed", "change_type").annotate(total=Count("id")))
     for i, agg in enumerate(data):
       agg["index"] = i
     return data
 
   class Meta:
-    model = models.JanitorRun
+    model = models.CarpenterRun
     fields = "__all__"
 
-class JanitorRecordSerializer(serializers.ModelSerializer):
-  """Serialize Janitor Records."""
+class CarpenterRecordSerializer(serializers.ModelSerializer):
+  """Serialize Carpenter Records."""
   raw_data = RawDataSerializer()
   event = EventSerializer()
   venue = VenueSerializer()
   artist = ArtistSerializer()
 
   class Meta:
-    model = models.JanitorRecord
+    model = models.CarpenterRecord
     fields = "__all__"
 
 class CrontabScheduleSerializer(serializers.ModelSerializer):
