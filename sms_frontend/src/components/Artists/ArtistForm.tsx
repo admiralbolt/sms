@@ -88,9 +88,9 @@ export const ArtistForm = ({
       items: {
         artist: {
           "ui:widget": "hidden",
-        }
-      }
-    }
+        },
+      },
+    },
   };
 
   return (

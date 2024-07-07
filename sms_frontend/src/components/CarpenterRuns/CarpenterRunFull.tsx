@@ -4,7 +4,7 @@ import { Box, Divider, Grid, Tab, Tabs, Typography } from "@mui/material";
 
 import { ChangeTypeChip } from "@/components/IngestionRuns/ChangeTypeChip";
 import customAxios from "@/hooks/customAxios";
-import { ChangeType, CarpenterRun } from "@/types";
+import { CarpenterRun, ChangeType } from "@/types";
 import { CarpenterRunRecord } from "@/types";
 
 import { RawDataComponent } from "../RawData";

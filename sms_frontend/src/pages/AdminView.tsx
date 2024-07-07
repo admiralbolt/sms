@@ -3,10 +3,10 @@ import * as React from "react";
 import { Box, Tab, Tabs } from "@mui/material";
 
 import { ArtistPanel } from "@/components/Artists";
+import { CarpenterRunPanel } from "@/components/CarpenterRuns";
 import { CommandPanel } from "@/components/Commands";
 import { EventPanel } from "@/components/Events";
 import { IngestionRunPanel } from "@/components/IngestionRuns";
-import { CarpenterRunPanel } from "@/components/CarpenterRuns";
 import { OpenMicPanel } from "@/components/OpenMics";
 import { PeriodicTaskStatus } from "@/components/PeriodicTaskStatus";
 import { VenuePanel } from "@/components/Venues";

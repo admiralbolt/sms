@@ -144,7 +144,9 @@ export const ArtistCard = ({
               </Box>
 
               {artist.social_links.map((link) => (
-                <Link target="_blank" rel="noopener" href={link.url}>{link.platform}</Link>
+                <Link target="_blank" rel="noopener" href={link.url}>
+                  {link.platform}
+                </Link>
               ))}
             </Box>
 
