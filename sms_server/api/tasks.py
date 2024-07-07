@@ -8,7 +8,8 @@ import requests
 from celery import shared_task
 
 from api.ingestion.ingester import Ingester
-from sms_server.api.ingestion.carpenter import Carpenter
+from api.ingestion.carpenter import Carpenter
+from api.ingestion.janitor import Janitor
 from api.models import IngestionRun, OpenMic
 from api.utils import open_mic_utils
 from sms_server.settings import IS_PROD, MEDIA_ROOT
@@ -43,6 +44,8 @@ def import_and_clean(debug: bool=False):
   ingester.import_data()
   carpenter = Carpenter()
   carpenter.run()
+  janitor = Janitor()
+  janitor.run()
 
 @shared_task
 def write_latest_data():
