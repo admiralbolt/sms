@@ -268,6 +268,7 @@ class OpenMic(models.Model):
 class JanitorRun(models.Model):
   """Is your janitor running?"""
   created_at = models.DateTimeField(auto_now_add=True)
+  finished_at = models.DateTimeField(blank=True, null=True)
   name = models.CharField(max_length=64)
 
   def __str__(self):
@@ -294,10 +295,17 @@ class JanitorRecord(models.Model):
 class CarpenterRun(models.Model):
   """Logs for runs from the carpenter."""
   created_at = models.DateTimeField(auto_now_add=True)
+  finished_at = models.DateTimeField(blank=True, null=True)
   name = models.CharField(max_length=64)
 
   def __str__(self):
     return f"{self.name} ({self.created_at})"
+  
+  def run_time(self) -> str:
+    if not self.finished_at:
+      return ""
+    
+    return str(self.finished_at - self.created_at)
   
 class CarpenterRecord(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
@@ -324,14 +332,28 @@ class CarpenterRecord(models.Model):
 
   def __str__(self):
     return f"{self.carpenter_run} - {self.api_name}: ({self.name_of_object_changed()}, {self.change_type})"
+  
+  def run_time(self) -> str:
+    if not self.finished_at:
+      return ""
+    
+    return str(self.finished_at - self.created_at)
 
 class IngestionRun(models.Model):
   """Logs for runs from the ingester."""
   created_at = models.DateTimeField(auto_now_add=True)
+  finished_at = models.DateTimeField(blank=True, null=True)
   name = models.CharField(max_length=64)
 
   def __str__(self):
     return f"{self.name} ({self.created_at})"
+  
+  def run_time(self) -> str:
+    if not self.finished_at:
+      return ""
+    
+    return str(self.finished_at - self.created_at)
+
 
 class IngestionRecord(models.Model):
   """Parent class for tracking individual changes from ingester run."""
