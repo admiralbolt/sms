@@ -188,8 +188,8 @@ class JanitorRunRecordsView(ListAPIView):
 
   def get_queryset(self):
     models.JanitorRecord.objects.prefetch_related("event", "venue")
-    carpenter_run = models.JanitorRun.objects.filter(id=self.kwargs.get("janitor_run_id", None)).first()
-    return models.JanitorRecord.objects.filter(carpenter_run=carpenter_run)
+    janitor_run = models.JanitorRun.objects.filter(id=self.kwargs.get("janitor_run_id", None)).first()
+    return models.JanitorRecord.objects.filter(janitor_run=janitor_run)
 
 class LogoutView(APIView):
   """Logout!"""

@@ -156,7 +156,7 @@ class JanitorMergeEventRecordSerializer(serializers.ModelSerializer):
 class JanitorApplyArtistsRecordSerializer(serializers.ModelSerializer):
   """Serialize apply artists records."""
   class Meta:
-    models = models.JanitorApplyArtistRecord
+    model = models.JanitorApplyArtistRecord
     fields = "__all__"
 
 class JanitorRecordSerializer(serializers.ModelSerializer):
