@@ -134,7 +134,7 @@ class Carpenter:
         )
 
   def run(self):
-    """CLEAN UP CLEAN UP EVERYBODY DO YOUR SHARE."""
+    """BUILD SOME SHIT."""
     if self.ingestion_apis:
       for ingestion_api in self.ingestion_apis:
         self.process_api(api=API_MAPPING[ingestion_api])
@@ -147,3 +147,6 @@ class Carpenter:
           continue
 
         self.process_api(api=API_MAPPING[ingestion_api])
+
+    self.carpenter_run.finished_at = datetime.now()
+    self.carpenter_run.save()

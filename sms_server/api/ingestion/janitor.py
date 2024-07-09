@@ -112,3 +112,6 @@ class Janitor:
 
     # Mark all previously unfinalized events as finalized.
     self.finalize_events()
+
+    self.janitor_run.finished_at = datetime.now()
+    self.janitor_run.save()
