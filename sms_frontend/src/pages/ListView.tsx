@@ -7,7 +7,7 @@ export const ListView = () => {
   usePageDescription("See a list of all shows & open mics in Seattle.");
 
   return (
-    <div>
+    <div className="md:max-w-[70vw]">
       <FilterPanel />
       <EventList />
     </div>

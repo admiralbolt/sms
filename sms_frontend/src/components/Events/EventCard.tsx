@@ -99,7 +99,7 @@ export const EventCard = ({
   };
 
   const displayImage = getEventDisplayImage(event);
-  const venueLink = () => {
+  const getVenueLink = () => {
     if (
       event.venue.venue_url == null ||
       event.venue.venue_url == undefined ||
@@ -128,27 +128,28 @@ export const EventCard = ({
     return (
       <Box
         key={event.id}
-        className="flex align-center content-center justify-center border-b-2 border-blue-500/20"
+        className="flex w-[400px] md:w-[600px] rounded-sm align-center p-2 content-center border-b-2 border-blue-500/20 bg-gray-600"
       >
-        <div
-          className="flex md:flex-row"
-          key={event.id}
-          style={{
-            display: "flex",
-            margin: 1,
-            padding: 1.5,
-          }}
-        >
+        <div className="flex md:flex-row" key={event.id}>
           <Box
-            className={`w-16 h-16 md:w-24 md:h-24 bg-cover bg-center flex flex-col justify-end text-center  relative`}
-            sx={{ backgroundImage: `url(${displayImage})` }}
+            className={`bg-center flex flex-col justify-end text-center relative`}
+            sx={{
+              backgroundImage: `url(${displayImage})`,
+              minWidth: "100px",
+              minHeight: "100px",
+              maxWidth: "100px",
+              maxHeight: "100px",
+              backgroundSize: "cover", // Ensure background image covers the box
+              backgroundPosition: "center",
+            }}
           >
+            <Box className="flex justify-center w-full h-full bg-black/50">
+              {getEventIcon(event.event_type)}
+            </Box>
             <div className="z-0 absolute bg-black w-full h-full opacity-20" />
             <div className="flex flex-col z-index-10 bg-black/50">
-              <span className="text-xs md:text-lg font-bold">
-                {venueLink()}
-              </span>
-              <span className="text-xs md:text-lg">{timeAndDate(event)}</span>
+              <span className="text-xs font-bold">{getVenueLink()}</span>
+              <span className="text-xs">{timeAndDate(event)}</span>
             </div>
           </Box>
 
@@ -182,9 +183,32 @@ export const EventCard = ({
             </Box>
           )}
 
-          <div className="px-4 md:w-[600px] flex-col content-center">
+          <div className="flex-col max-w-[70vw] min-width-[400px] content-center">
             <Box className="flex items-center">
-              <Box className="pr-4">{getEventIcon(event.event_type)}</Box>
+              <div className="flex flex-col justify-center align-center content-center px-4">
+                <Link target="_blank" href={mapsLink(venue)}>
+                  <IconButton
+                    disabled={!event.event_url}
+                    size="small"
+                    edge="start"
+                    color="primary"
+                    aria-label="menu"
+                  >
+                    <PlaceIcon fontSize={"small"} />
+                  </IconButton>
+                </Link>
+                <Link target="_blank" href={event.event_url || ""}>
+                  <IconButton
+                    disabled={!event.event_url}
+                    size="small"
+                    edge="start"
+                    color="primary"
+                    aria-label="menu"
+                  >
+                    <LinkIcon />
+                  </IconButton>
+                </Link>
+              </div>
               <Box className="flex flex-col">
                 <h2 className="md:text-lg text-wrap">{event.title}</h2>
                 <Box className="flex items-center">
@@ -214,7 +238,7 @@ export const EventCard = ({
                         <LinkIcon />
                       </IconButton>
                     </Link>
-                  </Box>
+                  </Box> */}
                 </Box>
               </Box>
             </Box>
