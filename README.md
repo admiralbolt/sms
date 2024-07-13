@@ -88,8 +88,6 @@ python manage.py import_api_data --all
 python manage.py crawl_data --all
 # 3. Generate open mic night events!
 python manage.py generate_open_mic_events
-# 4. Write the data to a flat file used by the frontend!
-python manage.py write_latest_data
 ```
 
 Now we should be able to see some data in both the admin panel and the rest api!

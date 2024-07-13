@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 
 import {
   Delete,
@@ -24,7 +24,7 @@ import { FaGuitar } from "react-icons/fa6";
 import { PiMicrophoneStageFill } from "react-icons/pi";
 
 import { SnackbarContext } from "@/contexts/SnackbarContext";
-import { getVenueById } from "@/hooks/api";
+import { getEventDisplayImage } from "@/hooks/api";
 import customAxios from "@/hooks/customAxios";
 import { Event, EventType, Venue } from "@/types";
 
@@ -57,18 +57,9 @@ export const EventCard = ({
   updateCallback = emptyCallback,
   deleteCallback = emptyCallback,
 }: Props) => {
-  const [venue, setVenue] = useState<Venue>({} as Venue);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
   const { setSnackbar } = useContext(SnackbarContext);
-
-  useEffect(() => {
-    if (event.venue < 0) return;
-
-    (async () => {
-      setVenue(await getVenueById(event.venue));
-    })();
-  }, [event.venue]);
 
   const toggleEdit = () => {
     setEdit(!edit);
@@ -133,24 +124,17 @@ export const EventCard = ({
     return <FaGuitar size={24} color={SHOW_COLOR} />;
   };
 
-  const displayImage = () => {
-    if (event.event_image) return event.event_image;
-    if (venue.venue_image) return venue.venue_image;
-
-    return "/placeholder.png";
-  };
-
   const venueLink = () => {
     if (
-      venue.venue_url == null ||
-      venue.venue_url == undefined ||
-      venue.venue_url.length == 0
+      event.venue.venue_url == null ||
+      event.venue.venue_url == undefined ||
+      event.venue.venue_url.length == 0
     )
-      return venue.name;
+      return event.venue.name;
 
     return (
-      <Link target="_blank" href={venue.venue_url}>
-        {venue.name}
+      <Link target="_blank" href={event.venue.venue_url}>
+        {event.venue.name}
       </Link>
     );
   };
@@ -183,7 +167,7 @@ export const EventCard = ({
             <CardMedia
               component="img"
               alt={`Poster for ${event.title}`}
-              image={displayImage()}
+              image={getEventDisplayImage(event)}
               sx={{
                 filter: "brightness(65%)",
                 width: "sm",
@@ -284,7 +268,7 @@ export const EventCard = ({
                 marginTop: 1,
               }}
             >
-              <Link target="_blank" href={mapsLink(venue)}>
+              <Link target="_blank" href={mapsLink(event.venue)}>
                 <IconButton
                   size="large"
                   edge="start"
