@@ -1,17 +1,12 @@
 """Schedulable / repeatable tasks for data gathering and processing."""
 import datetime
-import json
 import logging
-import os
-
-import requests
 from celery import shared_task
 
 from api.ingestion.ingester import Ingester
-from sms_server.api.ingestion.carpenter import Carpenter
+from api.ingestion.carpenter import Carpenter
 from api.models import IngestionRun, OpenMic
 from api.utils import open_mic_utils
-from sms_server.settings import IS_PROD, MEDIA_ROOT
 
 logger = logging.getLogger(__name__)
 
