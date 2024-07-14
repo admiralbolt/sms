@@ -9,7 +9,6 @@ import {
   IngestionRun,
   OpenMic,
   PeriodicTask,
-  SocialLink,
   Venue,
 } from "@/types";
 

@@ -3,9 +3,6 @@ import { useContext, useState } from "react";
 import {
   Delete,
   Edit,
-  GpsFixed as GpsFixedIcon,
-  Home as HomeIcon,
-  LocationCity as LocationCityIcon,
 } from "@mui/icons-material";
 import {
   Box,
