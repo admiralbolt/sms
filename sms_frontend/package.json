@@ -24,8 +24,6 @@
     "axios": "^1.6.7",
     "axios-cache-interceptor": "^1.5.1",
     "dayjs": "^1.11.10",
-    "fuse": "^0.12.1",
-    "fuse.js": "^7.0.0",
     "mem": "^10.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -33,6 +31,7 @@
     "react-icons": "^5.0.1",
     "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.22.1",
+    "use-debounce": "^10.0.1",
     "web-vitals": "^3.5.2"
   },
   "devDependencies": {

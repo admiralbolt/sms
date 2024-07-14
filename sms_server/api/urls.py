@@ -28,6 +28,7 @@ urlpatterns = [
   path("api/ingestion_runs/<int:ingestion_run_id>/records", views.IngestionRunRecordsView.as_view(), name="ingestion_run_records"),
   path("api/carpenter_runs/<int:carpenter_run_id>/records", views.CarpenterRunRecordsView.as_view(), name="carpenter_run_records"),
   path("api/janitor_runs/<int:janitor_run_id>/records", views.JanitorRunRecordsView.as_view(), name="janitor_run_records"),
+  path("api/get_events_on_day", views.get_events_on_day),
   path("api/get_all_event_types", views.get_all_event_types),
   path("api/get_all_venue_types", views.get_all_venue_types),
   path("api/logout", views.LogoutView.as_view()),

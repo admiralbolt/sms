@@ -1,7 +1,7 @@
 export type EventType = "Open Mic" | "Open Jam" | "Show";
 
 export interface Event {
-  venue: number;
+  venue: Venue;
   event_day: string;
   event_type: EventType;
   id: number;
@@ -68,7 +68,7 @@ export interface CarpenterRunRecord {
 
 export interface CarpenterRunSummary {
   api_name: string;
-  change_type: string;
+  change_type: ChangeType;
   field_changed: string;
   total: number;
   index: number;

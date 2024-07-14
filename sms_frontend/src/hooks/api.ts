@@ -1,9 +1,6 @@
-// Eventually, we should probably replace the old api entirely.
-// For now all things that interact with the *actual* api will be here,
-// and all things that interact explicitly with the flat file will be in
-// flatFileApi.ts.
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { useLocalStorageContext } from "@/contexts/LocalStorageContext";
 import customAxios from "@/hooks/customAxios";
 import {
   Artist,
@@ -12,9 +9,26 @@ import {
   IngestionRun,
   OpenMic,
   PeriodicTask,
-  SocialLink,
   Venue,
 } from "@/types";
+
+const BASE_API_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://seattlemusicscene.info:8000"
+    : "http://localhost:8000";
+
+const getEventDisplayImage = (event: Event): string => {
+  if (event.event_image) return BASE_API_URL + event.event_image;
+  if (event.venue.venue_image) return BASE_API_URL + event.venue.venue_image;
+
+  return "/placeholder.png";
+};
+
+const getVenueDisplayImage = (venue: Venue): string => {
+  if (venue.venue_image) return BASE_API_URL + venue.venue_image;
+
+  return "/placeholder.png";
+};
 
 const getVenueById = async (id: any): Promise<Venue> => {
   const result = await customAxios.get(`/api/venues/${id}`);
@@ -32,6 +46,38 @@ const getOpenMicById = async (id: any): Promise<OpenMic> => {
   const result = await customAxios.get(`/api/open_mics/${id}`);
 
   return result.data;
+};
+
+const getEventsByDay = async (day: string): Promise<Event[]> => {
+  const result = await customAxios.get(`/api/get_events_on_day?day=${day}`);
+
+  return result.data;
+};
+
+const useSelectedDateEvents = () => {
+  const eventsByDay = useRef<{ [key: string]: Event[] }>({});
+  const { selectedDate } = useLocalStorageContext();
+  const [selectedDateEvents, setSelectedDateEvents] = useState<Event[]>([]);
+  const [eventsLoading, setEventsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!selectedDate) return;
+
+    setEventsLoading(true);
+    const targetDate = selectedDate.format("YYYY-MM-DD");
+
+    (async () => {
+      if (!(targetDate in eventsByDay.current)) {
+        const result = await getEventsByDay(targetDate);
+        eventsByDay.current[targetDate] = result;
+      }
+
+      setSelectedDateEvents(eventsByDay.current[targetDate]);
+      setEventsLoading(false);
+    })();
+  }, [eventsByDay, selectedDate]);
+
+  return { selectedDateEvents, eventsLoading };
 };
 
 const useEventTypes = () => {
@@ -191,6 +237,7 @@ export {
   getEventById,
   getOpenMicById,
   getVenueById,
+  getEventsByDay,
   updateEvent,
   useEventTypes,
   useIngestionRuns,
@@ -207,4 +254,7 @@ export {
   usePeriodicTasks,
   useOpenMics,
   useVenues,
+  getEventDisplayImage,
+  getVenueDisplayImage,
+  useSelectedDateEvents,
 };

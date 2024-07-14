@@ -35,7 +35,7 @@ class BandsintownApi(EventApi):
 
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.BANDSINTOWN)
-    self.driver = crawler_utils.create_chrome_driver()
+    self.driver = crawler_utils.create_driver()
 
   def get_venue_kwargs(self, raw_data: dict) -> dict:
     venue_data = raw_data["jsonLdContainer"]["eventJsonLd"]["location"]

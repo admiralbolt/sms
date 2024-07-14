@@ -7,7 +7,7 @@ import { Box, Fade } from "@mui/material";
 import { EventCard } from "@/components/Events/EventCard";
 import { useAppBarHeight, useFilterPanelWidth } from "@/hooks/materialHacks";
 import { useIsMobile, useWindowDimensions } from "@/hooks/window";
-import { Event, Venue } from "@/types";
+import { Event } from "@/types";
 
 import { MapData } from "./MapData";
 
@@ -24,7 +24,6 @@ export const Map = () => {
   ]);
   const [bannerOpen, setBannerOpen] = React.useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event>();
-  const [selectedVenue, setSelectedVenue] = useState<Venue>();
 
   const eventBox = () => {
     if (isMobile) {
@@ -40,9 +39,7 @@ export const Map = () => {
             margin: "auto",
           }}
         >
-          {selectedVenue && selectedEvent && (
-            <EventCard event={selectedEvent} />
-          )}
+          {selectedEvent && <EventCard event={selectedEvent} />}
         </Box>
       );
     }
@@ -62,7 +59,7 @@ export const Map = () => {
           margin: "auto",
         }}
       >
-        {selectedVenue && selectedEvent && <EventCard event={selectedEvent} />}
+        {selectedEvent && <EventCard event={selectedEvent} />}
       </Box>
     );
   };
@@ -85,7 +82,6 @@ export const Map = () => {
         <MapData
           setBannerOpen={setBannerOpen}
           setSelectedEvent={setSelectedEvent}
-          setSelectedVenue={setSelectedVenue}
           setMapPosition={setMapPosition}
         />
       </MapContainer>

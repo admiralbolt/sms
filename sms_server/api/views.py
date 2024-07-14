@@ -206,6 +206,19 @@ class LogoutView(APIView):
     
 @api_view(["GET"])
 @permission_classes([AllowAny])
+def get_events_on_day(request):
+  day = request.GET.get("day")
+  if not day:
+    return JsonResponse([], safe=False)
+  
+  events = models.Event.objects.filter(show_event=True, event_day=day)
+  return JsonResponse(serializers.EventSerializer(
+    events,
+    many=True
+  ).data, safe=False)
+    
+@api_view(["GET"])
+@permission_classes([AllowAny])
 def get_all_event_types(request):
   """List all event types."""
   return JsonResponse(sorted(get_all(EventTypes)), safe=False)
@@ -217,7 +230,7 @@ def get_all_venue_types(request):
   return JsonResponse(sorted(get_all(VenueTypes)), safe=False)
 
 @api_view(["GET"])
-@permission_classes([IsAdminUser] if IS_PROD else [])
+@permission_classes([AllowAny] if IS_PROD else [])
 def search_events(request: HttpRequest):
   keyword = request.GET.get("keyword")
   if not keyword:

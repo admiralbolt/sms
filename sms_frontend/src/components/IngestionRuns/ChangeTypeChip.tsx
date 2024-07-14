@@ -6,7 +6,7 @@ import {
   SkipNext,
   Upgrade,
 } from "@mui/icons-material";
-import { Chip, Typography } from "@mui/material";
+import { Chip } from "@mui/material";
 
 import { ChangeType } from "@/types";
 
