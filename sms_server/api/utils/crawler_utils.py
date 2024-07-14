@@ -7,7 +7,7 @@ USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
 
 def create_driver() -> Driver:
   """Create a headless chrome driver for requests."""
-  return Driver(uc=True, headless=True, agent=USER_AGENT)
+  return Driver(uc=True, headless=True)
 
 def get_html_soup(driver: Driver, url: str) -> bs4.BeautifulSoup:
   """Delicious soup."""
