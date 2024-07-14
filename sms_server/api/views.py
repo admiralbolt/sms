@@ -216,7 +216,7 @@ def get_all_venue_types(request):
   return JsonResponse(sorted(get_all(VenueTypes)), safe=False)
 
 @api_view(["GET"])
-@permission_classes([IsAdminUser] if IS_PROD else [])
+@permission_classes([AllowAny] if IS_PROD else [])
 def search_events(request: HttpRequest):
   keyword = request.GET.get("keyword")
   if not keyword:
