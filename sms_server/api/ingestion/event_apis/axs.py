@@ -105,7 +105,7 @@ class AXSApi(EventApi):
     }
   
   def get_event_list(self) -> Generator[dict, None, None]:
-    driver = crawler_utils.create_chrome_driver()
+    driver = crawler_utils.create_driver()
     csrf_token = get_csrf_token(driver)
     data = event_list_request(driver, csrf_token, page=1)
     # AXS returns total events, not total pages. Little bit of maths.
