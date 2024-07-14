@@ -5,11 +5,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
 
-
-# Functions from the following migrations need manual copying.
-# Move them and any dependencies into this file, then update the
-# RunPython operations to refer to the local versions:
-# api.migrations.0062_populate_venue_name_lower
+from api.models import Venue
 
 class Migration(migrations.Migration):
 
@@ -17,6 +13,11 @@ class Migration(migrations.Migration):
 
     dependencies = [
     ]
+
+    def venue_names_to_lower(apps, schema_editor):
+      for venue in Venue.objects.all():
+          venue.name_lower = venue.name.lower()
+          venue.save()
 
     operations = [
         migrations.CreateModel(
@@ -146,7 +147,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.RunPython(
-            code=api.migrations.0062_populate_venue_name_lower.Migration.venue_names_to_lower,
+            code=venue_names_to_lower,
         ),
         migrations.AlterField(
             model_name='venue',
