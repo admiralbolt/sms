@@ -220,9 +220,6 @@ class Event(models.Model):
         self._original_event_image_url = self.event_image_url
         self.event_image.save(f"{self.title.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
 
-  class Meta:
-    unique_together = [["venue", "event_day", "start_time"]]
-
 
 class OpenMic(models.Model):
   """Generic information about an open mic."""
