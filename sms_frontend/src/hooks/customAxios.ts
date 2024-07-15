@@ -3,9 +3,9 @@ import axios from "axios";
 import { memoizedRefreshTokens } from "./auth";
 
 const baseUrl =
-  // process.env.NODE_ENV === "production"
-    "https://seattlemusicscene.info:8000"
-    // : "http://localhost:8000";
+  process.env.NODE_ENV === "production"
+    ? "https://seattlemusicscene.info:8000"
+    : "http://localhost:8000";
 
 const customAxios = axios.create({
   baseURL: baseUrl,
