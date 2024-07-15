@@ -100,6 +100,7 @@ export const EventCard = ({
     return formatTime(event.start_time);
   };
 
+
   const displayImage = getEventDisplayImage(event);
   const getVenueLink = () => {
     if (
@@ -108,6 +109,7 @@ export const EventCard = ({
       event.venue.venue_url.length == 0
     )
       return event.venue.name;
+
 
     return (
       <Link target="_blank" href={event.venue.venue_url}>
@@ -190,7 +192,7 @@ export const EventCard = ({
               <div className="flex flex-col justify-center align-center content-center px-4">
                 <Link target="_blank" href={mapsLink(event.venue)}>
                   <IconButton
-                    disabled={!event.event_url}
+                    disabled={!mapsLink(event.venue)}
                     size="small"
                     edge="start"
                     color="primary"
@@ -199,17 +201,18 @@ export const EventCard = ({
                     <PlaceIcon fontSize={"small"} />
                   </IconButton>
                 </Link>
-                <Link target="_blank" href={event.event_url || ""}>
-                  <IconButton
-                    disabled={!event.event_url}
-                    size="small"
-                    edge="start"
-                    color="primary"
-                    aria-label="menu"
-                  >
-                    <LinkIcon />
-                  </IconButton>
-                </Link>
+                {event.event_url && (
+                 <Link target="_blank" href={event.event_url}>
+                 <IconButton
+                   size="small"
+                   edge="start"
+                   color="info"
+                   aria-label="menu"
+                 >
+                   <LinkIcon />
+                 </IconButton>
+               </Link> 
+                )}
               </div>
               <Box className="flex flex-col">
                 <h2 className="md:text-lg text-wrap">{event.title}</h2>

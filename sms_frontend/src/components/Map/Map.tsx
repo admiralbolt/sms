@@ -31,7 +31,6 @@ export const Map = () => {
         <Box
           sx={{
             display: "flex",
-            // justifyContent: "center",
             flex: 1,
             zIndex: 900,
             position: "fixed",
@@ -51,7 +50,6 @@ export const Map = () => {
           left: `${pct}%`,
           transform: `translate(-${pct}%, 0)`,
           display: "flex",
-          // justifyContent: "center",
           flex: 1,
           zIndex: 900,
           position: "fixed",
