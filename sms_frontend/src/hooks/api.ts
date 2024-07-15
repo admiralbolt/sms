@@ -1,18 +1,34 @@
-// Eventually, we should probably replace the old api entirely.
-// For now all things that interact with the *actual* api will be here,
-// and all things that interact explicitly with the flat file will be in
-// flatFileApi.ts.
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { useLocalStorageContext } from "@/contexts/LocalStorageContext";
 import customAxios from "@/hooks/customAxios";
 import {
+  Artist,
+  CarpenterRun,
   Event,
   IngestionRun,
-  JanitorRun,
   OpenMic,
   PeriodicTask,
   Venue,
 } from "@/types";
+
+const BASE_API_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://seattlemusicscene.info:8000"
+    : "http://localhost:8000";
+
+const getEventDisplayImage = (event: Event): string => {
+  if (event.event_image) return BASE_API_URL + event.event_image;
+  if (event.venue.venue_image) return BASE_API_URL + event.venue.venue_image;
+
+  return "/placeholder.png";
+};
+
+const getVenueDisplayImage = (venue: Venue): string => {
+  if (venue.venue_image) return BASE_API_URL + venue.venue_image;
+
+  return "/placeholder.png";
+};
 
 const getVenueById = async (id: any): Promise<Venue> => {
   const result = await customAxios.get(`/api/venues/${id}`);
@@ -30,6 +46,38 @@ const getOpenMicById = async (id: any): Promise<OpenMic> => {
   const result = await customAxios.get(`/api/open_mics/${id}`);
 
   return result.data;
+};
+
+const getEventsByDay = async (day: string): Promise<Event[]> => {
+  const result = await customAxios.get(`/api/get_events_on_day?day=${day}`);
+
+  return result.data;
+};
+
+const useSelectedDateEvents = () => {
+  const eventsByDay = useRef<{ [key: string]: Event[] }>({});
+  const { selectedDate } = useLocalStorageContext();
+  const [selectedDateEvents, setSelectedDateEvents] = useState<Event[]>([]);
+  const [eventsLoading, setEventsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!selectedDate) return;
+
+    setEventsLoading(true);
+    const targetDate = selectedDate.format("YYYY-MM-DD");
+
+    (async () => {
+      if (!(targetDate in eventsByDay.current)) {
+        const result = await getEventsByDay(targetDate);
+        eventsByDay.current[targetDate] = result;
+      }
+
+      setSelectedDateEvents(eventsByDay.current[targetDate]);
+      setEventsLoading(false);
+    })();
+  }, [eventsByDay, selectedDate]);
+
+  return { selectedDateEvents, eventsLoading };
 };
 
 const useEventTypes = () => {
@@ -72,6 +120,18 @@ const updateEvent = (event: Event) => {
   return customAxios.put(`api/events/${event.id}`, event);
 };
 
+const createArtist = (artist: Artist) => {
+  return customAxios.post(`api/artists`, artist);
+};
+
+const updateArtist = (artist: Artist) => {
+  // Until we get file uploading from the UI figured out, we want to avoid
+  // making updates directly to the "artist_image" field.
+  delete artist.artist_image;
+
+  return customAxios.put(`api/artists/${artist.id}`, artist);
+};
+
 const createVenue = (venue: Venue) => {
   return customAxios.post(`api/venues`, venue);
 };
@@ -105,6 +165,21 @@ const useOpenMics = (): [
   }, []);
 
   return [openMics, setOpenMics];
+};
+
+const useArtists = (): [
+  Artist[],
+  React.Dispatch<React.SetStateAction<Artist[]>>,
+] => {
+  const [artists, setArtists] = useState<Artist[]>([]);
+
+  useEffect(() => {
+    customAxios.get("api/artists").then((res) => {
+      setArtists(res.data);
+    });
+  }, []);
+
+  return [artists, setArtists];
 };
 
 const useVenues = (): [
@@ -146,11 +221,11 @@ const useIngestionRuns = (): IngestionRun[] => {
   return runs;
 };
 
-const useJanitorRuns = (): JanitorRun[] => {
-  const [runs, setRuns] = useState<JanitorRun[]>([]);
+const useCarpenterRuns = (): CarpenterRun[] => {
+  const [runs, setRuns] = useState<CarpenterRun[]>([]);
 
   useEffect(() => {
-    customAxios.get("api/janitor_runs").then((res) => {
+    customAxios.get("api/carpenter_runs").then((res) => {
       setRuns(res.data);
     });
   }, []);
@@ -162,17 +237,24 @@ export {
   getEventById,
   getOpenMicById,
   getVenueById,
+  getEventsByDay,
   updateEvent,
   useEventTypes,
   useIngestionRuns,
-  useJanitorRuns,
+  useCarpenterRuns,
+  createArtist,
+  updateArtist,
   createEvent,
   createVenue,
   updateVenue,
   createOpenMic,
   updateOpenMic,
+  useArtists,
   useVenueTypes,
   usePeriodicTasks,
   useOpenMics,
   useVenues,
+  getEventDisplayImage,
+  getVenueDisplayImage,
+  useSelectedDateEvents,
 };

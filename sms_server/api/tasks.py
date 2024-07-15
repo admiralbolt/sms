@@ -8,7 +8,7 @@ import requests
 from celery import shared_task
 
 from api.ingestion.ingester import Ingester
-from api.ingestion.janitor import Janitor
+from sms_server.api.ingestion.carpenter import Carpenter
 from api.models import IngestionRun, OpenMic
 from api.utils import open_mic_utils
 from sms_server.settings import IS_PROD, MEDIA_ROOT
@@ -41,25 +41,8 @@ def import_and_clean(debug: bool=False):
   """Import data from ALL APIs & Crawlers."""
   ingester = Ingester()
   ingester.import_data()
-  janitor = Janitor()
-  janitor.run()
-
-@shared_task
-def write_latest_data():
-  """Write latest data for events and venues to a flat file."""
-  # On plane so can't google, will eventually need to get a server name in
-  # here somewhere to distinguish localhost / prod. For now we hardcode to
-  # localhost.
-  base_url = "http://localhost" if not IS_PROD else "https://seattlemusicscene.info"
-  venues_request = requests.get(f"{base_url}:8000/api/venues")
-  all_venues = venues_request.json()
-  with open(os.path.join(MEDIA_ROOT, "latest_venues.json"), "w") as wh:
-    json.dump(all_venues, wh)
-
-  events_request = requests.get(f"{base_url}:8000/api/events")
-  all_events = events_request.json()
-  with open(os.path.join(MEDIA_ROOT, "latest_events.json"), "w") as wh:
-    json.dump(all_events, wh)
+  carpenter = Carpenter()
+  carpenter.run()
 
 @shared_task
 def delete_old_ingestion_runs():

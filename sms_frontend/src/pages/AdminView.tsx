@@ -2,10 +2,11 @@ import * as React from "react";
 
 import { Box, Tab, Tabs } from "@mui/material";
 
+import { ArtistPanel } from "@/components/Artists";
+import { CarpenterRunPanel } from "@/components/CarpenterRuns";
 import { CommandPanel } from "@/components/Commands";
 import { EventPanel } from "@/components/Events";
 import { IngestionRunPanel } from "@/components/IngestionRuns";
-import { JanitorRunPanel } from "@/components/JanitorRuns";
 import { OpenMicPanel } from "@/components/OpenMics";
 import { PeriodicTaskStatus } from "@/components/PeriodicTaskStatus";
 import { VenuePanel } from "@/components/Venues";
@@ -57,11 +58,12 @@ export const AdminView = () => {
         >
           <Tab label="Status" {...a11yProps(0)} />
           <Tab label="Ingestion Runs" {...a11yProps(1)} />
-          <Tab label="Janitor Runs" {...a11yProps(2)} />
+          <Tab label="carpenter Runs" {...a11yProps(2)} />
           <Tab label="Commands" {...a11yProps(3)} />
           <Tab label="Venues" {...a11yProps(4)} />
           <Tab label="Open Mics" {...a11yProps(5)} />
           <Tab label="Events" {...a11yProps(6)} />
+          <Tab label="Artists" {...a11yProps(7)} />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -71,7 +73,7 @@ export const AdminView = () => {
         <IngestionRunPanel />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        <JanitorRunPanel />
+        <CarpenterRunPanel />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
         <CommandPanel />
@@ -84,6 +86,9 @@ export const AdminView = () => {
       </CustomTabPanel>
       <CustomTabPanel value={value} index={6}>
         <EventPanel />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={7}>
+        <ArtistPanel />
       </CustomTabPanel>
     </Box>
   );

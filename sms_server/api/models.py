@@ -16,8 +16,8 @@ class Venue(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
   name = models.CharField(max_length=128, unique=True)
   name_lower = models.CharField(max_length=128, unique=True)
-  latitude = models.DecimalField(max_digits=9, decimal_places=6)
-  longitude = models.DecimalField(max_digits=9, decimal_places=6)
+  latitude = models.DecimalField(max_digits=8, decimal_places=5)
+  longitude = models.DecimalField(max_digits=8, decimal_places=5)
   address = models.CharField(max_length=256)
   postal_code = models.CharField(max_length=8)
   city = models.CharField(max_length=64)
@@ -52,8 +52,8 @@ class Venue(models.Model):
     # but judging from: https://code.djangoproject.com/ticket/27825#comment:9
     # seems unlikely.
     self.name_lower = self.name.lower()
-    self.latitude = round(float(self.latitude), 6)
-    self.longitude = round(float(self.longitude), 6)
+    self.latitude = round(float(self.latitude), 5)
+    self.longitude = round(float(self.longitude), 5)
 
   def save(self, *args, **kwargs):
     self.make_pretty()
@@ -104,24 +104,45 @@ class Artist(models.Model):
   name = models.CharField(max_length=64, unique=True)
   name_slug = models.CharField(max_length=128, unique=True)
   bio = models.TextField(max_length=256, blank=True, null=True)
+  artist_image_url = models.CharField(max_length=1024, blank=True, null=True)
+  artist_image = models.ImageField(upload_to="event_images", blank=True, null=True)
 
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self._original_artist_image_url = self.artist_image_url
+  
   def save(self, *args, **kwargs):
     self.name_slug = self.name.lower().replace(" ", "-")
     super().save(*args, **kwargs)
+    if self.artist_image_url:
+      if self.artist_image_url != self._original_artist_image_url or not self.artist_image:
+        image_request = requests.get(self.artist_image_url, timeout=15)
+        file_extension = ""
+        parts = image_request.headers["Content-Type"].split("/")
+        if len(parts) == 2:
+          file_extension = parts[1]
+        kind = filetype.guess(image_request.content)
+        if kind is not None:
+          file_extension = kind.extension
+        content_file = ContentFile(image_request.content)
+        self._original_artist_image_url = self.artist_image_url
+        self.artist_image.save(f"{self.name_slug.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
 
   def __str__(self):
-    return self.name
+    return f"|{self.id}| {self.name}"
 
 class SocialLink(models.Model):
   """Social Links for artists."""
   created_at = models.DateTimeField(auto_now_add=True)
-  artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
+  artist = models.ForeignKey(Artist, related_name="social_links", on_delete=models.CASCADE)
   platform = models.CharField(max_length=32)
   url = models.CharField(max_length=128)
 
   class Meta:
     unique_together = [["artist", "platform"]]
 
+    def __str__(self):
+      return f"|{self.id}| [{self.artist}, {self.platform}]"
 
 class RawData(models.Model):
   """Raw data from an api request.
@@ -145,6 +166,7 @@ class RawData(models.Model):
   venue_name = models.CharField(max_length=128)
   event_day = models.DateField()
   data = models.JSONField()
+  processed = models.BooleanField(default=False)
 
   def __str__(self):
     return f"|{self.id}| [{self.api_name}] ({self.venue_name}, {self.event_name})"
@@ -154,7 +176,7 @@ class RawData(models.Model):
 
 
 class Event(models.Model):
-  """Finalized list of events."""
+  """List of events."""
   created_at = models.DateTimeField(auto_now_add=True)
   title = models.CharField(max_length=256)
   event_day = models.DateField()
@@ -171,6 +193,7 @@ class Event(models.Model):
   # Meta control for display of events.
   show_event = models.BooleanField(default=True)
 
+  finalized = models.BooleanField(default=False)
   # Link back to the raw data that an event comes from.
   raw_datas = models.ManyToManyField(RawData)
 
@@ -242,17 +265,17 @@ class OpenMic(models.Model):
 
     return "UNKNOWN_VENUE" if not self.venue else f"{self.venue.name} {self.event_mic_type}"
   
-class JanitorRun(models.Model):
-  """Logs for runs from the janitor."""
+class CarpenterRun(models.Model):
+  """Logs for runs from the carpenter."""
   created_at = models.DateTimeField(auto_now_add=True)
   name = models.CharField(max_length=64)
 
   def __str__(self):
     return f"{self.name} ({self.created_at})"
   
-class JanitorRecord(models.Model):
+class CarpenterRecord(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
-  janitor_run = models.ForeignKey(JanitorRun, on_delete=models.CASCADE)
+  carpenter_run = models.ForeignKey(CarpenterRun, on_delete=models.CASCADE)
   api_name = models.CharField(max_length=32, default="Manual")
   raw_data = models.ForeignKey(RawData, on_delete=models.CASCADE)
   change_type = models.CharField(max_length=16, choices=get_choices(ChangeTypes))
@@ -274,7 +297,7 @@ class JanitorRecord(models.Model):
     return getattr(obj, "name", getattr(obj, "title", "None"))
 
   def __str__(self):
-    return f"{self.janitor_run} - {self.api_name}: ({self.name_of_object_changed()}, {self.change_type})"
+    return f"{self.carpenter_run} - {self.api_name}: ({self.name_of_object_changed()}, {self.change_type})"
 
 class IngestionRun(models.Model):
   """Logs for runs from the ingester."""
@@ -304,8 +327,8 @@ ADMIN_MODELS = [
   Event,
   IngestionRun,
   IngestionRecord,
-  JanitorRun,
-  JanitorRecord,
+  CarpenterRun,
+  CarpenterRecord,
   OpenMic,
   RawData,
   SocialLink,

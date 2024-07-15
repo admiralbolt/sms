@@ -16,6 +16,7 @@ import {
   useEventTypes, // useVenueTypes
 } from "@/hooks/api";
 import { useAppBarHeight } from "@/hooks/materialHacks";
+import { getEventIcon } from "@/utils/eventIcon";
 
 export const FilterPanelContent = () => {
   const eventTypes = useEventTypes();
@@ -166,7 +167,11 @@ export const FilterPanelContent = () => {
                     onChange={updateEventFilters}
                   />
                 }
-                label={type}
+                label={
+                  <div className="flex">
+                    {getEventIcon(type)} {type}
+                  </div>
+                }
               />
               <Button onClick={() => setSelectedEventTypes?.([type])}>
                 Only

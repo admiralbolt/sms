@@ -137,45 +137,45 @@ class IngestionRunRecordsView(ListAPIView):
     ingestion_run = models.IngestionRun.objects.filter(id=self.kwargs.get("ingestion_run_id", None)).first()
     return models.IngestionRecord.objects.filter(ingestion_run=ingestion_run)
   
-class JanitorRunViewSet(viewsets.ReadOnlyModelViewSet):
-  """List all janitor runs."""
-  resource_name = "janitor_runs"
-  queryset = models.JanitorRun.objects.all()
-  serializer_class = serializers.JanitorRunSerializer
+class CarpenterRunViewSet(viewsets.ReadOnlyModelViewSet):
+  """List all carpenter runs."""
+  resource_name = "carpenter_runs"
+  queryset = models.CarpenterRun.objects.all()
+  serializer_class = serializers.CarpenterRunSerializer
 
   def get_permissions(self):
     permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
     return [permission() for permission in permission_classes]
 
   def get_queryset(self):
-    runs = models.JanitorRun.objects.order_by("-created_at")
+    runs = models.CarpenterRun.objects.order_by("-created_at")
     return runs
   
-class JanitorRecordViewSet(viewsets.ReadOnlyModelViewSet):
-  """List all janitor records."""
-  resource_name = "janitor_records"
-  queryset = models.JanitorRecord.objects.all()
-  serializer_class = serializers.JanitorRecordSerializer
+class CarpenterRecordViewSet(viewsets.ReadOnlyModelViewSet):
+  """List all carpenter records."""
+  resource_name = "carpenter_records"
+  queryset = models.CarpenterRecord.objects.all()
+  serializer_class = serializers.CarpenterRecordSerializer
 
   def get_permissions(self):
     permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
     return [permission() for permission in permission_classes]
 
   def get_queryset(self):
-    return models.JanitorRecord.objects.order_by("-created_at")
+    return models.CarpenterRecord.objects.order_by("-created_at")
   
-class JanitorRunRecordsView(ListAPIView):
-  """List all janitor records for a particular run."""
-  serializer_class = serializers.JanitorRecordSerializer
+class CarpenterRunRecordsView(ListAPIView):
+  """List all carpenter records for a particular run."""
+  serializer_class = serializers.CarpenterRecordSerializer
 
   def get_permissions(self):
     permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
     return [permission() for permission in permission_classes]
 
   def get_queryset(self):
-    models.JanitorRecord.objects.prefetch_related("event", "venue")
-    janitor_run = models.JanitorRun.objects.filter(id=self.kwargs.get("janitor_run_id", None)).first()
-    return models.JanitorRecord.objects.filter(janitor_run=janitor_run)
+    models.CarpenterRecord.objects.prefetch_related("event", "venue")
+    carpenter_run = models.CarpenterRun.objects.filter(id=self.kwargs.get("carpenter_run_id", None)).first()
+    return models.CarpenterRecord.objects.filter(carpenter_run=carpenter_run)
 
 class LogoutView(APIView):
   """Logout!"""
@@ -189,6 +189,19 @@ class LogoutView(APIView):
       return Response(status=status.HTTP_205_RESET_CONTENT)
     except Exception as e:
       return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_events_on_day(request):
+  day = request.GET.get("day")
+  if not day:
+    return JsonResponse([], safe=False)
+  
+  events = models.Event.objects.filter(show_event=True, event_day=day)
+  return JsonResponse(serializers.EventSerializer(
+    events,
+    many=True
+  ).data, safe=False)
     
 @api_view(["GET"])
 @permission_classes([AllowAny])

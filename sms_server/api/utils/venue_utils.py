@@ -26,8 +26,8 @@ def _get_venue(name: Optional[str], latitude: Optional[float], longitude: Option
 
   if latitude and longitude:
     # We need to round the inputs before we search the DB.
-    latitude = round(float(latitude), 6)
-    longitude = round(float(longitude), 6)
+    latitude = round(float(latitude), 5)
+    longitude = round(float(longitude), 5)
     db_venue = Venue.objects.filter(latitude=latitude, longitude=longitude)
     if db_venue.exists():
       return db_venue.first()

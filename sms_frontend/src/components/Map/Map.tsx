@@ -7,7 +7,7 @@ import { Box, Fade } from "@mui/material";
 import { EventCard } from "@/components/Events/EventCard";
 import { useAppBarHeight, useFilterPanelWidth } from "@/hooks/materialHacks";
 import { useIsMobile, useWindowDimensions } from "@/hooks/window";
-import { Event, Venue } from "@/types";
+import { Event } from "@/types";
 
 import { MapData } from "./MapData";
 
@@ -24,7 +24,6 @@ export const Map = () => {
   ]);
   const [bannerOpen, setBannerOpen] = React.useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event>();
-  const [selectedVenue, setSelectedVenue] = useState<Venue>();
 
   const eventBox = () => {
     if (isMobile) {
@@ -32,7 +31,6 @@ export const Map = () => {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "center",
             flex: 1,
             zIndex: 900,
             position: "fixed",
@@ -40,21 +38,18 @@ export const Map = () => {
             margin: "auto",
           }}
         >
-          {selectedVenue && selectedEvent && (
-            <EventCard event={selectedEvent} />
-          )}
+          {selectedEvent && <EventCard event={selectedEvent} size="small"/>}
         </Box>
       );
     }
 
-    const pct = (100 * (width - filterPanelWidth)) / (width * 2);
+    const pct = (100 * (width - filterPanelWidth)) / (width * 5);
     return (
       <Box
         sx={{
           left: `${pct}%`,
           transform: `translate(-${pct}%, 0)`,
           display: "flex",
-          justifyContent: "center",
           flex: 1,
           zIndex: 900,
           position: "fixed",
@@ -62,7 +57,7 @@ export const Map = () => {
           margin: "auto",
         }}
       >
-        {selectedVenue && selectedEvent && <EventCard event={selectedEvent} />}
+        {selectedEvent && <EventCard event={selectedEvent} size="small" />}
       </Box>
     );
   };
@@ -85,7 +80,6 @@ export const Map = () => {
         <MapData
           setBannerOpen={setBannerOpen}
           setSelectedEvent={setSelectedEvent}
-          setSelectedVenue={setSelectedVenue}
           setMapPosition={setMapPosition}
         />
       </MapContainer>

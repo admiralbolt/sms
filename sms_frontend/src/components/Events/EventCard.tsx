@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useState } from "react";
 
 import {
   Delete,
@@ -10,7 +10,6 @@ import {
 import {
   Box,
   Button,
-  Card,
   Dialog,
   DialogActions,
   DialogTitle,
@@ -18,25 +17,20 @@ import {
   Link,
 } from "@mui/material";
 
-import { FaGuitar } from "react-icons/fa6";
-import { PiMicrophoneStageFill } from "react-icons/pi";
-
 import { SnackbarContext } from "@/contexts/SnackbarContext";
-import { getVenueById } from "@/hooks/api";
+import { getEventDisplayImage } from "@/hooks/api";
 import customAxios from "@/hooks/customAxios";
-import { Event, EventType, Venue } from "@/types";
+import { Event, Venue } from "@/types";
+import { getEventIcon } from "@/utils/eventIcon";
 
 import { EventForm } from "./EventForm";
-
-const SHOW_COLOR = "#0070ff";
-const OPEN_JAM_COLOR = "#ff5500";
-const OPEN_MIC_COLOR = "#ee6600";
 
 interface Props {
   event: Event;
   showDate?: boolean;
   isNew?: boolean;
   showActions?: boolean;
+  size?: "small" |  "large";
   deleteCallback?: (id: number) => void;
   createCallback?: (id: number) => void;
   updateCallback?: (id: number) => void;
@@ -51,22 +45,14 @@ export const EventCard = ({
   showActions = false,
   showDate = false,
   isNew = false,
+  size = "large",
   createCallback = emptyCallback,
   updateCallback = emptyCallback,
   deleteCallback = emptyCallback,
 }: Props) => {
-  const [venue, setVenue] = useState<Venue>({} as Venue);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
   const { setSnackbar } = useContext(SnackbarContext);
-
-  useEffect(() => {
-    if (event.venue < 0) return;
-
-    (async () => {
-      setVenue(await getVenueById(event.venue));
-    })();
-  }, [event.venue]);
 
   const toggleEdit = () => {
     setEdit(!edit);
@@ -114,41 +100,20 @@ export const EventCard = ({
     return formatTime(event.start_time);
   };
 
-  const getEventIcon = (event_type: EventType) => {
-    const lowercaseEventType =
-      event_type != undefined ? event_type.toLowerCase() : "";
-    if (lowercaseEventType == "open mic" || lowercaseEventType == "open jam") {
-      return (
-        <PiMicrophoneStageFill
-          size={24}
-          color={
-            lowercaseEventType == "open jam" ? OPEN_JAM_COLOR : OPEN_MIC_COLOR
-          }
-        />
-      );
-    }
 
-    return <FaGuitar size={24} color={SHOW_COLOR} />;
-  };
-
-  const displayImage = useMemo(() => {
-    if (event.event_image) return event.event_image;
-    if (venue.venue_image) return venue.venue_image;
-
-    return "/placeholder.png";
-  }, [event.event_image, venue.venue_image]);
-
-  const venueLink = () => {
+  const displayImage = getEventDisplayImage(event);
+  const getVenueLink = () => {
     if (
-      venue.venue_url == null ||
-      venue.venue_url == undefined ||
-      venue.venue_url.length == 0
+      event.venue.venue_url == null ||
+      event.venue.venue_url == undefined ||
+      event.venue.venue_url.length == 0
     )
-      return venue.name;
+      return event.venue.name;
+
 
     return (
-      <Link target="_blank" href={venue.venue_url}>
-        {venue.name}
+      <Link target="_blank" href={event.venue.venue_url}>
+        {event.venue.name}
       </Link>
     );
   };
@@ -167,43 +132,29 @@ export const EventCard = ({
     return (
       <Box
         key={event.id}
-        className="flex  align-center content-center justify-center"
+        className={`flex w-[400px] sm:w-[600px] ${size === "large" ? "md:w-[600px] lg:w-[900px]" : ""} rounded-sm align-center p-2 content-center border-b-2 border-blue-500/20 bg-gray-600`}
       >
-        <div
-          className="flex md:flex-row"
-          key={event.id}
-          style={{
-            display: "flex",
-            margin: 1,
-            padding: 1.5,
-          }}
-        >
+        <div className="flex md:flex-row" key={event.id}>
           <Box
-            className={`w-24 h-24 md:w-44 md:h-44 bg-cover bg-center flex flex-col justify-end text-center md:text-right relative`}
-            sx={{ backgroundImage: `url(${displayImage})` }}
-          >
-            <div className="z-0 absolute bg-black w-full h-full opacity-20" />
-            <div className="flex flex-col z-index-10 p-4 bg-black/50">
-              <span className="text-xs md:text-xl">{venueLink()}</span>
-              <span className="text-xs md:text-lg fond-bold">
-                {timeAndDate(event)}
-              </span>
-            </div>
-          </Box>
-          <Box
+            className={`bg-center flex flex-col justify-end text-center relative`}
             sx={{
-              position: "absolute",
-              left: 0,
-              bottom: 0,
-              padding: "0.2em",
-              opacity: 0.4,
-              backgroundColor: "black",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              backgroundImage: `url(${displayImage})`,
+              minWidth: "100px",
+              minHeight: "100px",
+              maxWidth: "100px",
+              maxHeight: "100px",
+              backgroundSize: "cover", // Ensure background image covers the box
+              backgroundPosition: "center",
             }}
           >
-            {getEventIcon(event.event_type)}
+            <Box className="flex justify-center w-full h-full bg-black/50">
+              {getEventIcon(event.event_type)}
+            </Box>
+            <div className="z-0 absolute bg-black w-full h-full opacity-20" />
+            <div className="flex flex-col z-index-10 bg-black/50">
+              <span className="text-xs font-bold">{getVenueLink()}</span>
+              <span className="text-xs">{timeAndDate(event)}</span>
+            </div>
           </Box>
 
           {/* ACTION BUTTONS */}
@@ -236,33 +187,39 @@ export const EventCard = ({
             </Box>
           )}
 
-          <div className="p-4 md:w-[600px]">
-            <h2 className="md:text-3xl text-wrap">{event.title}</h2>
-            <h3>{venue.address}</h3>
-            <Box sx={{ display: "flex", flexDirection: "row", mt: 1 }}>
-              <Link target="_blank" href={mapsLink(venue)}>
-                <IconButton
-                  size="large"
-                  edge="start"
-                  color="primary"
-                  aria-label="menu"
-                  sx={{ mr: 3, ml: -0.5 }}
-                >
-                  <PlaceIcon />
-                </IconButton>
-              </Link>
-              <Link target="_blank" href={event.event_url || ""}>
-                <IconButton
-                  disabled={!event.event_url}
-                  size="large"
-                  edge="start"
-                  color="primary"
-                  aria-label="menu"
-                  sx={{ mr: 3 }}
-                >
-                  <LinkIcon />
-                </IconButton>
-              </Link>
+          <div className="flex-col max-w-[70vw] min-width-[400px] content-center">
+            <Box className="flex items-center">
+              <div className="flex flex-col justify-center align-center content-center px-4">
+                <Link target="_blank" href={mapsLink(event.venue)}>
+                  <IconButton
+                    disabled={!mapsLink(event.venue)}
+                    size="small"
+                    edge="start"
+                    color="primary"
+                    aria-label="menu"
+                  >
+                    <PlaceIcon fontSize={"small"} />
+                  </IconButton>
+                </Link>
+                {event.event_url && (
+                 <Link target="_blank" href={event.event_url}>
+                 <IconButton
+                   size="small"
+                   edge="start"
+                   color="info"
+                   aria-label="menu"
+                 >
+                   <LinkIcon />
+                 </IconButton>
+               </Link> 
+                )}
+              </div>
+              <Box className="flex flex-col">
+                <h2 className="md:text-lg text-wrap">{event.title}</h2>
+                <Box className="flex items-center">
+                  <span className="text-sm">{event.venue.address}</span>
+                </Box>
+              </Box>
             </Box>
           </div>
         </div>

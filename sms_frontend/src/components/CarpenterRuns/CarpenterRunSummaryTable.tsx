@@ -1,13 +1,13 @@
 import { Box, Divider, Typography } from "@mui/material";
 
 import { ChangeTypeChip } from "@/components/IngestionRuns/ChangeTypeChip";
-import { JanitorRun, changeTypes } from "@/types";
+import { CarpenterRun, changeTypes } from "@/types";
 
 interface Props {
-  JanitorRun: JanitorRun;
+  run: CarpenterRun;
 }
 
-export const JanitorRunSummaryTable = ({ JanitorRun }: Props) => {
+export const CarpenterRunSummaryTable = ({ run }: Props) => {
   // We map api -> change type -> val.
   const s: any = {};
   const totals: any = {};
@@ -15,7 +15,7 @@ export const JanitorRunSummaryTable = ({ JanitorRun }: Props) => {
     totals[t] = 0;
   });
 
-  JanitorRun.summary.forEach((record) => {
+  run.summary.forEach((record) => {
     if (!(record.api_name in s)) {
       s[record.api_name] = {};
     }
