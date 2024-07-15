@@ -39,7 +39,7 @@ export const Map = () => {
             margin: "auto",
           }}
         >
-          {selectedEvent && <EventCard event={selectedEvent} />}
+          {selectedEvent && <EventCard event={selectedEvent} size="small"/>}
         </Box>
       );
     }
@@ -59,7 +59,7 @@ export const Map = () => {
           margin: "auto",
         }}
       >
-        {selectedEvent && <EventCard event={selectedEvent} />}
+        {selectedEvent && <EventCard event={selectedEvent} size="small" />}
       </Box>
     );
   };

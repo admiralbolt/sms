@@ -30,6 +30,7 @@ interface Props {
   showDate?: boolean;
   isNew?: boolean;
   showActions?: boolean;
+  size?: "small" |  "large";
   deleteCallback?: (id: number) => void;
   createCallback?: (id: number) => void;
   updateCallback?: (id: number) => void;
@@ -44,6 +45,7 @@ export const EventCard = ({
   showActions = false,
   showDate = false,
   isNew = false,
+  size = "large",
   createCallback = emptyCallback,
   updateCallback = emptyCallback,
   deleteCallback = emptyCallback,
@@ -128,7 +130,7 @@ export const EventCard = ({
     return (
       <Box
         key={event.id}
-        className="flex w-[400px] md:w-[600px] rounded-sm align-center p-2 content-center border-b-2 border-blue-500/20 bg-gray-600"
+        className={`flex w-[400px] sm:w-[600px] ${size === "large" ? "md:w-[600px] lg:w-[900px]" : ""} rounded-sm align-center p-2 content-center border-b-2 border-blue-500/20 bg-gray-600`}
       >
         <div className="flex md:flex-row" key={event.id}>
           <Box
@@ -186,7 +188,7 @@ export const EventCard = ({
           <div className="flex-col max-w-[70vw] min-width-[400px] content-center">
             <Box className="flex items-center">
               <div className="flex flex-col justify-center align-center content-center px-4">
-                <Link target="_blank" href={mapsLink(venue)}>
+                <Link target="_blank" href={mapsLink(event.venue)}>
                   <IconButton
                     disabled={!event.event_url}
                     size="small"
@@ -213,32 +215,6 @@ export const EventCard = ({
                 <h2 className="md:text-lg text-wrap">{event.title}</h2>
                 <Box className="flex items-center">
                   <span className="text-sm">{event.venue.address}</span>
-                  <Box>
-                    <Link target="_blank" href={mapsLink(event.venue)}>
-                      <IconButton
-                        disabled={!event.event_url}
-                        size="small"
-                        edge="start"
-                        color="primary"
-                        aria-label="menu"
-                        sx={{ mr: 0.25 }}
-                      >
-                        <PlaceIcon fontSize={"small"} />
-                      </IconButton>
-                    </Link>
-                    <Link target="_blank" href={event.event_url || ""}>
-                      <IconButton
-                        disabled={!event.event_url}
-                        size="small"
-                        edge="start"
-                        color="primary"
-                        aria-label="menu"
-                        sx={{ mr: 3 }}
-                      >
-                        <LinkIcon />
-                      </IconButton>
-                    </Link>
-                  </Box> */}
                 </Box>
               </Box>
             </Box>
