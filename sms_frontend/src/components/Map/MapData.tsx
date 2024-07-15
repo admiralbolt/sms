@@ -13,7 +13,7 @@ import { Box, Typography } from "@mui/material";
 import { LocalStorageContext } from "@/contexts/LocalStorageContext";
 import { useFilteredEvents } from "@/hooks/filteredData";
 import { useIsMobile } from "@/hooks/window";
-import { Event, EventType, Venue } from "@/types";
+import { Event, EventType } from "@/types";
 
 import "./MapData.css";
 

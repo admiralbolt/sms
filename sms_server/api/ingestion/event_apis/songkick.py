@@ -88,7 +88,7 @@ class SongkickApi(EventApi):
       yield event
   
   def get_event_list(self) -> Generator[dict, None, None]:
-    driver = crawler_utils.create_chrome_driver()
+    driver = crawler_utils.create_driver()
     first_page = crawler_utils.get_html_soup(driver, url=self.get_paginated_url(page_number=1))
     # Get the total number of pages.
     pagination_div = first_page.find_all("div", class_="pagination")[0]

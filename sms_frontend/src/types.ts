@@ -68,7 +68,7 @@ export interface CarpenterRunRecord {
 
 export interface CarpenterRunSummary {
   api_name: string;
-  change_type: string;
+  change_type: ChangeType;
   field_changed: string;
   total: number;
   index: number;

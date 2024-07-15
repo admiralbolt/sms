@@ -2,6 +2,8 @@ sms_server/sms_server/local_settings.py
 *.swp
 sms_server/logs/*.log
 sms_server/db.sqlite3
+sms_server/downloaded_files
+sms_frontend/downloaded_files
 __pycache__
 .DS_Store
 

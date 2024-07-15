@@ -35,12 +35,12 @@ export const CarpenterRunFull = ({ run }: Props) => {
   const [selectedChangeTypeIndex, setSelectedChangeTypeIndex] =
     useState<number>(0);
 
-  const handleApiChange = (event: React.SyntheticEvent, newVal: number) => {
+  const handleApiChange = (_event: React.SyntheticEvent, newVal: number) => {
     setSelectedApiIndex(newVal);
   };
 
   const handleChangeTypeChange = (
-    event: React.SyntheticEvent,
+    _event: React.SyntheticEvent,
     newVal: number,
   ) => {
     setSelectedChangeTypeIndex(newVal);
