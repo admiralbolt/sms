@@ -211,7 +211,7 @@ def get_events_on_day(request):
   if not day:
     return JsonResponse([], safe=False)
   
-  events = models.Event.objects.filter(show_event=True, event_day=day)
+  events = models.Event.objects.filter(show_event=True, event_day=day).order_by("venue__name")
   return JsonResponse(serializers.EventSerializer(
     events,
     many=True
