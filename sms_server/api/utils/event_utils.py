@@ -66,7 +66,8 @@ def create_or_update_event(venue: Venue, raw_data: RawData, artists: list[Artist
   if not event:
     event = Event(venue=venue, **filtered_kwargs)
     event.save()
-    event.raw_datas.add(raw_data)
+    raw_data.event = event
+    raw_data.save()
     for artist in artists:
       event.artists.add(artist)
     event.save()
@@ -76,7 +77,8 @@ def create_or_update_event(venue: Venue, raw_data: RawData, artists: list[Artist
   # Check list of raw data links on event. If it doesn't include our input
   # raw_data, we need to add it.
   if not event.raw_datas.contains(raw_data):
-    event.raw_datas.add(raw_data)
+    raw_data.event = event
+    raw_data.save()
     new_raw_data = True
 
   new_artists = []
