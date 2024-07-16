@@ -144,6 +144,50 @@ class SocialLink(models.Model):
     def __str__(self):
       return f"|{self.id}| [{self.artist}, {self.platform}]"
 
+
+class Event(models.Model):
+  """List of events."""
+  created_at = models.DateTimeField(auto_now_add=True)
+  title = models.CharField(max_length=256)
+  event_day = models.DateField()
+  start_time = models.TimeField(default=None, blank=True, null=True)
+  event_url = models.CharField(max_length=512, blank=True, null=True)
+  description = models.TextField(blank=True, null=True)
+  event_image_url = models.CharField(max_length=1024, blank=True, null=True)
+  event_image = models.ImageField(upload_to="event_images", blank=True, null=True)
+  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+  artists = models.ManyToManyField(Artist)
+  event_type = models.CharField(max_length=16, choices=get_choices(EventTypes), default="Show")
+  # Only applicable if an open mic.
+  signup_start_time = models.TimeField(default=None, blank=True, null=True)
+  # Meta control for display of events.
+  show_event = models.BooleanField(default=True)
+
+  finalized = models.BooleanField(default=False)
+
+  def __str__(self):
+    return f"{self.title} ({self.venue.name}, {self.event_day}, {self.title})"
+  
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self._original_event_image_url = self.event_image_url
+
+  def save(self, *args, **kwargs):
+    super().save(*args, **kwargs)
+    if self.event_image_url:
+      if self.event_image_url != self._original_event_image_url or not self.event_image:
+        image_request = requests.get(self.event_image_url, timeout=15)
+        file_extension = ""
+        parts = image_request.headers["Content-Type"].split("/")
+        if len(parts) == 2:
+          file_extension = parts[1]
+        kind = filetype.guess(image_request.content)
+        if kind is not None:
+          file_extension = kind.extension
+        content_file = ContentFile(image_request.content)
+        self._original_event_image_url = self.event_image_url
+        self.event_image.save(f"{self.title.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
+
 class RawData(models.Model):
   """Raw data from an api request.
 
@@ -168,57 +212,13 @@ class RawData(models.Model):
   data = models.JSONField()
   processed = models.BooleanField(default=False)
 
+  event = models.ForeignKey(Event, related_name="raw_datas", on_delete=models.SET_NULL, blank=True, null=True)
+
   def __str__(self):
     return f"|{self.id}| [{self.api_name}] ({self.venue_name}, {self.event_name})"
 
   class Meta:
     unique_together = [["api_name", "event_api_id"]]
-
-
-class Event(models.Model):
-  """List of events."""
-  created_at = models.DateTimeField(auto_now_add=True)
-  title = models.CharField(max_length=256)
-  event_day = models.DateField()
-  start_time = models.TimeField(default=None, blank=True, null=True)
-  event_url = models.CharField(max_length=512, blank=True, null=True)
-  description = models.TextField(blank=True, null=True)
-  event_image_url = models.CharField(max_length=1024, blank=True, null=True)
-  event_image = models.ImageField(upload_to="event_images", blank=True, null=True)
-  venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
-  artists = models.ManyToManyField(Artist)
-  event_type = models.CharField(max_length=16, choices=get_choices(EventTypes), default="Show")
-  # Only applicable if an open mic.
-  signup_start_time = models.TimeField(default=None, blank=True, null=True)
-  # Meta control for display of events.
-  show_event = models.BooleanField(default=True)
-
-  finalized = models.BooleanField(default=False)
-  # Link back to the raw data that an event comes from.
-  raw_datas = models.ManyToManyField(RawData)
-
-  def __str__(self):
-    return f"{self.title} ({self.venue.name}, {self.event_day}, {self.title})"
-  
-  def __init__(self, *args, **kwargs):
-    super().__init__(*args, **kwargs)
-    self._original_event_image_url = self.event_image_url
-
-  def save(self, *args, **kwargs):
-    super().save(*args, **kwargs)
-    if self.event_image_url:
-      if self.event_image_url != self._original_event_image_url or not self.event_image:
-        image_request = requests.get(self.event_image_url, timeout=15)
-        file_extension = ""
-        parts = image_request.headers["Content-Type"].split("/")
-        if len(parts) == 2:
-          file_extension = parts[1]
-        kind = filetype.guess(image_request.content)
-        if kind is not None:
-          file_extension = kind.extension
-        content_file = ContentFile(image_request.content)
-        self._original_event_image_url = self.event_image_url
-        self.event_image.save(f"{self.title.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
 
 
 class OpenMic(models.Model):
