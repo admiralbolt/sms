@@ -36,26 +36,31 @@ CRAWLER_NICE_NAMES: dict[str, str] = {
 }
 
 API_PRIORITY_LIST = [
-  # Manual events should always take highest priority.
-  [IngestionApis.MANUAL],
-  # Trustworthy Primary APIS,
-  [IngestionApis.DICE, IngestionApis.AXS, IngestionApis.TIXR],
-  # Apis that don't have artist integrations.
-  [IngestionApis.VENUEPILOT],
-  # All the Crawlers
-  list(CRAWLER_MAPPING.keys()),
-  # Low quality data below here.
-  [IngestionApis.EVENTBRITE],
-  [IngestionApis.TICKETMASTER],
-  # Mostly good data, but are aggregators of existing sources.
-  [IngestionApis.SONGKICK, IngestionApis.BANDSINTOWN]
+  IngestionApis.MANUAL,
+  IngestionApis.DICE,
+  IngestionApis.AXS,
+  IngestionApis.TIXR,
+  IngestionApis.VENUEPILOT,
+  # Solid data, but generally aggregators of existing sources.
+  IngestionApis.SONGKICK,
+  IngestionApis.BANDSINTOWN,
+  # Put all the manual crawlers at the bottom, because I hate them.
+  IngestionApis.CRAWLER_BLUE_MOON,
+  IngestionApis.CRAWLER_DARRELLS_TAVERN,
+  IngestionApis.CRAWLER_LITTLE_RED_HEN,
+  IngestionApis.CRAWLER_SEA_MONSTER_LOUNGE,
+  IngestionApis.CRAWLER_SKYLARK,
+  IngestionApis.CRAWLER_THE_ROYAL_ROOM,
+  # Data can be suspect at best.
+  IngestionApis.EVENTBRITE,
+  IngestionApis.TICKETMASTER,
+
 ]
 
 API_TO_PRIORITY = {}
 
-def get_api_priority(api: IngestionApis):
-  if not API_TO_PRIORITY:
-    for i, sub_list in enumerate(API_PRIORITY_LIST):
-      for api in sub_list:
-        API_TO_PRIORITY[api]
-  return API_TO_PRIORITY.get(api, 10)
+def get_api_priority(api: str) -> int:
+  try:
+    return API_PRIORITY_LIST.index(api)
+  except:
+    return 100

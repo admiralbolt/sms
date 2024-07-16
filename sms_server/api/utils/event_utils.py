@@ -4,13 +4,23 @@ import logging
 import deepdiff
 
 from api.constants import IngestionApis
+from api.ingestion.import_mapping import get_api_priority
 from api.models import Artist, ChangeTypes, Event, Venue, RawData
 from api.utils import diff_utils
 
 logger = logging.getLogger(__name__)
 
-def get_event(venue: Venue, event_day: str="", start_time: str=""):
-  """Get event object by venue, day, and start_time."""
+def get_event(venue: Venue, raw_data: RawData, event_day: str="", start_time: str=""):
+  """Get a matching event from the database.
+
+  1) We check to see if we can find an existing event that has the raw data
+     attached to it.
+  2) If not we make a best guess based on venue, event_day, and start_time.
+  """
+  db_event = Event.objects.filter(raw_datas=raw_data)
+  if db_event.exists():
+    return db_event.first()
+
   return Event.objects.filter(venue=venue, event_day=event_day, start_time=start_time).first()
 
 def handle_open_mic_gen_diff(event: Event, values_changed: dict) -> tuple[bool, Event]:
@@ -52,7 +62,7 @@ def create_or_update_event(venue: Venue, raw_data: RawData, artists: list[Artist
   filtered_kwargs = {key: kwargs[key] for key in kwargs if key in allowed_keys}
 
   # If the event doesn't exist, create it and move on.
-  event = get_event(venue, kwargs["event_day"], kwargs["start_time"])
+  event = get_event(venue, raw_data, kwargs["event_day"], kwargs["start_time"])
   if not event:
     event = Event(venue=venue, **filtered_kwargs)
     event.save()
@@ -122,3 +132,15 @@ def create_or_update_event(venue: Venue, raw_data: RawData, artists: list[Artist
 
   event.save()
   return change_type, change_log, event
+
+def get_highest_priority_api(event: Event) -> tuple[str, int]:
+  """Get the highest priority api on an event.
+
+  Really this should be a class method, but we do it in the utils to avoid
+  a dependency loop.
+  """
+  api_info = [(d.api_name, get_api_priority(d.api_name)) for d in event.raw_datas.all()]
+  if len(api_info) == 0:
+    return "UNKNOWN", 100
+
+  return sorted(api_info, key=lambda item: item[1])[0]
