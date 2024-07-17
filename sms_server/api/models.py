@@ -272,7 +272,6 @@ class JanitorRun(models.Model):
     return f"{self.name} ({self.created_at})"
 
 class JanitorMergeEventRecord(models.Model):
-  from_events = models.ManyToManyField(Event, related_name="from_events")
   to_event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="to_event")
 
 class JanitorApplyArtistRecord(models.Model):
