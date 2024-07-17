@@ -57,16 +57,24 @@ class ArtistSerializer(serializers.ModelSerializer):
     artist_utils.update_socials(artist=instance, social_links=validated_data["social_links"])
     del validated_data["social_links"]
     return super().update(instance, validated_data)
+  
+class RawDataSerializer(serializers.ModelSerializer):
+  """Serialize Raw Data."""
+
+  class Meta:
+    model = models.RawData
+    fields = "__all__"
 
 class EventSerializer(serializers.ModelSerializer):
   """Serialize Event data."""
   event_image = serializers.ImageField(max_length=None, use_url=True, required=False)
   venue = VenueSerializer(read_only=True)
   artists = ArtistSerializer(read_only=True, many=True)
+  raw_datas = RawDataSerializer(read_only=True, many=True)
 
   class Meta:
     model = models.Event
-    fields = ("id", "event_image", "event_image_url", "event_type", "title", "event_day", "signup_start_time", "start_time", "event_url", "description", "venue", "artists")
+    fields = ("id", "event_image", "event_image_url", "event_type", "title", "event_day", "signup_start_time", "start_time", "event_url", "description", "venue", "artists", "raw_datas")
 
 class OpenMicSerializer(serializers.ModelSerializer):
   """Serialize OpenMic data."""
@@ -78,13 +86,6 @@ class OpenMicSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.OpenMic
     fields = ("id", "name", "open_mic_type", "description", "signup_start_time", "event_start_time", "event_end_time", "all_ages", "house_piano", "house_pa", "drums", "cadence_crontab", "cadence_readable", "generate_events", "venue")
-
-class RawDataSerializer(serializers.ModelSerializer):
-  """Serialize Raw Data."""
-
-  class Meta:
-    model = models.RawData
-    fields = "__all__"
 
 class IngestionRunSerializer(serializers.ModelSerializer):
   """Serialize IngestionRun data."""

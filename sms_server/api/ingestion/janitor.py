@@ -1,15 +1,12 @@
-import collections
 import logging
-import time
-import traceback
 from datetime import datetime, timedelta
 from typing import Optional
 
+from django.db.models import Count
+
 from api.constants import get_all, JanitorOperations
-from api.ingestion.event_apis.event_api import EventApi
-from api.ingestion.import_mapping import API_MAPPING, API_PRIORITY_LIST
 from api.models import Artist, Event, JanitorRun, JanitorRecord, JanitorApplyArtistRecord, JanitorMergeEventRecord
-from api.utils import artist_utils, event_utils, venue_utils
+from api.utils import event_utils
 
 logger = logging.getLogger(__name__)
 
@@ -34,9 +31,6 @@ class Janitor:
     run_name += f"- {process_all=}"
 
     self.janitor_run = JanitorRun.objects.create(name=run_name)
-
-  def merge_events(self):
-    pass
 
   def should_add_artist(self, artist: Artist, event: Event) -> bool:
     # Special exception for this band that made their name "@".
@@ -76,7 +70,7 @@ class Janitor:
     if their name shows up in the title, by cross checking with our good list
     of artist names pulled from trusted APIs.
     """
-    all_events = Event.objects.filter(event_day__gt=self.min_date)
+    all_events = Event.objects.filter(event_day__gt=self.min_date) if self.process_all else Event.objects.filter(finalized=False, event_day__gt=self.min_date)
     all_artists = Artist.objects.all()
     for event in all_events:
       artists_added = []
@@ -99,16 +93,45 @@ class Janitor:
         apply_artists_record=apply_artists_record
       )
 
+  def merge_events(self):
+    """Merge potentially duplicate events together."""
+    # 1. Identify potential duplicates. This is sets of events that share a
+    #    venue and a day.
+    all_events = Event.objects.filter(event_day__gt=self.min_date)
+    potential_collisions = all_events.values("event_day", "venue").annotate(total=Count("id")).filter(total__gte=2)
+    # 2. For each set of potential collions, get our list of events back.
+    for collision_info in potential_collisions:
+      event_set = all_events.filter(event_day=collision_info["event_day"], venue=collision_info["venue"])
+      if not event_utils.should_merge(event_set):
+        continue
+
+      # Eventually we may want to be smarter about selecting information using
+      # some sort of quorum thing, for now we just assume the highest priority
+      # event has the best info.
+      sorted_events = event_utils.sort_events_by_priority(event_set)
+      _, change_log, _ = event_utils.merge_events(sorted_events[0], sorted_events)
+      merge_event_record = JanitorMergeEventRecord.objects.create(
+        to_event=sorted_events[0]
+      )
+
+      JanitorRecord.objects.create(
+        janitor_run=self.janitor_run,
+        operation=JanitorOperations.MERGE_EVENTS,
+        change_log=change_log,
+        merge_event_record=merge_event_record
+      )
+
   def finalize_events(self):
     Event.objects.filter(finalized=False).update(finalized=False)
 
   def run(self):
     """Is your janitor running???"""
-    #1. Merge events.
-    self.merge_events()
-
-    #2. Apply artists.
+    #1. Apply artists. Slightly wasteful to do this first, but this gives us
+    #   an extra signal to use when merging events.
     self.apply_artists()
+
+    #2. Merge events.
+    self.merge_events()
 
     # Mark all previously unfinalized events as finalized.
     self.finalize_events()
