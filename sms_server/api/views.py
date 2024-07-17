@@ -30,7 +30,7 @@ class EventViewSet(viewsets.ModelViewSet):
 
   def get_queryset(self):
     models.Event.objects.prefetch_related("venue")
-    return models.Event.objects.order_by("event_day", "venue__name", "start_time").filter(event_day__gte=datetime.date.today(), venue__show_venue=True, show_event=True)
+    return models.Event.objects.order_by("venue__name", "start_time").filter(venue__show_venue=True, show_event=True)
 
 class VenueViewSet(viewsets.ModelViewSet):
   """List all venues."""
