@@ -119,6 +119,10 @@ export const JanitorRunFull = ({ run }: Props) => {
               <pre style={{ fontSize: "0.7em" }}>
                 {selectedRecord.change_log}
               </pre>
+              <Divider />
+              <pre style={{ fontSize: "0.7em" }}>
+                {JSON.stringify(selectedRecord?.merge_event_record || selectedRecord?.apply_artists_record, null, 2)}
+              </pre>
             </Box>
           )}
         </Grid>
