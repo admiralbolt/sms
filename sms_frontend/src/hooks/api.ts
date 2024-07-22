@@ -12,7 +12,6 @@ import {
   PeriodicTask,
   Venue,
 } from "@/types";
-import { RunCircleSharp } from "@mui/icons-material";
 
 const BASE_API_URL =
   process.env.NODE_ENV === "production"

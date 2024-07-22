@@ -30,14 +30,12 @@ export const changeTypes: ChangeType[] = [
   "Skip",
 ];
 
-export type OperationType =
-  | "Apply Artists"
-  | "Merge Events"
+export type OperationType = "Apply Artists" | "Merge Events";
 
 export const operationTypes: OperationType[] = [
   "Apply Artists",
-  "Merge Events"
-]
+  "Merge Events",
+];
 
 export interface IngestionRunRecord {
   id: number;

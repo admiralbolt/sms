@@ -16,14 +16,15 @@ export const JanitorRunFull = ({ run }: Props) => {
   );
   const [records, setRecords] = useState<JanitorRunRecord[]>([]);
   const [sortedOperations, setSortedOperations] = useState<string[]>([]);
- 
+
   const [breakdowns, setBreakdowns] = useState<any>({});
 
   const [filteredRecords, setFilteredRecords] = useState<JanitorRunRecord[]>(
     [],
   );
 
-  const [selectedOperationIndex, setSelectedOperationIndex] = useState<number>(-1);
+  const [selectedOperationIndex, setSelectedOperationIndex] =
+    useState<number>(-1);
 
   const handleOperationChange = (
     _event: React.SyntheticEvent,
@@ -35,14 +36,11 @@ export const JanitorRunFull = ({ run }: Props) => {
   useEffect(() => {
     setFilteredRecords(
       records.filter(
-        (record) => record.operation == sortedOperations[selectedOperationIndex]
+        (record) =>
+          record.operation == sortedOperations[selectedOperationIndex],
       ),
     );
-  }, [
-    records,
-    sortedOperations,
-    selectedOperationIndex,
-  ]);
+  }, [records, sortedOperations, selectedOperationIndex]);
 
   useEffect(() => {
     let breakdownValues: any = {};
@@ -72,9 +70,13 @@ export const JanitorRunFull = ({ run }: Props) => {
     setSelectedRecord(record);
   };
 
-  const getEventName = (record: JanitorRunRecord) =>  {
-    return record.merge_event_record?.to_event?.title || record.apply_artists_record?.event?.title || "UNKNOWN";
-  }
+  const getEventName = (record: JanitorRunRecord) => {
+    return (
+      record.merge_event_record?.to_event?.title ||
+      record.apply_artists_record?.event?.title ||
+      "UNKNOWN"
+    );
+  };
 
   return (
     <Box>
@@ -84,7 +86,9 @@ export const JanitorRunFull = ({ run }: Props) => {
           value={selectedOperationIndex}
           onChange={handleOperationChange}
         >
-          {sortedOperations?.map((op) => <Tab key={`op-${op}`} label={`${op} - ${breakdowns[op]}`} />)}
+          {sortedOperations?.map((op) => (
+            <Tab key={`op-${op}`} label={`${op} - ${breakdowns[op]}`} />
+          ))}
         </Tabs>
       </Box>
       <Grid sx={{ border: "1px solid #cccccc", padding: "0.5em" }} container>
@@ -121,7 +125,12 @@ export const JanitorRunFull = ({ run }: Props) => {
               </pre>
               <Divider />
               <pre style={{ fontSize: "0.7em" }}>
-                {JSON.stringify(selectedRecord?.merge_event_record || selectedRecord?.apply_artists_record, null, 2)}
+                {JSON.stringify(
+                  selectedRecord?.merge_event_record ||
+                    selectedRecord?.apply_artists_record,
+                  null,
+                  2,
+                )}
               </pre>
             </Box>
           )}

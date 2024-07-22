@@ -23,11 +23,15 @@ export const JanitorRunSummaryTable = ({ run }: Props) => {
         }}
       >
         {run.summary.map((summaryRecord) => (
-          <Typography key={summaryRecord.operation} sx={{ maxWidth: "140px" }} noWrap>
+          <Typography
+            key={summaryRecord.operation}
+            sx={{ maxWidth: "140px" }}
+            noWrap
+          >
             {summaryRecord.operation} : {summaryRecord.total}
           </Typography>
         ))}
       </Box>
-  </Box>
+    </Box>
   );
 };
