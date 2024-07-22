@@ -144,18 +144,29 @@ class CarpenterRecordSerializer(serializers.ModelSerializer):
 
 class JanitorRunSerializer(serializers.ModelSerializer):
   """Serialize JanitorRun data."""
+  summary = serializers.SerializerMethodField()
+
+  def get_summary(self, janitor_run: models.JanitorRun) -> list[dict]:
+    """Render a summary of the run for easy use."""
+    return list(models.JanitorRecord.objects.filter(janitor_run=janitor_run).values("operation").annotate(total=Count("id")))
+
   class Meta:
     model = models.JanitorRun
     fields = "__all__"
 
 class JanitorMergeEventRecordSerializer(serializers.ModelSerializer):
   """Serialize merge event records."""
+  to_event = EventSerializer()
+
   class Meta:
     model = models.JanitorMergeEventRecord
     fields = "__all__"
 
 class JanitorApplyArtistsRecordSerializer(serializers.ModelSerializer):
   """Serialize apply artists records."""
+  event = EventSerializer()
+  artists = ArtistSerializer(many=True)
+
   class Meta:
     model = models.JanitorApplyArtistRecord
     fields = "__all__"

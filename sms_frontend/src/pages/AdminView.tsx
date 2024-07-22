@@ -7,6 +7,7 @@ import { CarpenterRunPanel } from "@/components/CarpenterRuns";
 import { CommandPanel } from "@/components/Commands";
 import { EventPanel } from "@/components/Events";
 import { IngestionRunPanel } from "@/components/IngestionRuns";
+import { JanitorRunPanel } from "@/components/JanitorRuns";
 import { OpenMicPanel } from "@/components/OpenMics";
 import { PeriodicTaskStatus } from "@/components/PeriodicTaskStatus";
 import { VenuePanel } from "@/components/Venues";
@@ -58,12 +59,13 @@ export const AdminView = () => {
         >
           <Tab label="Status" {...a11yProps(0)} />
           <Tab label="Ingestion Runs" {...a11yProps(1)} />
-          <Tab label="carpenter Runs" {...a11yProps(2)} />
-          <Tab label="Commands" {...a11yProps(3)} />
-          <Tab label="Venues" {...a11yProps(4)} />
-          <Tab label="Open Mics" {...a11yProps(5)} />
-          <Tab label="Events" {...a11yProps(6)} />
-          <Tab label="Artists" {...a11yProps(7)} />
+          <Tab label="Carpenter Runs" {...a11yProps(2)} />
+          <Tab label="Janitor Runs" {...a11yProps(3)} />
+          <Tab label="Commands" {...a11yProps(4)} />
+          <Tab label="Venues" {...a11yProps(5)} />
+          <Tab label="Open Mics" {...a11yProps(6)} />
+          <Tab label="Events" {...a11yProps(7)} />
+          <Tab label="Artists" {...a11yProps(8)} />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -76,18 +78,21 @@ export const AdminView = () => {
         <CarpenterRunPanel />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={3}>
-        <CommandPanel />
+        <JanitorRunPanel />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={4}>
-        <VenuePanel />
+        <CommandPanel />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={5}>
-        <OpenMicPanel />
+        <VenuePanel />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={6}>
-        <EventPanel />
+        <OpenMicPanel />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={7}>
+        <EventPanel />
+      </CustomTabPanel>
+      <CustomTabPanel value={value} index={8}>
         <ArtistPanel />
       </CustomTabPanel>
     </Box>

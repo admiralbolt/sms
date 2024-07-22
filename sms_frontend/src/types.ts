@@ -30,6 +30,15 @@ export const changeTypes: ChangeType[] = [
   "Skip",
 ];
 
+export type OperationType =
+  | "Apply Artists"
+  | "Merge Events"
+
+export const operationTypes: OperationType[] = [
+  "Apply Artists",
+  "Merge Events"
+]
+
 export interface IngestionRunRecord {
   id: number;
   created_at: Date;
@@ -79,6 +88,37 @@ export interface CarpenterRun {
   name: string;
   created_at: Date;
   summary: CarpenterRunSummary[];
+}
+
+export interface JanitorMergeEventRecord {
+  to_event: Event;
+}
+
+export interface JanitorApplyArtistRecord {
+  event: Event;
+  artists: Artist[];
+}
+
+export interface JanitorRunRecord {
+  id: number;
+  created_at: Date;
+  operation: OperationType;
+  change_log: string;
+  merge_event_record: JanitorMergeEventRecord;
+  apply_artists_record: JanitorApplyArtistRecord;
+}
+
+export interface JanitorRunSummary {
+  operation: string;
+  total: number;
+}
+
+export interface JanitorRun {
+  id: number;
+  name: string;
+  created_at: Date;
+  finished_at: Date;
+  summary: JanitorRunSummary[];
 }
 
 export interface RawData {
