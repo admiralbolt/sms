@@ -21,7 +21,6 @@ import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { getEventDisplayImage } from "@/hooks/api";
 import customAxios from "@/hooks/customAxios";
 import { Event, Venue } from "@/types";
-import { getEventIcon } from "@/utils/eventIcon";
 
 import { EventForm } from "./EventForm";
 
@@ -30,7 +29,7 @@ interface Props {
   showDate?: boolean;
   isNew?: boolean;
   showActions?: boolean;
-  size?: "small" |  "large";
+  size?: "small" | "large";
   deleteCallback?: (id: number) => void;
   createCallback?: (id: number) => void;
   updateCallback?: (id: number) => void;
@@ -100,7 +99,6 @@ export const EventCard = ({
     return formatTime(event.start_time);
   };
 
-
   const displayImage = getEventDisplayImage(event);
   const getVenueLink = () => {
     if (
@@ -109,7 +107,6 @@ export const EventCard = ({
       event.venue.venue_url.length == 0
     )
       return event.venue.name;
-
 
     return (
       <Link target="_blank" href={event.venue.venue_url}>
@@ -136,7 +133,7 @@ export const EventCard = ({
       >
         <div className="flex md:flex-row" key={event.id}>
           <Box
-            className={`bg-center flex flex-col justify-end text-center relative`}
+            className={`bg-center flex flex-col justify-start text-center relative`}
             sx={{
               backgroundImage: `url(${displayImage})`,
               minWidth: "100px",
@@ -147,14 +144,8 @@ export const EventCard = ({
               backgroundPosition: "center",
             }}
           >
-            <Box className="flex justify-center w-full h-full bg-black/50">
-              {getEventIcon(event.event_type)}
-            </Box>
             <div className="z-0 absolute bg-black w-full h-full opacity-20" />
-            <div className="flex flex-col z-index-10 bg-black/50">
-              <span className="text-xs font-bold">{getVenueLink()}</span>
-              <span className="text-xs">{timeAndDate(event)}</span>
-            </div>
+            <div className="flex flex-col z-index-10 bg-black/50"></div>
           </Box>
 
           {/* ACTION BUTTONS */}
@@ -202,22 +193,31 @@ export const EventCard = ({
                   </IconButton>
                 </Link>
                 {event.event_url && (
-                 <Link target="_blank" href={event.event_url}>
-                 <IconButton
-                   size="small"
-                   edge="start"
-                   color="info"
-                   aria-label="menu"
-                 >
-                   <LinkIcon />
-                 </IconButton>
-               </Link> 
+                  <Link target="_blank" href={event.event_url}>
+                    <IconButton
+                      size="small"
+                      edge="start"
+                      color="info"
+                      aria-label="menu"
+                    >
+                      <LinkIcon />
+                    </IconButton>
+                  </Link>
                 )}
               </div>
               <Box className="flex flex-col">
-                <h2 className="md:text-lg text-wrap">{event.title}</h2>
+                <h2 className="text-lg lg:text-xl text-wrap font-bold">{event.title}</h2>
+
                 <Box className="flex items-center">
-                  <span className="text-sm">{event.venue.address}</span>
+                <span className="text-md text-wrap pr-2 font-medium">{getVenueLink()}</span>
+
+                  <span className="text-xs line-clamp-1">
+                    {timeAndDate(event)}
+                  </span>
+
+                </Box>
+                <Box className="flex">
+                  <span className="text-xs font-bold">{event.venue.address}</span>
                 </Box>
               </Box>
             </Box>
