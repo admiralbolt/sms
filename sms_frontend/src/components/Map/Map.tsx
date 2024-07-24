@@ -31,7 +31,6 @@ export const Map = () => {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "center",
             flex: 1,
             zIndex: 900,
             position: "fixed",
@@ -39,19 +38,18 @@ export const Map = () => {
             margin: "auto",
           }}
         >
-          {selectedEvent && <EventCard event={selectedEvent} />}
+          {selectedEvent && <EventCard event={selectedEvent} size="small"/>}
         </Box>
       );
     }
 
-    const pct = (100 * (width - filterPanelWidth)) / (width * 2);
+    const pct = (100 * (width - filterPanelWidth)) / (width * 5);
     return (
       <Box
         sx={{
           left: `${pct}%`,
           transform: `translate(-${pct}%, 0)`,
           display: "flex",
-          justifyContent: "center",
           flex: 1,
           zIndex: 900,
           position: "fixed",
@@ -59,7 +57,7 @@ export const Map = () => {
           margin: "auto",
         }}
       >
-        {selectedEvent && <EventCard event={selectedEvent} />}
+        {selectedEvent && <EventCard event={selectedEvent} size="small" />}
       </Box>
     );
   };

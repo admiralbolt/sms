@@ -43,6 +43,7 @@ export const EventList = () => {
       sx={{
         paddingBottom: "2rem",
       }}
+      className="flex flex-col items-center content-center width-full overflow-y-auto"
     >
       {filteredEvents.map((event) => (
         <ListItem sx={{ padding: 0 }} key={event.id}>

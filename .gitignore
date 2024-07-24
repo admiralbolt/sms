@@ -6,3 +6,5 @@ sms_server/downloaded_files
 sms_frontend/downloaded_files
 __pycache__
 .DS_Store
+
+sms_server/sms_server/uploads
