@@ -129,7 +129,7 @@ export const EventCard = ({
     return (
       <Box
         key={event.id}
-        className={`flex w-[400px] sm:w-[600px] ${size === "large" ? "md:w-[600px] lg:w-[900px]" : ""} rounded-sm align-center p-2 content-center border-b-2 border-blue-500/20 bg-gray-600`}
+        className={`flex w-[400px] sm:w-[600px] ${size === "large" ? "md:w-[600px] lg:w-[900px]" : ""} rounded-sm align-center p-2 content-center border-b-2 border-blue-500/20`}
       >
         <div className="flex md:flex-row" key={event.id}>
           <Box
@@ -209,12 +209,12 @@ export const EventCard = ({
                 <h2 className="text-lg lg:text-xl text-wrap font-bold">{event.title}</h2>
 
                 <Box className="flex items-center">
-                <span className="text-md text-wrap pr-2 font-medium">{getVenueLink()}</span>
-
-                  <span className="text-xs line-clamp-1">
+                  <span className="text-md text-wrap pr-2 font-medium">{getVenueLink()}</span>
+                </Box>
+                <Box className="flex">
+                  <span className="text-sm">
                     {timeAndDate(event)}
-                  </span>
-
+                   </span>
                 </Box>
                 <Box className="flex">
                   <span className="text-xs font-bold">{event.venue.address}</span>
