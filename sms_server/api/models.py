@@ -307,7 +307,8 @@ class CarpenterRecord(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
   carpenter_run = models.ForeignKey(CarpenterRun, on_delete=models.CASCADE)
   api_name = models.CharField(max_length=32, default="Manual")
-  raw_data = models.ForeignKey(RawData, on_delete=models.CASCADE)
+  raw_data = models.ForeignKey(RawData, on_delete=models.CASCADE, blank=True, null=True)
+  open_mic = models.ForeignKey(OpenMic, on_delete=models.CASCADE, blank=True, null=True)
   change_type = models.CharField(max_length=16, choices=get_choices(ChangeTypes))
   change_log = models.TextField(blank=True, null=True)
   

@@ -150,6 +150,7 @@ class CarpenterRunSerializer(serializers.ModelSerializer):
 class CarpenterRecordSerializer(serializers.ModelSerializer):
   """Serialize Carpenter Records."""
   raw_data = RawDataSerializer()
+  open_mic = OpenMicSerializer()
   event = EventSerializer()
   venue = VenueSerializer()
   artist = ArtistSerializer()
