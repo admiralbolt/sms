@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useDebounce } from "use-debounce";
 
 import {
   Autocomplete,
@@ -8,7 +9,6 @@ import {
   CircularProgress,
   Divider,
   TextField,
-  debounce,
 } from "@mui/material";
 
 import { getEventById } from "@/hooks/api";
@@ -18,13 +18,14 @@ import { Event } from "@/types";
 import { EventCard } from "./EventCard";
 
 export const EventPanel = () => {
+  const [results, setResults] = useState<Event[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
   const [open, setOpen] = useState<boolean>(false);
-  const [options, setOptions] = useState<Event[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
   const [isNew, setIsNew] = useState<boolean>(false);
-
-  const loading = open && options.length === 0;
+  const [keyword] = useDebounce(inputValue, 500);
 
   const handleChange = (
     _event: React.SyntheticEvent<Element, globalThis.Event>,
@@ -37,11 +38,11 @@ export const EventPanel = () => {
 
   useEffect(() => {
     if (!open) {
-      setOptions([]);
+      setResults([]);
     }
   }, [open]);
 
-  const doSearch = debounce((keyword) => {
+  const search = () => {
     if (keyword.length == 0) return;
 
     customAxios
@@ -51,15 +52,14 @@ export const EventPanel = () => {
         },
       })
       .then((response) => {
-        setOptions(response.data);
+        setResults(response.data);
+        setLoading(false);
       });
-  }, 300);
-
-  const search = useCallback(doSearch, [doSearch]);
+  };
 
   useEffect(() => {
-    search(inputValue);
-  }, [inputValue]);
+    search();
+  }, [keyword]);
 
   const createEvent = () => {
     setIsNew(true);
@@ -113,7 +113,7 @@ export const EventPanel = () => {
           getOptionLabel={(option: Event) =>
             `${option.title} (${option.event_day})`
           }
-          options={options}
+          options={results}
           loading={loading}
           onChange={handleChange}
           value={selectedEvent}
