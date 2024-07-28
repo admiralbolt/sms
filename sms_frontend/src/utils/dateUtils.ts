@@ -16,11 +16,9 @@ const secondsToReadable = (seconds: number): string => {
   const minutes = Math.floor(remainder / 60);
   remainder = Math.floor(seconds % 60);
 
-  if (hours > 0)
-    return `${hours}h ${minutes}m ${remainder}s`;
+  if (hours > 0) return `${hours}h ${minutes}m ${remainder}s`;
 
-  if (minutes > 0)
-    return `${minutes}m ${remainder}s`;
+  if (minutes > 0) return `${minutes}m ${remainder}s`;
 
   return `${remainder}s`;
 };
