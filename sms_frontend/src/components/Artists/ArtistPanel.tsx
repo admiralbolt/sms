@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDebounce} from "use-debounce";
 
 import {
   Autocomplete,
@@ -9,18 +10,21 @@ import {
   TextField,
 } from "@mui/material";
 
-import { useArtists } from "@/hooks/api";
+import { getArtistById } from "@/hooks/api";
 import customAxios from "@/hooks/customAxios";
 import { Artist } from "@/types";
 
 import { ArtistCard } from "./ArtistCard";
 
 export const ArtistPanel = () => {
-  const [Artists, setArtists] = useArtists();
+  const [results, setResults] = useState<Artist[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
+  const [open, setOpen] = useState<boolean>(false);
   const [selectedArtist, setSelectedArtist] = useState<Artist | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
   const [isNew, setIsNew] = useState<boolean>(false);
+  const [keyword] = useDebounce(inputValue, 500);
 
   const handleChange = (
     _event: any,
@@ -32,19 +36,41 @@ export const ArtistPanel = () => {
     setSelectedArtist(value == null ? null : value);
   };
 
+  useEffect(() => {
+    if (!open) {
+      setResults([]);
+    }
+  }, [open]);
+
+  const search = () => {
+    if (keyword.length == 0) return;
+
+    customAxios
+      .get("api/artist_search", {
+        params: {
+          keyword: keyword,
+          include_hidden: true,
+        },
+      })
+      .then((response) => {
+        setResults(response.data);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    search();
+  }, [keyword]);
+
   const createArtist = () => {
     setIsNew(true);
     setSelectedArtist({} as Artist);
   };
 
   const reloadData = (id?: number) => {
-    customAxios.get("api/Artists").then((res) => {
-      setArtists(res.data);
-      const v = res.data.find((o: any) => o.id == id);
-      if (v != undefined) {
-        setSelectedArtist(v);
-      }
-    });
+    (async () => {
+      setSelectedArtist(await getArtistById(id));
+    })();
   };
 
   const onDelete = () => {
@@ -75,12 +101,20 @@ export const ArtistPanel = () => {
         }}
       >
         <Autocomplete
-          options={Artists}
+          open={open}
+          onOpen={() => {
+            setOpen(true);
+          }}
+          onClose={() => {
+            setOpen(false);
+          }}
+          options={results}
           sx={{ width: 300 }}
           renderInput={(params) => <TextField {...params} label="Artist" />}
           getOptionLabel={(Artist: Artist) => {
             return Artist.name;
           }}
+          loading={loading}
           onChange={handleChange}
           value={selectedArtist}
           inputValue={inputValue}
