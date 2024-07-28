@@ -206,18 +206,22 @@ export const EventCard = ({
                 )}
               </div>
               <Box className="flex flex-col">
-                <h2 className="text-lg lg:text-xl text-wrap font-bold">{event.title}</h2>
+                <h2 className="text-lg lg:text-xl text-wrap font-bold">
+                  {event.title}
+                </h2>
 
                 <Box className="flex items-center">
-                  <span className="text-md text-wrap pr-2 font-medium">{getVenueLink()}</span>
+                  <span className="text-md text-wrap pr-2 font-medium">
+                    {getVenueLink()}
+                  </span>
                 </Box>
                 <Box className="flex">
-                  <span className="text-sm">
-                    {timeAndDate(event)}
-                   </span>
+                  <span className="text-sm">{timeAndDate(event)}</span>
                 </Box>
                 <Box className="flex">
-                  <span className="text-xs font-bold">{event.venue.address}</span>
+                  <span className="text-xs font-bold">
+                    {event.venue.address}
+                  </span>
                 </Box>
               </Box>
             </Box>

@@ -10,6 +10,7 @@ import {
   TextField,
 } from "@mui/material";
 
+import { getVenueById } from "@/hooks/api";
 import customAxios from "@/hooks/customAxios";
 import { Venue } from "@/types";
 
@@ -66,13 +67,9 @@ export const VenuePanel = () => {
   };
 
   const reloadData = (id?: number) => {
-    customAxios.get("api/venues").then((res) => {
-      setVenues(res.data);
-      const v = res.data.find((o: any) => o.id == id);
-      if (v != undefined) {
-        setSelectedVenue(v);
-      }
-    });
+    (async () => {
+      setSelectedVenue(await getVenueById(id));
+    })();
   };
 
   const onDelete = () => {
