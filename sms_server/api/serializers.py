@@ -90,6 +90,7 @@ class OpenMicSerializer(serializers.ModelSerializer):
 class IngestionRunSerializer(serializers.ModelSerializer):
   """Serialize IngestionRun data."""
   summary = serializers.SerializerMethodField()
+  run_time = serializers.SerializerMethodField()
 
   def get_summary(self, ingestion_run: models.IngestionRun) -> list[dict]:
     """Render a summary of the run for easy use.
@@ -100,6 +101,13 @@ class IngestionRunSerializer(serializers.ModelSerializer):
     for i, agg in enumerate(data):
       agg["index"] = i
     return data
+  
+  def get_run_time(self, ingestion_run: models.IngestionRun) -> float:
+    """Return the total runtime of the run in seconds."""
+    if not ingestion_run.finished_at:
+      return -1
+
+    return ingestion_run.finished_at - ingestion_run.created_at
 
   class Meta:
     model = models.IngestionRun
@@ -116,6 +124,7 @@ class IngestionRecordSerializer(serializers.ModelSerializer):
 class CarpenterRunSerializer(serializers.ModelSerializer):
   """Serialize CarpenterRun data."""
   summary = serializers.SerializerMethodField()
+  run_time = serializers.SerializerMethodField()
 
   def get_summary(self, carpenter_run: models.CarpenterRun) -> list[dict]:
     """Render a summary of the run for easy use.
@@ -126,6 +135,13 @@ class CarpenterRunSerializer(serializers.ModelSerializer):
     for i, agg in enumerate(data):
       agg["index"] = i
     return data
+  
+  def get_run_time(self, carpenter_run: models.CarpenterRun) -> float:
+    """Return the total runtime of the run in seconds."""
+    if not carpenter_run.finished_at:
+      return -1
+    
+    return carpenter_run.finished_at - carpenter_run.created_at
 
   class Meta:
     model = models.CarpenterRun
@@ -145,10 +161,18 @@ class CarpenterRecordSerializer(serializers.ModelSerializer):
 class JanitorRunSerializer(serializers.ModelSerializer):
   """Serialize JanitorRun data."""
   summary = serializers.SerializerMethodField()
+  run_time = serializers.SerializerMethodField()
 
   def get_summary(self, janitor_run: models.JanitorRun) -> list[dict]:
     """Render a summary of the run for easy use."""
     return list(models.JanitorRecord.objects.filter(janitor_run=janitor_run).values("operation").annotate(total=Count("id")))
+  
+  def get_run_time(self, janitor_run: models.JanitorRun) -> float:
+    """Return the total runtime of the run in seconds."""
+    if not janitor_run.finished_at:
+      return -1
+    
+    return janitor_run.finished_at - janitor_run.created_at
 
   class Meta:
     model = models.JanitorRun
