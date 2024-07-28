@@ -22,6 +22,7 @@ class ScoringTestCase(TestCase):
   def test_misc_cases(self):
     self.assertLessEqual(search_utils.score("Marble", keyword="carl"), search_utils._SCORE_THRESHOLD)
     self.assertGreaterEqual(search_utils.score("Darci Carlson", keyword="carl"), search_utils._SCORE_THRESHOLD)
+    self.assertGreaterEqual(search_utils.score("Brothertiger", keyword="brothretiger"), search_utils._SCORE_THRESHOLD)
 
   def test_check_raw_scores(self):
     self.debug_score("Darci Carlson", keyword="carl")

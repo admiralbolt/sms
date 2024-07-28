@@ -114,6 +114,9 @@ export const VenuePanel = () => {
           getOptionLabel={(venue: Venue) => {
             return venue.name;
           }}
+          // Filtering / scoring is already done by our search api, no need to
+          // filter results again.
+          filterOptions={(options, _state) => options}
           loading={loading}
           onChange={handleChange}
           value={selectedVenue}

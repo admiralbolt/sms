@@ -114,6 +114,9 @@ export const EventPanel = () => {
           getOptionLabel={(option: Event) =>
             `${option.title} (${option.event_day})`
           }
+          // Filtering / scoring is already done by our search api, no need to
+          // filter results again.
+          filterOptions={(options, _state) => options}
           options={results}
           loading={loading}
           onChange={handleChange}

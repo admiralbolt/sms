@@ -111,9 +111,12 @@ export const ArtistPanel = () => {
           options={results}
           sx={{ width: 300 }}
           renderInput={(params) => <TextField {...params} label="Artist" />}
-          getOptionLabel={(Artist: Artist) => {
-            return Artist.name;
+          getOptionLabel={(artist: Artist) => {
+            return artist.name;
           }}
+          // Filtering / scoring is already done by our search api, no need to
+          // filter results again.
+          filterOptions={(options, _state) => options}
           loading={loading}
           onChange={handleChange}
           value={selectedArtist}
