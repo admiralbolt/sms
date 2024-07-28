@@ -230,6 +230,21 @@ def search_events(request: HttpRequest):
     many=True
   ).data, safe=False)
 
+@api_view(["GET"])
+@permission_classes([AllowAny] if IS_PROD else [])
+def search_venues(request: HttpRequest):
+  keyword = request.GET.get("keyword")
+  if not keyword:
+    return JsonResponse({
+      "status": "error",
+      "message": "No keyword supplied"
+    })
+  
+  return JsonResponse(serializers.VenueSerializer(
+    search_utils.search_all_venues(keyword),
+    many=True
+  ).data, safe=False)
+
 @api_view(["POST"])
 @permission_classes([IsAdminUser] if IS_PROD else [])
 def alias_and_merge_all_venues(request: HttpRequest):

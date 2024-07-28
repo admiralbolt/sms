@@ -61,3 +61,7 @@ def search_all_events(keyword: str):
   all_events = models.Event.objects.order_by("title").filter(event_day__gte=datetime.date.today(), show_event=True)
   scores = map(lambda event: score_event(event, keyword), all_events)
   return [event for score, event in sorted(zip(scores, all_events), key=lambda pair: pair[0], reverse=True) if score > _SCORE_THRESHOLD]
+
+def search_all_venues(keyword: str):
+  """Search all venues!"""
+  return models.Venue.objects.order_by("name").filter(name_lower__contains=keyword.lower(), show_venue=True)
