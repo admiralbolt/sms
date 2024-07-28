@@ -23,6 +23,7 @@ router.register(r"carpenter_records", views.CarpenterRecordViewSet)
 
 urlpatterns = [
   path("api/", include(router.urls)),
+  path("api/artist_search", views.search_artists),
   path("api/event_search", views.search_events),
   path("api/venue_search", views.search_venues),
   path("api/venues/<int:venue_id>/venue_events", views.VenueEventsView.as_view(), name="venue_events"),
