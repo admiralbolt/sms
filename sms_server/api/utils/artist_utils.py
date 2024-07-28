@@ -80,6 +80,7 @@ def create_or_update_artist(**kwargs) -> tuple[str, str, Artist]:
   kwargs["name"] = kwargs["name"].strip()
   allowed_keys = set([field.name for field in Artist._meta.get_fields()])
   allowed_keys.remove("id")
+  allowed_keys.remove("social_links")
   filtered_kwargs = {key: kwargs[key] for key in kwargs if key in allowed_keys}
   artist = get_artist(name=kwargs["name"])
 

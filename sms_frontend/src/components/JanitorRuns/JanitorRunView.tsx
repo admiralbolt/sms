@@ -2,17 +2,17 @@ import { useState } from "react";
 
 import { Box, Button } from "@mui/material";
 
-import { IngestionRun } from "@/types";
+import { JanitorRun } from "@/types";
 import { formatDateTime, secondsToReadable } from "@/utils/dateUtils";
 
-import { IngestionRunFull } from "./IngestionRunFull";
-import { IngestionRunSummaryTable } from "./IngestionRunSummaryTable";
+import { JanitorRunFull } from "./JanitorRunFull";
+import { JanitorRunSummaryTable } from "./JanitorRunSummaryTable";
 
 interface Props {
-  run: IngestionRun;
+  run: JanitorRun;
 }
 
-export const IngestionRunView = ({ run }: Props) => {
+export const JanitorRunView = ({ run }: Props) => {
   const [showFullDetails, setShowFullDetails] = useState<boolean>(false);
 
   return (
@@ -25,8 +25,8 @@ export const IngestionRunView = ({ run }: Props) => {
         <Button onClick={() => setShowFullDetails(!showFullDetails)}>
           Toggle Details
         </Button>
-        {showFullDetails && <IngestionRunFull run={run} />}
-        {!showFullDetails && <IngestionRunSummaryTable ingestionRun={run} />}
+        {showFullDetails && <JanitorRunFull run={run} />}
+        {!showFullDetails && <JanitorRunSummaryTable run={run} />}
       </Box>
       <Box height="3em" width="100%" />
     </Box>

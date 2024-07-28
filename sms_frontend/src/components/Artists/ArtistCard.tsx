@@ -1,9 +1,6 @@
 import { useContext, useState } from "react";
 
-import {
-  Delete,
-  Edit,
-} from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 import {
   Box,
   Button,

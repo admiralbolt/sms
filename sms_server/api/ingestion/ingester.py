@@ -1,3 +1,4 @@
+import datetime
 import logging
 from typing import Optional
 
@@ -61,3 +62,5 @@ class Ingester:
         print(f"Error importing from api {api}, error: {e}")
         print(e)
         logger.error("Error importing from api %s, error: %s.", api, e, exc_info=1)
+    self.ingestion_run.finished_at = datetime.datetime.now()
+    self.ingestion_run.save()

@@ -10,4 +10,17 @@ const format24HourTime = (time: string): string => {
   return dayjs(time, "HH:mm:ss").format("ha");
 };
 
-export { format24HourTime, formatDateTime };
+const secondsToReadable = (seconds: number): string => {
+  const hours = Math.floor(seconds / 3600);
+  let remainder = seconds % 3600;
+  const minutes = Math.floor(remainder / 60);
+  remainder = Math.floor(seconds % 60);
+
+  if (hours > 0) return `${hours}h ${minutes}m ${remainder}s`;
+
+  if (minutes > 0) return `${minutes}m ${remainder}s`;
+
+  return `${remainder}s`;
+};
+
+export { format24HourTime, formatDateTime, secondsToReadable };

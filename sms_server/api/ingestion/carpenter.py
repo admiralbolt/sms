@@ -134,16 +134,18 @@ class Carpenter:
         )
 
   def run(self):
-    """CLEAN UP CLEAN UP EVERYBODY DO YOUR SHARE."""
+    """BUILD SOME SHIT."""
     if self.ingestion_apis:
       for ingestion_api in self.ingestion_apis:
         self.process_api(api=API_MAPPING[ingestion_api])
         return
 
-    for sub_list in API_PRIORITY_LIST:
-      for ingestion_api in sub_list:
-        # Skip manual ones.
-        if ingestion_api == IngestionApis.MANUAL:
-          continue
+    for ingestion_api in API_PRIORITY_LIST:
+      # Skip manual.
+      if ingestion_api == IngestionApis.MANUAL:
+        continue
 
-        self.process_api(api=API_MAPPING[ingestion_api])
+      self.process_api(api=API_MAPPING[ingestion_api])
+
+    self.carpenter_run.finished_at = datetime.now()
+    self.carpenter_run.save()

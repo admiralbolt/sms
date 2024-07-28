@@ -9,6 +9,10 @@ class ChangeTypes:
   SKIP = "Skip"
   UPDATE = "Update"
 
+class JanitorOperations:
+  APPLY_ARTISTS = "Apply Artists"
+  MERGE_EVENTS = "Merge Events"
+
 class EventTypes:
   OPEN_MIC = "Open Mic"
   OPEN_JAM = "Open Jam"
