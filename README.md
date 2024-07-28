@@ -82,12 +82,12 @@ We can fix that by running management commands to import data.
 > Also the api import takes ~45 minutes.
 
 ```bash
-# 1. Import all data from the automatic apis!
-python manage.py import_api_data --all
-# 2. Import all data from the cralwers!
-python manage.py crawl_data --all
-# 3. Generate open mic night events!
-python manage.py generate_open_mic_events
+# 1. Import a bunch of raw data from the internet!
+python manage.py ingester
+# 2. Create a bunch of events from that raw data!
+python manage.py carpenter
+# 3. Clean those events!
+python manage.py janitor
 ```
 
 Now we should be able to see some data in both the admin panel and the rest api!
@@ -104,15 +104,10 @@ their corresponding venue automatically based on a venue name regex in the crawl
 <img width="685" alt="Screenshot 2024-05-13 at 3 07 09 PM" src="https://github.com/admiralbolt/sms/assets/1838577/328fceb3-e7f6-450d-8a1f-dee8784c138a">
 
 Each time a crawler is invoked, it will attempt to match itself with the corresponding venue.
-When matched successfully it will create a `VenueApi` object with
+When matched successfully it will create a `Crawler` object with the corresponding crawler name
+and the proper venue. Here's an example record for the crawler for The Royal Room:
 
-1. The appropriate venue attached.
-2. The Api Name set to "Crawler"
-3. The Crawler Name set to the exact name of the crawler file.
-
-Here's an example record for the crawler for Blue Moon Tavern:
-
-![image](https://github.com/admiralbolt/sms/assets/1838577/31fb1dcd-b195-4758-b92c-85912754867e)
+<img width="487" alt="image" src="https://github.com/user-attachments/assets/a2f5b9a4-9e5e-481f-ae4d-e2d727abd937">
 
 ## Frontend Setup
 

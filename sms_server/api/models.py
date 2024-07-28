@@ -7,7 +7,7 @@ import requests
 from django.core.files.base import ContentFile
 from django.db import models
 
-from api.constants import get_choices, ChangeTypes, EventTypes, IngestionApis, Neighborhoods, OpenMicTypes, VenueTypes
+from api.constants import get_choices, ChangeTypes, EventTypes, IngestionApis, JanitorOperations, Neighborhoods, OpenMicTypes, VenueTypes
 
 logger = logging.getLogger(__name__)
 
@@ -144,36 +144,6 @@ class SocialLink(models.Model):
     def __str__(self):
       return f"|{self.id}| [{self.artist}, {self.platform}]"
 
-class RawData(models.Model):
-  """Raw data from an api request.
-
-  We save data from api requests in a staging table before it becomes finalized
-  data. This will require some duplication of fields / code, but will provide
-  some nice benefits:
-
-  1) Better debugging, and we won't need to re-poll APIs to see where data
-     comes from.
-  2) The ability to link finalized events to the raw data where they come from.
-  3) The ability to change merging/deduping rules and immediately see results.
-  4) We can edit finalized venues / events, without losing the underlying data
-     that they come from. 
-  """
-  created_at = models.DateTimeField(auto_now_add=True)
-  api_name = models.CharField(max_length=32, choices=get_choices(IngestionApis), default="Manual")
-  event_api_id = models.CharField(max_length=64)
-  # We include event and venue name for sanity purposes.
-  event_name = models.CharField(max_length=256)
-  venue_name = models.CharField(max_length=128)
-  event_day = models.DateField()
-  data = models.JSONField()
-  processed = models.BooleanField(default=False)
-
-  def __str__(self):
-    return f"|{self.id}| [{self.api_name}] ({self.venue_name}, {self.event_name})"
-
-  class Meta:
-    unique_together = [["api_name", "event_api_id"]]
-
 
 class Event(models.Model):
   """List of events."""
@@ -194,8 +164,6 @@ class Event(models.Model):
   show_event = models.BooleanField(default=True)
 
   finalized = models.BooleanField(default=False)
-  # Link back to the raw data that an event comes from.
-  raw_datas = models.ManyToManyField(RawData)
 
   def __str__(self):
     return f"{self.title} ({self.venue.name}, {self.event_day}, {self.title})"
@@ -220,8 +188,37 @@ class Event(models.Model):
         self._original_event_image_url = self.event_image_url
         self.event_image.save(f"{self.title.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
 
+class RawData(models.Model):
+  """Raw data from an api request.
+
+  We save data from api requests in a staging table before it becomes finalized
+  data. This will require some duplication of fields / code, but will provide
+  some nice benefits:
+
+  1) Better debugging, and we won't need to re-poll APIs to see where data
+     comes from.
+  2) The ability to link finalized events to the raw data where they come from.
+  3) The ability to change merging/deduping rules and immediately see results.
+  4) We can edit finalized venues / events, without losing the underlying data
+     that they come from. 
+  """
+  created_at = models.DateTimeField(auto_now_add=True)
+  api_name = models.CharField(max_length=32, choices=get_choices(IngestionApis), default="Manual")
+  event_api_id = models.CharField(max_length=64)
+  # We include event and venue name for sanity purposes.
+  event_name = models.CharField(max_length=256)
+  venue_name = models.CharField(max_length=128)
+  event_day = models.DateField()
+  data = models.JSONField()
+  processed = models.BooleanField(default=False)
+
+  event = models.ForeignKey(Event, related_name="raw_datas", on_delete=models.SET_NULL, blank=True, null=True)
+
+  def __str__(self):
+    return f"|{self.id}| [{self.api_name}] ({self.venue_name}, {self.event_name})"
+
   class Meta:
-    unique_together = [["venue", "event_day", "start_time"]]
+    unique_together = [["api_name", "event_api_id"]]
 
 
 class OpenMic(models.Model):
@@ -264,14 +261,47 @@ class OpenMic(models.Model):
       return self.title
 
     return "UNKNOWN_VENUE" if not self.venue else f"{self.venue.name} {self.event_mic_type}"
-  
-class CarpenterRun(models.Model):
-  """Logs for runs from the carpenter."""
+
+class JanitorRun(models.Model):
+  """Is your janitor running?"""
   created_at = models.DateTimeField(auto_now_add=True)
+  finished_at = models.DateTimeField(blank=True, null=True)
   name = models.CharField(max_length=64)
 
   def __str__(self):
     return f"{self.name} ({self.created_at})"
+
+class JanitorMergeEventRecord(models.Model):
+  to_event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="to_event")
+
+class JanitorApplyArtistRecord(models.Model):
+  event = models.ForeignKey(Event, on_delete=models.CASCADE)
+  artists = models.ManyToManyField(Artist)
+
+class JanitorRecord(models.Model):
+  created_at = models.DateTimeField(auto_now_add=True)
+  janitor_run = models.ForeignKey(JanitorRun, on_delete=models.CASCADE)
+  operation = models.CharField(max_length=16, choices=get_choices(JanitorOperations))
+  change_log = models.TextField(blank=True, null=True)
+
+  # Only one of the following should be populated.
+  merge_event_record = models.ForeignKey(JanitorMergeEventRecord, on_delete=models.SET_NULL, blank=True, null=True)
+  apply_artists_record = models.ForeignKey(JanitorApplyArtistRecord, on_delete=models.SET_NULL, blank=True, null=True)
+  
+class CarpenterRun(models.Model):
+  """Logs for runs from the carpenter."""
+  created_at = models.DateTimeField(auto_now_add=True)
+  finished_at = models.DateTimeField(blank=True, null=True)
+  name = models.CharField(max_length=64)
+
+  def __str__(self):
+    return f"{self.name} ({self.created_at})"
+  
+  def run_time(self) -> str:
+    if not self.finished_at:
+      return ""
+    
+    return str(self.finished_at - self.created_at)
   
 class CarpenterRecord(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
@@ -298,14 +328,28 @@ class CarpenterRecord(models.Model):
 
   def __str__(self):
     return f"{self.carpenter_run} - {self.api_name}: ({self.name_of_object_changed()}, {self.change_type})"
+  
+  def run_time(self) -> str:
+    if not self.finished_at:
+      return ""
+    
+    return str(self.finished_at - self.created_at)
 
 class IngestionRun(models.Model):
   """Logs for runs from the ingester."""
   created_at = models.DateTimeField(auto_now_add=True)
+  finished_at = models.DateTimeField(blank=True, null=True)
   name = models.CharField(max_length=64)
 
   def __str__(self):
     return f"{self.name} ({self.created_at})"
+  
+  def run_time(self) -> str:
+    if not self.finished_at:
+      return ""
+    
+    return str(self.finished_at - self.created_at)
+
 
 class IngestionRecord(models.Model):
   """Parent class for tracking individual changes from ingester run."""

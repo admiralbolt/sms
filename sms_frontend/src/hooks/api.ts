@@ -7,6 +7,7 @@ import {
   CarpenterRun,
   Event,
   IngestionRun,
+  JanitorRun,
   OpenMic,
   PeriodicTask,
   Venue,
@@ -239,6 +240,18 @@ const useCarpenterRuns = (): CarpenterRun[] => {
   return runs;
 };
 
+const useJanitorRuns = (): JanitorRun[] => {
+  const [runs, setRuns] = useState<JanitorRun[]>([]);
+
+  useEffect(() => {
+    customAxios.get("api/janitor_runs").then((res) => {
+      setRuns(res.data);
+    });
+  }, []);
+
+  return runs;
+};
+
 export {
   getArtistById,
   getEventById,
@@ -249,6 +262,7 @@ export {
   useEventTypes,
   useIngestionRuns,
   useCarpenterRuns,
+  useJanitorRuns,
   createArtist,
   updateArtist,
   createEvent,
