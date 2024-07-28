@@ -57,6 +57,8 @@ export interface IngestionRun {
   id: string;
   name: string;
   created_at: Date;
+  finished_at: Date;
+  run_time: number;
   summary: IngestionRunSummary[];
 }
 
@@ -85,6 +87,8 @@ export interface CarpenterRun {
   id: string;
   name: string;
   created_at: Date;
+  finished_at: Date;
+  run_time: number;
   summary: CarpenterRunSummary[];
 }
 
@@ -116,6 +120,7 @@ export interface JanitorRun {
   name: string;
   created_at: Date;
   finished_at: Date;
+  run_time: number;
   summary: JanitorRunSummary[];
 }
 
