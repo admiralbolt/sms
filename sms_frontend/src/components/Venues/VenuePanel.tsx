@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDebounce } from "use-debounce";
 
 import {
   Autocomplete,
@@ -9,18 +10,20 @@ import {
   TextField,
 } from "@mui/material";
 
-import { useVenues } from "@/hooks/api";
 import customAxios from "@/hooks/customAxios";
 import { Venue } from "@/types";
 
 import { VenueCard } from "./VenueCard";
 
 export const VenuePanel = () => {
-  const [venues, setVenues] = useVenues();
+  const [results, setResults] = useState<Venue[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
+  const [open, setOpen] = useState<boolean>(false);
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
   const [inputValue, setInputValue] = useState<string>("");
   const [isNew, setIsNew] = useState<boolean>(false);
+  const [keyword] = useDebounce(inputValue, 500);
 
   const handleChange = (
     _event: any,
@@ -31,6 +34,31 @@ export const VenuePanel = () => {
     setIsNew(false);
     setSelectedVenue(value == null ? null : value);
   };
+
+  useEffect(() => {
+    if (!open) {
+      setResults([]);
+    }
+  }, [open]);
+
+  const search = () => {
+    if (keyword.length == 0) return;
+
+    customAxios
+      .get("api/venue_search", {
+        params: {
+          keyword: keyword,
+        },
+      })
+      .then((response) => {
+        setResults(response.data);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    search();
+  }, [keyword]);
 
   const createVenue = () => {
     setIsNew(true);
@@ -75,12 +103,20 @@ export const VenuePanel = () => {
         }}
       >
         <Autocomplete
-          options={venues}
+          open={open}
+          onOpen={() => {
+            setOpen(true);
+          }}
+          onClose={() => {
+            setOpen(false);
+          }}
+          options={results}
           sx={{ width: 300 }}
           renderInput={(params) => <TextField {...params} label="Venue" />}
           getOptionLabel={(venue: Venue) => {
             return venue.name;
           }}
+          loading={loading}
           onChange={handleChange}
           value={selectedVenue}
           inputValue={inputValue}
