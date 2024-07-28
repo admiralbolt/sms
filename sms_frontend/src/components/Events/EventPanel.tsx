@@ -49,6 +49,7 @@ export const EventPanel = () => {
       .get("api/event_search", {
         params: {
           keyword: keyword,
+          include_hidden: true,
         },
       })
       .then((response) => {

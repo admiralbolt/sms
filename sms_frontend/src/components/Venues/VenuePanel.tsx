@@ -49,6 +49,7 @@ export const VenuePanel = () => {
       .get("api/venue_search", {
         params: {
           keyword: keyword,
+          include_hidden: true,
         },
       })
       .then((response) => {

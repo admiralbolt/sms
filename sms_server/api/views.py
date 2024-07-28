@@ -225,8 +225,10 @@ def search_events(request: HttpRequest):
       "message": "No keyword supplied"
     })
   
+  include_hidden = request.GET.get("include_hidden", False)
+  
   return JsonResponse(serializers.EventSerializer(
-    search_utils.search_all_events(keyword),
+    search_utils.search_all_events(keyword, include_hidden=include_hidden),
     many=True
   ).data, safe=False)
 
@@ -240,8 +242,10 @@ def search_venues(request: HttpRequest):
       "message": "No keyword supplied"
     })
   
+  include_hidden = request.GET.get("include_hidden", False)
+  
   return JsonResponse(serializers.VenueSerializer(
-    search_utils.search_all_venues(keyword),
+    search_utils.search_all_venues(keyword, include_hidden=include_hidden),
     many=True
   ).data, safe=False)
 

@@ -56,12 +56,17 @@ def score_event(event: models.Event, keyword: str) -> float:
   """Compute a matching score for an event."""
   return score(event.title, keyword) * _EVENT_NAME_WEIGHT + score(event.venue.name, keyword) * _EVENT_VENUE_WEIGHT
 
-def search_all_events(keyword: str):
+def search_all_events(keyword: str, include_hidden: bool=False):
   """Search all events!"""
-  all_events = models.Event.objects.order_by("title").filter(event_day__gte=datetime.date.today(), show_event=True)
+  all_events = models.Event.objects.order_by("title").filter(event_day__gte=datetime.date.today())
+  if not include_hidden:
+    all_events = all_events.filter(show_event=True)
   scores = map(lambda event: score_event(event, keyword), all_events)
   return [event for score, event in sorted(zip(scores, all_events), key=lambda pair: pair[0], reverse=True) if score > _SCORE_THRESHOLD]
 
-def search_all_venues(keyword: str):
+def search_all_venues(keyword: str, include_hidden: bool=False):
   """Search all venues!"""
-  return models.Venue.objects.order_by("name").filter(name_lower__contains=keyword.lower(), show_venue=True)
+  all_venues = models.Venue.objects.order_by("name").filter(name_lower__contains=keyword.lower())
+  if not include_hidden:
+    all_venues = all_venues.filter(show_venue=True)
+  return all_venues
