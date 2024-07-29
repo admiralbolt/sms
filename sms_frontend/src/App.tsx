@@ -19,6 +19,7 @@ import { LogoutView } from "./pages/LogoutView";
 import { MapView } from "./pages/MapView";
 import { NotFoundView } from "./pages/NotFoundView";
 import { SearchView } from "./pages/SearchView";
+import { VenuesView } from "@/pages";
 
 // We only want to run Google Analytics in production.
 if (process.env.NODE_ENV === "production") {
@@ -41,6 +42,7 @@ const App = () => {
                     <Route path="map" element={<MapView />} />
                     <Route path="search" element={<SearchView />} />
                     <Route path="about" element={<AboutView />} />
+                    <Route path="venues" element={<VenuesView />} />
                     <Route path="login" element={<LoginView />} />
                     <Route path="logout" element={<LogoutView />} />
                     <Route
