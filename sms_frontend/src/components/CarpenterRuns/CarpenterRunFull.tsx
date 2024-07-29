@@ -8,6 +8,7 @@ import { CarpenterRun, ChangeType } from "@/types";
 import { CarpenterRunRecord } from "@/types";
 
 import { RawDataComponent } from "../RawData";
+import { OpenMicCard } from "../OpenMics/OpenMicCard";
 
 interface Props {
   run: CarpenterRun;
@@ -205,7 +206,7 @@ export const CarpenterRunFull = ({ run }: Props) => {
           item
           xs={6}
         >
-          {selectedRecord.raw_data != undefined && (
+          {selectedRecord.id != undefined && (
             <Box>
               <Typography>Record ID: {selectedRecord.id}</Typography>
               <pre style={{ fontSize: "0.7em" }}>
@@ -219,7 +220,12 @@ export const CarpenterRunFull = ({ run }: Props) => {
                 {getObjData(selectedRecord)}
               </pre>
               <br />
-              <RawDataComponent rawData={selectedRecord.raw_data} />
+              {selectedRecord.raw_data != undefined && (
+                <RawDataComponent rawData={selectedRecord.raw_data} />
+              )}
+              {selectedRecord.open_mic != undefined && (
+                <OpenMicCard openMic={selectedRecord.open_mic} />
+              )}
             </Box>
           )}
         </Grid>
