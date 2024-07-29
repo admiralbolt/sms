@@ -69,9 +69,7 @@ export const OpenMicCard = ({
   };
 
   const displayImage = () => {
-    if (openMic.venue.venue_image) return openMic.venue.venue_image;
-
-    return "/placeholder.png";
+    return openMic.venue.venue_image ?? "/placeholder.png";
   };
 
   if (edit) {
