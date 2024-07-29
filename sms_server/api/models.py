@@ -166,7 +166,7 @@ class Event(models.Model):
   finalized = models.BooleanField(default=False)
 
   def __str__(self):
-    return f"{self.title} ({self.venue.name}, {self.event_day}, {self.title})"
+    return f"|{self.id}| {self.title} ({self.venue.name}, {self.event_day}, {self.title})"
   
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
