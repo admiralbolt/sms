@@ -8,7 +8,7 @@ django.setup()
 from celery import Celery
 from celery.schedules import crontab
 
-from api.tasks import generate_open_mic_events, import_and_clean, delete_old_ingestion_runs
+from api.tasks import import_and_clean, delete_old_ingestion_runs
 
 
 app = Celery("sms_server")
