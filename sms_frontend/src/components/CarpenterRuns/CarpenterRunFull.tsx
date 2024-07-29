@@ -206,7 +206,7 @@ export const CarpenterRunFull = ({ run }: Props) => {
           item
           xs={6}
         >
-          {selectedRecord.id != undefined && (
+          {selectedRecord?.id && (
             <Box>
               <Typography>Record ID: {selectedRecord.id}</Typography>
               <pre style={{ fontSize: "0.7em" }}>
@@ -220,10 +220,10 @@ export const CarpenterRunFull = ({ run }: Props) => {
                 {getObjData(selectedRecord)}
               </pre>
               <br />
-              {selectedRecord.raw_data != undefined && (
+              {selectedRecord?.raw_data && (
                 <RawDataComponent rawData={selectedRecord.raw_data} />
               )}
-              {selectedRecord.open_mic != undefined && (
+              {selectedRecord?.open_mic && (
                 <OpenMicCard openMic={selectedRecord.open_mic} />
               )}
             </Box>
