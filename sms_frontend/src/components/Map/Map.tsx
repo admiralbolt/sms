@@ -31,11 +31,15 @@ export const Map = () => {
         <Box
           sx={{
             display: "flex",
+            alignItems: "center",
             flex: 1,
             zIndex: 900,
             position: "fixed",
-            bottom: 0,
+            bottom: "2em",
             margin: "auto",
+            backgroundColor: "#252530",
+            borderRadius: "0.3em",
+            width: "100vw",
           }}
         >
           {selectedEvent && <EventCard event={selectedEvent} size="small" />}
@@ -43,21 +47,23 @@ export const Map = () => {
       );
     }
 
-    const pct = (100 * (width - filterPanelWidth)) / (width * 5);
+    const offset = (width - filterPanelWidth) / 2 - 450;
+    console.log(offset);
     return (
       <Box
         sx={{
-          left: `${pct}%`,
-          transform: `translate(-${pct}%, 0)`,
+          left: `${offset}px`,
           display: "flex",
           flex: 1,
           zIndex: 900,
           position: "fixed",
-          bottom: 0,
+          bottom: "2em",
           margin: "auto",
+          backgroundColor: "#252530",
+          borderRadius: "0.3em",
         }}
       >
-        {selectedEvent && <EventCard event={selectedEvent} size="small" />}
+        {selectedEvent && <EventCard event={selectedEvent} size="large" />}
       </Box>
     );
   };
@@ -85,7 +91,7 @@ export const Map = () => {
       </MapContainer>
 
       <Fade appear={false} in={bannerOpen}>
-        {eventBox()}
+        <Box sx={{ backgroundColor: "black" }}>{eventBox()}</Box>
       </Fade>
     </div>
   );

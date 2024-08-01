@@ -44,7 +44,7 @@ export const AboutView = () => {
         <b>V1.5.0</b> -- August 1st, 2024 <br />
       </Typography>
       <List sx={{ listStyleType: "disc", pl: 4 }}>
-      <ListItem
+        <ListItem
           sx={{
             display: "list-item",
             paddingBottom: 0,
@@ -68,8 +68,8 @@ export const AboutView = () => {
             paddingBottom: 0,
             paddingTop: 0,
           }}
-        > 
-          Rewrote the entire ingestion pipeline. It's now really complicated, 
+        >
+          Rewrote the entire ingestion pipeline. It's now really complicated,
           and maybe worse than before ¯\_(ツ)_/¯
         </ListItem>
         <ListItem
@@ -78,7 +78,7 @@ export const AboutView = () => {
             paddingBottom: 0,
             paddingTop: 0,
           }}
-        > 
+        >
           List view now looks waay nicer, and less blocky.
         </ListItem>
         <ListItem
@@ -87,7 +87,7 @@ export const AboutView = () => {
             paddingBottom: 0,
             paddingTop: 0,
           }}
-        > 
+        >
           API is now fully connected, instead of using flat data for the
           frontend.
         </ListItem>
@@ -97,7 +97,7 @@ export const AboutView = () => {
             paddingBottom: 0,
             paddingTop: 0,
           }}
-        > 
+        >
           Improved a bunch of admin tooling to make managing this pile of data
           somewhat easier.
         </ListItem>
@@ -105,7 +105,8 @@ export const AboutView = () => {
       Open Mic/Jam Adjustments <br />
       <Grid container borderTop={"1px solid white"} padding={0.5}>
         <Grid item xs={6} md={3} paddingTop={0}>
-          + Conor Byrne is BACK!!<br />
+          + Conor Byrne is BACK!!
+          <br />
         </Grid>
         <Grid item xs={6} md={3} paddingTop={0}></Grid>
       </Grid>
