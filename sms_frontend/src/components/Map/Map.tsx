@@ -48,7 +48,6 @@ export const Map = () => {
     }
 
     const offset = (width - filterPanelWidth) / 2 - 450;
-    console.log(offset);
     return (
       <Box
         sx={{
