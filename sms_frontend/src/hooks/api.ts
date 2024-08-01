@@ -49,6 +49,12 @@ const getOpenMicById = async (id: any): Promise<OpenMic> => {
   return result.data;
 };
 
+const getArtistById = async (id: any): Promise<Artist> => {
+  const result = await customAxios.get(`/api/artists/${id}`);
+
+  return result.data;
+};
+
 const getEventsByDay = async (day: string): Promise<Event[]> => {
   const result = await customAxios.get(`/api/get_events_on_day?day=${day}`);
 
@@ -247,6 +253,7 @@ const useJanitorRuns = (): JanitorRun[] => {
 };
 
 export {
+  getArtistById,
   getEventById,
   getOpenMicById,
   getVenueById,

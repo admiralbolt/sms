@@ -239,8 +239,42 @@ def search_events(request: HttpRequest):
       "message": "No keyword supplied"
     })
   
+  include_hidden = request.GET.get("include_hidden", False)
+  
   return JsonResponse(serializers.EventSerializer(
-    search_utils.search_all_events(keyword),
+    search_utils.search_all_events(keyword, include_hidden=include_hidden),
+    many=True
+  ).data, safe=False)
+
+@api_view(["GET"])
+@permission_classes([AllowAny] if IS_PROD else [])
+def search_venues(request: HttpRequest):
+  keyword = request.GET.get("keyword")
+  if not keyword:
+    return JsonResponse({
+      "status": "error",
+      "message": "No keyword supplied"
+    })
+  
+  include_hidden = request.GET.get("include_hidden", False)
+  
+  return JsonResponse(serializers.VenueSerializer(
+    search_utils.search_all_venues(keyword, include_hidden=include_hidden),
+    many=True
+  ).data, safe=False)
+
+@api_view(["GET"])
+@permission_classes([AllowAny] if IS_PROD else [])
+def search_artists(request: HttpRequest):
+  keyword = request.GET.get("keyword")
+  if not keyword:
+    return JsonResponse({
+      "status": "error",
+      "message": "No keyword supplied"
+    })
+  
+  return JsonResponse(serializers.ArtistSerializer(
+    search_utils.search_all_artists(keyword),
     many=True
   ).data, safe=False)
 
