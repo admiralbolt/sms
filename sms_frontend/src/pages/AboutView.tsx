@@ -41,6 +41,76 @@ export const AboutView = () => {
       <Typography variant={"h5"}>Changelog</Typography>
       <br />
       <Typography sx={{ fontSize: "1.3rem" }}>
+        <b>V1.5.0</b> -- August 1st, 2024 <br />
+      </Typography>
+      <List sx={{ listStyleType: "disc", pl: 4 }}>
+      <ListItem
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
+        >
+          Songkick integration added!
+        </ListItem>
+        <ListItem
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
+        >
+          Bandsintown integration added!
+        </ListItem>
+        <ListItem
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
+        > 
+          Rewrote the entire ingestion pipeline. It's now really complicated, 
+          and maybe worse than before ¯\_(ツ)_/¯
+        </ListItem>
+        <ListItem
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
+        > 
+          List view now looks waay nicer, and less blocky.
+        </ListItem>
+        <ListItem
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
+        > 
+          API is now fully connected, instead of using flat data for the
+          frontend.
+        </ListItem>
+        <ListItem
+          sx={{
+            display: "list-item",
+            paddingBottom: 0,
+            paddingTop: 0,
+          }}
+        > 
+          Improved a bunch of admin tooling to make managing this pile of data
+          somewhat easier.
+        </ListItem>
+      </List>
+      Open Mic/Jam Adjustments <br />
+      <Grid container borderTop={"1px solid white"} padding={0.5}>
+        <Grid item xs={6} md={3} paddingTop={0}>
+          + Conor Byrne is BACK!!<br />
+        </Grid>
+        <Grid item xs={6} md={3} paddingTop={0}></Grid>
+      </Grid>
+      <br />
+      <Typography sx={{ fontSize: "1.3rem" }}>
         <b>V1.4.0</b> -- June 1st, 2024 <br />
       </Typography>
       <List sx={{ listStyleType: "disc", pl: 4 }}>
