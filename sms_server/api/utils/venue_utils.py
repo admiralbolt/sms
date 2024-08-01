@@ -132,7 +132,7 @@ def check_aliasing_and_merge_all():
       if venue == proper_venue:
         continue
 
-      if not proper_venue.alias_matches(venue):
+      if not re.match(proper_venue.alias, venue.name, flags=re.IGNORECASE):
         continue
 
       merge_venues(venue, proper_venue)
