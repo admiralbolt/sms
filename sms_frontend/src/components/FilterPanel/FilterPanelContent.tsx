@@ -51,9 +51,9 @@ export const FilterPanelContent = () => {
     if (initialEventTypes.length > 0) {
       setSelectedEventTypes?.(initialEventTypes);
     } else {
-      setSelectedEventTypes?.([]);
+      setSelectedEventTypes?.(eventTypes);
     }
-  }, [getEventTypesFromURL, setSelectedEventTypes]); // Only re-run the effect if the URL changes
+  }, [eventTypes, getEventTypesFromURL, setSelectedEventTypes]); // Only re-run the effect if the URL changes
 
   useEffect(() => {
     const date = getDateFromURL();
