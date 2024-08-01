@@ -1,10 +1,11 @@
 """Utils for generating open mic events!"""
 import datetime
+from typing import Generator
 
 import croniter
 
 from api.constants import IngestionApis
-from api.models import OpenMic, Venue
+from api.models import Event, OpenMic, Venue
 from api.utils import event_utils
 
 def get_open_mic_by_venue_name(venue_name: str) -> OpenMic:
@@ -15,7 +16,7 @@ def get_open_mic_by_venue_name(venue_name: str) -> OpenMic:
 
   return OpenMic.objects.filter(venue=venue).first()
 
-def generate_open_mic_events(open_mic: OpenMic, max_diff: datetime.timedelta = datetime.timedelta(days=45), debug: bool=False) -> None:
+def generate_open_mic_events(open_mic: OpenMic, max_diff: datetime.timedelta = datetime.timedelta(days=45)) -> Generator[tuple[str, str, Event], None, None]:
   """Generate calendar events for an open mic.
 
   Dates are generated based on the open mics cadence crontab, starting from the
@@ -30,11 +31,9 @@ def generate_open_mic_events(open_mic: OpenMic, max_diff: datetime.timedelta = d
     if (next_date - now) > max_diff:
       break
 
-    if debug:
-      print(next_date)
-
-    _ = event_utils.create_or_update_event(
+    yield event_utils.create_or_update_event(
       venue=open_mic.venue,
+      raw_data=None,
       event_type=open_mic.event_mic_type,
       title=open_mic.name(),
       event_day=next_date.date(),

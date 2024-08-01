@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 
 import {
   Category,
@@ -20,9 +20,7 @@ import {
 } from "@mui/material";
 
 import { SnackbarContext } from "@/contexts/SnackbarContext";
-import { getVenueById } from "@/hooks/api";
 import customAxios from "@/hooks/customAxios";
-import { Venue } from "@/types";
 import { OpenMic } from "@/types";
 import { format24HourTime } from "@/utils/dateUtils";
 
@@ -46,17 +44,8 @@ export const OpenMicCard = ({
   createCallback = emptyCallback,
 }: Props) => {
   const [edit, setEdit] = useState<boolean>(false);
-  const [venue, setVenue] = useState<Venue>({} as Venue);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
   const { setSnackbar } = useContext(SnackbarContext) || {};
-
-  useEffect(() => {
-    if (openMic.venue < 0) return;
-
-    (async () => {
-      setVenue(await getVenueById(openMic.venue));
-    })();
-  }, [openMic.venue]);
 
   const toggleEdit = () => {
     setEdit(!edit);
@@ -80,9 +69,7 @@ export const OpenMicCard = ({
   };
 
   const displayImage = () => {
-    if (venue.venue_image) return venue.venue_image;
-
-    return "/placeholder.png";
+    return openMic.venue.venue_image ?? "/placeholder.png";
   };
 
   if (edit) {

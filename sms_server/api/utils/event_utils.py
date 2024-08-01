@@ -1,7 +1,6 @@
 """Utils related to Events."""
 import datetime
 import logging
-import math
 from typing import Iterable, Optional
 
 import deepdiff
@@ -14,16 +13,17 @@ from api.utils import diff_utils
 
 logger = logging.getLogger(__name__)
 
-def get_event(venue: Venue, raw_data: RawData, event_day: str="", start_time: str=""):
+def get_event(venue: Venue, raw_data: Optional[RawData], event_day: str="", start_time: str=""):
   """Get a matching event from the database.
 
   1) We check to see if we can find an existing event that has the raw data
      attached to it.
   2) If not we make a best guess based on venue, event_day, and start_time.
   """
-  db_event = Event.objects.filter(raw_datas=raw_data)
-  if db_event.exists():
-    return db_event.first()
+  if raw_data is not None:
+    db_event = Event.objects.filter(raw_datas=raw_data)
+    if db_event.exists():
+      return db_event.first()
 
   return Event.objects.filter(venue=venue, event_day=event_day, start_time=start_time).first()
 
@@ -47,7 +47,7 @@ def merge_event(to_event: Event, from_event: Event, raw_datas: list[RawData] = [
   new_raw_data = False
   # Check list of raw data links on event. If it doesn't include our input
   # raw_data, we need to add it.
-  raw_datas = from_event.raw_datas.all() or raw_datas
+  raw_datas = raw_datas if (raw_datas or not from_event.id) else from_event.raw_datas.all()
   for raw_data in raw_datas:
     if not to_event.raw_datas.contains(raw_data):
       raw_data.event = to_event
@@ -55,7 +55,9 @@ def merge_event(to_event: Event, from_event: Event, raw_datas: list[RawData] = [
       new_raw_data = True
 
   new_artists = []
-  artists = from_event.artists.all() or artists
+  # We can't access many to many field values unless there's an ID set on an
+  # object.
+  artists = artists if (artists or not from_event.id) else from_event.artists.all()
   for artist in artists:
     if not to_event.artists.contains(artist):
       to_event.artists.add(artist)
@@ -106,7 +108,7 @@ def merge_event(to_event: Event, from_event: Event, raw_datas: list[RawData] = [
   return change_type, change_log, to_event
 
 
-def create_or_update_event(venue: Venue, raw_data: RawData, artists: list[Artist] = [], **kwargs) -> tuple[str, str, Event]:
+def create_or_update_event(venue: Venue, raw_data: Optional[RawData], artists: list[Artist] = [], **kwargs) -> tuple[str, str, Event]:
   """Create or update an event.‘
 
   Returns a tuple of (change_type, change_log, Event). The change_type will be 
@@ -139,15 +141,16 @@ def create_or_update_event(venue: Venue, raw_data: RawData, artists: list[Artist
   if not event:
     event = Event(venue=venue, **filtered_kwargs)
     event.save()
-    raw_data.event = event
-    raw_data.save()
+    if raw_data is not None:
+      raw_data.event = event
+      raw_data.save()
     for artist in artists:
       event.artists.add(artist)
     event.save()
     return ChangeTypes.CREATE, f"Event created {event.__dict__}", event
   
   new_event = Event(venue=venue, **filtered_kwargs)
-  return merge_event(event, new_event, raw_datas=[raw_data], artists=artists)
+  return merge_event(event, new_event, raw_datas=[raw_data] if raw_data is not None else [], artists=artists)
 
 def get_highest_priority_api(event: Event) -> tuple[int, str]:
   """Get the highest priority api on an event.

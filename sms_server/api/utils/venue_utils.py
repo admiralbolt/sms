@@ -7,7 +7,7 @@ from typing import Generator, Optional
 
 from api.constants import get_all, ChangeTypes, VenueTypes
 from api.ingestion.crawlers.crawler import AbstractCrawler
-from api.models import Event, IngestionRecord, Venue, VenueTag
+from api.models import Event, CarpenterRecord, Venue, VenueTag
 
 logger = logging.getLogger(__name__)
 
@@ -100,7 +100,7 @@ def merge_venues(from_venue: Venue, to_venue: Venue) -> bool:
       event.save()
 
   # 2. Update all ingestion records to point to the new venue.
-  for record in IngestionRecord.objects.filter(venue=from_venue):
+  for record in CarpenterRecord.objects.filter(venue=from_venue):
     record.venue = to_venue
     record.save()
   
@@ -132,10 +132,10 @@ def check_aliasing_and_merge_all():
       if venue == proper_venue:
         continue
 
-      if not proper_venue.alias_matches(venue):
+      if not re.match(proper_venue.alias, venue.name, flags=re.IGNORECASE):
         continue
 
-      merge_venues(venue, proper_venue)
+      merge_venues(from_venue=venue, to_venue=proper_venue)
 
 def all_crawler_names() -> Generator[str, None, None]:
   """Loads all crawler names based on file names on disk."""

@@ -7,8 +7,8 @@ from typing import Optional
 from api.constants import ChangeTypes, IngestionApis
 from api.ingestion.event_apis.event_api import EventApi
 from api.ingestion.import_mapping import API_MAPPING, API_PRIORITY_LIST
-from api.models import Artist, Event, CarpenterRun, CarpenterRecord, RawData, Venue
-from api.utils import artist_utils, event_utils, venue_utils
+from api.models import Artist, Event, CarpenterRun, CarpenterRecord, OpenMic, RawData, Venue
+from api.utils import artist_utils, event_utils, open_mic_utils, venue_utils
 
 logger = logging.getLogger(__name__)
 
@@ -133,6 +133,29 @@ class Carpenter:
            field_changed="none"
         )
 
+  def generate_open_mic_events(self, max_diff: timedelta=timedelta(days=30)):
+    """Generate events for open mics!"""
+    for mic in OpenMic.objects.all():
+      # Only want to generate events for open mics that have a venue attached.
+      if not mic.venue:
+        continue
+
+      # Make sure we only generate events for mics that have the generate events
+      # flag set.
+      if not mic.generate_events:
+        continue
+
+      for change_type, change_log, event in open_mic_utils.generate_open_mic_events(mic, max_diff=max_diff):
+        CarpenterRecord.objects.create(
+          carpenter_run=self.carpenter_run,
+          api_name=IngestionApis.OPEN_MIC_GENERATOR,
+          open_mic=mic,
+          change_type=change_type,
+          change_log=change_log,
+          field_changed="event",
+          event=event,
+        )
+
   def run(self):
     """BUILD SOME SHIT."""
     if self.ingestion_apis:
@@ -146,6 +169,8 @@ class Carpenter:
         continue
 
       self.process_api(api=API_MAPPING[ingestion_api])
+
+    self.generate_open_mic_events()
 
     self.carpenter_run.finished_at = datetime.now()
     self.carpenter_run.save()
