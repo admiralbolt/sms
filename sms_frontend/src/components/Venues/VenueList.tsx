@@ -5,6 +5,7 @@ import {
   Box,
   CircularProgress,
   List,
+  ListItem,
   TextField,
   Typography,
 } from "@mui/material";
@@ -61,7 +62,9 @@ export const VenueList = () => {
           }}
         >
           {results.map((result) => (
-            <VenueListItem key={`venue-${result.id}`} venue={result} />
+            <ListItem key={`venue-${result.id}`}>
+              <VenueListItem  venue={result} />
+            </ListItem>
           ))}
         </List>
       </>
