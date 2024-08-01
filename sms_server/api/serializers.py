@@ -79,6 +79,7 @@ class EventSerializer(serializers.ModelSerializer):
 class OpenMicSerializer(serializers.ModelSerializer):
   """Serialize OpenMic data."""
   name = serializers.SerializerMethodField
+  venue = VenueSerializer()
 
   def get_name(self, open_mic: models.OpenMic):
     return open_mic.name()
@@ -150,6 +151,7 @@ class CarpenterRunSerializer(serializers.ModelSerializer):
 class CarpenterRecordSerializer(serializers.ModelSerializer):
   """Serialize Carpenter Records."""
   raw_data = RawDataSerializer()
+  open_mic = OpenMicSerializer()
   event = EventSerializer()
   venue = VenueSerializer()
   artist = ArtistSerializer()

@@ -7,6 +7,7 @@ import customAxios from "@/hooks/customAxios";
 import { CarpenterRun, ChangeType } from "@/types";
 import { CarpenterRunRecord } from "@/types";
 
+import { OpenMicCard } from "../OpenMics/OpenMicCard";
 import { RawDataComponent } from "../RawData";
 
 interface Props {
@@ -205,7 +206,7 @@ export const CarpenterRunFull = ({ run }: Props) => {
           item
           xs={6}
         >
-          {selectedRecord.raw_data != undefined && (
+          {selectedRecord?.id && (
             <Box>
               <Typography>Record ID: {selectedRecord.id}</Typography>
               <pre style={{ fontSize: "0.7em" }}>
@@ -219,7 +220,12 @@ export const CarpenterRunFull = ({ run }: Props) => {
                 {getObjData(selectedRecord)}
               </pre>
               <br />
-              <RawDataComponent rawData={selectedRecord.raw_data} />
+              {selectedRecord?.raw_data && (
+                <RawDataComponent rawData={selectedRecord.raw_data} />
+              )}
+              {selectedRecord?.open_mic && (
+                <OpenMicCard openMic={selectedRecord.open_mic} />
+              )}
             </Box>
           )}
         </Grid>

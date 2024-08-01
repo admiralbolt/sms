@@ -166,7 +166,7 @@ class Event(models.Model):
   finalized = models.BooleanField(default=False)
 
   def __str__(self):
-    return f"{self.title} ({self.venue.name}, {self.event_day}, {self.title})"
+    return f"|{self.id}| {self.title} ({self.venue.name}, {self.event_day}, {self.title})"
   
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
@@ -307,7 +307,8 @@ class CarpenterRecord(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
   carpenter_run = models.ForeignKey(CarpenterRun, on_delete=models.CASCADE)
   api_name = models.CharField(max_length=32, default="Manual")
-  raw_data = models.ForeignKey(RawData, on_delete=models.CASCADE)
+  raw_data = models.ForeignKey(RawData, on_delete=models.CASCADE, blank=True, null=True)
+  open_mic = models.ForeignKey(OpenMic, on_delete=models.CASCADE, blank=True, null=True)
   change_type = models.CharField(max_length=16, choices=get_choices(ChangeTypes))
   change_log = models.TextField(blank=True, null=True)
   

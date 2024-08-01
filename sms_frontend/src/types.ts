@@ -70,6 +70,7 @@ export interface CarpenterRunRecord {
   change_log: string;
   field_changed: string;
   raw_data: RawData;
+  open_mic: OpenMic;
   event: Event;
   venue: Venue;
   artist: Artist;
@@ -151,7 +152,7 @@ export interface Venue {
 
 export interface OpenMic {
   id: number;
-  venue: number;
+  venue: Venue;
   name: string;
   event_mic_type: EventType;
   open_mic_type: string;
