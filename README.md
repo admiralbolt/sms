@@ -120,7 +120,11 @@ npm run dev
 
 ## Celery Setup
 
-Celery handles running tasks periodically. In our case that is importing data from various APIs / websites, creating events, and cleaning them. Celery requires a message transport to send and receive messages. This is done with RabbitMQ, but can also be done with redis. If you're developing on mac, you can install and run RabbitMQ via `brew` very easily:
+Celery handles running tasks periodically. In our case that is importing data
+from various APIs / websites, creating events, and cleaning them. Celery
+requires a message transport to send and receive messages. This is done with
+RabbitMQ, but can also be done with redis. If you're developing on mac, you can
+install and run RabbitMQ via `brew` very easily:
 
 ```bash
 brew install rabbitmq
