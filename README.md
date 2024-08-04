@@ -79,7 +79,7 @@ We can fix that by running management commands to import data.
 
 > [!WARNING]
 > You need functional api keys to import data.
-> Also the api import takes ~45 minutes.
+> Also the api import can take a few hours.
 
 ```bash
 # 1. Import a bunch of raw data from the internet!
