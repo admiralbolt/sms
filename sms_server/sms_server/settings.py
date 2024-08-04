@@ -121,6 +121,7 @@ INSTALLED_APPS = [
     'api',
     'corsheaders',
     'django_celery_beat',
+    'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
