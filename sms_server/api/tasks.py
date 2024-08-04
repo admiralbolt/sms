@@ -12,12 +12,20 @@ from api.utils import open_mic_utils
 logger = logging.getLogger(__name__)
 
 @shared_task
-def import_and_clean(debug: bool=False):
-  """Import data from ALL APIs & Crawlers."""
+def run_ingester():
+  """Run the ingester!"""
   ingester = Ingester()
   ingester.import_data()
+
+@shared_task
+def run_carpenter():
+  """Run the carpenter!"""
   carpenter = Carpenter()
   carpenter.run()
+  
+@shared_task
+def run_janitor():
+  """Run the janitor!"""
   janitor = Janitor()
   janitor.run()
 
