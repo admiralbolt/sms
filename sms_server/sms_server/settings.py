@@ -161,8 +161,8 @@ WSGI_APPLICATION = 'sms_server.wsgi.application'
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_TIMEZONE = "America/Los_Angeles"
 CELERY_TASK_TRACK_STARTED = True
-# Set the task limit to 3 hours since bandsintown ingestion takes so long.
-CELERY_TASK_TIME_LIMIT = 3 * 60 * 60
+# Set the task limit to 10 hours since bandsintown ingestion takes so long.
+CELERY_TASK_TIME_LIMIT = 10 * 60 * 60
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
