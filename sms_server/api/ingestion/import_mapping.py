@@ -54,10 +54,7 @@ API_PRIORITY_LIST = [
   # Data can be suspect at best.
   IngestionApis.EVENTBRITE,
   IngestionApis.TICKETMASTER,
-
 ]
-
-API_TO_PRIORITY = {}
 
 def get_api_priority(api: str) -> int:
   try:
