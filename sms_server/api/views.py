@@ -87,6 +87,19 @@ class ArtistViewSet(viewsets.ModelViewSet):
   def get_queryset(self):
     return models.Artist.objects.order_by("name")
 
+class ArtistEventsView(ListAPIView):
+  """List all events for a particular venue."""
+  serializer_class = serializers.EventSerializer
+  schema = AutoSchema(operation_id_base="ArtistEvents")
+
+  def get_permissions(self):
+    permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
+    return [permission() for permission in permission_classes]
+
+  def get_queryset(self):
+    artist = models.Artist.objects.filter(id=self.kwargs.get("artist_id", None)).first()
+    return models.Event.objects.filter(artists=artist).order_by("event_day")
+
 class RawDataViewSet(viewsets.ModelViewSet):
   """List all raw data."""
   resource_name = "raw_datas"
