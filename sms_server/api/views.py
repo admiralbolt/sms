@@ -72,7 +72,7 @@ class VenueEventsView(ListAPIView):
 
   def get_queryset(self):
     venue = models.Venue.objects.filter(id=self.kwargs.get("venue_id", None)).first()
-    return models.Event.objects.filter(venue=venue)
+    return models.Event.objects.filter(venue=venue).order_by("event_day")
 
 class ArtistViewSet(viewsets.ModelViewSet):
   """List artists."""
