@@ -37,6 +37,7 @@ class VenueViewSet(viewsets.ModelViewSet):
   resource_name = "venues"
   queryset = models.Venue.objects.all()
   serializer_class = serializers.VenueSerializer
+  lookup_field = "slug"
 
   def get_permissions(self):
     permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
