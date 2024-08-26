@@ -148,7 +148,7 @@ const updateVenue = (venue: Venue) => {
   // making updates directly to the "venue_image" field.
   delete venue.venue_image;
 
-  return customAxios.put(`api/venues/${venue.id}`, venue);
+  return customAxios.put(`api/venues/${venue.slug}`, venue);
 };
 
 const createOpenMic = (openMic: OpenMic) => {
