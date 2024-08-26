@@ -31,8 +31,8 @@ const getVenueDisplayImage = (venue: Venue): string => {
   return "/placeholder.png";
 };
 
-const getVenueById = async (id: any): Promise<Venue> => {
-  const result = await customAxios.get(`/api/venues/${id}`);
+const getVenueBySlug = async (slug: any): Promise<Venue> => {
+  const result = await customAxios.get(`/api/venues/${slug}`);
 
   return result.data;
 };
@@ -256,7 +256,7 @@ export {
   getArtistById,
   getEventById,
   getOpenMicById,
-  getVenueById,
+  getVenueBySlug,
   getEventsByDay,
   updateEvent,
   useEventTypes,

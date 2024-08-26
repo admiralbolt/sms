@@ -21,6 +21,8 @@ import { NotFoundView } from "./pages/NotFoundView";
 import { SearchView } from "./pages/SearchView";
 import { VenuesView } from "@/pages";
 
+import { VenuePage } from "./components/Venues/VenuePage";
+
 // We only want to run Google Analytics in production.
 if (process.env.NODE_ENV === "production") {
   ReactGA.initialize("G-HGEJWK9DS2");
@@ -43,6 +45,7 @@ const App = () => {
                     <Route path="search" element={<SearchView />} />
                     <Route path="about" element={<AboutView />} />
                     <Route path="venues" element={<VenuesView />} />
+                    <Route path="venues/:slug" element={<VenuePage />} />
                     <Route path="login" element={<LoginView />} />
                     <Route path="logout" element={<LogoutView />} />
                     <Route

@@ -10,7 +10,7 @@ import {
   TextField,
 } from "@mui/material";
 
-import { getVenueById } from "@/hooks/api";
+import { getVenueBySlug } from "@/hooks/api";
 import customAxios from "@/hooks/customAxios";
 import { Venue } from "@/types";
 
@@ -67,9 +67,9 @@ export const VenuePanel = () => {
     setSelectedVenue({} as Venue);
   };
 
-  const reloadData = (id?: number) => {
+  const reloadData = (slug?: string) => {
     (async () => {
-      setSelectedVenue(await getVenueById(id));
+      setSelectedVenue(await getVenueBySlug(slug));
     })();
   };
 
@@ -81,14 +81,14 @@ export const VenuePanel = () => {
     setInputValue("");
   };
 
-  const onCreate = (id: number) => {
+  const onCreate = (slug: string) => {
     if (selectedVenue == null) return;
 
-    reloadData(id);
+    reloadData(slug);
   };
 
-  const onUpdate = (id: number) => {
-    reloadData(id);
+  const onUpdate = (slug: string) => {
+    reloadData(slug);
   };
 
   return (

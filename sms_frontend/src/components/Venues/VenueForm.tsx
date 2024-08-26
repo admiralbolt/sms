@@ -39,7 +39,7 @@ export const VenueForm = ({
             message: `Venue ${response.data.name} updated successfully!`,
           });
           setEdit(false);
-          createCallback(response.data["id"]);
+          createCallback(response.data["slug"]);
         },
         (error: AxiosError) => {
           setSnackbar({
@@ -61,7 +61,7 @@ export const VenueForm = ({
           message: `Venue ${response.data.name} updated successfully!`,
         });
         setEdit(false);
-        updateCallback(response.data["id"]);
+        updateCallback(response.data["slug"]);
       },
       (error: AxiosError) => {
         setSnackbar({
