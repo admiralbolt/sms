@@ -48,7 +48,7 @@ export const VenueCard = ({
   };
 
   const deleteVenue = () => {
-    customAxios.delete(`api/venues/${venue.id}`).then(
+    customAxios.delete(`api/venues/${venue.slug}`).then(
       (_res) => {
         deleteCallback();
       },
