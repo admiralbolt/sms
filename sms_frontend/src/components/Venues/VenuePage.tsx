@@ -24,6 +24,10 @@ export const VenuePage = () => {
       const venue = await getVenueBySlug(slug);
       if (venue) {
         setVenue(venue);
+        usePageTitle(`Seattle Music Venue - ${venue.name}`);
+        // TODO: Update the page description here based on the venue
+        //   descriptions eventually. Right now these aren't very good.
+        // useDescription(`${venue.description}`);
       } else {
         setSnackbar({
           open: true,
