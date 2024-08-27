@@ -1,41 +1,38 @@
 // Top level component that gets routed to.
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { getVenueBySlug } from "@/hooks/api";
-import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
 import { Venue } from "@/types";
 
 import { VenueDetail } from "./VenueDetail";
+import { Typography } from "@mui/material";
+
+import { setMeta } from "@/utils/seo";
 
 export const VenuePage = () => {
   const [venue, setVenue] = useState<Venue>({} as Venue);
   const { slug } = useParams();
 
-  const { setSnackbar } = useContext(SnackbarContext) || {};
-
-  usePageTitle("Seattle Venues");
-  usePageDescription("Search all venues in Seattle.");
-
   useEffect(() => {
-    (async () => {
-      const venue = await getVenueBySlug(slug);
-      if (venue) {
-        setVenue(venue);
-        usePageTitle(`Seattle Music Venue - ${venue.name}`);
-        // TODO: Update the page description here based on the venue
-        //   descriptions eventually. Right now these aren't very good.
-        // useDescription(`${venue.description}`);
-      } else {
-        setSnackbar({
-          open: true,
-          severity: "error",
-          message: "No such venue exists.",
-        });
-      }
-    })();
+    getVenueBySlug(slug).then((res) => {
+      setVenue(res);
+      // TODO: Set the description here eventually once the venue descriptions
+      //   have actually been vetted.
+      setMeta({
+        title: `Seattle Music Venue - ${res.name}`
+      });
+    });
   }, [slug]);
 
-  return <>{venue && <VenueDetail venue={venue} />}</>;
+  if (Object.keys(venue).length === 0) {
+    return (
+      <Typography sx={{fontSize: "2rem", padding: "1rem"}}>
+        No Such Venue found <br />
+        Try typing better
+      </Typography>
+    );
+  } else {
+    return (<VenueDetail venue={venue} />);
+  }
 };
