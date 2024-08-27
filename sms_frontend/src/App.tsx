@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
 
+import { VenuePage, VenueSearchView } from "@/components/Venues";
 import { SnackbarContextProvider } from "@/contexts/SnackbarContext";
 
 import "./App.css";
@@ -19,7 +20,6 @@ import { LogoutView } from "./pages/LogoutView";
 import { MapView } from "./pages/MapView";
 import { NotFoundView } from "./pages/NotFoundView";
 import { SearchView } from "./pages/SearchView";
-import { VenuePage, VenueSearchView } from "@/components/Venues";
 
 // We only want to run Google Analytics in production.
 if (process.env.NODE_ENV === "production") {

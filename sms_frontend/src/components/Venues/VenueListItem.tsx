@@ -1,18 +1,18 @@
-import { Venue } from "@/types";
-import { Box, Link, IconButton } from "@mui/material";
 import {
   Delete,
   Edit,
   Link as LinkIcon,
   Place as PlaceIcon,
 } from "@mui/icons-material";
+import { Box, IconButton, Link } from "@mui/material";
+
+import { Venue } from "@/types";
 
 interface Props {
   venue: Venue;
 }
 
 export const VenueListItem = ({ venue }: Props) => {
-
   const displayImage = () => {
     return venue.venue_image ?? "/placeholder.png";
   };
@@ -73,9 +73,7 @@ export const VenueListItem = ({ venue }: Props) => {
             </Link>
 
             <Box className="flex">
-              <span className="text-xs font-bold">
-                {venue.address}
-              </span>
+              <span className="text-xs font-bold">{venue.address}</span>
             </Box>
           </Box>
         </Box>

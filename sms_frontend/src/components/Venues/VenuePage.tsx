@@ -1,14 +1,13 @@
 // Top level component that gets routed to.
-import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
-import { Venue } from "@/types";
-import { useEffect, useContext, useState } from "react";
-import { getVenueBySlug } from "@/hooks/api";
+import { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import { SnackbarContext } from "@/contexts/SnackbarContext";
+import { getVenueBySlug } from "@/hooks/api";
+import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
+import { Venue } from "@/types";
 
-import { useParams } from "react-router-dom";
 import { VenueDetail } from "./VenueDetail";
-
 
 export const VenuePage = () => {
   const [venue, setVenue] = useState<Venue>({} as Venue);
@@ -20,7 +19,7 @@ export const VenuePage = () => {
   usePageDescription("Search all venues in Seattle.");
 
   useEffect(() => {
-    (async() => {
+    (async () => {
       const venue = await getVenueBySlug(slug);
       if (venue) {
         setVenue(venue);
@@ -32,17 +31,11 @@ export const VenuePage = () => {
         setSnackbar({
           open: true,
           severity: "error",
-          message: "No such venue exists."
+          message: "No such venue exists.",
         });
       }
     })();
   }, [slug]);
 
-  return (
-    <>
-    {venue && (
-      <VenueDetail venue={venue} />
-    )}
-    </>
-  )
-}
+  return <>{venue && <VenueDetail venue={venue} />}</>;
+};

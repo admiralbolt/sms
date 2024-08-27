@@ -10,11 +10,11 @@ import {
   Typography,
 } from "@mui/material";
 
+import { useIsAuthenticated } from "@/hooks/auth";
 import customAxios from "@/hooks/customAxios";
 import { Venue } from "@/types";
 
 import { VenueListItem } from "./VenueListItem";
-import { useIsAuthenticated } from "@/hooks/auth";
 
 const MAX_RESULTS = 10;
 
@@ -63,7 +63,7 @@ export const VenueList = () => {
         >
           {results.map((result) => (
             <ListItem key={`venue-${result.id}`}>
-              <VenueListItem  venue={result} />
+              <VenueListItem venue={result} />
             </ListItem>
           ))}
         </List>
