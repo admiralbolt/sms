@@ -1,6 +1,4 @@
 import {
-  Delete,
-  Edit,
   Link as LinkIcon,
   Place as PlaceIcon,
 } from "@mui/icons-material";
