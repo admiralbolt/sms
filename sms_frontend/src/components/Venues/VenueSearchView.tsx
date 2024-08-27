@@ -4,8 +4,8 @@ import { Button } from "@mui/material";
 
 import { VenueList } from "@/components/Venues/VenueList";
 import { useIsAuthenticated } from "@/hooks/auth";
-import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
 import { Venue } from "@/types";
+import { setMeta } from "@/utils/seo";
 
 import { VenueForm } from "./VenueForm";
 
@@ -13,8 +13,10 @@ export const VenueSearchView = () => {
   const [isAuthenticated, _] = useIsAuthenticated();
   const [createNew, setCreateNew] = useState<boolean>(false);
 
-  usePageTitle("Seattle Venues");
-  usePageDescription("Search all venues in Seattle.");
+  setMeta({
+    title: "Seattle Venues",
+    description: "Search all music venues in Seattle.",
+  });
 
   if (createNew) {
     return (
