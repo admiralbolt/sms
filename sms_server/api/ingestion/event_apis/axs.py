@@ -19,21 +19,20 @@ from api.utils import crawler_utils
 
 PER_PAGE = 15
 
-def get_csrf_token(driver: webdriver.Chrome):
+def get_csrf_token():
   """Get a valid CSRF Token from AXS."""
   # We first query the search page to get a valid CSRF token, then reuse that
   # token to make a validated request to the API. In order to bypass the
   # protections AXS has in place, we use selenium and a "normal" user agent.
-  soup = crawler_utils.get_html_soup(driver, "https://www.axs.com/")
+  soup = crawler_utils.get_html_soup("https://www.axs.com/")
   # We then look for the "hdn_csrf_token" input -- something like this:
   # <input id="hdn_csrf_token" type="hidden" value="Wrt06Y2wRCus0d7_YxlmLuQsg90KS45zwhozujtNjnY"/>
   csrf_token_input = soup.find(id="hdn_csrf_token")
   return csrf_token_input.get("value")
 
-def event_list_request(driver: webdriver.Chrome, csrf_token: str, page: int=1) -> dict:
+def event_list_request(csrf_token: str, page: int=1) -> dict:
   """Get a list of events from AXS."""
   soup = crawler_utils.get_html_soup(
-    driver,
     f"https://www.axs.com/apip/event/category?siteId=999&csrf_token={csrf_token}&majorCat=2&lat=47.63480&long=-122.34510&radius=50&locale=en-US&rows={PER_PAGE}&page={page}"
   )
   return json.loads(soup.body.string)
@@ -105,14 +104,13 @@ class AXSApi(EventApi):
     }
   
   def get_event_list(self) -> Generator[dict, None, None]:
-    driver = crawler_utils.create_driver()
-    csrf_token = get_csrf_token(driver)
-    data = event_list_request(driver, csrf_token, page=1)
+    csrf_token = get_csrf_token()
+    data = event_list_request(csrf_token, page=1)
     # AXS returns total events, not total pages. Little bit of maths.
     last_page = math.ceil(data["meta"]["total"] / PER_PAGE) + 1
     for page in range(2, last_page):
       # Insert artifical delay to avoid hitting any QPS limits.
       time.sleep(self.delay)
-      data = event_list_request(driver, csrf_token, page=page)
+      data = event_list_request(csrf_token, page=page)
       for event_data in data["events"]:
         yield event_data

@@ -1,15 +1,20 @@
 """Utilities for crawling things!"""
-from seleniumbase import Driver
+from typing import Optional
 
 import bs4
+from seleniumbase import Driver
+
 
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
 
-def create_driver() -> Driver:
-  """Create a headless chrome driver for requests."""
-  return Driver(uc=True, headless=True)
-
-def get_html_soup(driver: Driver, url: str) -> bs4.BeautifulSoup:
+def get_html_soup(url: str) -> Optional[bs4.BeautifulSoup]:
   """Delicious soup."""
-  driver.get(url)
-  return bs4.BeautifulSoup(driver.page_source, "html.parser")
+  driver = Driver(uc=True, headless=True)
+  soup = None
+  try:
+    driver.get(url)
+    soup = bs4.BeautifulSoup(driver.page_source, "html.parser")
+  finally:
+    driver.quit()
+
+  return soup

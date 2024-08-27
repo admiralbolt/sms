@@ -24,7 +24,6 @@ import json
 from typing import Generator
 
 import bs4
-from scourgify import normalize_address_record
 
 from api.constants import IngestionApis
 from api.ingestion.event_apis.event_api import EventApi
@@ -88,8 +87,7 @@ class SongkickApi(EventApi):
       yield event
   
   def get_event_list(self) -> Generator[dict, None, None]:
-    driver = crawler_utils.create_driver()
-    first_page = crawler_utils.get_html_soup(driver, url=self.get_paginated_url(page_number=1))
+    first_page = crawler_utils.get_html_soup(url=self.get_paginated_url(page_number=1))
     # Get the total number of pages.
     pagination_div = first_page.find_all("div", class_="pagination")[0]
     anchors = pagination_div.find_all("a")
@@ -99,6 +97,6 @@ class SongkickApi(EventApi):
       yield event
 
     for page_number in range(2, max_page + 1):
-      page = crawler_utils.get_html_soup(driver, url=self.get_paginated_url(page_number=page_number))
+      page = crawler_utils.get_html_soup(url=self.get_paginated_url(page_number=page_number))
       for event in self.process_page(page):
         yield event
