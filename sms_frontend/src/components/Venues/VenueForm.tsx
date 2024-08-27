@@ -9,13 +9,13 @@ import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { createVenue, updateVenue } from "@/hooks/api";
 import { useSchema } from "@/hooks/schema";
 import { Venue } from "@/types";
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   venue: Venue;
   setEdit: any;
   isNew?: boolean;
   setIsNew?: any;
-  createCallback?: any;
   updateCallback?: any;
 }
 
@@ -23,11 +23,10 @@ export const VenueForm = ({
   venue,
   setEdit,
   isNew,
-  createCallback,
-  updateCallback,
 }: Props) => {
   const { setSnackbar } = useContext(SnackbarContext) || {};
   const { venueSchema } = useSchema();
+  const navigate = useNavigate();
 
   const submit = (submitVenue: any) => {
     if (isNew) {
@@ -39,7 +38,7 @@ export const VenueForm = ({
             message: `Venue ${response.data.name} updated successfully!`,
           });
           setEdit(false);
-          createCallback(response.data["slug"]);
+          navigate(`/venues/${response.data["slug"]}`);
         },
         (error: AxiosError) => {
           setSnackbar({
@@ -61,7 +60,7 @@ export const VenueForm = ({
           message: `Venue ${response.data.name} updated successfully!`,
         });
         setEdit(false);
-        updateCallback(response.data["slug"]);
+        navigate(`/venues/${response.data["slug"]}`);
       },
       (error: AxiosError) => {
         setSnackbar({
