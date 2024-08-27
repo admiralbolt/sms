@@ -6,4 +6,3 @@ export * from "./LogoutView.tsx";
 export * from "./MapView.tsx";
 export * from "./NotFoundView.tsx";
 export * from "./SearchView.tsx";
-export * from "./VenuesView.tsx";

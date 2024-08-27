@@ -66,9 +66,11 @@ export const VenueListItem = ({ venue }: Props) => {
             )}
           </div>
           <Box className="flex flex-col">
-            <h2 className="text-lg lg:text-xl text-wrap font-bold">
-              {venue.name}
-            </h2>
+            <Link href={`/venues/${venue.slug}`}>
+              <h2 className="text-lg lg:text-xl text-wrap font-bold">
+                {venue.name}
+              </h2>
+            </Link>
 
             <Box className="flex">
               <span className="text-xs font-bold">

@@ -1,7 +1,7 @@
 import { VenueList } from "@/components/Venues/VenueList";
 import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
 
-export const VenuesView = () => {
+export const VenueSearchView = () => {
   usePageTitle("Seattle Venues");
   usePageDescription("Search all venues in Seattle.");
 
