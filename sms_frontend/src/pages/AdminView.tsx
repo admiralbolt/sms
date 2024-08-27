@@ -10,7 +10,6 @@ import { IngestionRunPanel } from "@/components/IngestionRuns";
 import { JanitorRunPanel } from "@/components/JanitorRuns";
 import { OpenMicPanel } from "@/components/OpenMics";
 import { PeriodicTaskStatus } from "@/components/PeriodicTaskStatus";
-import { VenuePanel } from "@/components/Venues";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -62,10 +61,9 @@ export const AdminView = () => {
           <Tab label="Carpenter Runs" {...a11yProps(2)} />
           <Tab label="Janitor Runs" {...a11yProps(3)} />
           <Tab label="Commands" {...a11yProps(4)} />
-          <Tab label="Venues" {...a11yProps(5)} />
-          <Tab label="Open Mics" {...a11yProps(6)} />
-          <Tab label="Events" {...a11yProps(7)} />
-          <Tab label="Artists" {...a11yProps(8)} />
+          <Tab label="Open Mics" {...a11yProps(5)} />
+          <Tab label="Events" {...a11yProps(6)} />
+          <Tab label="Artists" {...a11yProps(7)} />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
@@ -84,15 +82,12 @@ export const AdminView = () => {
         <CommandPanel />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={5}>
-        <VenuePanel />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={6}>
         <OpenMicPanel />
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={7}>
+      <CustomTabPanel value={value} index={6}>
         <EventPanel />
       </CustomTabPanel>
-      <CustomTabPanel value={value} index={8}>
+      <CustomTabPanel value={value} index={7}>
         <ArtistPanel />
       </CustomTabPanel>
     </Box>
