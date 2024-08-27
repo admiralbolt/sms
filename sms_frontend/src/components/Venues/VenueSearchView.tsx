@@ -1,14 +1,13 @@
 import { useState } from "react";
 
+import { Button } from "@mui/material";
+
 import { VenueList } from "@/components/Venues/VenueList";
-import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
-
 import { useIsAuthenticated } from "@/hooks/auth";
-import { VenueForm } from "./VenueForm";
-
+import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
 import { Venue } from "@/types";
 
-import { Button } from "@mui/material";
+import { VenueForm } from "./VenueForm";
 
 export const VenueSearchView = () => {
   const [isAuthenticated, _] = useIsAuthenticated();
@@ -16,20 +15,20 @@ export const VenueSearchView = () => {
 
   usePageTitle("Seattle Venues");
   usePageDescription("Search all venues in Seattle.");
-  
+
   if (createNew) {
     return (
-      <VenueForm
-        venue={{} as Venue}
-        setEdit={setCreateNew}
-        isNew={true}
-      />
+      <VenueForm venue={{} as Venue} setEdit={setCreateNew} isNew={true} />
     );
   } else {
     return (
       <>
         {isAuthenticated && (
-          <Button onClick={() => {setCreateNew(true);}}>
+          <Button
+            onClick={() => {
+              setCreateNew(true);
+            }}
+          >
             Create New Venue
           </Button>
         )}

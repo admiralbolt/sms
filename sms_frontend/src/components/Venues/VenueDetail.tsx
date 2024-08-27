@@ -1,28 +1,16 @@
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+import { Delete, Edit } from "@mui/icons-material";
+import { Box, Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
+
+import { SnackbarContext } from "@/contexts/SnackbarContext";
+import { useIsAuthenticated } from "@/hooks/auth";
+import customAxios from "@/hooks/customAxios";
 import { Venue } from "@/types";
 
 import { VenueCard } from "./VenueCard";
-
-import { useIsAuthenticated } from "@/hooks/auth";
-
-import { useContext, useState } from "react";
-
-import {
-  Delete,
-  Edit,
-} from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogTitle,
-} from "@mui/material";
-
-import { SnackbarContext } from "@/contexts/SnackbarContext";
-import customAxios from "@/hooks/customAxios";
-
 import { VenueForm } from "./VenueForm";
-import { useNavigate } from "react-router-dom";
 
 interface Props {
   venue: Venue;
@@ -46,7 +34,7 @@ export const VenueDetail = ({ venue }: Props) => {
         setSnackbar({
           open: true,
           severity: "success",
-          message: `Venue: ${venue.name} deleted. Navigating to /venues`
+          message: `Venue: ${venue.name} deleted. Navigating to /venues`,
         });
         setTimeout(() => {
           navigate("/venues");
@@ -65,12 +53,7 @@ export const VenueDetail = ({ venue }: Props) => {
   };
 
   if (edit) {
-    return (
-      <VenueForm
-        venue={venue}
-        setEdit={setEdit}
-      />
-    );
+    return <VenueForm venue={venue} setEdit={setEdit} />;
   } else {
     return (
       <>

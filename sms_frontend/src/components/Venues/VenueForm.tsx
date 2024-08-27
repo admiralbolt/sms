@@ -2,6 +2,7 @@ import { Form } from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
 import { AxiosError } from "axios";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@mui/material";
 
@@ -9,7 +10,6 @@ import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { createVenue, updateVenue } from "@/hooks/api";
 import { useSchema } from "@/hooks/schema";
 import { Venue } from "@/types";
-import { useNavigate } from "react-router-dom";
 
 interface Props {
   venue: Venue;
@@ -19,11 +19,7 @@ interface Props {
   updateCallback?: any;
 }
 
-export const VenueForm = ({
-  venue,
-  setEdit,
-  isNew,
-}: Props) => {
+export const VenueForm = ({ venue, setEdit, isNew }: Props) => {
   const { setSnackbar } = useContext(SnackbarContext) || {};
   const { venueSchema } = useSchema();
   const navigate = useNavigate();

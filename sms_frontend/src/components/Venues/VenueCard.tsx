@@ -1,15 +1,9 @@
-
 import {
   GpsFixed as GpsFixedIcon,
   Home as HomeIcon,
   LocationCity as LocationCityIcon,
 } from "@mui/icons-material";
-import {
-  Box,
-  Card,
-  CardMedia,
-  Typography,
-} from "@mui/material";
+import { Box, Card, CardMedia, Typography } from "@mui/material";
 
 import { Venue } from "@/types";
 
@@ -17,9 +11,7 @@ interface Props {
   venue: Venue;
 }
 
-export const VenueCard = ({
-  venue,
-}: Props) => {
+export const VenueCard = ({ venue }: Props) => {
   const displayImage = () => {
     if (venue.venue_image) return venue.venue_image;
 
@@ -97,9 +89,7 @@ export const VenueCard = ({
               }}
             >
               <LocationCityIcon sx={{ verticalAlign: "middle" }} />
-              <Typography sx={{ marginLeft: "0.5em" }}>
-                {venue.city}
-              </Typography>
+              <Typography sx={{ marginLeft: "0.5em" }}>{venue.city}</Typography>
             </Box>
             <Box
               sx={{
