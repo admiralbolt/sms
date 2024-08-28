@@ -23,8 +23,8 @@ def setup_periodic_tasks(sender, **kwargs):
   # Run the ingester everyday at 1am.
   sender.add_periodic_task(crontab(hour=1, minute=0), run_ingester, name="Ingester Cron")
   # Wait a few hours, then run the carpenter.
-  sender.add_periodic_task(crontab(hour=4, minute=0), run_carpenter, name="Carpenter Cron")
+  sender.add_periodic_task(crontab(hour=5, minute=0), run_carpenter, name="Carpenter Cron")
   # Wait an hour, then run the janitor.
-  sender.add_periodic_task(crontab(hour=5, minute=0), run_janitor, name="Janitor Cron")
+  sender.add_periodic_task(crontab(hour=6, minute=0), run_janitor, name="Janitor Cron")
   # Delete old ingestion runs once a day.
-  sender.add_periodic_task(crontab(hour=2, minute=0), delete_old_ingestion_runs, name="Delete Old Ingestion Runs")
+  sender.add_periodic_task(crontab(hour=7, minute=0), delete_old_ingestion_runs, name="Delete Old Ingestion Runs")
