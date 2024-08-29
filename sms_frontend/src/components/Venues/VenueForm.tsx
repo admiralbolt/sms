@@ -2,6 +2,7 @@ import { Form } from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
 import { AxiosError } from "axios";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Button } from "@mui/material";
 
@@ -15,19 +16,13 @@ interface Props {
   setEdit: any;
   isNew?: boolean;
   setIsNew?: any;
-  createCallback?: any;
   updateCallback?: any;
 }
 
-export const VenueForm = ({
-  venue,
-  setEdit,
-  isNew,
-  createCallback,
-  updateCallback,
-}: Props) => {
+export const VenueForm = ({ venue, setEdit, isNew }: Props) => {
   const { setSnackbar } = useContext(SnackbarContext) || {};
   const { venueSchema } = useSchema();
+  const navigate = useNavigate();
 
   const submit = (submitVenue: any) => {
     if (isNew) {
@@ -39,7 +34,7 @@ export const VenueForm = ({
             message: `Venue ${response.data.name} updated successfully!`,
           });
           setEdit(false);
-          createCallback(response.data["id"]);
+          navigate(`/venues/${response.data["slug"]}`);
         },
         (error: AxiosError) => {
           setSnackbar({
@@ -61,7 +56,7 @@ export const VenueForm = ({
           message: `Venue ${response.data.name} updated successfully!`,
         });
         setEdit(false);
-        updateCallback(response.data["id"]);
+        navigate(`/venues/${response.data["slug"]}`);
       },
       (error: AxiosError) => {
         setSnackbar({

@@ -1,10 +1,12 @@
 import { Box, Typography } from "@mui/material";
 
-import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
+import { setMeta } from "@/utils/seo";
 
 export const NotFoundView = () => {
-  usePageTitle("Seattle Music Scene 404");
-  usePageDescription("Seattle Music Scene 404");
+  setMeta({
+    title: "Seattle Music Scene 404",
+    description: "Seattle Music Scene 404",
+  });
 
   return (
     <>

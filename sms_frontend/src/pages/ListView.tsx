@@ -1,10 +1,12 @@
 import { EventList } from "@/components/Events";
 import { FilterPanel } from "@/components/FilterPanel";
-import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
+import { setMeta } from "@/utils/seo";
 
 export const ListView = () => {
-  usePageTitle("Seattle Show & Open Mic List");
-  usePageDescription("See a list of all shows & open mics in Seattle.");
+  setMeta({
+    title: "Seattle Show & Open Mic List",
+    description: "See a list of all shows & open mics in Seattle.",
+  });
 
   return (
     <div className="md:max-w-[70vw]">

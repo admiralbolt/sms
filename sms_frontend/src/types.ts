@@ -136,6 +136,7 @@ export interface RawData {
 
 export interface Venue {
   id: number;
+  slug: string;
   latitude: number;
   longitude: number;
   name: string;

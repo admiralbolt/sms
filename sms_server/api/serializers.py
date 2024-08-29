@@ -36,7 +36,11 @@ class VenueSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.Venue
-    fields = ("id", "venue_image_url", "venue_image", "name", "latitude", "longitude", "address", "postal_code", "city", "venue_url", "description", "venue_tags", "alias", "show_venue")
+    lookup_field = "slug"
+    extra_kwargs = {
+      "url": {"lookup_field": "slug"}
+    }
+    fields = ("id", "slug", "venue_image_url", "venue_image", "name", "latitude", "longitude", "address", "postal_code", "city", "venue_url", "description", "venue_tags", "alias", "show_venue")
 
 class SocialLink(serializers.ModelSerializer):
   """Serialize social links."""
