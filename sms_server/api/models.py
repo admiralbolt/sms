@@ -16,6 +16,7 @@ class Venue(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
   name = models.CharField(max_length=128, unique=True)
   name_lower = models.CharField(max_length=128, unique=True)
+  slug = models.CharField(max_length=128, unique=True)
   latitude = models.DecimalField(max_digits=8, decimal_places=5)
   longitude = models.DecimalField(max_digits=8, decimal_places=5)
   address = models.CharField(max_length=256)
@@ -52,6 +53,7 @@ class Venue(models.Model):
     # but judging from: https://code.djangoproject.com/ticket/27825#comment:9
     # seems unlikely.
     self.name_lower = self.name.lower()
+    self.slug = re.sub("[^a-z0-9 ]+", "", self.name_lower).replace(" ", "-")
     self.latitude = round(float(self.latitude), 5)
     self.longitude = round(float(self.longitude), 5)
 

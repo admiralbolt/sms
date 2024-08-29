@@ -31,8 +31,8 @@ const getVenueDisplayImage = (venue: Venue): string => {
   return "/placeholder.png";
 };
 
-const getVenueById = async (id: any): Promise<Venue> => {
-  const result = await customAxios.get(`/api/venues/${id}`);
+const getVenueBySlug = async (slug: any): Promise<Venue> => {
+  const result = await customAxios.get(`/api/venues/${slug}`);
 
   return result.data;
 };
@@ -148,7 +148,7 @@ const updateVenue = (venue: Venue) => {
   // making updates directly to the "venue_image" field.
   delete venue.venue_image;
 
-  return customAxios.put(`api/venues/${venue.id}`, venue);
+  return customAxios.put(`api/venues/${venue.slug}`, venue);
 };
 
 const createOpenMic = (openMic: OpenMic) => {
@@ -256,7 +256,7 @@ export {
   getArtistById,
   getEventById,
   getOpenMicById,
-  getVenueById,
+  getVenueBySlug,
   getEventsByDay,
   updateEvent,
   useEventTypes,

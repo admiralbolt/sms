@@ -37,6 +37,7 @@ class VenueViewSet(viewsets.ModelViewSet):
   resource_name = "venues"
   queryset = models.Venue.objects.all()
   serializer_class = serializers.VenueSerializer
+  lookup_field = "slug"
 
   def get_permissions(self):
     permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
@@ -45,6 +46,10 @@ class VenueViewSet(viewsets.ModelViewSet):
   def get_queryset(self):
     models.Venue.objects.prefetch_related("venue_tags")
     venues = models.Venue.objects.order_by("name")
+    user = self.request.user
+    if user.is_authenticated and user.is_staff:
+      return venues
+    
     return venues.filter(show_venue=True)
 
 class OpenMicViewSet(viewsets.ModelViewSet):

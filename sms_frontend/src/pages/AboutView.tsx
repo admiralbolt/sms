@@ -1,11 +1,13 @@
 import { Divider, Link, List, ListItem, Typography } from "@mui/material";
 import { Box, Grid } from "@mui/material";
 
-import { usePageDescription, usePageTitle } from "@/hooks/metaTags";
+import { setMeta } from "@/utils/seo";
 
 export const AboutView = () => {
-  usePageTitle("Seattle Music Scene - About");
-  usePageDescription("Information about the seattle music scene website");
+  setMeta({
+    title: "Seattle Music Scene - About",
+    description: "Information about the seattle music scene website",
+  });
 
   return (
     <Box
