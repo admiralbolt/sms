@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='venue',
             name='slug',
-            field=models.CharField(blank=True, null=True, max_length=128, unique=True),
+            field=models.CharField(blank=True, null=True, max_length=128),
             preserve_default=False,
         ),
         migrations.RunPython(update_venue_slugs, undo),
