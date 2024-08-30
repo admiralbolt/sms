@@ -146,10 +146,8 @@ class BandsintownApi(EventApi):
       page_number += 1
       time.sleep(2)
 
-    logger.info("API=Bandsintown, Total Events: %s", len(all_event_urls))
     time.sleep(60)
     for i, event_url in enumerate(all_event_urls):
-      logger.info("API=Bandsintown, processing event (%s, %s)", i, event_url)
       time.sleep(3)
       try:
         event_data = self.get_event_detail(event_url)

@@ -45,6 +45,8 @@ class Ingester:
           change_log=change_log,
           raw_data=raw_data
         )
+
+        logger.info("[Ingester] API=%s, event_name=%s", api.api_name, raw_data.event_name)
       except Exception as e:
         IngestionRecord.objects.create(
           ingestion_run=self.ingestion_run,
