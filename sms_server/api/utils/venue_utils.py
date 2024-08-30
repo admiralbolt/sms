@@ -1,15 +1,17 @@
 """Utils related to Venues."""
+
 import importlib
 import logging
 import os
 import re
 from typing import Generator, Optional
 
-from api.constants import get_all, ChangeTypes, VenueTypes
+from api.constants import ChangeTypes, VenueTypes, get_all
 from api.ingestion.crawlers.crawler import AbstractCrawler
-from api.models import Event, CarpenterRecord, Venue, VenueTag
+from api.models import CarpenterRecord, Event, Venue, VenueTag
 
 logger = logging.getLogger(__name__)
+
 
 def _get_venue(name: Optional[str], latitude: Optional[float], longitude: Optional[float]) -> Venue:
   """Get a venue by name, lat/long fields, or aliasing."""
@@ -17,7 +19,7 @@ def _get_venue(name: Optional[str], latitude: Optional[float], longitude: Option
     db_venue = Venue.objects.filter(name_lower=name.lower())
     if db_venue.exists():
       return db_venue.first()
-    
+
     # Check against all venues with defined aliases.
     venues_with_aliases = Venue.objects.exclude(alias__isnull=True).exclude(alias__exact="")
     for db_venue in venues_with_aliases:
@@ -34,30 +36,25 @@ def _get_venue(name: Optional[str], latitude: Optional[float], longitude: Option
 
   return None
 
+
 def add_venue_tags(venue: Venue, tags: list[str]) -> None:
   """Add venue tags if they don't exist."""
   for tag in tags:
     if tag not in get_all(VenueTypes):
       continue
 
-    VenueTag.objects.get_or_create(
-      venue=venue,
-      venue_type=tag
-    )
+    VenueTag.objects.get_or_create(venue=venue, venue_type=tag)
+
 
 def get_or_create_venue(**kwargs) -> tuple[str, str, Venue]:
   """Get or create a venue.
 
   Returns a tuple of (change_type, change_log, Venue).
   """
-  existing_venue = _get_venue(
-    name=kwargs.get("name", None),
-    latitude=kwargs.get("latitude", None),
-    longitude=kwargs.get("longitude", None)
-  )
+  existing_venue = _get_venue(name=kwargs.get("name", None), latitude=kwargs.get("latitude", None), longitude=kwargs.get("longitude", None))
   if existing_venue:
     return ChangeTypes.NOOP, "", existing_venue
-  
+
   # Otherwise, we need to create the new venue.
   allowed_keys = set([field.name for field in Venue._meta.get_fields()])
   allowed_keys.remove("id")
@@ -76,6 +73,7 @@ def get_crawler(crawler_module_name: str) -> AbstractCrawler:
       return getattr(crawler_module, attr)()
 
   return None
+
 
 def merge_venues(from_venue: Venue, to_venue: Venue) -> bool:
   """Merge from_venue => to_venue.
@@ -103,7 +101,7 @@ def merge_venues(from_venue: Venue, to_venue: Venue) -> bool:
   for record in CarpenterRecord.objects.filter(venue=from_venue):
     record.venue = to_venue
     record.save()
-  
+
   # 4. Merge all venue tags, delete them if they aren't needed.
   for tag in VenueTag.objects.filter(venue=from_venue):
     if VenueTag.objects.filter(venue=to_venue, venue_type=tag.venue_type).exists():
@@ -117,6 +115,7 @@ def merge_venues(from_venue: Venue, to_venue: Venue) -> bool:
 
   return True
 
+
 def check_aliasing_and_merge_all():
   """Checks aliasing of ALL venues, and merge venues accordingly.
 
@@ -126,7 +125,7 @@ def check_aliasing_and_merge_all():
   venues_with_aliasing = Venue.objects.exclude(alias__isnull=True).exclude(alias__exact="")
   if not venues_with_aliasing.exists():
     return
-  
+
   for venue in Venue.objects.all():
     for proper_venue in venues_with_aliasing:
       if venue == proper_venue:
@@ -136,6 +135,7 @@ def check_aliasing_and_merge_all():
         continue
 
       merge_venues(from_venue=venue, to_venue=proper_venue)
+
 
 def all_crawler_names() -> Generator[str, None, None]:
   """Loads all crawler names based on file names on disk."""

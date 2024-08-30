@@ -1,4 +1,5 @@
 """Utils related to Events."""
+
 import datetime
 import logging
 from typing import Iterable, Optional
@@ -8,12 +9,13 @@ from django.db import models
 
 from api.constants import IngestionApis
 from api.ingestion.import_mapping import get_api_priority
-from api.models import Artist, ChangeTypes, Event, Venue, RawData
+from api.models import Artist, ChangeTypes, Event, RawData, Venue
 from api.utils import diff_utils
 
 logger = logging.getLogger(__name__)
 
-def get_event(venue: Venue, raw_data: Optional[RawData], event_day: str="", start_time: str=""):
+
+def get_event(venue: Venue, raw_data: Optional[RawData], event_day: str = "", start_time: str = ""):
   """Get a matching event from the database.
 
   1) We check to see if we can find an existing event that has the raw data
@@ -27,15 +29,17 @@ def get_event(venue: Venue, raw_data: Optional[RawData], event_day: str="", star
 
   return Event.objects.filter(venue=venue, event_day=event_day, start_time=start_time).first()
 
+
 def handle_open_mic_gen_diff(event: Event, values_changed: dict) -> tuple[bool, Event]:
   """Handle open mic event generation for events that are already in the API."""
   if not values_changed:
     return False, event
-  
+
   if values_changed.get("root['event_api']", {}).get("new_value", None) != IngestionApis.OPEN_MIC_GENERATOR:
     return False, event
 
   return diff_utils.apply_diff(event, values_changed, fields=["event_type", "title", "event_api"])
+
 
 def merge_event(to_event: Event, from_event: Event, raw_datas: list[RawData] = [], artists: list[Artist] = []) -> tuple[str, str, Event]:
   """Merge event data.
@@ -87,14 +91,9 @@ def merge_event(to_event: Event, from_event: Event, raw_datas: list[RawData] = [
   if any([fields_added, fields_changed, open_mic_diff]):
     change_type = ChangeTypes.UPDATE
     # Takes some extra effort, but we serialize the final diffs to json.
-    final_diff = deepdiff.DeepDiff(
-      original_event_data,
-      to_event.__dict__,
-      ignore_order=True,
-      exclude_paths=["id"]
-    )
+    final_diff = deepdiff.DeepDiff(original_event_data, to_event.__dict__, ignore_order=True, exclude_paths=["id"])
     change_log = f"{fields_added=}, {fields_changed=}, {open_mic_diff=}\n{final_diff.to_json()}"
-  
+
   if new_raw_data:
     change_type = ChangeTypes.UPDATE
     change_log += f"\nAdded new raw_data link with id={raw_data.id}"
@@ -111,16 +110,16 @@ def merge_event(to_event: Event, from_event: Event, raw_datas: list[RawData] = [
 def create_or_update_event(venue: Venue, raw_data: Optional[RawData], artists: list[Artist] = [], **kwargs) -> tuple[str, str, Event]:
   """Create or update an event.‘
 
-  Returns a tuple of (change_type, change_log, Event). The change_type will be 
+  Returns a tuple of (change_type, change_log, Event). The change_type will be
   the changes applied (if any), and the change_log will include more information
-  about the changes applied / fields created. The Event returned will be the 
+  about the changes applied / fields created. The Event returned will be the
   finalized version of the created or updated Event.
   """
   # Special handling for importing "open mic" events that come from the apis.
   # We want to use the open mic generators instead of the apis directly.
   if kwargs["event_api"] != IngestionApis.OPEN_MIC_GENERATOR and "open mic" in kwargs["title"].lower():
     return ChangeTypes.SKIP, "Skipping because open mics are handled by generators.", None
-  
+
   # Similarly, we want to handle some special cases. We don't want to include
   # trivia or karaoke events.
   if "trivia" in kwargs["title"].lower() or "karaoke" in kwargs["title"].lower():
@@ -131,7 +130,7 @@ def create_or_update_event(venue: Venue, raw_data: Optional[RawData], artists: l
   if not kwargs.get("event_day", None) or not kwargs.get("start_time", None):
     logger.warning(f"Can't process event, not enough information to proceed. {venue}, {kwargs}")
     return ChangeTypes.SKIP, f"Skipping because there isn't enough info to proceed. {venue=}, {kwargs=}", None
-  
+
   allowed_keys = set([field.name for field in Event._meta.get_fields()])
   allowed_keys.remove("id")
   filtered_kwargs = {key: kwargs[key] for key in kwargs if key in allowed_keys}
@@ -148,9 +147,10 @@ def create_or_update_event(venue: Venue, raw_data: Optional[RawData], artists: l
       event.artists.add(artist)
     event.save()
     return ChangeTypes.CREATE, f"Event created {event.__dict__}", event
-  
+
   new_event = Event(venue=venue, **filtered_kwargs)
   return merge_event(event, new_event, raw_datas=[raw_data] if raw_data is not None else [], artists=artists)
+
 
 def get_highest_priority_api(event: Event) -> tuple[int, str]:
   """Get the highest priority api on an event.
@@ -164,8 +164,10 @@ def get_highest_priority_api(event: Event) -> tuple[int, str]:
 
   return sorted(api_info, key=lambda item: item[1])[0]
 
+
 def sort_events_by_priority(event_set: models.Manager[Event]) -> list[Event]:
   return sorted(event_set, key=lambda event: get_highest_priority_api(event))
+
 
 def should_merge(event_set: Iterable[Event]) -> bool:
   # We assume that all these events have the same day and venue.
@@ -186,8 +188,9 @@ def should_merge(event_set: Iterable[Event]) -> bool:
   # Set diff to slightly more than an hour and half.
   if diff_in_minutes >= 100:
     return True
-  
+
   return False
+
 
 def merge_events(to_event: Event, event_set: Iterable[Event]) -> tuple[str, str, Event]:
   change_type = ChangeTypes.NOOP
@@ -203,4 +206,3 @@ def merge_events(to_event: Event, event_set: Iterable[Event]) -> tuple[str, str,
     change_log += tmp_log + "\n"
 
   return change_type, change_log, to_event
-

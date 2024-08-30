@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+  dependencies = [
+    ("api", "0002_janitorapplyartistrecord_janitormergeeventrecord_and_more"),
+  ]
 
-    dependencies = [
-        ('api', '0002_janitorapplyartistrecord_janitormergeeventrecord_and_more'),
-    ]
-
-    operations = [
-        migrations.AlterUniqueTogether(
-            name='event',
-            unique_together=set(),
-        ),
-    ]
+  operations = [
+    migrations.AlterUniqueTogether(
+      name="event",
+      unique_together=set(),
+    ),
+  ]

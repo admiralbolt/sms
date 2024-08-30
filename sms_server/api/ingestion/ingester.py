@@ -6,10 +6,11 @@ from typing import Optional
 from api.constants import ChangeTypes
 from api.ingestion.event_apis.event_api import EventApi
 from api.ingestion.import_mapping import API_MAPPING
-from api.models import IngestionRecord, IngestionRun, RawData
+from api.models import IngestionRecord, IngestionRun
 from api.utils import raw_data_utils
 
 logger = logging.getLogger(__name__)
+
 
 class Ingester:
   """Load some data."""
@@ -36,33 +37,27 @@ class Ingester:
           event_name=raw_event_info["event_name"],
           venue_name=raw_event_info["venue_name"],
           event_day=raw_event_info["event_day"],
-          data=event_data
+          data=event_data,
         )
 
         IngestionRecord.objects.create(
-          ingestion_run=self.ingestion_run,
-          api_name=api.api_name,
-          change_type=change_type,
-          change_log=change_log,
-          raw_data=raw_data
+          ingestion_run=self.ingestion_run, api_name=api.api_name, change_type=change_type, change_log=change_log, raw_data=raw_data
         )
 
         logger.info("[Ingester] API=%s, event_name=%s", api.api_name, raw_data.event_name)
-      except Exception as e:
+      except Exception:
         IngestionRecord.objects.create(
           ingestion_run=self.ingestion_run,
           api_name=api.api_name,
           change_type=ChangeTypes.ERROR,
-          change_log=f"Error importing data: {event_data}"
+          change_log=f"Error importing data: {event_data}",
         )
 
   def import_data(self):
     self.ingestion_run = IngestionRun.objects.create(name=self.run_name)
     metadata = {}
     for api in self.ingestion_apis:
-      metadata[api] = {
-        "start_time": time.time()
-      }
+      metadata[api] = {"start_time": time.time()}
       try:
         self.import_from_api(API_MAPPING[api])
       except Exception as e:

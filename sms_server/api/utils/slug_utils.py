@@ -1,5 +1,7 @@
 """slug"""
+
 import re
+
 
 def make_slug(name: str) -> str:
   slug = name.lower()

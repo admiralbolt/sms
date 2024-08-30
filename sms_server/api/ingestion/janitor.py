@@ -4,16 +4,17 @@ from typing import Optional
 
 from django.db.models import Count
 
-from api.constants import get_all, JanitorOperations
-from api.models import Artist, Event, JanitorRun, JanitorRecord, JanitorApplyArtistRecord, JanitorMergeEventRecord
+from api.constants import JanitorOperations, get_all
+from api.models import Artist, Event, JanitorApplyArtistRecord, JanitorMergeEventRecord, JanitorRecord, JanitorRun
 from api.utils import event_utils
 
 logger = logging.getLogger(__name__)
 
+
 class Janitor:
   """Clean some data!"""
 
-  def __init__(self, operations: Optional[list[str]]=None, min_date: Optional[datetime]=None, process_all: bool=False):
+  def __init__(self, operations: Optional[list[str]] = None, min_date: Optional[datetime] = None, process_all: bool = False):
     all_janitor_ops = get_all(JanitorOperations)
     self.operations = [op for op in operations if op in all_janitor_ops] if operations else all_janitor_ops
     if len(self.operations) == 0:
@@ -37,17 +38,17 @@ class Janitor:
     # They are now my number one enemy.
     if artist.name == "@":
       return False
-    
+
     # NOTE to future me, this is actually a perfect spot to use a modified
     # Aho-Corasick, but for now we just do it the lazy way.
     if event.artists.contains(artist):
       return False
-    
+
     name_lower = artist.name.lower()
     event_lower = event.title.lower()
-    if not name_lower in event_lower:
+    if name_lower not in event_lower:
       return False
-    
+
     # We want a FULL match of the text, not just any substring. So, if we have
     # a match, check the character on either side of the match. If it's any
     # alpha character [a-z] we don't consider it a full match.
@@ -55,7 +56,7 @@ class Janitor:
 
     if pos > 0 and event_lower[pos - 1].isalpha():
       return False
-    
+
     n_len = len(name_lower)
     e_len = len(event_lower)
     if pos + n_len < e_len and event_lower[pos + n_len].isalpha():
@@ -70,7 +71,11 @@ class Janitor:
     if their name shows up in the title, by cross checking with our good list
     of artist names pulled from trusted APIs.
     """
-    all_events = Event.objects.filter(event_day__gt=self.min_date) if self.process_all else Event.objects.filter(finalized=False, event_day__gt=self.min_date)
+    all_events = (
+      Event.objects.filter(event_day__gt=self.min_date)
+      if self.process_all
+      else Event.objects.filter(finalized=False, event_day__gt=self.min_date)
+    )
     all_artists = Artist.objects.all()
     for event in all_events:
       artists_added = []
@@ -81,7 +86,7 @@ class Janitor:
 
       if len(artists_added) == 0:
         continue
-      
+
       event.save()
       apply_artists_record = JanitorApplyArtistRecord.objects.create(event=event)
       apply_artists_record.artists.add(*artists_added)
@@ -90,7 +95,7 @@ class Janitor:
         janitor_run=self.janitor_run,
         operation=JanitorOperations.APPLY_ARTISTS,
         change_log=f"Added artists [{', '.join([str((artist.id, artist.name)) for artist in artists_added])}] to event: {(event.id, event.title)}",
-        apply_artists_record=apply_artists_record
+        apply_artists_record=apply_artists_record,
       )
 
   def merge_events(self):
@@ -110,15 +115,10 @@ class Janitor:
       # event has the best info.
       sorted_events = event_utils.sort_events_by_priority(event_set)
       _, change_log, _ = event_utils.merge_events(sorted_events[0], sorted_events)
-      merge_event_record = JanitorMergeEventRecord.objects.create(
-        to_event=sorted_events[0]
-      )
+      merge_event_record = JanitorMergeEventRecord.objects.create(to_event=sorted_events[0])
 
       JanitorRecord.objects.create(
-        janitor_run=self.janitor_run,
-        operation=JanitorOperations.MERGE_EVENTS,
-        change_log=change_log,
-        merge_event_record=merge_event_record
+        janitor_run=self.janitor_run, operation=JanitorOperations.MERGE_EVENTS, change_log=change_log, merge_event_record=merge_event_record
       )
 
   def finalize_events(self):
@@ -126,11 +126,11 @@ class Janitor:
 
   def run(self):
     """Is your janitor running???"""
-    #1. Apply artists. Slightly wasteful to do this first, but this gives us
+    # 1. Apply artists. Slightly wasteful to do this first, but this gives us
     #   an extra signal to use when merging events.
     self.apply_artists()
 
-    #2. Merge events.
+    # 2. Merge events.
     self.merge_events()
 
     # Mark all previously unfinalized events as finalized.

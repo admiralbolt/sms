@@ -1,4 +1,5 @@
 """Utils for generating open mic events!"""
+
 import datetime
 from typing import Generator
 
@@ -8,6 +9,7 @@ from api.constants import IngestionApis
 from api.models import Event, OpenMic, Venue
 from api.utils import event_utils
 
+
 def get_open_mic_by_venue_name(venue_name: str) -> OpenMic:
   """Get an open mic by it's venue name."""
   venue = Venue.objects.filter(name=venue_name).first()
@@ -16,7 +18,10 @@ def get_open_mic_by_venue_name(venue_name: str) -> OpenMic:
 
   return OpenMic.objects.filter(venue=venue).first()
 
-def generate_open_mic_events(open_mic: OpenMic, max_diff: datetime.timedelta = datetime.timedelta(days=45)) -> Generator[tuple[str, str, Event], None, None]:
+
+def generate_open_mic_events(
+  open_mic: OpenMic, max_diff: datetime.timedelta = datetime.timedelta(days=45)
+) -> Generator[tuple[str, str, Event], None, None]:
   """Generate calendar events for an open mic.
 
   Dates are generated based on the open mics cadence crontab, starting from the

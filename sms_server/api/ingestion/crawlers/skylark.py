@@ -5,6 +5,7 @@ Entry point: https://www.skylarkcafe.com/calendar
 Upcoming shows are contained within divs emulating list items.
 Very sparse information about the shows themselves, but it's a start.
 """
+
 import os
 import re
 from datetime import datetime
@@ -18,8 +19,8 @@ from api.ingestion.crawlers.crawler import AbstractCrawler
 
 SKYLARK_ROOT = "https://www.skylarkcafe.com"
 
-class SkylarkCrawler(AbstractCrawler):
 
+class SkylarkCrawler(AbstractCrawler):
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.CRAWLER_SKYLARK, venue_name_regex="^skylark$")
 
@@ -29,9 +30,9 @@ class SkylarkCrawler(AbstractCrawler):
       "event_day": raw_data["event_day"],
       "start_time": raw_data["start_time"],
       "event_url": raw_data["event_url"],
-      "event_image_url": raw_data["event_image_url"]
+      "event_image_url": raw_data["event_image_url"],
     }
-  
+
   def get_event_list(self) -> Generator[dict, None, None]:
     skylark_request = requests.get(f"{SKYLARK_ROOT}/calendar", timeout=15)
     soup = BeautifulSoup(skylark_request.text, "html.parser")
@@ -58,5 +59,5 @@ class SkylarkCrawler(AbstractCrawler):
         "event_url": event_url,
         "event_image_url": event_image_url,
         "event_name": event_titles[0].text,
-        "event_api_id": os.path.basename(os.path.normpath(event_url))
+        "event_api_id": os.path.basename(os.path.normpath(event_url)),
       }

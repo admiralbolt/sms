@@ -6,8 +6,10 @@ from api.models import Venue
 
 logger = logging.getLogger(__name__)
 
+
 class EventApi(ABC):
   """Abstract api class."""
+
   api_name: str = ""
   venue_logs: dict = {}
   has_artists: bool = False
@@ -19,7 +21,7 @@ class EventApi(ABC):
   @abstractmethod
   def get_event_list(self) -> Generator[dict, None, None]:
     pass
-  
+
   @abstractmethod
   def get_event_kwargs(self, raw_data: dict) -> dict:
     pass
@@ -45,7 +47,3 @@ class EventApi(ABC):
 
   def get_venue(self) -> Venue:
     return None
-
-
-
-

@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+  dependencies = [
+    ("api", "0007_venue_slug"),
+  ]
 
-    dependencies = [
-        ('api', '0007_venue_slug'),
-    ]
-
-    operations = [
-        migrations.AddField(
-            model_name='ingestionrun',
-            name='metadata',
-            field=models.JSONField(blank=True, null=True),
-        ),
-    ]
+  operations = [
+    migrations.AddField(
+      model_name="ingestionrun",
+      name="metadata",
+      field=models.JSONField(blank=True, null=True),
+    ),
+  ]
