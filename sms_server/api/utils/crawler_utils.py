@@ -12,7 +12,7 @@ USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36
 
 def get_html_soup_thread(url: str) -> Optional[bs4.BeautifulSoup]:
   """Delicious soup."""
-  driver = Driver(uc=True, headless=True)
+  driver = Driver(headless=True)
   soup = None
   try:
     driver.get(url)
@@ -24,6 +24,7 @@ def get_html_soup_thread(url: str) -> Optional[bs4.BeautifulSoup]:
 
 def get_html_soup(url: str, timeout: int=45) -> Optional[bs4.BeautifulSoup]:
   """Delicious soup."""
+  logger.info("[Trawler] Looking up url: %s", url)
   try:
     with concurrent.futures.ThreadPoolExecutor() as executor:
       future = executor.submit(get_html_soup_thread, url)
