@@ -1,5 +1,6 @@
 import datetime
 import logging
+import time
 from typing import Optional
 
 from api.constants import ChangeTypes
@@ -57,12 +58,22 @@ class Ingester:
 
   def import_data(self):
     self.ingestion_run = IngestionRun.objects.create(name=self.run_name)
+    metadata = {}
     for api in self.ingestion_apis:
+      metadata[api] = {
+        "start_time": time.time()
+      }
       try:
         self.import_from_api(API_MAPPING[api])
       except Exception as e:
         print(f"Error importing from api {api}, error: {e}")
         print(e)
         logger.error("Error importing from api %s, error: %s.", api, e, exc_info=1)
+      metadata[api]["end_time"] = time.time()
+      metadata[api]["elapsed_time"] = metadata[api]["end_time"] - metadata[api]["start_time"]
+      # Because we've been timing out here, we're going to save our extra
+      # metadata each time we complete an api.
+      self.ingestion_run.metadata = metadata
+      self.ingestion_run.save()
     self.ingestion_run.finished_at = datetime.datetime.now()
     self.ingestion_run.save()
