@@ -139,3 +139,18 @@ celery -A sms_server beat -l DEBUG
 # 2. Running the celery worker. Must be run from the sms/sms_server folder.
 celery -A sms_server worker -l DEBUG
 ```
+
+## Formatting stuff
+
+To format the python code, in the `sms_server` directory, run:
+
+```
+ruff check . --fix
+ruff format .
+```
+
+To format the js code, in the `sms_frontend` directory, run:
+
+```
+npm run pretty
+```
