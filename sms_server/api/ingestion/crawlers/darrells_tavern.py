@@ -8,11 +8,12 @@ is technically malformed. Which is really cool, nice job Darrell's.
 
 Finally, shows are 8pm, and $10 unless otherwise specified.
 """
+
 import logging
-import requests
 from datetime import datetime
 from typing import Generator
 
+import requests
 from bs4 import BeautifulSoup
 
 from api.constants import IngestionApis
@@ -23,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 EVENTS_URL = "https://darrellstavern.com/show-calendar/"
 
+
 def _get_first_uppercase_letters(text: str) -> str:
   """Don't ask why this is necessary, I'd recommend not reading this code."""
   for i, c in enumerate(text):
@@ -30,15 +32,15 @@ def _get_first_uppercase_letters(text: str) -> str:
       if c == " ":
         continue
 
-      return text[:i - 1]
+      return text[: i - 1]
 
     if not c.isupper():
-      return text[:i - 1]
+      return text[: i - 1]
 
   return text
 
-class DarellsTavernCrawler(AbstractCrawler):
 
+class DarellsTavernCrawler(AbstractCrawler):
   has_artists = False
 
   def __init__(self) -> object:
@@ -52,13 +54,11 @@ class DarellsTavernCrawler(AbstractCrawler):
       "event_url": raw_data["event_url"],
       "description": raw_data["description"],
     }
-  
+
   def get_artist_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
     for artist in raw_data["artists"]:
-      yield {
-        "name": artist
-      }
-  
+      yield {"name": artist}
+
   def get_event_list(self) -> Generator[dict, None, None]:
     """Crawl data for Darell's!!!"""
     headers = {
@@ -68,7 +68,7 @@ class DarellsTavernCrawler(AbstractCrawler):
     soup = BeautifulSoup(darells_request.text, "html.parser")
     # Should only be a single div with entry-content class.
     show_content = soup.find_all("div", class_="entry-content")
-    # Show dates are always in h1. Some main content is also in h1's, and 
+    # Show dates are always in h1. Some main content is also in h1's, and
     # sometimes the show dates also include an updated time.
     show_date_tags = show_content[0].find_all("h1")
     for date_tag in show_date_tags:
@@ -89,7 +89,7 @@ class DarellsTavernCrawler(AbstractCrawler):
       # text. In all cases, these are split line by line.
       date_info = date_tag.text.split("\n")
       event_dates = [datetime.strptime(d.strip(), "%a %m.%d").replace(year=today.year) for d in date_info[0].split("/")]
-      
+
       for event_date in event_dates:
         # If the event_date is before the current day, that's because it's
         # happening next year!
@@ -103,7 +103,7 @@ class DarellsTavernCrawler(AbstractCrawler):
         # Then we guess what the rest of the fields are.
         if len(date_info) > 1:
           for extra_info in date_info[1:]:
-            if (new_start := parsing_utils.find_time(extra_info)):
+            if new_start := parsing_utils.find_time(extra_info):
               start_time = new_start
               continue
 
@@ -127,7 +127,7 @@ class DarellsTavernCrawler(AbstractCrawler):
             artists.append(maybe.title())
           else:
             description += potential_artist
-        
+
         show_title += ", ".join(artists)
 
         yield {
@@ -138,5 +138,5 @@ class DarellsTavernCrawler(AbstractCrawler):
           "event_url": EVENTS_URL,
           "description": description,
           "artist_names": artists,
-          "event_api_id": f"{event_date.strftime('%Y-%m-%d')}-{show_title[:30]}"
+          "event_api_id": f"{event_date.strftime('%Y-%m-%d')}-{show_title[:30]}",
         }

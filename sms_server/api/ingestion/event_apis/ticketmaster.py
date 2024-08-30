@@ -1,4 +1,5 @@
 """Ticketmaster integration."""
+
 import logging
 import time
 from typing import Generator
@@ -11,9 +12,14 @@ from sms_server import settings
 
 logger = logging.getLogger(__name__)
 
-def event_list_request(page: int=0) -> dict:
+
+def event_list_request(page: int = 0) -> dict:
   """Get event data from Ticketmaster."""
-  return requests.get(f"https://app.ticketmaster.com/discovery/v2/events?apikey={settings.TICKET_MASTER_API_KEY}&radius=10&unit=miles&segmentName=Music&geoPoint=c22zp&page={page}", timeout=15).json()
+  return requests.get(
+    f"https://app.ticketmaster.com/discovery/v2/events?apikey={settings.TICKET_MASTER_API_KEY}&radius=10&unit=miles&segmentName=Music&geoPoint=c22zp&page={page}",
+    timeout=15,
+  ).json()
+
 
 def select_image(images: list[dict]) -> str:
   """Select an image from the tickemaster image response.
@@ -33,11 +39,7 @@ def select_image(images: list[dict]) -> str:
   if not images:
     return ""
 
-  ratio_priority = {
-    '16_9': 3,
-    '3_2': 2,
-    '4_3': 1
-  }
+  ratio_priority = {"16_9": 3, "3_2": 2, "4_3": 1}
   max_index = -1
   max_prio = -1
   max_width = -1
@@ -52,8 +54,8 @@ def select_image(images: list[dict]) -> str:
 
   return images[max_index]["url"]
 
-class TicketmasterApi(EventApi):
 
+class TicketmasterApi(EventApi):
   delay: float = 0.5
 
   def __init__(self) -> object:
@@ -74,16 +76,16 @@ class TicketmasterApi(EventApi):
       "city": venue_data["city"]["name"],
       "api_id": venue_data["id"],
     }
-  
+
   def get_event_kwargs(self, raw_data: dict) -> dict:
     return {
       "title": raw_data["name"],
       "event_day": raw_data["dates"]["start"]["localDate"],
       "start_time": raw_data["dates"]["start"].get("localTime", None),
       "event_url": raw_data["url"],
-      "event_image_url": select_image(raw_data["images"])
+      "event_image_url": select_image(raw_data["images"]),
     }
-  
+
   def get_raw_data_info(self, raw_data: dict) -> dict:
     return {
       "event_api_id": raw_data["id"],
@@ -91,17 +93,17 @@ class TicketmasterApi(EventApi):
       "venue_name": raw_data["_embedded"]["venues"][0]["name"],
       "event_day": raw_data["dates"]["start"]["localDate"],
     }
-  
+
   def get_event_list(self) -> Generator[dict, None, None]:
     events = event_list_request(page=0)
     if "_embedded" not in events:
       logger.warning(f"Empty events list: {events}, while ingesting from Ticketmaster.")
       return
-    
+
     num_pages = events["page"]["totalPages"]
     for event_data in events["_embedded"]["events"]:
       yield event_data
-    
+
     for page in range(1, num_pages):
       # We are only allowed a maximum of 5 QPS worth of traffic, so we insert
       # an artificial delay between requests to avoid hitting it.
@@ -113,4 +115,3 @@ class TicketmasterApi(EventApi):
 
       for event_data in events["_embedded"]["events"]:
         yield event_data
-  

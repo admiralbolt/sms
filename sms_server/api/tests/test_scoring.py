@@ -2,11 +2,11 @@ from django.test import TestCase
 
 from api.utils import search_utils
 
-class ScoringTestCase(TestCase):
 
+class ScoringTestCase(TestCase):
   def debug_score(self, name: str, keyword: str):
     print(f"Scoring {name=}, {keyword=}: {search_utils.score(name, keyword)}.\nRaw Scores:\n{search_utils.get_raw_scores(name, keyword)}\n")
-  
+
   def test_exact_match_is_100(self):
     self.assertEqual(100, search_utils.score("SOME EVENT TITLE", keyword="some event title"))
 

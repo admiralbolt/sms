@@ -5,8 +5,10 @@ import deepdiff
 from api.constants import ChangeTypes
 from api.models import RawData
 
+
 def get_raw_data(api_name: str, event_api_id: str) -> Optional[RawData]:
   return RawData.objects.filter(api_name=api_name, event_api_id=event_api_id).first()
+
 
 def create_or_update_raw_data(**kwargs) -> tuple[str, str, RawData]:
   """Create or update raw data.

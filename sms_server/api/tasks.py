@@ -1,15 +1,17 @@
 """Schedulable / repeatable tasks for data gathering and processing."""
+
 import datetime
 import logging
+
 from celery import shared_task
 
-from api.ingestion.ingester import Ingester
 from api.ingestion.carpenter import Carpenter
+from api.ingestion.ingester import Ingester
 from api.ingestion.janitor import Janitor
-from api.models import IngestionRun, OpenMic
-from api.utils import open_mic_utils
+from api.models import IngestionRun
 
 logger = logging.getLogger(__name__)
+
 
 @shared_task
 def run_ingester():
@@ -17,17 +19,20 @@ def run_ingester():
   ingester = Ingester()
   ingester.import_data()
 
+
 @shared_task
 def run_carpenter():
   """Run the carpenter!"""
   carpenter = Carpenter()
   carpenter.run()
-  
+
+
 @shared_task
 def run_janitor():
   """Run the janitor!"""
   janitor = Janitor()
   janitor.run()
+
 
 @shared_task
 def delete_old_ingestion_runs():

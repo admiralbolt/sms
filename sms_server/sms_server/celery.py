@@ -1,5 +1,7 @@
 """Celery is good for you. Also used to schedule tasks."""
+
 import os
+
 import django
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sms_server.settings")
@@ -10,10 +12,10 @@ from celery.schedules import crontab
 
 from api.tasks import delete_old_ingestion_runs, run_carpenter, run_ingester, run_janitor
 
-
 app = Celery("sms_server")
 app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
+
 
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):

@@ -14,13 +14,13 @@ There's a <script type="application/ld+json">{...}</script> at the bottom that
 contains "@type": "MusicEvent", with all the relevant, easily parsable details
 in it!
 """
+
 import json
 import logging
-import requests
 import time
 from typing import Generator
 
-import bs4
+import requests
 
 from api.constants import IngestionApis
 from api.ingestion.event_apis.event_api import EventApi
@@ -29,8 +29,8 @@ from sms_server.settings import BANDSINTOWN_APP_ID
 
 logger = logging.getLogger(__name__)
 
-class BandsintownApi(EventApi):
 
+class BandsintownApi(EventApi):
   has_artists = True
 
   def __init__(self) -> object:
@@ -59,17 +59,21 @@ class BandsintownApi(EventApi):
       "start_time": start_time,
       "event_url": event_info["url"],
       "event_image_url": event_info["image"],
-      "description": event_info["description"]
+      "description": event_info["description"],
     }
-  
+
   def get_artist_detail(self, artist_name: str) -> dict:
     """Get detailed info for an artist."""
     try:
-      r = requests.get(f"https://rest.bandsintown.com/artists/{artist_name}?app_id={BANDSINTOWN_APP_ID}", headers={"Content-Type": "application/json"}, timeout=10)
+      r = requests.get(
+        f"https://rest.bandsintown.com/artists/{artist_name}?app_id={BANDSINTOWN_APP_ID}",
+        headers={"Content-Type": "application/json"},
+        timeout=10,
+      )
       return r.json()
-    except Exception as e:
+    except Exception:
       return {}
-    
+
   def load_artist_info(self, all_data: dict) -> list[dict]:
     artists = []
     for performer in all_data["eventView"]["body"]["eventInfoContainer"]["lineupContainer"]["lineupItems"]:
@@ -78,21 +82,16 @@ class BandsintownApi(EventApi):
       artists.append(detail if detail else performer)
 
     return artists
-  
+
   def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
     for artist in raw_data["artist_info"]:
-      links = [
-        {
-          "platform": link["type"],
-          "url": link.get("url", "") or link.get("link", "")
-        } for link in artist.get("links", [])
-      ]
+      links = [{"platform": link["type"], "url": link.get("url", "") or link.get("link", "")} for link in artist.get("links", [])]
 
       yield {
         "name": artist["name"],
         "bio": artist.get("description", ""),
         "artist_image_url": artist.get("image_url", ""),
-        "social_links": links
+        "social_links": links,
       }
 
   def get_raw_data_info(self, raw_data: dict) -> dict:
@@ -101,12 +100,12 @@ class BandsintownApi(EventApi):
       "event_api_id": event_info["url"].split("?")[0],
       "event_name": event_info["name"],
       "venue_name": event_info["location"]["name"],
-      "event_day": event_info["startDate"].split("T")[0]
+      "event_day": event_info["startDate"].split("T")[0],
     }
-  
-  def get_paginated_url(self, page_number: int=1) -> str:
+
+  def get_paginated_url(self, page_number: int = 1) -> str:
     return f"https://www.bandsintown.com/all-dates/fetch-next/upcomingEvents?page={page_number}&longitude=-122.3701&latitude=47.6674"
-  
+
   def get_event_detail(self, event_url: str) -> dict:
     r = requests.get(event_url, headers={"User-Agent": crawler_utils.USER_AGENT})
     start = "<script>window.__data="
@@ -118,16 +117,16 @@ class BandsintownApi(EventApi):
       if not line.startswith(start):
         continue
 
-      all_data = json.loads(line[len(start):-len(end)])
+      all_data = json.loads(line[len(start) : -len(end)])
       # Return a subset so it's actually readable. We also want to fetch related
       # info about artists in the ingestion phase so we aren't pulling data
       # in the creation phase.
       return {
         "jsonLdContainer": all_data["jsonLdContainer"],
         "lineup": all_data["eventView"]["body"]["eventInfoContainer"]["lineupContainer"]["lineupItems"],
-        "artist_info": self.load_artist_info(all_data)
+        "artist_info": self.load_artist_info(all_data),
       }
-    
+
     logger.error("no data found for url: %s, raw_html: %s", event_url, r.text)
     return None
 

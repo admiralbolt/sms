@@ -17,12 +17,13 @@ Wednesday is karaoke
 
 Thursday/Friday/Saturday have bands.
 """
+
 import logging
 import os
-import requests
 from datetime import datetime, timedelta
 from typing import Generator, Optional
 
+import requests
 from bs4 import BeautifulSoup
 
 from api.constants import IngestionApis
@@ -43,8 +44,10 @@ headers = {
   "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
 }
 
+
 class Calendar:
   """Abstracting a calendar page since we need to parse multiple."""
+
   url: str
   soup: BeautifulSoup
   month: str
@@ -52,7 +55,7 @@ class Calendar:
   year: int
   is_next_year: bool = False
 
-  def __init__(self, url: str, is_next_year: bool=False):
+  def __init__(self, url: str, is_next_year: bool = False):
     self.url = url
     self._initialize()
 
@@ -80,7 +83,7 @@ class Calendar:
 
     logger.error(f"Could not load next months calendar from {self.url}")
     return None
-  
+
   def get_events(self) -> Generator[tuple[datetime, str, int], None, None]:
     start_parsing = False
     for row in self.soup.find_all("tr"):
@@ -102,11 +105,8 @@ class Calendar:
           continue
 
         day, band, cost, *_ = info
-        yield (
-          datetime(year=self.year, month=self.month_number, day=int(day)),
-          band,
-          parsing_utils.find_cost(cost)
-        )
+        yield (datetime(year=self.year, month=self.month_number, day=int(day)), band, parsing_utils.find_cost(cost))
+
 
 class LittleRedHenCrawler(AbstractCrawler):
   """Crawl data for the little red hen!"""
@@ -116,7 +116,7 @@ class LittleRedHenCrawler(AbstractCrawler):
 
   def get_event_kwargs(self, raw_data: dict) -> dict:
     return raw_data
-  
+
   def get_event_list(self) -> Generator[dict, None, None]:
     """Gets all events from little red hen calendars."""
     calendar = Calendar(url=HEN_CAL_START)
@@ -146,4 +146,3 @@ class LittleRedHenCrawler(AbstractCrawler):
       calendar = calendar.get_next_calendar()
       if calendar is None:
         return
-

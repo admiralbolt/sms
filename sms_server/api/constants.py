@@ -1,6 +1,7 @@
 """Some things always change, but one thing stays the same, constants."""
 # pylint: disable=invalid-name,missing-class-docstring
 
+
 class ChangeTypes:
   CREATE = "Create"
   DELETE = "Delete"
@@ -9,14 +10,17 @@ class ChangeTypes:
   SKIP = "Skip"
   UPDATE = "Update"
 
+
 class JanitorOperations:
   APPLY_ARTISTS = "Apply Artists"
   MERGE_EVENTS = "Merge Events"
+
 
 class EventTypes:
   OPEN_MIC = "Open Mic"
   OPEN_JAM = "Open Jam"
   SHOW = "Show"
+
 
 class IngestionApis:
   AXS = "AXS"
@@ -36,11 +40,13 @@ class IngestionApis:
   TIXR = "TIXR"
   VENUEPILOT = "Venuepilot"
 
+
 class OpenMicTypes:
   ALL = "All"
   COMEDY = "Comedy"
   MUSIC = "Music"
   SPOKEN_WORD = "Spoken Word"
+
 
 class VenueTypes:
   BAR = "Bar"
@@ -48,6 +54,7 @@ class VenueTypes:
   COFFEE_SHOP = "Coffee Shop"
   EVENT_SPACE = "Event Space"
   SHOP = "Shop"
+
 
 class Neighborhoods:
   BALLARD = "Ballard"
@@ -62,6 +69,7 @@ class Neighborhoods:
   UNIVERSITY_DISTRICT = "University District"
   WEST_SEATTLE = "West Seattle"
 
+
 def get_all(cls) -> list[str]:
   """Get a list of all options."""
   instance = cls()
@@ -73,6 +81,7 @@ def get_all(cls) -> list[str]:
     val = getattr(instance, attr)
     choices.append(val)
   return choices
+
 
 def get_choices(cls) -> list[tuple[str, str]]:
   """Get a list of choices for models.py based on the attrs of the input."""

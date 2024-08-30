@@ -1,18 +1,21 @@
 """Database models."""
-import filetype
+
 import logging
 import re
-import requests
 
+import filetype
+import requests
 from django.core.files.base import ContentFile
 from django.db import models
 
-from api.constants import get_choices, ChangeTypes, EventTypes, IngestionApis, JanitorOperations, Neighborhoods, OpenMicTypes, VenueTypes
+from api.constants import ChangeTypes, EventTypes, IngestionApis, JanitorOperations, Neighborhoods, OpenMicTypes, VenueTypes, get_choices
 
 logger = logging.getLogger(__name__)
 
+
 class Venue(models.Model):
   """Places to go!"""
+
   created_at = models.DateTimeField(auto_now_add=True)
   name = models.CharField(max_length=128, unique=True)
   name_lower = models.CharField(max_length=128, unique=True)
@@ -39,10 +42,10 @@ class Venue(models.Model):
   # 1) Hiding / showing the venue.
   # 2) Turning off / on data gathering for the venue.
   show_venue = models.BooleanField(default=True)
-  
+
   def __str__(self):
     return self.name
-  
+
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._original_venue_image_url = self.venue_image_url
@@ -80,6 +83,7 @@ class Venue(models.Model):
 
 class VenueTag(models.Model):
   """Tags for venue types."""
+
   venue = models.ForeignKey(Venue, related_name="venue_tags", on_delete=models.CASCADE)
   created_at = models.DateTimeField(auto_now_add=True)
   venue_type = models.CharField(max_length=32, choices=get_choices(VenueTypes))
@@ -90,8 +94,10 @@ class VenueTag(models.Model):
   class Meta:
     unique_together = [["venue", "venue_type"]]
 
+
 class Crawler(models.Model):
   """Information about a crawler."""
+
   created_at = models.DateTimeField(auto_now_add=True)
   crawler_name = models.CharField(max_length=32, unique=True)
   venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
@@ -102,6 +108,7 @@ class Crawler(models.Model):
 
 class Artist(models.Model):
   """Artists!"""
+
   created_at = models.DateTimeField(auto_now_add=True)
   name = models.CharField(max_length=64, unique=True)
   name_slug = models.CharField(max_length=128, unique=True)
@@ -112,7 +119,7 @@ class Artist(models.Model):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._original_artist_image_url = self.artist_image_url
-  
+
   def save(self, *args, **kwargs):
     self.name_slug = self.name.lower().replace(" ", "-")
     super().save(*args, **kwargs)
@@ -133,8 +140,10 @@ class Artist(models.Model):
   def __str__(self):
     return f"|{self.id}| {self.name}"
 
+
 class SocialLink(models.Model):
   """Social Links for artists."""
+
   created_at = models.DateTimeField(auto_now_add=True)
   artist = models.ForeignKey(Artist, related_name="social_links", on_delete=models.CASCADE)
   platform = models.CharField(max_length=32)
@@ -149,6 +158,7 @@ class SocialLink(models.Model):
 
 class Event(models.Model):
   """List of events."""
+
   created_at = models.DateTimeField(auto_now_add=True)
   title = models.CharField(max_length=256)
   event_day = models.DateField()
@@ -169,7 +179,7 @@ class Event(models.Model):
 
   def __str__(self):
     return f"|{self.id}| {self.title} ({self.venue.name}, {self.event_day}, {self.title})"
-  
+
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._original_event_image_url = self.event_image_url
@@ -190,6 +200,7 @@ class Event(models.Model):
         self._original_event_image_url = self.event_image_url
         self.event_image.save(f"{self.title.replace(' ', '_').replace('/', '')}.{file_extension}", content_file)
 
+
 class RawData(models.Model):
   """Raw data from an api request.
 
@@ -202,8 +213,9 @@ class RawData(models.Model):
   2) The ability to link finalized events to the raw data where they come from.
   3) The ability to change merging/deduping rules and immediately see results.
   4) We can edit finalized venues / events, without losing the underlying data
-     that they come from. 
+     that they come from.
   """
+
   created_at = models.DateTimeField(auto_now_add=True)
   api_name = models.CharField(max_length=32, choices=get_choices(IngestionApis), default="Manual")
   event_api_id = models.CharField(max_length=64)
@@ -225,6 +237,7 @@ class RawData(models.Model):
 
 class OpenMic(models.Model):
   """Generic information about an open mic."""
+
   venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, null=True)
   created_at = models.DateTimeField(auto_now_add=True)
   # A lot of open mic nights are just venue name + open mic i.e.
@@ -264,8 +277,10 @@ class OpenMic(models.Model):
 
     return "UNKNOWN_VENUE" if not self.venue else f"{self.venue.name} {self.event_mic_type}"
 
+
 class JanitorRun(models.Model):
   """Is your janitor running?"""
+
   created_at = models.DateTimeField(auto_now_add=True)
   finished_at = models.DateTimeField(blank=True, null=True)
   name = models.CharField(max_length=64)
@@ -273,12 +288,15 @@ class JanitorRun(models.Model):
   def __str__(self):
     return f"{self.name} ({self.created_at})"
 
+
 class JanitorMergeEventRecord(models.Model):
   to_event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name="to_event")
+
 
 class JanitorApplyArtistRecord(models.Model):
   event = models.ForeignKey(Event, on_delete=models.CASCADE)
   artists = models.ManyToManyField(Artist)
+
 
 class JanitorRecord(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
@@ -289,22 +307,25 @@ class JanitorRecord(models.Model):
   # Only one of the following should be populated.
   merge_event_record = models.ForeignKey(JanitorMergeEventRecord, on_delete=models.SET_NULL, blank=True, null=True)
   apply_artists_record = models.ForeignKey(JanitorApplyArtistRecord, on_delete=models.SET_NULL, blank=True, null=True)
-  
+
+
 class CarpenterRun(models.Model):
   """Logs for runs from the carpenter."""
+
   created_at = models.DateTimeField(auto_now_add=True)
   finished_at = models.DateTimeField(blank=True, null=True)
   name = models.CharField(max_length=64)
 
   def __str__(self):
     return f"{self.name} ({self.created_at})"
-  
+
   def run_time(self) -> str:
     if not self.finished_at:
       return ""
-    
+
     return str(self.finished_at - self.created_at)
-  
+
+
 class CarpenterRecord(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
   carpenter_run = models.ForeignKey(CarpenterRun, on_delete=models.CASCADE)
@@ -313,7 +334,7 @@ class CarpenterRecord(models.Model):
   open_mic = models.ForeignKey(OpenMic, on_delete=models.CASCADE, blank=True, null=True)
   change_type = models.CharField(max_length=16, choices=get_choices(ChangeTypes))
   change_log = models.TextField(blank=True, null=True)
-  
+
   # Helper field for seeing what got added/changed/deleted -> either an event,
   # a venue, or an artist.
   field_changed = models.CharField(max_length=32, choices=[("event", "event"), ("venue", "venue"), ("artist", "artist"), ("none", "none")])
@@ -325,21 +346,23 @@ class CarpenterRecord(models.Model):
   def name_of_object_changed(self):
     if self.field_changed == "none":
       return "None"
-    
+
     obj = getattr(self, self.field_changed)
     return getattr(obj, "name", getattr(obj, "title", "None"))
 
   def __str__(self):
     return f"{self.carpenter_run} - {self.api_name}: ({self.name_of_object_changed()}, {self.change_type})"
-  
+
   def run_time(self) -> str:
     if not self.finished_at:
       return ""
-    
+
     return str(self.finished_at - self.created_at)
+
 
 class IngestionRun(models.Model):
   """Logs for runs from the ingester."""
+
   created_at = models.DateTimeField(auto_now_add=True)
   finished_at = models.DateTimeField(blank=True, null=True)
   name = models.CharField(max_length=64)
@@ -347,16 +370,17 @@ class IngestionRun(models.Model):
 
   def __str__(self):
     return f"{self.name} ({self.created_at})"
-  
+
   def run_time(self) -> str:
     if not self.finished_at:
       return ""
-    
+
     return str(self.finished_at - self.created_at)
 
 
 class IngestionRecord(models.Model):
   """Parent class for tracking individual changes from ingester run."""
+
   created_at = models.DateTimeField(auto_now_add=True)
   ingestion_run = models.ForeignKey(IngestionRun, on_delete=models.CASCADE)
   api_name = models.CharField(max_length=32, default="Manual")
@@ -368,6 +392,7 @@ class IngestionRecord(models.Model):
 
   def __str__(self):
     return f"{self.ingestion_run} - {self.change_type}, {self.raw_data}"
+
 
 ADMIN_MODELS = [
   Artist,

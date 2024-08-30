@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
+  dependencies = [
+    ("api", "0004_m2m_to_o2m"),
+  ]
 
-    dependencies = [
-        ('api', '0004_m2m_to_o2m'),
-    ]
-
-    operations = [
-        migrations.RemoveField(
-            model_name='janitormergeeventrecord',
-            name='from_events',
-        ),
-    ]
+  operations = [
+    migrations.RemoveField(
+      model_name="janitormergeeventrecord",
+      name="from_events",
+    ),
+  ]

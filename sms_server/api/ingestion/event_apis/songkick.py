@@ -20,6 +20,7 @@ https://www.songkick.com/metro-areas/2846-us-seattle?page=2#metro-area-calendar
 Total number of pages can be found in a pagination element that looks like:
 <div role="navigation" aria-label="Pagination" class="pagination">
 """
+
 import json
 from typing import Generator
 
@@ -29,8 +30,8 @@ from api.constants import IngestionApis
 from api.ingestion.event_apis.event_api import EventApi
 from api.utils import crawler_utils
 
-class SongkickApi(EventApi):
 
+class SongkickApi(EventApi):
   has_artists = True
 
   def __init__(self) -> object:
@@ -57,10 +58,10 @@ class SongkickApi(EventApi):
       "event_day": event_day,
       "start_time": start_time,
       "event_url": raw_data["url"],
-      "event_image_url": f"https://images.sk-static.com/images/{raw_data['image']}" if raw_data['image'] else "",
-      "description": raw_data["description"]
+      "event_image_url": f"https://images.sk-static.com/images/{raw_data['image']}" if raw_data["image"] else "",
+      "description": raw_data["description"],
     }
-  
+
   def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
     for performer in raw_data["performer"]:
       yield {"name": performer["name"]}
@@ -70,12 +71,12 @@ class SongkickApi(EventApi):
       "event_api_id": raw_data["url"].split("?")[0],
       "event_name": raw_data["name"],
       "venue_name": raw_data["location"]["name"],
-      "event_day": raw_data["startDate"].split("T")[0]
+      "event_day": raw_data["startDate"].split("T")[0],
     }
-  
-  def get_paginated_url(self, page_number: int=1) -> str:
+
+  def get_paginated_url(self, page_number: int = 1) -> str:
     return f"https://www.songkick.com/metro-areas/2846-us-seattle?page={page_number}#metro-area-calendar"
-  
+
   def process_page(self, soup: bs4.BeautifulSoup) -> Generator[dict, None, None]:
     for micro_div in soup.find_all("div", class_="microformat"):
       script_tag = micro_div.find("script", type="application/ld+json")
@@ -85,7 +86,7 @@ class SongkickApi(EventApi):
         continue
 
       yield event
-  
+
   def get_event_list(self) -> Generator[dict, None, None]:
     first_page = crawler_utils.get_html_soup(url=self.get_paginated_url(page_number=1))
     # Get the total number of pages.

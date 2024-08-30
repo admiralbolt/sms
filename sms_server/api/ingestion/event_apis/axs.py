@@ -5,19 +5,18 @@ AXS has much better protections in place than the rest of the apis I've been
 to get a valid CSRF Token, and then using that in subsequent requests to their
 API.
 """
-import math
-import requests
-import time
-from typing import Generator
 
 import json
-from selenium import webdriver
+import math
+import time
+from typing import Generator
 
 from api.constants import IngestionApis
 from api.ingestion.event_apis.event_api import EventApi
 from api.utils import crawler_utils
 
 PER_PAGE = 15
+
 
 def get_csrf_token():
   """Get a valid CSRF Token from AXS."""
@@ -30,12 +29,14 @@ def get_csrf_token():
   csrf_token_input = soup.find(id="hdn_csrf_token")
   return csrf_token_input.get("value")
 
-def event_list_request(csrf_token: str, page: int=1) -> dict:
+
+def event_list_request(csrf_token: str, page: int = 1) -> dict:
   """Get a list of events from AXS."""
   soup = crawler_utils.get_html_soup(
     f"https://www.axs.com/apip/event/category?siteId=999&csrf_token={csrf_token}&majorCat=2&lat=47.63480&long=-122.34510&radius=50&locale=en-US&rows={PER_PAGE}&page={page}"
   )
   return json.loads(soup.body.string)
+
 
 def get_biggest_non_default_image(media: dict) -> str:
   """Returns the biggest non default image from a media dict from axs resp."""
@@ -57,8 +58,8 @@ def get_biggest_non_default_image(media: dict) -> str:
 
   return media[max_key]["file_name"]
 
-class AXSApi(EventApi):
 
+class AXSApi(EventApi):
   delay: float = 0.5
 
   def __init__(self):
@@ -76,7 +77,7 @@ class AXSApi(EventApi):
       "venue_image_url": get_biggest_non_default_image(venue_data["media"]),
       "api_id": venue_data["venueId"],
     }
-  
+
   def get_event_kwargs(self, raw_data: dict) -> dict:
     event_day, start_time = None, None
     if raw_data["eventDateTime"] != "TBD":
@@ -90,7 +91,7 @@ class AXSApi(EventApi):
       "event_image_url": get_biggest_non_default_image(raw_data["media"]),
       "description": raw_data["description"],
     }
-  
+
   def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
     pass
 
@@ -102,7 +103,7 @@ class AXSApi(EventApi):
       "venue_name": raw_data["venue"]["title"],
       "event_day": event_day,
     }
-  
+
   def get_event_list(self) -> Generator[dict, None, None]:
     csrf_token = get_csrf_token()
     data = event_list_request(csrf_token, page=1)

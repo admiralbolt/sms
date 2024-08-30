@@ -3,15 +3,15 @@
 Venuepilot doesn't have any sort of search scope features, so we query all
 events and then filter by city accordingly.
 """
+
 import logging
 from datetime import datetime
-from typing import Any, Generator, Optional
+from typing import Generator, Optional
 
 import requests
 
 from api.constants import IngestionApis
 from api.ingestion.event_apis.event_api import EventApi
-from api.models import IngestionRun
 
 REQUEST_TEMPLATE = """
 query PaginatedEvents {
@@ -76,20 +76,16 @@ query PaginatedEvents {
 
 logger = logging.getLogger(__name__)
 
-def event_list_request(min_start_date: Optional[str]=None, page: int=0):
+
+def event_list_request(min_start_date: Optional[str] = None, page: int = 0):
   """Get a list of events from Venuepilot."""
   min_start_date = min_start_date or datetime.today().strftime("%Y-%m-%d")
-  headers = {
-    "Content-Type": "application/json"
-  }
-  data = {
-    "operationName": "PaginatedEvents",
-    "query": REQUEST_TEMPLATE % (page, min_start_date)
-  }
+  headers = {"Content-Type": "application/json"}
+  data = {"operationName": "PaginatedEvents", "query": REQUEST_TEMPLATE % (page, min_start_date)}
   return requests.post("https://www.venuepilot.co/graphql", headers=headers, json=data, timeout=30).json()
 
-class VenuepilotApi(EventApi):
 
+class VenuepilotApi(EventApi):
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.VENUEPILOT)
 
@@ -107,7 +103,7 @@ class VenuepilotApi(EventApi):
       "city": venue_data["city"],
       "api_id": venue_data["id"],
     }
-  
+
   def get_event_kwargs(self, raw_data: dict) -> dict:
     return {
       "title": raw_data["name"],
@@ -117,7 +113,7 @@ class VenuepilotApi(EventApi):
       "description": raw_data["description"],
       "event_image_url": raw_data["highlightedImage"],
     }
-  
+
   def get_artists_kwargs(self, raw_data: dict) -> Generator[dict, None, None]:
     # Technically venuepilot has artist info, but in practice I've never seen
     # the 'artist' field actually populated.
@@ -134,13 +130,13 @@ class VenuepilotApi(EventApi):
       "venue_name": raw_data["venue"]["name"],
       "event_day": raw_data["date"],
     }
-  
+
   def process_event_list(self, event_list: list[dict]) -> Generator[dict, None, None]:
     for event_data in event_list["data"]["paginatedEvents"]["collection"]:
       if event_data["venue"]["city"].lower() != "seattle":
         continue
       yield event_data
-  
+
   def get_event_list(self) -> Generator[dict, None, None]:
     event_list = event_list_request(page=0)
     total_pages = event_list["data"]["paginatedEvents"]["metadata"]["totalPages"]

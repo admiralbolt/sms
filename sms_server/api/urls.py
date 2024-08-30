@@ -1,12 +1,12 @@
 """Map URLs => views."""
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
-
 from rest_framework import routers
-from rest_framework_simplejwt import views as jwt_views
-from rest_framework.renderers import BrowsableAPIRenderer, CoreJSONRenderer, JSONRenderer, JSONOpenAPIRenderer
+from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from rest_framework.schemas import get_schema_view
+from rest_framework_simplejwt import views as jwt_views
 
 from api import views
 
@@ -37,16 +37,16 @@ urlpatterns = [
   path("api/logout", views.LogoutView.as_view()),
   path("api/token/", jwt_views.TokenObtainPairView.as_view()),
   path("api/token/refresh/", jwt_views.TokenRefreshView.as_view()),
-
   # Management commands triggered from the UI.
   path("api/commands/alias_and_merge_all_venues", views.alias_and_merge_all_venues),
-
-  path("api/schema",
-       get_schema_view(
-        title="SMS",
-        description="SMS API",
-        version="1.0.0",
-        renderer_classes=[JSONRenderer, BrowsableAPIRenderer],
-       ), name="openapi-schema",
+  path(
+    "api/schema",
+    get_schema_view(
+      title="SMS",
+      description="SMS API",
+      version="1.0.0",
+      renderer_classes=[JSONRenderer, BrowsableAPIRenderer],
+    ),
+    name="openapi-schema",
   ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

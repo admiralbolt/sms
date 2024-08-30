@@ -2,18 +2,19 @@
 As of 2024-05-06, entry point is: https://www.seamonsterlounge.com/
 
 Wix site that's using some kind of calendar plugin, and thankfully all the data
-is dumped in a json object on the page. 
+is dumped in a json object on the page.
 
 <!-- warmup data start -->
 <script type="application/json" id="wix-warmup-data">{...}</script>
 <!-- warmup data end -->
 """
+
 import json
 import logging
-import requests
 from datetime import datetime
 from typing import Generator
 
+import requests
 from bs4 import BeautifulSoup
 
 from api.constants import IngestionApis
@@ -24,8 +25,8 @@ logger = logging.getLogger(__name__)
 
 SEAMONSTER_URL = "https://www.seamonsterlounge.com/buy-tickets-in-advance"
 
-class SeaMonsterLoungeCrawler(AbstractCrawler):
 
+class SeaMonsterLoungeCrawler(AbstractCrawler):
   def __init__(self) -> object:
     super().__init__(api_name=IngestionApis.CRAWLER_SEA_MONSTER_LOUNGE, venue_name_regex="^sea monster lounge$")
 
@@ -37,7 +38,7 @@ class SeaMonsterLoungeCrawler(AbstractCrawler):
       "start_time": parsing_utils.parse_12hr_time(raw_data["scheduling"]["startTimeFormatted"]),
       "title": raw_data["title"].strip(),
     }
-  
+
   def get_event_list(self) -> Generator[dict, None, None]:
     headers = {
       "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
@@ -57,5 +58,5 @@ class SeaMonsterLoungeCrawler(AbstractCrawler):
   def should_skip(self, raw_data: dict) -> tuple[bool, str]:
     if "la luz" in raw_data["title"].lower():
       return True, "Skipping La Luz Open Jam Event."
-    
+
     return False, ""

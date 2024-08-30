@@ -15,25 +15,24 @@ https://www.eventbriteapi.com/v3/events/{event_id}/?expand=ticket_classes,venue,
 
 Don't forget we need to include the `Authorization: Bearer {token}` header.
 """
-import logging
-import time
-from typing import Generator
 
 import json
+import logging
+from typing import Generator
+
 import requests
 
 from api.constants import IngestionApis
 from api.ingestion.event_apis.event_api import EventApi
-from api.models import IngestionRun
-from sms_server import settings
 
 logger = logging.getLogger(__name__)
+
 
 # Looks like the data returned from the backend search call is dumped into
 # javascript into a `__SERVER_DATA__` variable. There's a line like this
 # `window.__SERVER_DATA__ = {...}`
 # We can can grab this line, parse the JSON, and be off to the races.
-def event_list_request(page: int=1) -> dict:
+def event_list_request(page: int = 1) -> dict:
   """Get a list of events from Eventbrite by scraping their UI search page."""
   # As it turns out eventbrite has some protections in place to prevent
   # exactly what I'm attempting to do. Unfortunately for them, their protections
@@ -53,12 +52,12 @@ def event_list_request(page: int=1) -> dict:
       continue
 
     # The line ends with a semicolon since it's javascript.
-    data = json.loads(line[len("window.__SERVER_DATA__ = "):-1])
+    data = json.loads(line[len("window.__SERVER_DATA__ = ") : -1])
     return data
   return {}
 
-class EventbriteApi(EventApi):
 
+class EventbriteApi(EventApi):
   delay: float = 0.5
 
   def __init__(self) -> object:
@@ -80,7 +79,7 @@ class EventbriteApi(EventApi):
       "city": venue_data["address"]["city"],
       "api_id": venue_data["id"],
     }
-  
+
   def get_event_kwargs(self, raw_data: dict) -> dict:
     return {
       "title": raw_data["name"],
@@ -88,15 +87,15 @@ class EventbriteApi(EventApi):
       "start_time": raw_data["start_time"],
       "event_url": raw_data["url"],
       "event_image_url": raw_data["image"]["url"],
-      "description": raw_data.get("summary", "")
+      "description": raw_data.get("summary", ""),
     }
-  
+
   def get_raw_data_info(self, raw_data: dict) -> dict:
     return {
       "event_api_id": raw_data["id"],
       "event_name": raw_data["name"],
       "venue_name": raw_data["primary_venue"]["name"],
-      "event_day": raw_data["start_date"]
+      "event_day": raw_data["start_date"],
     }
 
   def get_event_list(self) -> Generator[dict, None, None]:
@@ -104,7 +103,7 @@ class EventbriteApi(EventApi):
     data = event_list_request(page=1)
     for event_data in data["search_data"]["events"]["results"]:
       yield event_data
-      
+
     for page in range(2, data["page_count"]):
       data = event_list_request(page=page)
       for event_data in data["search_data"]["events"]["results"]:

@@ -1,14 +1,14 @@
-from abc import abstractmethod
-from typing import Generator
 import logging
 
-from api.models import Crawler, Venue
 from api.ingestion.event_apis.event_api import EventApi
+from api.models import Crawler, Venue
 
 logger = logging.getLogger(__name__)
 
+
 class AbstractCrawler(EventApi):
   """Abstract crawler class."""
+
   venue_name_regex: str = ""
   venue: Venue = None
 
@@ -24,7 +24,7 @@ class AbstractCrawler(EventApi):
   def get_raw_data_info(self, raw_data: dict) -> dict:
     raw_data["venue_name"] = self.venue.name
     return raw_data
-  
+
   def get_venue(self) -> Venue:
     return self.venue
 
@@ -40,17 +40,13 @@ class AbstractCrawler(EventApi):
     if apis.exists():
       self.venue = apis.first().venue
       return
-    
+
     # Look for venues that match the name regex. We only proceed if a single
     # venue matches.
     venues = Venue.objects.filter(name__iregex=self.venue_name_regex)
     if len(venues) != 1:
       logger.warn(f"Unable to create venue api object for crawler: {self.api_name}, {len(venues)} match the name regex.")
       return
-    
-    Crawler.objects.create(
-      venue=venues.first(),
-      crawler_name=self.api_name
-    )
-    self.venue = venues.first()
 
+    Crawler.objects.create(venue=venues.first(), crawler_name=self.api_name)
+    self.venue = venues.first()
