@@ -1,5 +1,5 @@
 export * from "./VenueSelect";
-export * from "./VenueList";
+export * from "./VenueSearch";
 export * from "./VenueDetail";
 export * from "./VenuePage";
-export * from "./VenueSearchView";
+export * from "./VenueLandingPage";

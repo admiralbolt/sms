@@ -18,7 +18,7 @@ import { VenueListItem } from "./VenueListItem";
 
 const MAX_RESULTS = 10;
 
-export const VenueList = () => {
+export const VenueSearch = () => {
   const [isAuthenticated] = useIsAuthenticated();
   const [searchTerm, setSearchTerm] = useState("");
   const [keyword] = useDebounce(searchTerm, 500);
