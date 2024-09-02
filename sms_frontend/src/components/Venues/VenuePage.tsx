@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-import { Typography } from "@mui/material";
+import { CircularProgress, Typography } from "@mui/material";
 
 import { getVenueBySlug } from "@/hooks/api";
 import { Venue } from "@/types";
@@ -12,6 +12,7 @@ import { VenueDetail } from "./VenueDetail";
 
 export const VenuePage = () => {
   const [venue, setVenue] = useState<Venue>({} as Venue);
+  const [loading, setLoading] = useState<boolean>(true);
   const { slug } = useParams();
 
   useEffect(() => {
@@ -22,8 +23,17 @@ export const VenuePage = () => {
       setMeta({
         title: `Seattle Music Venue - ${res.name}`,
       });
+      setLoading(false);
+    }, (_) => {
+      setLoading(false);
     });
   }, [slug]);
+
+  if (loading) {
+    return (
+      <CircularProgress sx={{ marginLeft: "1em", marginTop: "1em" }} />
+    );
+  }
 
   if (Object.keys(venue).length === 0) {
     return (
