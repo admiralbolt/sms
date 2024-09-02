@@ -299,6 +299,9 @@ def search_venues(request: HttpRequest):
     return JsonResponse({"status": "error", "message": "No keyword supplied"})
 
   include_hidden = request.GET.get("include_hidden", False)
+  # Need to translate literal string values "true" and "false", since GET
+  # params are not type aware.
+  include_hidden = True if include_hidden == "true" else False
 
   return JsonResponse(
     serializers.VenueSerializer(search_utils.search_all_venues(keyword, include_hidden=include_hidden), many=True).data, safe=False
