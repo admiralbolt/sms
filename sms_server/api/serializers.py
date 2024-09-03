@@ -51,6 +51,7 @@ class VenueSerializer(serializers.ModelSerializer):
       "name",
       "latitude",
       "longitude",
+      "neighborhood",
       "address",
       "postal_code",
       "city",

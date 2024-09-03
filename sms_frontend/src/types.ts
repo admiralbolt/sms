@@ -149,6 +149,7 @@ export interface Venue {
   alias: string;
   show_venue: boolean;
   gather_data: boolean;
+  neighborhood?: string | null;
 }
 
 export interface OpenMic {

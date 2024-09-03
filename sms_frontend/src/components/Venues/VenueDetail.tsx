@@ -2,15 +2,14 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Delete, Edit } from "@mui/icons-material";
-import { Box, Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogTitle, Typography } from "@mui/material";
 
 import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { useIsAuthenticated } from "@/hooks/auth";
 import customAxios from "@/hooks/customAxios";
 import { Venue } from "@/types";
 
-import { VenueCard } from "./VenueCard";
-import { VenueForm } from "./VenueForm";
+import { VenueCard, VenueForm } from "@/components/Venues";
 
 interface Props {
   venue: Venue;
@@ -18,7 +17,6 @@ interface Props {
 
 export const VenueDetail = ({ venue }: Props) => {
   const [isAuthenticated, _] = useIsAuthenticated();
-  console.log(`AUTH?: ${isAuthenticated}`);
   const [edit, setEdit] = useState<boolean>(false);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
   const { setSnackbar } = useContext(SnackbarContext) || {};
@@ -110,7 +108,10 @@ export const VenueDetail = ({ venue }: Props) => {
             </Dialog>
           </Box>
         )}
-        <VenueCard venue={venue} />
+
+        <Box sx={{padding: {sx: "0.25rem"}, display: "flex", alignItems: {"xs": "center", "sm": "start"}, flexDirection: "column"}} key={venue.id}>
+          <VenueCard venue={venue} />
+        </Box>
       </>
     );
   }
