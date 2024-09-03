@@ -24,6 +24,7 @@ import { DateSelectorTabs } from "@/components/DateSelectorTabs/DateSelectorTabs
 import { DrawerContext } from "@/contexts/DrawerContext";
 import { useIsAuthenticated } from "@/hooks/auth";
 import { useAppBarHeight } from "@/hooks/materialHacks";
+import theme from "@/hooks/theme";
 
 export const NavBar = () => {
   const [showFilters, setShowFilters] = useState(false);
@@ -53,7 +54,7 @@ export const NavBar = () => {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed" sx={{ zIndex: 999999, padding: 0, margin: 0 }}>
+      <AppBar position="fixed" sx={{ background: "transparent", zIndex: 10000, padding: 0, margin: 0 }}>
         <Toolbar>
           <NavLink to={addParamsToLink("/list")}>
             {({ isActive }) => (
@@ -144,6 +145,7 @@ export const NavBar = () => {
         </Toolbar>
         {showFilters && <DateSelectorTabs />}
       </AppBar>
+      <Toolbar style={{ height: appBarHeight }} sx={{ backgroundColor: theme.palette.background.default, position: "fixed", width: "100vw", zIndex: 8000 }} />
       <Toolbar style={{ height: appBarHeight }} />
       <Outlet />
     </Box>

@@ -10,6 +10,7 @@ import customAxios from "@/hooks/customAxios";
 import { Venue } from "@/types";
 
 import { VenueCard, VenueForm } from "@/components/Venues";
+import { useAppBarHeight } from "@/hooks/materialHacks";
 
 interface Props {
   venue: Venue;
@@ -20,6 +21,7 @@ export const VenueDetail = ({ venue }: Props) => {
   const [edit, setEdit] = useState<boolean>(false);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
   const { setSnackbar } = useContext(SnackbarContext) || {};
+  const appBarHeight = useAppBarHeight();
   const navigate = useNavigate();
 
   const toggleEdit = () => {
@@ -109,7 +111,19 @@ export const VenueDetail = ({ venue }: Props) => {
           </Box>
         )}
 
-        <Box sx={{padding: {sx: "0.25rem"}, display: "flex", alignItems: {"xs": "center", "sm": "start"}, flexDirection: "column"}} key={venue.id}>
+        {venue.venue_image != undefined && (
+          <Box sx={{filter: "brightness(20%);", position: "fixed", top: 0, zIndex: 9000, width: "100vw", height: "100vh"}}>
+            <img style={{maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0)", objectFit: "cover", width: "100vw"}}  src={venue.venue_image} />
+          </Box>
+        )}
+
+        {venue.venue_image != undefined && (
+          <Box sx={{filter: "brightness(20%);", position: "fixed", top: 0, zIndex: 9100, width: "100vw", height: `${appBarHeight}px`, overflow: "hidden"}}>
+            <img style={{objectFit: "cover", width: "100vw"}}  src={venue.venue_image} />
+          </Box>
+        )}
+
+        <Box sx={{position: "relative", zIndex: 9001, padding: "0.6rem", display: "flex", alignItems: "start", flexDirection: "column"}} key={venue.id}>
           <VenueCard venue={venue} />
         </Box>
       </>

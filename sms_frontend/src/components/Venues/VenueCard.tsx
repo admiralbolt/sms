@@ -26,35 +26,6 @@ export const VenueCard = ({ venue }: Props) => {
 
   return (
     <Box key={venue.id}>
-      <Card
-        key={venue.id}
-        sx={{
-          width: "800px",
-          maxWidth: "100vw",
-        }}
-      >
-        <Box position="relative">
-          <CardMedia
-            component="img"
-            image={displayImage()}
-            sx={{
-              filter: "brightness(25%)",
-              width: "sm",
-              aspectRatio: 2,
-            }}
-          />
-          <Box
-            sx={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              padding: "0.2em",
-              display: "flex",
-              alignItems: "start",
-              justifyContent: "center",
-              flexDirection: "column",
-            }}
-          >
             <Typography
               sx={{
                 fontWeight: "bold",
@@ -131,8 +102,5 @@ export const VenueCard = ({ venue }: Props) => {
               </Box>
             )}
           </Box>
-        </Box>
-      </Card>
-    </Box>
   );
 };
