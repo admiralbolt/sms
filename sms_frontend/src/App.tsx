@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 
 import { VenuePage, VenueSearchView } from "@/components/Venues";
+import { OpenMicView } from "@/components/OpenMics";
 import { SnackbarContextProvider } from "@/contexts/SnackbarContext";
 
 import "./App.css";
@@ -44,6 +45,7 @@ const App = () => {
                     <Route path="about" element={<AboutView />} />
                     <Route path="venues" element={<VenueSearchView />} />
                     <Route path="venues/:slug" element={<VenuePage />} />
+                    <Route path="open_mics" element={<OpenMicView />} />
                     <Route path="login" element={<LoginView />} />
                     <Route path="logout" element={<LogoutView />} />
                     <Route
