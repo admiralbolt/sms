@@ -67,7 +67,7 @@ class OpenMicViewSet(viewsets.ModelViewSet):
     return [permission() for permission in permission_classes]
 
   def get_queryset(self):
-    mics = models.OpenMic.objects.order_by("venue__name")
+    mics = models.OpenMic.objects.order_by("day", "venue__name")
     return mics.filter(generate_events=True)
 
 

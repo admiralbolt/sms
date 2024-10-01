@@ -1,7 +1,4 @@
-import {
-  Link as LinkIcon,
-  Place as PlaceIcon,
-} from "@mui/icons-material";
+import { Link as LinkIcon, Place as PlaceIcon } from "@mui/icons-material";
 import { Box, IconButton, Link } from "@mui/material";
 
 import { Venue } from "@/types";

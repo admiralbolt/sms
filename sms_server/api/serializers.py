@@ -145,6 +145,7 @@ class OpenMicSerializer(serializers.ModelSerializer):
       "drums",
       "cadence_crontab",
       "cadence_readable",
+      "day",
       "generate_events",
       "venue",
     )

@@ -164,6 +164,7 @@ export interface OpenMic {
   drums?: boolean;
   cadence_crontab: string;
   cadence_readable: string;
+  day: string;
   signup_start_time: string;
   event_start_time: string;
 }

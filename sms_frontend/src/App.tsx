@@ -3,8 +3,8 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
 
-import { VenuePage, VenueSearchView } from "@/components/Venues";
 import { OpenMicView } from "@/components/OpenMics";
+import { VenuePage, VenueSearchView } from "@/components/Venues";
 import { SnackbarContextProvider } from "@/contexts/SnackbarContext";
 
 import "./App.css";
