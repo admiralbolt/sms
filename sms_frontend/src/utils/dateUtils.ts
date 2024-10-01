@@ -7,7 +7,7 @@ const formatDateTime = (day: Date): string => {
 
 const format24HourTime = (time: string): string => {
   dayjs.extend(customParseFormat);
-  return dayjs(time, "HH:mm:ss").format("ha");
+  return dayjs(time, "HH:mm:ss").format("h:mm a");
 };
 
 const secondsToReadable = (seconds: number): string => {

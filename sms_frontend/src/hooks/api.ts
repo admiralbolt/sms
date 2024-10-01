@@ -156,7 +156,12 @@ const createOpenMic = (openMic: OpenMic) => {
 };
 
 const updateOpenMic = (openMic: OpenMic) => {
-  return customAxios.put(`api/open_mics/${openMic.id}`, openMic);
+  // Don't want to make any nested updates to the venue, just want to send
+  // the venue as an id.
+  let data: any = openMic;
+  data["venue"] = openMic.venue.id;
+
+  return customAxios.put(`api/open_mics/${openMic.id}`, data);
 };
 
 const useOpenMics = (): [
