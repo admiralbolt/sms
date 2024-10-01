@@ -1,6 +1,5 @@
 """Display stuff!"""
 
-
 from django.http import HttpRequest, JsonResponse
 from django_celery_beat.models import PeriodicTask
 from rest_framework import status, viewsets

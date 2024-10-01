@@ -8,7 +8,17 @@ import requests
 from django.core.files.base import ContentFile
 from django.db import models
 
-from api.constants import ChangeTypes, EventTypes, IngestionApis, JanitorOperations, Neighborhoods, OpenMicTypes, VenueTypes, get_choices
+from api.constants import (
+  DAY_CHOICES,
+  ChangeTypes,
+  EventTypes,
+  IngestionApis,
+  JanitorOperations,
+  Neighborhoods,
+  OpenMicTypes,
+  VenueTypes,
+  get_choices,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -263,6 +273,8 @@ class OpenMic(models.Model):
   cadence_crontab = models.CharField(max_length=64)
   # The human readable version of the open mic cadence.
   cadence_readable = models.CharField(max_length=128)
+  # The day of the week the open mic occurs on.
+  day = models.CharField(max_length=16, choices=DAY_CHOICES, default="Sunday")
 
   # Should we display / generate events for this open mic?
   generate_events = models.BooleanField(default=True)

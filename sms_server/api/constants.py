@@ -70,6 +70,29 @@ class Neighborhoods:
   WEST_SEATTLE = "West Seattle"
 
 
+class Days:
+  SUNDAY = "Sunday"
+  MONDAY = "Monday"
+  TUESDAY = "Tuesday"
+  WEDNESDAY = "Wednesday"
+  THURSDAY = "Thursday"
+  FRIDAY = "Friday"
+  SATURDAY = "Saturday"
+
+
+# Sadly we want these choices to be ordered by day of week, not
+# alphabetically, so not reusing the `get_choices` method here.
+DAY_CHOICES = [
+  (Days.SUNDAY, Days.SUNDAY),
+  (Days.MONDAY, Days.MONDAY),
+  (Days.TUESDAY, Days.TUESDAY),
+  (Days.WEDNESDAY, Days.WEDNESDAY),
+  (Days.THURSDAY, Days.THURSDAY),
+  (Days.FRIDAY, Days.FRIDAY),
+  (Days.SATURDAY, Days.SATURDAY),
+]
+
+
 def get_all(cls) -> list[str]:
   """Get a list of all options."""
   instance = cls()

@@ -122,6 +122,7 @@ class EventSerializer(serializers.ModelSerializer):
 
 class OpenMicSerializer(serializers.ModelSerializer):
   """Serialize OpenMic data."""
+
   name = serializers.SerializerMethodField
   venue = VenueSerializer(read_only=True)
 
