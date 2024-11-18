@@ -249,6 +249,7 @@ class OpenMic(models.Model):
   """Generic information about an open mic."""
 
   venue = models.ForeignKey(Venue, on_delete=models.SET_NULL, null=True)
+  slug = models.CharField(max_length=128, blank=True, null=True)
   created_at = models.DateTimeField(auto_now_add=True)
   # A lot of open mic nights are just venue name + open mic i.e.
   # Connor Byrne Open Mic, Hidden Door Open Mic. There are some exceptions like
@@ -279,8 +280,21 @@ class OpenMic(models.Model):
   # Should we display / generate events for this open mic?
   generate_events = models.BooleanField(default=True)
 
+  def save(self, *args, **kwargs):
+    self.make_pretty()
+    super().save(*args, **kwargs)
+
   def __str__(self):
     return self.name()
+  
+  def make_pretty(self):
+    self.name_lower = self.name().lower()
+    self.slug = re.sub("[^a-z0-9 ]+", "", self.name_lower).replace(" ", "-")
+    # We do an extra check here to see if a slug already exists. Venues can
+    # have multiple different types of open mics, so sometimes the name isn't
+    # enough identifying information by itself.
+    if OpenMic.objects.filter(slug=self.slug).exists():
+      self.slug += f"_{self.id}"
 
   def name(self):
     """Get the name of the open mic!"""
