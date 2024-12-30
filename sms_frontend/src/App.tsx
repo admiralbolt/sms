@@ -3,7 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 import { CssBaseline, ThemeProvider } from "@mui/material";
 
-import { OpenMicView, OpenMicDetailView } from "@/components/OpenMics";
+import { OpenMicDetailView, OpenMicView } from "@/components/OpenMics";
 import { VenuePage, VenueSearchView } from "@/components/Venues";
 import { SnackbarContextProvider } from "@/contexts/SnackbarContext";
 
@@ -46,7 +46,10 @@ const App = () => {
                     <Route path="venues" element={<VenueSearchView />} />
                     <Route path="venues/:slug" element={<VenuePage />} />
                     <Route path="open-mics" element={<OpenMicView />} />
-                    <Route path="open-mics/:slug" element={<OpenMicDetailView />} />
+                    <Route
+                      path="open-mics/:slug"
+                      element={<OpenMicDetailView />}
+                    />
                     <Route path="login" element={<LoginView />} />
                     <Route path="logout" element={<LogoutView />} />
                     <Route

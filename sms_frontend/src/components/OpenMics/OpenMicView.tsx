@@ -9,6 +9,7 @@ import { setMeta } from "@/utils/seo";
 
 import { OpenMicCard } from "./OpenMicCard";
 import { OpenMicForm } from "./OpenMicForm";
+import { OpenMicListItem } from "./OpenMicListItem";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -121,37 +122,37 @@ export const OpenMicView = () => {
           </Tabs>
           <CustomTabPanel value={tab} index={0}>
             {openMicsByDay["Sunday"].map((mic) => (
-              <OpenMicCard key={mic.id} openMic={mic} />
+              <OpenMicListItem key={mic.id} openMic={mic} />
             ))}
           </CustomTabPanel>
           <CustomTabPanel value={tab} index={1}>
             {openMicsByDay["Monday"].map((mic) => (
-              <OpenMicCard key={mic.id} openMic={mic} />
+              <OpenMicListItem key={mic.id} openMic={mic} />
             ))}
           </CustomTabPanel>
           <CustomTabPanel value={tab} index={2}>
             {openMicsByDay["Tuesday"].map((mic) => (
-              <OpenMicCard key={mic.id} openMic={mic} />
+              <OpenMicListItem key={mic.id} openMic={mic} />
             ))}
           </CustomTabPanel>
           <CustomTabPanel value={tab} index={3}>
             {openMicsByDay["Wednesday"].map((mic) => (
-              <OpenMicCard key={mic.id} openMic={mic} />
+              <OpenMicListItem key={mic.id} openMic={mic} />
             ))}
           </CustomTabPanel>
           <CustomTabPanel value={tab} index={4}>
             {openMicsByDay["Thursday"].map((mic) => (
-              <OpenMicCard key={mic.id} openMic={mic} />
+              <OpenMicListItem key={mic.id} openMic={mic} />
             ))}
           </CustomTabPanel>
           <CustomTabPanel value={tab} index={5}>
             {openMicsByDay["Friday"].map((mic) => (
-              <OpenMicCard key={mic.id} openMic={mic} />
+              <OpenMicListItem key={mic.id} openMic={mic} />
             ))}
           </CustomTabPanel>
           <CustomTabPanel value={tab} index={6}>
             {openMicsByDay["Saturday"].map((mic) => (
-              <OpenMicCard key={mic.id} openMic={mic} />
+              <OpenMicListItem key={mic.id} openMic={mic} />
             ))}
           </CustomTabPanel>
         </Box>
