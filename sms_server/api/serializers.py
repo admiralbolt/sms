@@ -133,6 +133,7 @@ class OpenMicSerializer(serializers.ModelSerializer):
     model = models.OpenMic
     fields = (
       "id",
+      "slug",
       "name",
       "open_mic_type",
       "description",

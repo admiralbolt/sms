@@ -37,6 +37,12 @@ const getVenueBySlug = async (slug: any): Promise<Venue> => {
   return result.data;
 };
 
+const getOpenMicBySlug = async (slug: any): Promise<OpenMic> => {
+  const result = await customAxios.get(`/api/open_mics/${slug}`);
+
+  return result.data;
+};
+
 const getEventById = async (id: any): Promise<Event> => {
   const result = await customAxios.get(`/api/events/${id}`);
 
@@ -261,6 +267,7 @@ export {
   getArtistById,
   getEventById,
   getOpenMicById,
+  getOpenMicBySlug,
   getVenueBySlug,
   getEventsByDay,
   updateEvent,

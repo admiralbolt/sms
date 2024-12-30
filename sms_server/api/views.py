@@ -61,6 +61,7 @@ class OpenMicViewSet(viewsets.ModelViewSet):
   resource_name = "open_mics"
   queryset = models.OpenMic.objects.all()
   serializer_class = serializers.OpenMicSerializer
+  lookup_field = "slug"
 
   def get_permissions(self):
     permission_classes = [IsAuthenticatedOrReadOnly] if IS_PROD else []
