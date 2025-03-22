@@ -16,7 +16,7 @@ import {
 const BASE_API_URL =
   process.env.NODE_ENV === "production"
     ? "https://seattlemusicscene.info:8000"
-    : "http://localhost:8000";
+    : `http://${__HOST__}:8000`;
 
 const getEventDisplayImage = (event: Event): string => {
   if (event.event_image) return BASE_API_URL + event.event_image;

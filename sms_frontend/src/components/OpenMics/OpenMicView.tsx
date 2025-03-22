@@ -7,7 +7,6 @@ import { useIsAuthenticated } from "@/hooks/auth";
 import { OpenMic } from "@/types";
 import { setMeta } from "@/utils/seo";
 
-import { OpenMicCard } from "./OpenMicCard";
 import { OpenMicForm } from "./OpenMicForm";
 import { OpenMicListItem } from "./OpenMicListItem";
 
@@ -105,11 +104,11 @@ export const OpenMicView = () => {
             Create New Open Mic
           </Button>
         )}
-        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Box>
           <Tabs
             value={tab}
             onChange={handleChange}
-            aria-label="basic tabs example"
+            aria-label="Seattle open mics"
             variant="scrollable"
           >
             <Tab label="Sunday" {...a11yProps(0)} />
