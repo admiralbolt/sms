@@ -18,17 +18,13 @@ export const OpenMicListItem = ({ openMic }: Props) => {
   return (
     <Box
       key={openMic.id}
-      className={`flex w-[400px] md:w-[600px] lg:w-[900px] sm:w-[600px rounded-sm align-center p-2 content-center border-b-2 border-blue-500/20`}
+      className={`flex w-full md:w-[600px] lg:w-[900px] sm:w-[600px rounded-sm align-center p-2 content-center border-b-2 border-blue-500/20`}
     >
       <div className="flex md:flex-row">
         <Box
-          className={`bg-center flex flex-col justify-start text-center relative`}
+          className={`bg-center flex flex-col justify-start text-center relative min-w-[80px] w-[80px] min-h-[80px] h-[80px] sm:w-[100px] sm:h-[100px]`}
           sx={{
             backgroundImage: `url(${openMic.venue.venue_image})`,
-            minWidth: "100px",
-            minHeight: "100px",
-            maxWidth: "100px",
-            maxHeight: "100px",
             backgroundSize: "cover", // Ensure background image covers the box
             backgroundPosition: "center",
           }}
@@ -37,37 +33,18 @@ export const OpenMicListItem = ({ openMic }: Props) => {
           <div className="flex flex-col z-index-10 bg-black/50"></div>
         </Box>
 
-        <div className="flex-col max-w-[70vw] min-width-[400px] content-center">
+        <div className="flex-col content-center px-4">
           <Box className="flex items-center">
-            <div className="flex flex-col justify-center align-center content-center px-4">
-              <Link target="_blank" href={mapsLink(openMic.venue)}>
-                <IconButton
-                  disabled={!mapsLink(openMic.venue)}
-                  size="small"
-                  edge="start"
-                  color="primary"
-                  aria-label="menu"
-                >
-                  <PlaceIcon fontSize={"small"} />
-                </IconButton>
-              </Link>
-              {openMic.venue.venue_url && (
-                <Link target="_blank" href={openMic.venue.venue_url}>
-                  <IconButton
-                    size="small"
-                    edge="start"
-                    color="info"
-                    aria-label="menu"
-                  >
-                    <LinkIcon />
-                  </IconButton>
-                </Link>
-              )}
-            </div>
             <Box className="flex flex-col">
-              <h2 className="text-lg lg:text-xl text-wrap font-bold">
+              <Typography sx={{fontSize: "1.05rem", textWrap: 1, fontWeight: "bold"}}>
                 {openMic.name}
-              </h2>
+              </Typography>
+
+              <Box className="flex">
+                <Link sx={{fontSize: "0.85em"}} target="_blank" href={mapsLink(openMic.venue)}>
+                  {openMic.venue.address}
+                </Link>
+              </Box>
 
               <Box className="flex">
                 <EditNote sx={{ verticalAlign: "middle" }} />
