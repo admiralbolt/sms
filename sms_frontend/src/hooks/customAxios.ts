@@ -2,7 +2,6 @@ import axios from "axios";
 
 import { memoizedRefreshTokens } from "./auth";
 
-
 const baseUrl =
   process.env.NODE_ENV === "production"
     ? "https://seattlemusicscene.info:8000"

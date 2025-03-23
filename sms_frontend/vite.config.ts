@@ -1,7 +1,7 @@
 import react from "@vitejs/plugin-react-swc";
 import { URL, fileURLToPath } from "node:url";
-import { defineConfig } from "vite";
 import os from "os";
+import { defineConfig } from "vite";
 
 function getLocalIP() {
   const networkInterfaces = os.networkInterfaces();
@@ -28,6 +28,6 @@ export default defineConfig({
     },
   },
   define: {
-    __HOST__: JSON.stringify(getLocalIP())
-  }
+    __HOST__: JSON.stringify(getLocalIP()),
+  },
 });

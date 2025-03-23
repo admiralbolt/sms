@@ -1,10 +1,5 @@
-import {
-  EditNote,
-  Link as LinkIcon,
-  Place as PlaceIcon,
-  WatchLater,
-} from "@mui/icons-material";
-import { Box, IconButton, Link, Typography } from "@mui/material";
+import { EditNote, WatchLater } from "@mui/icons-material";
+import { Box, Link, Typography } from "@mui/material";
 
 import { OpenMic } from "@/types";
 import { format24HourTime } from "@/utils/dateUtils";
@@ -36,12 +31,18 @@ export const OpenMicListItem = ({ openMic }: Props) => {
         <div className="flex-col content-center px-4">
           <Box className="flex items-center">
             <Box className="flex flex-col">
-              <Typography sx={{fontSize: "1.05rem", textWrap: 1, fontWeight: "bold"}}>
+              <Typography
+                sx={{ fontSize: "1.05rem", textWrap: 1, fontWeight: "bold" }}
+              >
                 {openMic.name}
               </Typography>
 
               <Box className="flex">
-                <Link sx={{fontSize: "0.85em"}} target="_blank" href={mapsLink(openMic.venue)}>
+                <Link
+                  sx={{ fontSize: "0.85em" }}
+                  target="_blank"
+                  href={mapsLink(openMic.venue)}
+                >
                   {openMic.venue.address}
                 </Link>
               </Box>
