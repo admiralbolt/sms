@@ -155,6 +155,7 @@ export interface OpenMic {
   id: number;
   venue: Venue;
   name: string;
+  slug: string;
   event_mic_type: EventType;
   open_mic_type: string;
   description: string;

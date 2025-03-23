@@ -16,17 +16,19 @@ export const OpenMicListItem = ({ openMic }: Props) => {
       className={`flex w-full md:w-[600px] lg:w-[900px] sm:w-[600px rounded-sm align-center p-2 content-center border-b-2 border-blue-500/20`}
     >
       <div className="flex md:flex-row">
-        <Box
-          className={`bg-center flex flex-col justify-start text-center relative min-w-[80px] w-[80px] min-h-[80px] h-[80px] sm:w-[100px] sm:h-[100px]`}
-          sx={{
-            backgroundImage: `url(${openMic.venue.venue_image})`,
-            backgroundSize: "cover", // Ensure background image covers the box
-            backgroundPosition: "center",
-          }}
-        >
-          <div className="z-0 absolute bg-black w-full h-full opacity-20" />
-          <div className="flex flex-col z-index-10 bg-black/50"></div>
-        </Box>
+        <Link href={`open-mics/${openMic.slug}`}>
+          <Box
+            className={`bg-center flex flex-col justify-start text-center relative min-w-[80px] w-[80px] min-h-[80px] h-[80px] sm:w-[100px] sm:h-[100px]`}
+            sx={{
+              backgroundImage: `url(${openMic.venue.venue_image})`,
+              backgroundSize: "cover", // Ensure background image covers the box
+              backgroundPosition: "center",
+            }}
+          >
+            <div className="z-0 absolute bg-black w-full h-full opacity-20" />
+            <div className="flex flex-col z-index-10 bg-black/50"></div>
+          </Box>
+        </Link>
 
         <div className="flex-col content-center px-4">
           <Box className="flex items-center">
