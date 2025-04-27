@@ -293,7 +293,8 @@ class OpenMic(models.Model):
     # We do an extra check here to see if a slug already exists. Venues can
     # have multiple different types of open mics, so sometimes the name isn't
     # enough identifying information by itself.
-    if OpenMic.objects.filter(slug=self.slug).exists():
+    # Make sure to exclude the current open mic from the search :p
+    if OpenMic.objects.exclude(id=self.id).filter(slug=self.slug):
       self.slug += f"_{self.id}"
 
   def name(self):

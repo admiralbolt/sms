@@ -7,9 +7,10 @@ import { Box, Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import { SnackbarContext } from "@/contexts/SnackbarContext";
 import { useIsAuthenticated } from "@/hooks/auth";
 import customAxios from "@/hooks/customAxios";
+import { useAppBarHeight } from "@/hooks/materialHacks";
 import { OpenMic } from "@/types";
 
-import { OpenMicCard } from "./OpenMicCard";
+import { OpenMicDetailDisplay } from "./OpenMicDetailDisplay";
 import { OpenMicForm } from "./OpenMicForm";
 
 interface Props {
@@ -18,10 +19,10 @@ interface Props {
 
 export const OpenMicDetail = ({ openMic }: Props) => {
   const [isAuthenticated, _] = useIsAuthenticated();
-  console.log(`AUTH?: ${isAuthenticated}`);
   const [edit, setEdit] = useState<boolean>(false);
   const [openConfirmation, setOpenConfirmation] = useState<boolean>(false);
   const { setSnackbar } = useContext(SnackbarContext) || {};
+  const appBarHeight = useAppBarHeight();
   const navigate = useNavigate();
 
   const toggleEdit = () => {
@@ -110,7 +111,52 @@ export const OpenMicDetail = ({ openMic }: Props) => {
             </Dialog>
           </Box>
         )}
-        <OpenMicCard openMic={openMic} />
+
+        {openMic.venue.venue_image != undefined && (
+          <Box
+            sx={{
+              filter: "brightness(20%);",
+              position: "fixed",
+              top: 0,
+              zIndex: 9000,
+              width: "100vw",
+              height: "100vh",
+            }}
+          >
+            <img
+              style={{
+                maskImage:
+                  "linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0)",
+                objectFit: "cover",
+                width: "100vw",
+              }}
+              src={openMic.venue.venue_image}
+            />
+          </Box>
+        )}
+
+        {openMic.venue.venue_image != undefined && (
+          <Box
+            sx={{
+              filter: "brightness(20%);",
+              position: "fixed",
+              top: 0,
+              zIndex: 9100,
+              width: "100vw",
+              height: `${appBarHeight}px`,
+              overflow: "hidden",
+            }}
+          >
+            <img
+              style={{ objectFit: "cover", width: "100vw" }}
+              src={openMic.venue.venue_image}
+            />
+          </Box>
+        )}
+
+        <Box sx={{ position: "relative", zIndex: 9001 }} className={`p-3`}>
+          <OpenMicDetailDisplay openMic={openMic} />
+        </Box>
       </>
     );
   }

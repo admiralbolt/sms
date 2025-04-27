@@ -53,7 +53,15 @@ export const NavBar = () => {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="fixed" sx={{ zIndex: 999999, padding: 0, margin: 0 }}>
+      <AppBar
+        position="fixed"
+        sx={{
+          background: "transparent",
+          zIndex: 999999,
+          padding: 0,
+          margin: 0,
+        }}
+      >
         <Toolbar>
           <NavLink to={addParamsToLink("/list")}>
             {({ isActive }) => (

@@ -16,7 +16,7 @@ export const OpenMicListItem = ({ openMic }: Props) => {
       className={`flex w-full md:w-[600px] lg:w-[900px] sm:w-[600px rounded-sm align-center p-2 content-center border-b-2 border-blue-500/20`}
     >
       <div className="flex md:flex-row">
-        <Link href={`open-mics/${openMic.slug}`}>
+        <Link href={`/open-mics/${openMic.slug}`}>
           <Box
             className={`bg-center flex flex-col justify-start text-center relative min-w-[80px] w-[80px] min-h-[80px] h-[80px] sm:w-[100px] sm:h-[100px]`}
             sx={{
