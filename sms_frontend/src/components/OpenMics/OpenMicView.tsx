@@ -7,6 +7,7 @@ import { useIsAuthenticated } from "@/hooks/auth";
 import { OpenMic } from "@/types";
 import { setMeta } from "@/utils/seo";
 
+import { BackgroundHeader } from "../Layout/BackgroundHeader";
 import { OpenMicForm } from "./OpenMicForm";
 import { OpenMicListItem } from "./OpenMicListItem";
 
@@ -86,76 +87,82 @@ export const OpenMicView = () => {
 
   if (createNew) {
     return (
-      <OpenMicForm
-        openMic={{} as OpenMic}
-        setEdit={setCreateNew}
-        isNew={true}
-      />
+      <>
+        <BackgroundHeader />
+        <OpenMicForm
+          openMic={{} as OpenMic}
+          setEdit={setCreateNew}
+          isNew={true}
+        />
+      </>
     );
   } else {
     return (
-      <Box sx={{ width: "100%" }}>
-        {isAuthenticated && (
-          <Button
-            onClick={() => {
-              setCreateNew(true);
-            }}
-          >
-            Create New Open Mic
-          </Button>
-        )}
-        <Box>
-          <Tabs
-            value={tab}
-            onChange={handleChange}
-            aria-label="Seattle open mics"
-            variant="scrollable"
-          >
-            <Tab label="Sunday" {...a11yProps(0)} />
-            <Tab label="Monday" {...a11yProps(1)} />
-            <Tab label="Tuesday" {...a11yProps(2)} />
-            <Tab label="Wednesday" {...a11yProps(3)} />
-            <Tab label="Thursday" {...a11yProps(4)} />
-            <Tab label="Friday" {...a11yProps(5)} />
-            <Tab label="Saturday" {...a11yProps(6)} />
-          </Tabs>
-          <CustomTabPanel value={tab} index={0}>
-            {openMicsByDay["Sunday"].map((mic) => (
-              <OpenMicListItem key={mic.id} openMic={mic} />
-            ))}
-          </CustomTabPanel>
-          <CustomTabPanel value={tab} index={1}>
-            {openMicsByDay["Monday"].map((mic) => (
-              <OpenMicListItem key={mic.id} openMic={mic} />
-            ))}
-          </CustomTabPanel>
-          <CustomTabPanel value={tab} index={2}>
-            {openMicsByDay["Tuesday"].map((mic) => (
-              <OpenMicListItem key={mic.id} openMic={mic} />
-            ))}
-          </CustomTabPanel>
-          <CustomTabPanel value={tab} index={3}>
-            {openMicsByDay["Wednesday"].map((mic) => (
-              <OpenMicListItem key={mic.id} openMic={mic} />
-            ))}
-          </CustomTabPanel>
-          <CustomTabPanel value={tab} index={4}>
-            {openMicsByDay["Thursday"].map((mic) => (
-              <OpenMicListItem key={mic.id} openMic={mic} />
-            ))}
-          </CustomTabPanel>
-          <CustomTabPanel value={tab} index={5}>
-            {openMicsByDay["Friday"].map((mic) => (
-              <OpenMicListItem key={mic.id} openMic={mic} />
-            ))}
-          </CustomTabPanel>
-          <CustomTabPanel value={tab} index={6}>
-            {openMicsByDay["Saturday"].map((mic) => (
-              <OpenMicListItem key={mic.id} openMic={mic} />
-            ))}
-          </CustomTabPanel>
+      <>
+        <BackgroundHeader />
+        <Box sx={{ width: "100%" }}>
+          {isAuthenticated && (
+            <Button
+              onClick={() => {
+                setCreateNew(true);
+              }}
+            >
+              Create New Open Mic
+            </Button>
+          )}
+          <Box>
+            <Tabs
+              value={tab}
+              onChange={handleChange}
+              aria-label="Seattle open mics"
+              variant="scrollable"
+            >
+              <Tab label="Sunday" {...a11yProps(0)} />
+              <Tab label="Monday" {...a11yProps(1)} />
+              <Tab label="Tuesday" {...a11yProps(2)} />
+              <Tab label="Wednesday" {...a11yProps(3)} />
+              <Tab label="Thursday" {...a11yProps(4)} />
+              <Tab label="Friday" {...a11yProps(5)} />
+              <Tab label="Saturday" {...a11yProps(6)} />
+            </Tabs>
+            <CustomTabPanel value={tab} index={0}>
+              {openMicsByDay["Sunday"].map((mic) => (
+                <OpenMicListItem key={mic.id} openMic={mic} />
+              ))}
+            </CustomTabPanel>
+            <CustomTabPanel value={tab} index={1}>
+              {openMicsByDay["Monday"].map((mic) => (
+                <OpenMicListItem key={mic.id} openMic={mic} />
+              ))}
+            </CustomTabPanel>
+            <CustomTabPanel value={tab} index={2}>
+              {openMicsByDay["Tuesday"].map((mic) => (
+                <OpenMicListItem key={mic.id} openMic={mic} />
+              ))}
+            </CustomTabPanel>
+            <CustomTabPanel value={tab} index={3}>
+              {openMicsByDay["Wednesday"].map((mic) => (
+                <OpenMicListItem key={mic.id} openMic={mic} />
+              ))}
+            </CustomTabPanel>
+            <CustomTabPanel value={tab} index={4}>
+              {openMicsByDay["Thursday"].map((mic) => (
+                <OpenMicListItem key={mic.id} openMic={mic} />
+              ))}
+            </CustomTabPanel>
+            <CustomTabPanel value={tab} index={5}>
+              {openMicsByDay["Friday"].map((mic) => (
+                <OpenMicListItem key={mic.id} openMic={mic} />
+              ))}
+            </CustomTabPanel>
+            <CustomTabPanel value={tab} index={6}>
+              {openMicsByDay["Saturday"].map((mic) => (
+                <OpenMicListItem key={mic.id} openMic={mic} />
+              ))}
+            </CustomTabPanel>
+          </Box>
         </Box>
-      </Box>
+      </>
     );
   }
 };

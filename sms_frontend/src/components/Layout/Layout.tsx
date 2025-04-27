@@ -20,6 +20,8 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Toolbar from "@mui/material/Toolbar";
 
+import { PiMicrophoneStageFill } from "react-icons/pi";
+
 import { DateSelectorTabs } from "@/components/DateSelectorTabs/DateSelectorTabs";
 import { DrawerContext } from "@/contexts/DrawerContext";
 import { useIsAuthenticated } from "@/hooks/auth";
@@ -32,6 +34,8 @@ export const NavBar = () => {
   const { drawerOpen, setDrawerOpen } = useContext(DrawerContext) || {};
   const { pathname } = useLocation();
   const appBarHeight = useAppBarHeight();
+
+  console.log(`appBarHeight: ${appBarHeight}`);
 
   const huh = () => {
     setDrawerOpen?.(!drawerOpen);
@@ -63,6 +67,19 @@ export const NavBar = () => {
         }}
       >
         <Toolbar>
+          <NavLink to={"/open-mics"}>
+            {({ isActive }) => (
+              <IconButton
+                size="large"
+                edge="start"
+                aria-label="menu"
+                color={isActive ? "primary" : undefined}
+                sx={{ mr: 4 }}
+              >
+                <PiMicrophoneStageFill />
+              </IconButton>
+            )}
+          </NavLink>
           <NavLink to={addParamsToLink("/list")}>
             {({ isActive }) => (
               <IconButton

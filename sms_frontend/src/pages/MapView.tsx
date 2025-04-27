@@ -1,6 +1,7 @@
 import "leaflet/dist/leaflet.css";
 
 import { FilterPanel } from "@/components/FilterPanel";
+import { BackgroundHeader } from "@/components/Layout/BackgroundHeader";
 import { Map } from "@/components/Map";
 import { setMeta } from "@/utils/seo";
 
@@ -11,9 +12,12 @@ export const MapView = () => {
   });
 
   return (
-    <div>
-      <FilterPanel />
-      <Map />
-    </div>
+    <>
+      <BackgroundHeader />
+      <div>
+        <FilterPanel />
+        <Map />
+      </div>
+    </>
   );
 };

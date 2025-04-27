@@ -1,5 +1,6 @@
 import { Box, Typography } from "@mui/material";
 
+import { BackgroundHeader } from "@/components/Layout/BackgroundHeader";
 import { setMeta } from "@/utils/seo";
 
 export const NotFoundView = () => {
@@ -10,6 +11,7 @@ export const NotFoundView = () => {
 
   return (
     <>
+      <BackgroundHeader />
       <Box sx={{ padding: 1.5, maxWidth: "md" }}>
         <Typography variant={"h4"}>404 Not Found!</Typography>
         <br />

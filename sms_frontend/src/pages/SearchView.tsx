@@ -1,3 +1,4 @@
+import { BackgroundHeader } from "@/components/Layout/BackgroundHeader";
 import { Search } from "@/components/Search";
 import { setMeta } from "@/utils/seo";
 
@@ -8,8 +9,11 @@ export const SearchView = () => {
   });
 
   return (
-    <div style={{ padding: "12px 5px 5px 5px" }}>
-      <Search />
-    </div>
+    <>
+      <BackgroundHeader />
+      <div style={{ padding: "12px 5px 5px 5px" }}>
+        <Search />
+      </div>
+    </>
   );
 };

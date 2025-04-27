@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Alert } from "@mui/material";
 import { Box, Button, Container, Snackbar, TextField } from "@mui/material";
 
+import { BackgroundHeader } from "@/components/Layout/BackgroundHeader";
 import { useIsAuthenticated } from "@/hooks/auth";
 import { login } from "@/hooks/auth";
 
@@ -43,54 +44,57 @@ export const LoginView = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          id="username"
-          label="Username"
-          name="username"
-          autoComplete="username"
-          onChange={(e) => setUsername(e.target.value)}
-          autoFocus
-        />
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          name="password"
-          label="Password"
-          type="password"
-          id="password"
-          onChange={(e) => setPassword(e.target.value)}
-          autoComplete="current-password"
-        />
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          Sign In
-        </Button>
-      </Box>
-      <Snackbar
-        open={openBar}
-        autoHideDuration={4000}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-      >
-        <Alert
+    <>
+      <BackgroundHeader />
+      <Container component="main" maxWidth="xs">
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="username"
+            label="Username"
+            name="username"
+            autoComplete="username"
+            onChange={(e) => setUsername(e.target.value)}
+            autoFocus
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Sign In
+          </Button>
+        </Box>
+        <Snackbar
+          open={openBar}
+          autoHideDuration={4000}
           onClose={handleClose}
-          severity="error"
-          variant="filled"
-          sx={{ width: "100%" }}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         >
-          {errorMessage}
-        </Alert>
-      </Snackbar>
-    </Container>
+          <Alert
+            onClose={handleClose}
+            severity="error"
+            variant="filled"
+            sx={{ width: "100%" }}
+          >
+            {errorMessage}
+          </Alert>
+        </Snackbar>
+      </Container>
+    </>
   );
 };

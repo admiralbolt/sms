@@ -8,6 +8,7 @@ import { CommandPanel } from "@/components/Commands";
 import { EventPanel } from "@/components/Events";
 import { IngestionRunPanel } from "@/components/IngestionRuns";
 import { JanitorRunPanel } from "@/components/JanitorRuns";
+import { BackgroundHeader } from "@/components/Layout/BackgroundHeader";
 import { OpenMicPanel } from "@/components/OpenMics";
 import { PeriodicTaskStatus } from "@/components/PeriodicTaskStatus";
 
@@ -48,48 +49,51 @@ export const AdminView = () => {
   };
 
   return (
-    <Box sx={{ width: "100%" }}>
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="basic tabs example"
-          variant="scrollable"
-        >
-          <Tab label="Status" {...a11yProps(0)} />
-          <Tab label="Ingestion Runs" {...a11yProps(1)} />
-          <Tab label="Carpenter Runs" {...a11yProps(2)} />
-          <Tab label="Janitor Runs" {...a11yProps(3)} />
-          <Tab label="Commands" {...a11yProps(4)} />
-          <Tab label="Open Mics" {...a11yProps(5)} />
-          <Tab label="Events" {...a11yProps(6)} />
-          <Tab label="Artists" {...a11yProps(7)} />
-        </Tabs>
+    <>
+      <BackgroundHeader />
+      <Box sx={{ width: "100%" }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="basic tabs example"
+            variant="scrollable"
+          >
+            <Tab label="Status" {...a11yProps(0)} />
+            <Tab label="Ingestion Runs" {...a11yProps(1)} />
+            <Tab label="Carpenter Runs" {...a11yProps(2)} />
+            <Tab label="Janitor Runs" {...a11yProps(3)} />
+            <Tab label="Commands" {...a11yProps(4)} />
+            <Tab label="Open Mics" {...a11yProps(5)} />
+            <Tab label="Events" {...a11yProps(6)} />
+            <Tab label="Artists" {...a11yProps(7)} />
+          </Tabs>
+        </Box>
+        <CustomTabPanel value={value} index={0}>
+          <PeriodicTaskStatus />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={1}>
+          <IngestionRunPanel />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={2}>
+          <CarpenterRunPanel />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={3}>
+          <JanitorRunPanel />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={4}>
+          <CommandPanel />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={5}>
+          <OpenMicPanel />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={6}>
+          <EventPanel />
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={7}>
+          <ArtistPanel />
+        </CustomTabPanel>
       </Box>
-      <CustomTabPanel value={value} index={0}>
-        <PeriodicTaskStatus />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
-        <IngestionRunPanel />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
-        <CarpenterRunPanel />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={3}>
-        <JanitorRunPanel />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={4}>
-        <CommandPanel />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={5}>
-        <OpenMicPanel />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={6}>
-        <EventPanel />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={7}>
-        <ArtistPanel />
-      </CustomTabPanel>
-    </Box>
+    </>
   );
 };

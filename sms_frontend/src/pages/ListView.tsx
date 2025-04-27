@@ -1,5 +1,6 @@
 import { EventList } from "@/components/Events";
 import { FilterPanel } from "@/components/FilterPanel";
+import { BackgroundHeader } from "@/components/Layout/BackgroundHeader";
 import { setMeta } from "@/utils/seo";
 
 export const ListView = () => {
@@ -9,9 +10,12 @@ export const ListView = () => {
   });
 
   return (
-    <div className="md:max-w-[70vw]">
-      <FilterPanel />
-      <EventList />
-    </div>
+    <>
+      <BackgroundHeader />
+      <div className="md:max-w-[70vw]">
+        <FilterPanel />
+        <EventList />
+      </div>
+    </>
   );
 };
